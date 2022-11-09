@@ -85,10 +85,13 @@
 		<Unit filename="C:/programacion/MemDB/main.cpp">
 			<Option target="memdb"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/DBMap.hpp">
+		<Unit filename="C:/programacion/MemDB/src/utils/DBMap.cpp">
 			<Option target="memdb"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/utils/HashCreator.hpp">
+			<Option target="memdb"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/utils/Map.h">
 			<Option target="memdb"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/CMakeLists.txt">

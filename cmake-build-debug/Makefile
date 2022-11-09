@@ -152,6 +152,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\memdb.dir\build.make CMakeFiles/memdb.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+src/utils/DBMap.obj: src/utils/DBMap.cpp.obj
+.PHONY : src/utils/DBMap.obj
+
+# target to build an object file
+src/utils/DBMap.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\memdb.dir\build.make CMakeFiles/memdb.dir/src/utils/DBMap.cpp.obj
+.PHONY : src/utils/DBMap.cpp.obj
+
+src/utils/DBMap.i: src/utils/DBMap.cpp.i
+.PHONY : src/utils/DBMap.i
+
+# target to preprocess a source file
+src/utils/DBMap.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\memdb.dir\build.make CMakeFiles/memdb.dir/src/utils/DBMap.cpp.i
+.PHONY : src/utils/DBMap.cpp.i
+
+src/utils/DBMap.s: src/utils/DBMap.cpp.s
+.PHONY : src/utils/DBMap.s
+
+# target to generate assembly for a file
+src/utils/DBMap.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\memdb.dir\build.make CMakeFiles/memdb.dir/src/utils/DBMap.cpp.s
+.PHONY : src/utils/DBMap.cpp.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -164,6 +188,9 @@ help:
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
+	@echo ... src/utils/DBMap.obj
+	@echo ... src/utils/DBMap.i
+	@echo ... src/utils/DBMap.s
 .PHONY : help
 
 

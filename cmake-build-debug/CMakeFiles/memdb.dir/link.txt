@@ -1,0 +1,3 @@
+C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\cmake\win\bin\cmake.exe -E rm -f CMakeFiles\memdb.dir/objects.a
+C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\ar.exe qc CMakeFiles\memdb.dir/objects.a @CMakeFiles\memdb.dir\objects1.rsp
+C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe -g -Wl,--whole-archive CMakeFiles\memdb.dir/objects.a -Wl,--no-whole-archive -o memdb.exe -Wl,--out-implib,libmemdb.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\memdb.dir\linklibs.rsp

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.23)
-project(untitled)
+project(memdb)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(untitled main.cpp)
+add_executable(memdb main.cpp src/utils/DBMap.hpp src/utils/HashCreator.hpp)

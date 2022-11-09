@@ -176,6 +176,30 @@ src/utils/DBMap.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\memdb.dir\build.make CMakeFiles/memdb.dir/src/utils/DBMap.cpp.s
 .PHONY : src/utils/DBMap.cpp.s
 
+src/utils/PolynomialHashCreator.obj: src/utils/PolynomialHashCreator.cpp.obj
+.PHONY : src/utils/PolynomialHashCreator.obj
+
+# target to build an object file
+src/utils/PolynomialHashCreator.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\memdb.dir\build.make CMakeFiles/memdb.dir/src/utils/PolynomialHashCreator.cpp.obj
+.PHONY : src/utils/PolynomialHashCreator.cpp.obj
+
+src/utils/PolynomialHashCreator.i: src/utils/PolynomialHashCreator.cpp.i
+.PHONY : src/utils/PolynomialHashCreator.i
+
+# target to preprocess a source file
+src/utils/PolynomialHashCreator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\memdb.dir\build.make CMakeFiles/memdb.dir/src/utils/PolynomialHashCreator.cpp.i
+.PHONY : src/utils/PolynomialHashCreator.cpp.i
+
+src/utils/PolynomialHashCreator.s: src/utils/PolynomialHashCreator.cpp.s
+.PHONY : src/utils/PolynomialHashCreator.s
+
+# target to generate assembly for a file
+src/utils/PolynomialHashCreator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\memdb.dir\build.make CMakeFiles/memdb.dir/src/utils/PolynomialHashCreator.cpp.s
+.PHONY : src/utils/PolynomialHashCreator.cpp.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -191,6 +215,9 @@ help:
 	@echo ... src/utils/DBMap.obj
 	@echo ... src/utils/DBMap.i
 	@echo ... src/utils/DBMap.s
+	@echo ... src/utils/PolynomialHashCreator.obj
+	@echo ... src/utils/PolynomialHashCreator.i
+	@echo ... src/utils/PolynomialHashCreator.s
 .PHONY : help
 
 

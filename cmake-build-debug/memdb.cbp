@@ -94,6 +94,9 @@
 		<Unit filename="C:/programacion/MemDB/src/utils/Map.h">
 			<Option target="memdb"/>
 		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/utils/PolynomialHashCreator.cpp">
+			<Option target="memdb"/>
+		</Unit>
 		<Unit filename="C:/programacion/MemDB/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

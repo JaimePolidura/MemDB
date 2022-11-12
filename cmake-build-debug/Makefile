@@ -84,6 +84,51 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\cmake\win\bin\cmake.exe -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\cmake\win\bin\cmake.exe -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\cmake\win\bin\cmake.exe -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\cmake\win\bin\cmake.exe -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\cmake\win\bin\cmake.exe -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\cmake\win\bin\cmake.exe -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
 # The main all target
 all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start C:\programacion\MemDB\cmake-build-debug\CMakeFiles C:\programacion\MemDB\cmake-build-debug\\CMakeFiles\progress.marks
@@ -116,89 +161,95 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named memdb
+# Target rules for targets named memdb_run
 
 # Build rule for target.
-memdb: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 memdb
-.PHONY : memdb
+memdb_run: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 memdb_run
+.PHONY : memdb_run
 
 # fast build rule for target.
-memdb/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\memdb.dir\build.make CMakeFiles/memdb.dir/build
-.PHONY : memdb/fast
+memdb_run/fast:
+	$(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/build
+.PHONY : memdb_run/fast
 
-main.obj: main.cpp.obj
-.PHONY : main.obj
+#=============================================================================
+# Target rules for targets named memdb_lib
 
-# target to build an object file
-main.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\memdb.dir\build.make CMakeFiles/memdb.dir/main.cpp.obj
-.PHONY : main.cpp.obj
+# Build rule for target.
+memdb_lib: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 memdb_lib
+.PHONY : memdb_lib
 
-main.i: main.cpp.i
-.PHONY : main.i
+# fast build rule for target.
+memdb_lib/fast:
+	$(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/build
+.PHONY : memdb_lib/fast
 
-# target to preprocess a source file
-main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\memdb.dir\build.make CMakeFiles/memdb.dir/main.cpp.i
-.PHONY : main.cpp.i
+#=============================================================================
+# Target rules for targets named memdb_tst
 
-main.s: main.cpp.s
-.PHONY : main.s
+# Build rule for target.
+memdb_tst: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 memdb_tst
+.PHONY : memdb_tst
 
-# target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\memdb.dir\build.make CMakeFiles/memdb.dir/main.cpp.s
-.PHONY : main.cpp.s
+# fast build rule for target.
+memdb_tst/fast:
+	$(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/build
+.PHONY : memdb_tst/fast
 
-src/utils/DBMap.obj: src/utils/DBMap.cpp.obj
-.PHONY : src/utils/DBMap.obj
+#=============================================================================
+# Target rules for targets named gmock
 
-# target to build an object file
-src/utils/DBMap.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\memdb.dir\build.make CMakeFiles/memdb.dir/src/utils/DBMap.cpp.obj
-.PHONY : src/utils/DBMap.cpp.obj
+# Build rule for target.
+gmock: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 gmock
+.PHONY : gmock
 
-src/utils/DBMap.i: src/utils/DBMap.cpp.i
-.PHONY : src/utils/DBMap.i
+# fast build rule for target.
+gmock/fast:
+	$(MAKE) $(MAKESILENT) -f libs\googletest\googlemock\CMakeFiles\gmock.dir\build.make libs/googletest/googlemock/CMakeFiles/gmock.dir/build
+.PHONY : gmock/fast
 
-# target to preprocess a source file
-src/utils/DBMap.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\memdb.dir\build.make CMakeFiles/memdb.dir/src/utils/DBMap.cpp.i
-.PHONY : src/utils/DBMap.cpp.i
+#=============================================================================
+# Target rules for targets named gmock_main
 
-src/utils/DBMap.s: src/utils/DBMap.cpp.s
-.PHONY : src/utils/DBMap.s
+# Build rule for target.
+gmock_main: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 gmock_main
+.PHONY : gmock_main
 
-# target to generate assembly for a file
-src/utils/DBMap.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\memdb.dir\build.make CMakeFiles/memdb.dir/src/utils/DBMap.cpp.s
-.PHONY : src/utils/DBMap.cpp.s
+# fast build rule for target.
+gmock_main/fast:
+	$(MAKE) $(MAKESILENT) -f libs\googletest\googlemock\CMakeFiles\gmock_main.dir\build.make libs/googletest/googlemock/CMakeFiles/gmock_main.dir/build
+.PHONY : gmock_main/fast
 
-src/utils/PolynomialHashCreator.obj: src/utils/PolynomialHashCreator.cpp.obj
-.PHONY : src/utils/PolynomialHashCreator.obj
+#=============================================================================
+# Target rules for targets named gtest
 
-# target to build an object file
-src/utils/PolynomialHashCreator.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\memdb.dir\build.make CMakeFiles/memdb.dir/src/utils/PolynomialHashCreator.cpp.obj
-.PHONY : src/utils/PolynomialHashCreator.cpp.obj
+# Build rule for target.
+gtest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 gtest
+.PHONY : gtest
 
-src/utils/PolynomialHashCreator.i: src/utils/PolynomialHashCreator.cpp.i
-.PHONY : src/utils/PolynomialHashCreator.i
+# fast build rule for target.
+gtest/fast:
+	$(MAKE) $(MAKESILENT) -f libs\googletest\googletest\CMakeFiles\gtest.dir\build.make libs/googletest/googletest/CMakeFiles/gtest.dir/build
+.PHONY : gtest/fast
 
-# target to preprocess a source file
-src/utils/PolynomialHashCreator.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\memdb.dir\build.make CMakeFiles/memdb.dir/src/utils/PolynomialHashCreator.cpp.i
-.PHONY : src/utils/PolynomialHashCreator.cpp.i
+#=============================================================================
+# Target rules for targets named gtest_main
 
-src/utils/PolynomialHashCreator.s: src/utils/PolynomialHashCreator.cpp.s
-.PHONY : src/utils/PolynomialHashCreator.s
+# Build rule for target.
+gtest_main: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 gtest_main
+.PHONY : gtest_main
 
-# target to generate assembly for a file
-src/utils/PolynomialHashCreator.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\memdb.dir\build.make CMakeFiles/memdb.dir/src/utils/PolynomialHashCreator.cpp.s
-.PHONY : src/utils/PolynomialHashCreator.cpp.s
+# fast build rule for target.
+gtest_main/fast:
+	$(MAKE) $(MAKESILENT) -f libs\googletest\googletest\CMakeFiles\gtest_main.dir\build.make libs/googletest/googletest/CMakeFiles/gtest_main.dir/build
+.PHONY : gtest_main/fast
 
 # Help Target
 help:
@@ -207,17 +258,18 @@ help:
 	@echo ... clean
 	@echo ... depend
 	@echo ... edit_cache
+	@echo ... install
+	@echo ... install/local
+	@echo ... install/strip
+	@echo ... list_install_components
 	@echo ... rebuild_cache
-	@echo ... memdb
-	@echo ... main.obj
-	@echo ... main.i
-	@echo ... main.s
-	@echo ... src/utils/DBMap.obj
-	@echo ... src/utils/DBMap.i
-	@echo ... src/utils/DBMap.s
-	@echo ... src/utils/PolynomialHashCreator.obj
-	@echo ... src/utils/PolynomialHashCreator.i
-	@echo ... src/utils/PolynomialHashCreator.s
+	@echo ... gmock
+	@echo ... gmock_main
+	@echo ... gtest
+	@echo ... gtest_main
+	@echo ... memdb_lib
+	@echo ... memdb_run
+	@echo ... memdb_tst
 .PHONY : help
 
 

@@ -1,9 +1,8 @@
 #include <string>
 #include <optional>
 
-#include "HashCreator.hpp"
+#include "HashCreator.h"
 #include "Map.h"
-
 
 class Node {
 private:
@@ -53,8 +52,7 @@ private:
     }
 };
 
-
-class DBMapImpl : public Map{
+class DBMapImpl : public Map {
 private:
     static const int NUMBER_OF_BUCKETS = 1;
 

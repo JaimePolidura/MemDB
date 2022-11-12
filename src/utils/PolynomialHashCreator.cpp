@@ -1,4 +1,4 @@
-#include "HashCreator.hpp"
+#include "HashCreator.h"
 
 #include <string>
 #include <tgmath.h>

@@ -460,6 +460,10 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/utils/PolynomialHashCreator.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/main.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>

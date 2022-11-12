@@ -1,21 +1,13 @@
-#include "HashCreator.h"
-
 #include <string>
-#include <tgmath.h>
+#include "PolynomialHashCreator.h"
 
-class PolynomialHashCreator : public HashCreator<std::string> {
-private:
-    int primeFactor;
+PolynomialHashCreator::PolynomialHashCreator(int primeFactorCons): primeFactor {primeFactorCons} {}
 
-public:
-    PolynomialHashCreator(int primceFactorCons): primeFactor{primceFactorCons} {};
+int PolynomialHashCreator::create(const std::string &key) {
+    int hashCode = 0;
 
-    int create(const std::string& key) {
-        int hashCode = 0;
+    for(int i = 0; i < key.length(); i++)
+        hashCode += key[i] * std::pow(this->primeFactor, i);
 
-        for(int i = 0; i < key.length(); i++)
-            hashCode += key[i] * std::pow(this->primeFactor, i);
-
-        return hashCode;
-    }
-};
+    return hashCode;
+}

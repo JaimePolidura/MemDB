@@ -22,6 +22,8 @@ void DBMap::put(const std::string &key, char * value, size_t valueSize) {
         actualMapNode->replaceDeletedNode(keyHash, value, valueSize);
     else if(actualMapNode->hasSameHash(keyHash))
         actualMapNode->replaceValue(value, valueSize);
+
+    this->size++;
 }
 
 std::optional<MapEntry> DBMap::get(const std::string &key) {

@@ -77,11 +77,13 @@ private:
     Node * getNodeByKeyHash(int keyHash) {
         Node * actualMapNode = this->getBucket(keyHash);
 
-        while (actualMapNode->hasNext() || actualMapNode->isNotDeleted())
+        while (actualMapNode != nullptr && (actualMapNode->hasNext() || actualMapNode->isNotDeleted()))
             if(actualMapNode->hasSameHash(keyHash))
                 return actualMapNode;
 
-        return actualMapNode->hasSameHash(keyHash) ? actualMapNode : nullptr;
+        return (actualMapNode != nullptr && actualMapNode->hasSameHash(keyHash)) ?
+            actualMapNode :
+            nullptr;
     }
 
     int getBucketSlot(int keyHash) {

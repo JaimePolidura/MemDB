@@ -3,117 +3,46 @@
 
 #include "HashCreator.h"
 #include "Map.h"
+#include "DBMap.h"
 
-class Node {
-private:
-    Node * next;
-    int keyHash;
-    char * data;
-    size_t size;
-    bool deleted;
+DBMap::DBMap(HashCreator<std::string> * hashCreatorCons): hashCreator{hashCreatorCons}, size{0} {}
 
-public:
-    Node(char * newData, int newKeyHash, size_t newSize): keyHash{newKeyHash}, data{newData}, size{newSize}, next{nullptr}, deleted{false} {}
+void DBMap::put(const std::string &key, char * value, size_t valueSize) {
+    int keyHash = this->hashCreator->create(key);
+    Node * actualMapNode = this->getBucket(keyHash);
 
-    void replaceDeletedNode(int newHash, char * newData, size_t newSize) {
-        this->data = newData;
-        this->keyHash = newHash;
-        this->size = newSize;
-        this->deleted = false;
-    }
+    while (actualMapNode != nullptr && (actualMapNode->hasNext() || actualMapNode->isNotDeleted() ||actualMapNode->hasNotSameHash(keyHash)))
+        actualMapNode = actualMapNode->getNext();
 
-    void replaceValue(char * newData, size_t newSize) {
-        this->data = newData;
-        this->size = newSize;
-    }
+    if(actualMapNode == nullptr)
+        this->buckets[this->getBucketSlot(keyHash)] = new Node(value, keyHash, valueSize);
+    else if(actualMapNode->hasNoNext() && actualMapNode->isNotDeleted() && actualMapNode->hasNotSameHash(keyHash))
+        actualMapNode->setNext( new Node(value, keyHash, valueSize));
+    else if(actualMapNode->isDeleted())
+        actualMapNode->replaceDeletedNode(keyHash, value, valueSize);
+    else if(actualMapNode->hasSameHash(keyHash))
+        actualMapNode->replaceValue(value, valueSize);
+}
 
-    void setDeleted() {
-        this->deleted = true;
-        this->deleteDataPointer();
-    }
+std::optional<MapEntry> DBMap::get(const std::string &key) {
+    Node * nodeFoundForKey = this->getNodeByKeyHash(this->hashCreator->create(key));
 
-    void setNext(Node * newNext) {
-        this->next = newNext;
-    }
+    return nodeFoundForKey!= nullptr ? std::optional<MapEntry>{nodeFoundForKey->toEntry()} : std::nullopt;
+}
 
-    MapEntry toEntry() const { return MapEntry{data, size}; }
-    Node * getNext() const { return this->next; }
-    bool isNotDeleted() const { return !this->deleted; }
-    bool isDeleted() const { return this->deleted; }
-    bool hasNotSameHash(int otherHashKey) const { return this->keyHash != otherHashKey; }
-    bool hasSameHash(int otherKeyHash) const { return this->keyHash == otherKeyHash; }
-    bool hasNoNext() const { return this->next == nullptr; }
-    bool hasNext() const { return this->next != nullptr; }
+std::optional<MapEntry> DBMap::remove(const std::string &key) {
+    Node * nodeFoundForKey = this->getNodeByKeyHash(this->hashCreator->create(key));
 
-private:
-    void deleteDataPointer() {
-        for(int i = 0; i < this->size; i++)
-            delete (this->data + i);
-    }
-};
+    if(nodeFoundForKey)
+        nodeFoundForKey->setDeleted();
 
-class DBMapImpl : public Map {
-private:
-    static const int NUMBER_OF_BUCKETS = 1;
+    return nodeFoundForKey != nullptr ? std::optional<MapEntry>{nodeFoundForKey->toEntry()} : std::nullopt;
+}
 
-    HashCreator<std::string> * hashCreator;
-    Node * buckets[NUMBER_OF_BUCKETS];
-    int size;
+bool DBMap::contains(const std::string &key) {
+    return this->getNodeByKeyHash(this->hashCreator->create(key)) != nullptr;
+}
 
-public:
-    DBMapImpl(HashCreator<std::string> * hashCreatorCons): hashCreator{hashCreatorCons}, size{0} {}
-
-    void put(const std::string& key, char * value, size_t valueSize) override{
-        int keyHash = this->hashCreator->create(key);
-        Node * actualMapNode = this->getBucket(keyHash);
-
-        while (actualMapNode->hasNext() || actualMapNode->isNotDeleted() || actualMapNode->hasNotSameHash(keyHash))
-            actualMapNode = actualMapNode->getNext();
-
-        if(actualMapNode->hasNoNext() && actualMapNode->isNotDeleted() && actualMapNode->hasNotSameHash(keyHash))
-            actualMapNode->setNext( new Node(value, keyHash, valueSize));
-        else if(actualMapNode->isDeleted())
-            actualMapNode->replaceDeletedNode(keyHash, value, valueSize);
-        else if(actualMapNode->hasSameHash(keyHash))
-            actualMapNode->replaceValue(value, valueSize);
-    }
-
-    std::optional<MapEntry> get(const std::string &key) override {
-        Node * nodeFoundForKey = this->getNodeByKeyHash(this->hashCreator->create(key));
-
-        return nodeFoundForKey!= nullptr ? std::optional<MapEntry>{nodeFoundForKey->toEntry()} : std::nullopt;
-    }
-
-    std::optional<MapEntry> remove(const std::string &key) override{
-        Node * nodeFoundForKey = this->getNodeByKeyHash(this->hashCreator->create(key));
-
-        if(nodeFoundForKey)
-            nodeFoundForKey->setDeleted();
-
-        return nodeFoundForKey != nullptr ? std::optional<MapEntry>{nodeFoundForKey->toEntry()} : std::nullopt;
-    }
-
-    bool contains(const std::string &key) override {
-        return this->getNodeByKeyHash(this->hashCreator->create(key)) != nullptr;
-    }
-
-    int getSize() override {
-        return this->size;
-    }
-
-private:
-    Node * getNodeByKeyHash(int keyHash) {
-        Node * actualMapNode = this->getBucket(keyHash);
-
-        while (actualMapNode->hasNext() || actualMapNode->isNotDeleted())
-            if(actualMapNode->hasSameHash(keyHash))
-                return actualMapNode;
-
-        return actualMapNode->hasSameHash(keyHash) ? actualMapNode : nullptr;
-    }
-
-    Node * getBucket(int keyHash) {
-        int bucketSlot = keyHash % NUMBER_OF_BUCKETS;
-        return this->buckets[bucketSlot];
-    }
-};
+int DBMap::getSize() {
+    return this->size;
+}

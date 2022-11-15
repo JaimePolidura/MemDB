@@ -2289,7 +2289,7 @@ class ResultOfMatcher {
   const InnerMatcher matcher_;
 };
 
-// Implements a matcher that checks the size of an STL-style container.
+// Implements a matcher that checks the valueSize of an STL-style container.
 template <typename SizeMatcher>
 class SizeIsMatcher {
  public:
@@ -2304,25 +2304,25 @@ class SizeIsMatcher {
   template <typename Container>
   class Impl : public MatcherInterface<Container> {
    public:
-    using SizeType = decltype(std::declval<Container>().size());
+    using SizeType = decltype(std::declval<Container>().valueSize());
     explicit Impl(const SizeMatcher& size_matcher)
         : size_matcher_(MatcherCast<SizeType>(size_matcher)) {}
 
     void DescribeTo(::std::ostream* os) const override {
-      *os << "size ";
+      *os << "valueSize ";
       size_matcher_.DescribeTo(os);
     }
     void DescribeNegationTo(::std::ostream* os) const override {
-      *os << "size ";
+      *os << "valueSize ";
       size_matcher_.DescribeNegationTo(os);
     }
 
     bool MatchAndExplain(Container container,
                          MatchResultListener* listener) const override {
-      SizeType size = container.size();
+      SizeType size = container.valueSize();
       StringMatchResultListener size_listener;
       const bool result = size_matcher_.MatchAndExplain(size, &size_listener);
-      *listener << "whose size " << size
+      *listener << "whose valueSize " << size
                 << (result ? " matches" : " doesn't match");
       PrintIfNotEmpty(size_listener.str(), listener->stream());
       return result;
@@ -2640,7 +2640,7 @@ class PointwiseMatcher {
     bool MatchAndExplain(LhsContainer lhs,
                          MatchResultListener* listener) const override {
       LhsStlContainerReference lhs_stl_container = LhsView::ConstReference(lhs);
-      const size_t actual_size = lhs_stl_container.size();
+      const size_t actual_size = lhs_stl_container.valueSize();
       if (actual_size != rhs_.size()) {
         *listener << "which contains " << actual_size << " values";
         return false;
@@ -3448,8 +3448,8 @@ class ElementsAreMatcherImpl : public MatcherInterface<Container> {
     // If mismatch_found is true, 'exam_pos' is the index of the mismatch.
 
     // Find how many elements the actual container has.  We avoid
-    // calling size() s.t. this code works for stream-like "containers"
-    // that don't define size().
+    // calling valueSize() s.t. this code works for stream-like "containers"
+    // that don't define valueSize().
     size_t actual_count = exam_pos;
     for (; it != stl_container.end(); ++it) {
       ++actual_count;
@@ -4240,7 +4240,7 @@ inline internal::UnorderedElementsAreArrayMatcher<T> UnorderedElementsAreArray(
 //
 //   1. The C++ standard permits using the name _ in a namespace that
 //      is not the global namespace or ::std.
-//   2. The AnythingMatcher class has no data member or constructor,
+//   2. The AnythingMatcher class has no value member or constructor,
 //      so it's OK to create global variables of this type.
 //   3. c-style has approved of using _ in this case.
 const internal::AnythingMatcher _ = {};
@@ -4680,9 +4680,9 @@ inline PolymorphicMatcher<internal::TrulyMatcher<Predicate>> Truly(
   return MakePolymorphicMatcher(internal::TrulyMatcher<Predicate>(pred));
 }
 
-// Returns a matcher that matches the container size. The container must
-// support both size() and size_type which all STL-like containers provide.
-// Note that the parameter 'size' can be a value of type size_type as well as
+// Returns a matcher that matches the container valueSize. The container must
+// support both valueSize() and size_type which all STL-like containers provide.
+// Note that the parameter 'valueSize' can be a value of type size_type as well as
 // matcher. For instance:
 //   EXPECT_THAT(container, SizeIs(2));     // Checks container has 2 elements.
 //   EXPECT_THAT(container, SizeIs(Le(2));  // Checks container has at most 2.
@@ -4693,9 +4693,9 @@ inline internal::SizeIsMatcher<SizeMatcher> SizeIs(
 }
 
 // Returns a matcher that matches the distance between the container's begin()
-// iterator and its end() iterator, i.e. the size of the container. This matcher
+// iterator and its end() iterator, i.e. the valueSize of the container. This matcher
 // can be used instead of SizeIs with containers such as std::forward_list which
-// do not implement size(). The container must provide const_iterator (with
+// do not implement valueSize(). The container must provide const_iterator (with
 // valid iterator_traits), begin() and end().
 template <typename DistanceMatcher>
 inline internal::BeginEndDistanceIsMatcher<DistanceMatcher> BeginEndDistanceIs(
@@ -4847,7 +4847,7 @@ inline internal::ContainsMatcher<M> Contains(M matcher) {
 // of matchers exists. In other words, a container matches
 // IsSupersetOf({e1, ..., en}) if and only if there is a permutation
 // {y1, ..., yn} of some of the container's elements where y1 matches e1,
-// ..., and yn matches en. Obviously, the size of the container must be >= n
+// ..., and yn matches en. Obviously, the valueSize of the container must be >= n
 // in order to have a match. Examples:
 //
 // - {1, 2, 3} matches IsSupersetOf({Ge(3), Ne(0)}), as 3 matches Ge(3) and
@@ -4907,7 +4907,7 @@ inline internal::UnorderedElementsAreArrayMatcher<T> IsSupersetOf(
 // IsSubsetOf() verifies that an injective mapping onto a collection of matchers
 // exists.  In other words, a container matches IsSubsetOf({e1, ..., en}) if and
 // only if there is a subset of matchers {m1, ..., mk} which would match the
-// container using UnorderedElementsAre.  Obviously, the size of the container
+// container using UnorderedElementsAre.  Obviously, the valueSize of the container
 // must be <= n in order to have a match. Examples:
 //
 // - {1} matches IsSubsetOf({Gt(0), Lt(0)}), as 1 matches Gt(0).

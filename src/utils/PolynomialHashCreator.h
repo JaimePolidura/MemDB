@@ -1,10 +1,11 @@
 #pragma once
 
 #include "HashCreator.h"
+#include "DBMap.h"
 #include <string>
 #include <tgmath.h>
 
-class PolynomialHashCreator : HashCreator<std::string> {
+class PolynomialHashCreator : public HashCreator<std::string> {
 private:
     int primeFactor;
 

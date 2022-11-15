@@ -99,7 +99,7 @@ GTEST_API_ bool InDeathTestChild();
 //
 //   ASSERT_EXIT(client.HangUpServer(), KilledBySIGHUP, "Hanging up!");
 //
-// The final parameter to each of these macros is a matcher applied to any data
+// The final parameter to each of these macros is a matcher applied to any value
 // the sub-process wrote to stderr.  For compatibility with existing tests, a
 // bare string is interpreted as a regular expression matcher.
 //

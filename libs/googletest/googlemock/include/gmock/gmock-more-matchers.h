@@ -63,17 +63,17 @@ namespace internal {
 
 // Implements the polymorphic IsEmpty matcher, which
 // can be used as a Matcher<T> as long as T is either a container that defines
-// empty() and size() (e.g. std::vector or std::string), or a C-style string.
+// empty() and valueSize() (e.g. std::vector or std::string), or a C-style string.
 class IsEmptyMatcher {
  public:
-  // Matches anything that defines empty() and size().
+  // Matches anything that defines empty() and valueSize().
   template <typename MatcheeContainerType>
   bool MatchAndExplain(const MatcheeContainerType& c,
                        MatchResultListener* listener) const {
     if (c.empty()) {
       return true;
     }
-    *listener << "whose size is " << c.size();
+    *listener << "whose valueSize is " << c.valueSize();
     return false;
   }
 
@@ -91,7 +91,7 @@ class IsEmptyMatcher {
 }  // namespace internal
 
 // Creates a polymorphic matcher that matches an empty container or C-style
-// string. The container must support both size() and empty(), which all
+// string. The container must support both valueSize() and empty(), which all
 // STL-like containers provide.
 inline PolymorphicMatcher<internal::IsEmptyMatcher> IsEmpty() {
   return MakePolymorphicMatcher(internal::IsEmptyMatcher());

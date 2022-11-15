@@ -2,10 +2,10 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "src/memdb_run.exe"
+			"path" : "tst/memdb_tst.exe"
 		},
 		{
-			"path" : "src/memdb_run.pdb"
+			"path" : "tst/memdb_tst.pdb"
 		}
 	],
 	"backtrace" : 1,
@@ -14,11 +14,12 @@
 		"commands" : 
 		[
 			"add_executable",
+			"target_link_libraries",
 			"include_directories"
 		],
 		"files" : 
 		[
-			"src/CMakeLists.txt",
+			"tst/CMakeLists.txt",
 			"CMakeLists.txt"
 		],
 		"nodes" : 
@@ -33,13 +34,19 @@
 				"parent" : 0
 			},
 			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 11,
+				"parent" : 0
+			},
+			{
 				"file" : 1
 			},
 			{
-				"command" : 1,
+				"command" : 2,
 				"file" : 1,
 				"line" : 6,
-				"parent" : 2
+				"parent" : 3
 			}
 		]
 	},
@@ -58,8 +65,18 @@
 			"includes" : 
 			[
 				{
-					"backtrace" : 3,
+					"backtrace" : 4,
 					"path" : "C:/programacion/MemDB/src"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "C:/programacion/MemDB/libs/googletest/googletest/include"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "C:/programacion/MemDB/libs/googletest/googletest"
 				}
 			],
 			"language" : "CXX",
@@ -67,18 +84,30 @@
 			{
 				"backtraces" : 
 				[
-					1
+					2
 				],
 				"standard" : "23"
 			},
 			"sourceIndexes" : 
 			[
+				0,
 				1,
-				4
+				2
 			]
 		}
 	],
-	"id" : "memdb_run::@145eef247bfb46b6828c",
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "gtest::@f3055240739694365a17"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "memdb_lib::@145eef247bfb46b6828c"
+		}
+	],
+	"id" : "memdb_tst::@bc08d5df49ffa9ee5cce",
 	"link" : 
 	{
 		"commandFragments" : 
@@ -92,43 +121,38 @@
 				"role" : "flags"
 			},
 			{
+				"backtrace" : 2,
+				"fragment" : "..\\src\\libmemdb_lib.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "..\\lib\\libgtest.a",
+				"role" : "libraries"
+			},
+			{
 				"fragment" : "-lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32",
 				"role" : "libraries"
 			}
 		],
 		"language" : "CXX"
 	},
-	"name" : "memdb_run",
-	"nameOnDisk" : "memdb_run.exe",
+	"name" : "memdb_tst",
+	"nameOnDisk" : "memdb_tst.exe",
 	"paths" : 
 	{
-		"build" : "src",
-		"source" : "src"
+		"build" : "tst",
+		"source" : "tst"
 	},
 	"sourceGroups" : 
 	[
 		{
-			"name" : "",
-			"sourceIndexes" : 
-			[
-				0
-			]
-		},
-		{
 			"name" : "Source Files",
 			"sourceIndexes" : 
 			[
+				0,
 				1,
-				4
-			]
-		},
-		{
-			"name" : "Header Files",
-			"sourceIndexes" : 
-			[
-				2,
-				3,
-				5
+				2
 			]
 		}
 	],
@@ -136,35 +160,21 @@
 	[
 		{
 			"backtrace" : 1,
-			"path" : "src/utils",
+			"compileGroupIndex" : 0,
+			"path" : "tst/main.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "src/utils/DBMap.cpp",
-			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 1,
-			"path" : "src/utils/HashCreator.h",
-			"sourceGroupIndex" : 2
-		},
-		{
-			"backtrace" : 1,
-			"path" : "src/utils/Map.h",
-			"sourceGroupIndex" : 2
+			"path" : "tst/utils/DBMapTest.cpp",
+			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "src/utils/PolynomialHashCreator.cpp",
-			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 1,
-			"path" : "src/utils/PolynomialHashCreator.h",
-			"sourceGroupIndex" : 2
+			"path" : "tst/utils/PolynomialHashCreatorTest.cpp",
+			"sourceGroupIndex" : 0
 		}
 	],
 	"type" : "EXECUTABLE"

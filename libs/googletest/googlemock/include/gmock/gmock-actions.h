@@ -1030,7 +1030,7 @@ class ReturnAction final {
       //     // to the supplied script.
       //     void SetActions(MockFunction<bool(size_t)>& mock,
       //                     const std::vector<bool>& script) {
-      //       for (size_t i = 0; i < script.size(); ++i) {
+      //       for (size_t i = 0; i < script.valueSize(); ++i) {
       //         EXPECT_CALL(mock, Call(i)).WillOnce(Return(script[i]));
       //       }
       //     }

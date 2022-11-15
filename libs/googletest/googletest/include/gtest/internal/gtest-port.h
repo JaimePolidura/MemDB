@@ -1144,7 +1144,7 @@ GTEST_API_ void CaptureStderr();
 GTEST_API_ std::string GetCapturedStderr();
 
 #endif  // GTEST_HAS_STREAM_REDIRECTION
-// Returns the size (in bytes) of a file.
+// Returns the valueSize (in bytes) of a file.
 GTEST_API_ size_t GetFileSize(FILE* file);
 
 // Reads the entire content of a file as a string.
@@ -1718,7 +1718,7 @@ class GTEST_API_ ThreadLocalValueHolderBase {
   virtual ~ThreadLocalValueHolderBase() {}
 };
 
-// Called by pthread to delete thread-local data stored by
+// Called by pthread to delete thread-local value stored by
 // pthread_setspecific().
 extern "C" inline void DeleteThreadLocalValue(void* value_holder) {
   delete static_cast<ThreadLocalValueHolderBase*>(value_holder);
@@ -2121,8 +2121,8 @@ GTEST_DISABLE_MSC_DEPRECATED_POP_()
 // snprintf is a variadic function.
 #if _MSC_VER && !GTEST_OS_WINDOWS_MOBILE
 // MSVC 2005 and above support variadic macros.
-#define GTEST_SNPRINTF_(buffer, size, format, ...) \
-  _snprintf_s(buffer, size, size, format, __VA_ARGS__)
+#define GTEST_SNPRINTF_(buffer, valueSize, format, ...) \
+  _snprintf_s(buffer, valueSize, valueSize, format, __VA_ARGS__)
 #elif defined(_MSC_VER)
 // Windows CE does not define _snprintf_s
 #define GTEST_SNPRINTF_ _snprintf
@@ -2138,9 +2138,9 @@ using BiggestInt = long long;  // NOLINT
 // The maximum number a BiggestInt can represent.
 constexpr BiggestInt kMaxBiggestInt = (std::numeric_limits<BiggestInt>::max)();
 
-// This template class serves as a compile-time function from size to
-// type.  It maps a size in bytes to a primitive type with that
-// size. e.g.
+// This template class serves as a compile-time function from valueSize to
+// type.  It maps a valueSize in bytes to a primitive type with that
+// valueSize. e.g.
 //
 //   TypeWithSize<4>::UInt
 //
@@ -2164,7 +2164,7 @@ class TypeWithSize {
   using UInt = void;
 };
 
-// The specialization for size 4.
+// The specialization for valueSize 4.
 template <>
 class TypeWithSize<4> {
  public:
@@ -2172,7 +2172,7 @@ class TypeWithSize<4> {
   using UInt = std::uint32_t;
 };
 
-// The specialization for size 8.
+// The specialization for valueSize 8.
 template <>
 class TypeWithSize<8> {
  public:

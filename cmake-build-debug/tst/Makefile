@@ -198,6 +198,30 @@ main.cpp.s:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+utils/DBMapTest.obj: utils/DBMapTest.cpp.obj
+.PHONY : utils/DBMapTest.obj
+
+# target to build an object file
+utils/DBMapTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/DBMapTest.cpp.obj
+.PHONY : utils/DBMapTest.cpp.obj
+
+utils/DBMapTest.i: utils/DBMapTest.cpp.i
+.PHONY : utils/DBMapTest.i
+
+# target to preprocess a source file
+utils/DBMapTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/DBMapTest.cpp.i
+.PHONY : utils/DBMapTest.cpp.i
+
+utils/DBMapTest.s: utils/DBMapTest.cpp.s
+.PHONY : utils/DBMapTest.s
+
+# target to generate assembly for a file
+utils/DBMapTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/DBMapTest.cpp.s
+.PHONY : utils/DBMapTest.cpp.s
+
 utils/PolynomialHashCreatorTest.obj: utils/PolynomialHashCreatorTest.cpp.obj
 .PHONY : utils/PolynomialHashCreatorTest.obj
 
@@ -238,6 +262,9 @@ help:
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
+	@echo ... utils/DBMapTest.obj
+	@echo ... utils/DBMapTest.i
+	@echo ... utils/DBMapTest.s
 	@echo ... utils/PolynomialHashCreatorTest.obj
 	@echo ... utils/PolynomialHashCreatorTest.i
 	@echo ... utils/PolynomialHashCreatorTest.s

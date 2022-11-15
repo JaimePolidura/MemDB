@@ -74,7 +74,7 @@ following notable projects:
 *   The [Chromium projects](http://www.chromium.org/) (behind the Chrome browser
     and Chrome OS).
 *   The [LLVM](http://llvm.org/) compiler.
-*   [Protocol Buffers](https://github.com/google/protobuf), Google's data
+*   [Protocol Buffers](https://github.com/google/protobuf), Google's value
     interchange format.
 *   The [OpenCV](http://opencv.org/) computer vision library.
 

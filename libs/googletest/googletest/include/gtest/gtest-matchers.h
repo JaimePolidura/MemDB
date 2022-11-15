@@ -158,8 +158,8 @@ class MatcherInterface : public MatcherDescriberInterface {
   // what the actual element count is, regardless of the match result,
   // as it is useful information to the reader; on the other hand, an
   // "is empty" matcher probably only needs to explain what the actual
-  // size is when the match fails, as it's redundant to say that the
-  // size is 0 when the value is already known to be empty.
+  // valueSize is when the match fails, as it's redundant to say that the
+  // valueSize is 0 when the value is already known to be empty.
   //
   // You should override this method when defining a new matcher.
   //
@@ -414,7 +414,7 @@ class MatcherBase : private MatcherDescriberInterface {
   }
 
   union Buffer {
-    // Add some types to give Buffer some common alignment/size use cases.
+    // Add some types to give Buffer some common alignment/valueSize use cases.
     void* ptr;
     double d;
     int64_t i;

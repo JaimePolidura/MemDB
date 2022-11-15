@@ -163,8 +163,8 @@ size_t GetThreadCount() {
   };
   u_int miblen = sizeof(mib) / sizeof(mib[0]);
   struct kinfo_proc info;
-  size_t size = sizeof(info);
-  if (sysctl(mib, miblen, &info, &size, NULL, 0)) {
+  size_t valueSize = sizeof(info);
+  if (sysctl(mib, miblen, &info, &valueSize, NULL, 0)) {
     return 0;
   }
   return static_cast<size_t>(KP_NLWP(info));
@@ -185,22 +185,22 @@ size_t GetThreadCount() {
   u_int miblen = sizeof(mib) / sizeof(mib[0]);
 
   // get number of structs
-  size_t size;
-  if (sysctl(mib, miblen, NULL, &size, NULL, 0)) {
+  size_t valueSize;
+  if (sysctl(mib, miblen, NULL, &valueSize, NULL, 0)) {
     return 0;
   }
 
-  mib[5] = static_cast<int>(size / static_cast<size_t>(mib[4]));
+  mib[5] = static_cast<int>(valueSize / static_cast<size_t>(mib[4]));
 
   // populate array of structs
   struct kinfo_proc info[mib[5]];
-  if (sysctl(mib, miblen, &info, &size, NULL, 0)) {
+  if (sysctl(mib, miblen, &info, &valueSize, NULL, 0)) {
     return 0;
   }
 
   // exclude empty members
   size_t nthreads = 0;
-  for (size_t i = 0; i < size / static_cast<size_t>(mib[4]); i++) {
+  for (size_t i = 0; i < valueSize / static_cast<size_t>(mib[4]); i++) {
     if (info[i].p_tid != -1) nthreads++;
   }
   return nthreads;
@@ -427,7 +427,7 @@ class ThreadWithParamSupport : public ThreadWithParamBase {
     DWORD thread_id;
     HANDLE thread_handle = ::CreateThread(
         nullptr,  // Default security.
-        0,        // Default stack size.
+        0,        // Default stack valueSize.
         &ThreadWithParamSupport::ThreadMain,
         param,        // Parameter to ThreadMainStatic
         0x0,          // Default creation flags.
@@ -523,7 +523,7 @@ class ThreadLocalRegistryImpl {
   static void OnThreadLocalDestroyed(
       const ThreadLocalBase* thread_local_instance) {
     std::vector<std::shared_ptr<ThreadLocalValueHolderBase> > value_holders;
-    // Clean up the ThreadLocalValues data structure while holding the lock, but
+    // Clean up the ThreadLocalValues value structure while holding the lock, but
     // defer the destruction of the ThreadLocalValueHolderBases.
     {
       MutexLock lock(&mutex_);
@@ -550,7 +550,7 @@ class ThreadLocalRegistryImpl {
   static void OnThreadExit(DWORD thread_id) {
     GTEST_CHECK_(thread_id != 0) << ::GetLastError();
     std::vector<std::shared_ptr<ThreadLocalValueHolderBase> > value_holders;
-    // Clean up the ThreadIdToThreadLocals data structure while holding the
+    // Clean up the ThreadIdToThreadLocals value structure while holding the
     // lock, but defer the destruction of the ThreadLocalValueHolderBases.
     {
       MutexLock lock(&mutex_);
@@ -596,7 +596,7 @@ class ThreadLocalRegistryImpl {
     DWORD watcher_thread_id;
     HANDLE watcher_thread = ::CreateThread(
         nullptr,  // Default security.
-        0,        // Default stack size
+        0,        // Default stack valueSize
         &ThreadLocalRegistryImpl::WatcherThreadFunc,
         reinterpret_cast<LPVOID>(new ThreadIdAndHandle(thread_id, thread)),
         CREATE_SUSPENDED, &watcher_thread_id);
@@ -1063,10 +1063,10 @@ class CapturedStream {
     // code as part of a regular standalone executable, which doesn't
     // run in a Dalvik process (e.g. when running it through 'adb shell').
     //
-    // The location /data/local/tmp is directly accessible from native code.
+    // The location /value/local/tmp is directly accessible from native code.
     // '/sdcard' and other variants cannot be relied on, as they are not
     // guaranteed to be mounted, or may have a delay in mounting.
-    name_template = "/data/local/tmp/";
+    name_template = "/value/local/tmp/";
 #elif GTEST_OS_IOS
     char user_temp_dir[PATH_MAX + 1];
 
@@ -1099,7 +1099,7 @@ class CapturedStream {
     // The const_cast is needed below C++17. The constraints on std::string
     // implementations in C++11 and above make assumption behind the const_cast
     // fairly safe.
-    const int captured_fd = ::mkstemp(const_cast<char*>(name_template.data()));
+    const int captured_fd = ::mkstemp(const_cast<char*>(name_template.value()));
     if (captured_fd == -1) {
       GTEST_LOG_(WARNING)
           << "Failed to create tmp file " << name_template
@@ -1214,7 +1214,7 @@ std::string ReadEntireFile(FILE* file) {
   fseek(file, 0, SEEK_SET);
 
   // Keeps reading the file until we cannot read further or the
-  // pre-determined file size is reached.
+  // pre-determined file valueSize is reached.
   do {
     bytes_last_read =
         fread(buffer + bytes_read, 1, file_size - bytes_read, file);

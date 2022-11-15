@@ -335,7 +335,7 @@ class OnCallSpec : public UntypedOnCallSpecBase {
   //       .With(multi-argument-matcher)
   //       .WillByDefault(action);
   //
-  // is recorded in the data members like this:
+  // is recorded in the value members like this:
   //
   //   source file that contains the statement => file_
   //   line number of the statement            => line_

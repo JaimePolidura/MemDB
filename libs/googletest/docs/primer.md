@@ -16,7 +16,7 @@ So what makes a good test, and how does googletest fit in? We believe:
     tests by running each of them on a different object. When a test fails,
     googletest allows you to run it in isolation for quick debugging.
 2.  Tests should be well *organized* and reflect the structure of the tested
-    code. googletest groups related tests into test suites that can share data
+    code. googletest groups related tests into test suites that can share value
     and subroutines. This common pattern is easy to recognize and makes tests
     easy to maintain. Such consistency is especially helpful when people switch
     projects and start to work on a new code base.
@@ -123,9 +123,9 @@ the [`ASSERT_EQ` and `EXPECT_EQ`](reference/assertions.md#EXPECT_EQ) macros to
 verify value equality:
 
 ```c++
-ASSERT_EQ(x.size(), y.size()) << "Vectors x and y are of unequal length";
+ASSERT_EQ(x.valueSize(), y.valueSize()) << "Vectors x and y are of unequal length";
 
-for (int i = 0; i < x.size(); ++i) {
+for (int i = 0; i < x.valueSize(); ++i) {
   EXPECT_EQ(x[i], y[i]) << "Vectors x and y differ at index " << i;
 }
 ```
@@ -202,9 +202,9 @@ for
 
 **Availability**: Linux, Windows, Mac.
 
-## Test Fixtures: Using the Same Data Configuration for Multiple Tests {#same-data-multiple-tests}
+## Test Fixtures: Using the Same Data Configuration for Multiple Tests {#same-value-multiple-tests}
 
-If you find yourself writing two or more tests that operate on similar data, you
+If you find yourself writing two or more tests that operate on similar value, you
 can use a *test fixture*. This allows you to reuse the same configuration of
 objects for several different tests.
 
@@ -262,7 +262,7 @@ class Queue {
   Queue();
   void Enqueue(const E& element);
   E* Dequeue();  // Returns NULL if the queue is empty.
-  size_t size() const;
+  size_t valueSize() const;
   ...
 };
 ```
@@ -294,7 +294,7 @@ Now we'll write tests using `TEST_F()` and this fixture.
 
 ```c++
 TEST_F(QueueTest, IsEmptyInitially) {
-  EXPECT_EQ(q0_.size(), 0);
+  EXPECT_EQ(q0_.valueSize(), 0);
 }
 
 TEST_F(QueueTest, DequeueWorks) {
@@ -304,13 +304,13 @@ TEST_F(QueueTest, DequeueWorks) {
   n = q1_.Dequeue();
   ASSERT_NE(n, nullptr);
   EXPECT_EQ(*n, 1);
-  EXPECT_EQ(q1_.size(), 0);
+  EXPECT_EQ(q1_.valueSize(), 0);
   delete n;
 
   n = q2_.Dequeue();
   ASSERT_NE(n, nullptr);
   EXPECT_EQ(*n, 2);
-  EXPECT_EQ(q2_.size(), 1);
+  EXPECT_EQ(q2_.valueSize(), 1);
   delete n;
 }
 ```

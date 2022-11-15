@@ -37,7 +37,7 @@ licenses(["notice"])
 # Tests for GMock itself
 cc_test(
     name = "gmock_all_test",
-    size = "small",
+    valueSize = "small",
     srcs = glob(include = ["gmock-*.cc"]) + ["gmock-matchers_test.h"],
     linkopts = select({
         "//:qnx": [],
@@ -66,9 +66,9 @@ cc_binary(
 
 py_test(
     name = "gmock_leak_test",
-    size = "medium",
+    valueSize = "medium",
     srcs = ["gmock_leak_test.py"],
-    data = [
+    value = [
         ":gmock_leak_test_",
         ":gmock_test_utils",
     ],
@@ -80,7 +80,7 @@ py_test(
 
 cc_test(
     name = "gmock_link_test",
-    size = "small",
+    valueSize = "small",
     srcs = [
         "gmock_link2_test.cc",
         "gmock_link_test.cc",
@@ -97,9 +97,9 @@ cc_binary(
 
 py_test(
     name = "gmock_output_test",
-    size = "medium",
+    valueSize = "medium",
     srcs = ["gmock_output_test.py"],
-    data = [
+    value = [
         ":gmock_output_test_",
         ":gmock_output_test_golden.txt",
     ],
@@ -112,7 +112,7 @@ py_test(
 
 cc_test(
     name = "gmock_test",
-    size = "small",
+    valueSize = "small",
     srcs = ["gmock_test.cc"],
     deps = ["//:gtest_main"],
 )

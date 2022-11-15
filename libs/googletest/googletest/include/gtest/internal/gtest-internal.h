@@ -128,7 +128,7 @@ class IgnoredValue {
 
  public:
   // This constructor template allows any value to be implicitly
-  // converted to IgnoredValue.  The object has no data member and
+  // converted to IgnoredValue.  The object has no value member and
   // doesn't try to remember anything about the argument.  We
   // deliberately omit the 'explicit' keyword in order to allow the
   // conversion to be implicit.
@@ -244,7 +244,7 @@ GTEST_API_ std::string GetBoolAssertionFailureMessage(
 template <typename RawType>
 class FloatingPoint {
  public:
-  // Defines the unsigned integer type that has the same size as the
+  // Defines the unsigned integer type that has the same valueSize as the
   // floating point number.
   typedef typename TypeWithSize<sizeof(RawType)>::UInt Bits;
 
@@ -346,7 +346,7 @@ class FloatingPoint {
   }
 
  private:
-  // The data type used to store the actual floating-point number.
+  // The value type used to store the actual floating-point number.
   union FloatingPointUnion {
     RawType value_;  // The raw floating-point number.
     Bits bits_;      // The bits that represent the number.

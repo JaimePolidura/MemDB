@@ -131,7 +131,8 @@ src/CMakeFiles/memdb_lib.dir/utils/DBMap.cpp.obj: ../src/utils/DBMap.cpp \
   C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/nested_exception.h \
   C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/enable_special_members.h \
   ../src/utils/HashCreator.h \
-  ../src/utils/Map.h
+  ../src/utils/Map.h \
+  ../src/utils/DBMap.h
 
 src/CMakeFiles/memdb_lib.dir/utils/PolynomialHashCreator.cpp.obj: ../src/utils/PolynomialHashCreator.cpp \
   C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/string \
@@ -255,6 +256,17 @@ src/CMakeFiles/memdb_lib.dir/utils/PolynomialHashCreator.cpp.obj: ../src/utils/P
   C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/basic_string.tcc \
   ../src/utils/PolynomialHashCreator.h \
   ../src/utils/HashCreator.h \
+  ../src/utils/DBMap.h \
+  ../src/utils/Map.h \
+  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/optional \
+  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/utility \
+  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/stl_relops.h \
+  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/exception \
+  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/exception_ptr.h \
+  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/cxxabi_init_exception.h \
+  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/typeinfo \
+  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/nested_exception.h \
+  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/enable_special_members.h \
   C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/tgmath.h \
   C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/ctgmath \
   C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/cmath \
@@ -277,11 +289,6 @@ src/CMakeFiles/memdb_lib.dir/utils/PolynomialHashCreator.cpp.obj: ../src/utils/P
   C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/sstream \
   C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/istream \
   C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/ios \
-  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/exception \
-  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/exception_ptr.h \
-  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/cxxabi_init_exception.h \
-  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/typeinfo \
-  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/nested_exception.h \
   C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/ios_base.h \
   C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/locale_classes.h \
   C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/locale_classes.tcc \
@@ -476,6 +483,8 @@ C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/m
 C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed/syslimits.h:
 
 C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/x86_64-w64-mingw32/include/limits.h:
+
+../src/utils/DBMap.h:
 
 C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/stdlib.h:
 

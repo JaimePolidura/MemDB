@@ -630,7 +630,7 @@ class ParameterizedTestSuiteInfo : public ParameterizedTestSuiteInfoBase {
     const CodeLocation code_location;
   };
   using TestInfoContainer = ::std::vector<std::shared_ptr<TestInfo>>;
-  // Records data received from INSTANTIATE_TEST_SUITE_P macros:
+  // Records value received from INSTANTIATE_TEST_SUITE_P macros:
   //  <Instantiation name, Sequence generator creation function,
   //     Name generator function, Source file, Source line>
   struct InstantiationInfo {

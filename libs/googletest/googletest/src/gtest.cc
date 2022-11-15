@@ -1879,7 +1879,7 @@ AssertionResult HRESULTFailureHelper(const char* expr, const char* expected,
                                           static_cast<DWORD>(hr),  // the error
                                           0,  // no line width restrictions
                                           error_text,  // output buffer
-                                          kBufSize,    // buf size
+                                          kBufSize,    // buf valueSize
                                           nullptr);  // no arguments for inserts
   // Trims tailing white space (FormatMessage leaves a trailing CR-LF)
   for (; message_length && IsSpace(error_text[message_length - 1]);
@@ -6655,9 +6655,9 @@ void ParseGoogleTestFlagsOnly(int* argc, char** argv) {
     // positional arguments after the flag-terminating delimiter '--'.
     // See https://abseil.io/docs/cpp/guides/flags.
     std::copy(positional_args.begin(), positional_args.end(), argv);
-    if (static_cast<int>(positional_args.size()) < *argc) {
-      argv[positional_args.size()] = nullptr;
-      *argc = static_cast<int>(positional_args.size());
+    if (static_cast<int>(positional_args.valueSize()) < *argc) {
+      argv[positional_args.valueSize()] = nullptr;
+      *argc = static_cast<int>(positional_args.valueSize());
     }
   }
 #else
@@ -6782,7 +6782,7 @@ std::string TempDir() {
 #elif GTEST_OS_WINDOWS || GTEST_OS_WINDOWS_MOBILE
   return GetDirFromEnv({"TEST_TMPDIR", "TEMP"}, "\\temp\\", '\\');
 #elif GTEST_OS_LINUX_ANDROID
-  return GetDirFromEnv({"TEST_TMPDIR", "TMPDIR"}, "/data/local/tmp/", '/');
+  return GetDirFromEnv({"TEST_TMPDIR", "TMPDIR"}, "/value/local/tmp/", '/');
 #else
   return GetDirFromEnv({"TEST_TMPDIR", "TMPDIR"}, "/tmp/", '/');
 #endif

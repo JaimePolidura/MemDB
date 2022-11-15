@@ -42,7 +42,7 @@ Defines an individual test named *`TestName`* that uses the test fixture class
 Both arguments *`TestFixtureName`* and *`TestName`* must be valid C++
 identifiers and must not contain underscores (`_`). *`TestFixtureName`* must be
 the name of a test fixture class—see
-[Test Fixtures](../primer.md#same-data-multiple-tests).
+[Test Fixtures](../primer.md#same-value-multiple-tests).
 
 The statements within the test body can be any code under test.
 [Assertions](assertions.md) used within the test body determine the outcome of

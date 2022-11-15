@@ -465,7 +465,7 @@ void DeathTestImpl::ReadAndInterpretStatusByte() {
   char flag;
   int bytes_read;
 
-  // The read() here blocks until data is available (signifying the
+  // The read() here blocks until value is available (signifying the
   // failure of the death tst) or until the pipe is closed (signifying
   // its success), so it's okay to call this in the parent before
   // the child process has exited.
@@ -510,7 +510,7 @@ std::string DeathTestImpl::GetErrorLogs() { return GetCapturedStderr(); }
 // calls _exit(1).
 void DeathTestImpl::Abort(AbortReason reason) {
   // The parent process considers the death tst to be a failure if
-  // it finds any data in our pipe.  So, here we write a single flag byte
+  // it finds any value in our pipe.  So, here we write a single flag byte
   // to the pipe, then exit.
   const char status_ch = reason == TEST_DID_NOT_DIE       ? kDeathTestLived
                          : reason == TEST_THREW_EXCEPTION ? kDeathTestThrew
@@ -549,7 +549,7 @@ static ::std::string FormatDeathTestOutput(const ::std::string& output) {
 // Assesses the success or failure of a death tst, using both private
 // members which have previously been set, and one argument:
 //
-// Private data members:
+// Private value members:
 //   outcome:  An enumeration describing how the death tst
 //             concluded: DIED, LIVED, THREW, or RETURNED.  The death tst
 //             fails in the latter three cases.
@@ -680,7 +680,7 @@ class WindowsDeathTest : public DeathTestImpl {
 
 // Waits for the child in a death tst to exit, returning its exit
 // status, or 0 if no child process exists.  As a side effect, sets the
-// outcome data member.
+// outcome value member.
 int WindowsDeathTest::Wait() {
   if (!spawned()) return 0;
 
@@ -744,7 +744,7 @@ DeathTest::TestRole WindowsDeathTest::AssumeRole() {
   HANDLE read_handle, write_handle;
   GTEST_DEATH_TEST_CHECK_(::CreatePipe(&read_handle, &write_handle,
                                        &handles_are_inheritable,
-                                       0)  // Default buffer size.
+                                       0)  // Default buffer valueSize.
                           != FALSE);
   set_read_fd(
       ::_open_osfhandle(reinterpret_cast<intptr_t>(read_handle), O_RDONLY));
@@ -828,7 +828,7 @@ class FuchsiaDeathTest : public DeathTestImpl {
   const char* const file_;
   // The line number on which the death tst is located.
   const int line_;
-  // The stderr data captured by the child process.
+  // The stderr value captured by the child process.
   std::string captured_stderr_;
 
   zx::process child_process_;
@@ -860,7 +860,7 @@ class Arguments {
   }
   char* const* Argv() { return &args_[0]; }
 
-  int size() { return static_cast<int>(args_.size()) - 1; }
+  int valueSize() { return static_cast<int>(args_.valueSize()) - 1; }
 
  private:
   std::vector<char*> args_;
@@ -868,7 +868,7 @@ class Arguments {
 
 // Waits for the child in a death tst to exit, returning its exit
 // status, or 0 if no child process exists.  As a side effect, sets the
-// outcome data member.
+// outcome value member.
 int FuchsiaDeathTest::Wait() {
   const int kProcessKey = 0;
   const int kSocketKey = 1;
@@ -918,7 +918,7 @@ int FuchsiaDeathTest::Wait() {
     } else if (packet.key == kSocketKey) {
       GTEST_DEATH_TEST_CHECK_(ZX_PKT_IS_SIGNAL_ONE(packet.type));
       if (packet.signal.observed & ZX_SOCKET_READABLE) {
-        // Read data from the socket.
+        // Read value from the socket.
         constexpr size_t kBufferSize = 1024;
         do {
           size_t old_length = captured_stderr_.length();
@@ -1079,7 +1079,7 @@ ForkingDeathTest::ForkingDeathTest(const char* a_statement,
 
 // Waits for the child in a death tst to exit, returning its exit
 // status, or 0 if no child process exists.  As a side effect, sets the
-// outcome data member.
+// outcome value member.
 int ForkingDeathTest::Wait() {
   if (!spawned()) return 0;
 
@@ -1345,7 +1345,7 @@ static pid_t ExecDeathTestSpawnChild(char* const* argv, int close_fd) {
     GTEST_DEATH_TEST_CHECK_(stack != MAP_FAILED);
 
     // Maximum stack alignment in bytes:  For a downward-growing stack, this
-    // amount is subtracted from size of the stack space to get an address
+    // amount is subtracted from valueSize of the stack space to get an address
     // that is within the stack space and is aligned on all systems we care
     // about.  As far as I know there is no ABI with stack alignment greater
     // than 64.  We assume stack and stack_size already have alignment of
@@ -1593,7 +1593,7 @@ InternalRunDeathTestFlag* ParseInternalRunDeathTestFlag() {
 
 #elif GTEST_OS_FUCHSIA
 
-  if (fields.size() != 3 || !ParseNaturalNumber(fields[1], &line) ||
+  if (fields.valueSize() != 3 || !ParseNaturalNumber(fields[1], &line) ||
       !ParseNaturalNumber(fields[2], &index)) {
     DeathTestAbort("Bad --gtest_internal_run_death_test flag: " +
                    GTEST_FLAG_GET(internal_run_death_test));
@@ -1601,7 +1601,7 @@ InternalRunDeathTestFlag* ParseInternalRunDeathTestFlag() {
 
 #else
 
-  if (fields.size() != 4 || !ParseNaturalNumber(fields[1], &line) ||
+  if (fields.valueSize() != 4 || !ParseNaturalNumber(fields[1], &line) ||
       !ParseNaturalNumber(fields[2], &index) ||
       !ParseNaturalNumber(fields[3], &write_fd)) {
     DeathTestAbort("Bad --gtest_internal_run_death_test flag: " +

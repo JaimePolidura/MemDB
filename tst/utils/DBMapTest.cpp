@@ -6,10 +6,25 @@
 
 struct Value {
     int value;
+
+    Value(int valueCons): value(valueCons) {}
 };
 
-void insertValueInMap(DBMap * dbmap, const std::string &key, const int value);
-bool stringCompare(char * a, char * b);
+Value * insertValueInMap(DBMap * dbmap, const std::string &key, int value);
+
+TEST(DBMap, ShouldRemove) {
+    HashCreator<std::string> * polynomialHashCreator = dynamic_cast<HashCreator<std::string> *>(new PolynomialHashCreator(31));
+    DBMap dbMap { polynomialHashCreator };
+    Value * inserted = insertValueInMap(&dbMap, "key1", 1);
+
+    std::optional<MapEntry> removedValueOptional = dbMap.remove("key1");
+    const Value * removedValue = (Value *) removedValueOptional.value().value;
+    ASSERT_TRUE(removedValueOptional.has_value());
+    ASSERT_EQ(removedValue->value, 1);
+
+    ASSERT_FALSE(dbMap.contains("key1"));
+    ASSERT_FALSE(dbMap.get("key1").has_value());
+}
 
 TEST(DBMap, ShouldGet) {
     HashCreator<std::string> * polynomialHashCreator = dynamic_cast<HashCreator<std::string> *>(new PolynomialHashCreator(31));
@@ -17,7 +32,12 @@ TEST(DBMap, ShouldGet) {
 
     insertValueInMap(&dbMap, "key1", 1);
     ASSERT_EQ(dbMap.getSize(), 1);
-    ASSERT_TRUE(dbMap.get("key1").has_value());
+
+    ASSERT_FALSE(dbMap.get("key2").has_value());
+    const std::optional<MapEntry> anOptional = dbMap.get("key1");
+    ASSERT_TRUE(anOptional.has_value());
+    const Value * valueOptional = (Value *) anOptional.value().value;
+    ASSERT_EQ(valueOptional->value, 1);
 }
 
 TEST(DBMap, ShouldPutAndContains) {
@@ -35,7 +55,9 @@ TEST(DBMap, ShouldPutAndContains) {
     ASSERT_TRUE(dbMap.contains("key2"));
 }
 
-void insertValueInMap(DBMap * dbmap, const std::string &key, const int value){
-    Value value1 {value};
-    dbmap->put(key, (char *) &value1, sizeof(Value));
+Value * insertValueInMap(DBMap * dbmap, const std::string &key, int value){
+    Value * value1 = new Value(value);
+    dbmap->put(key, (char *) value1, sizeof(Value));
+
+    return value1;
 }

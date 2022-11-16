@@ -13,7 +13,6 @@ void DBMap::put(const std::string &key, char * value, size_t valueSize) {
 
     while (actualMapNode != nullptr && (actualMapNode->hasNext() || actualMapNode->isNotDeleted() ||actualMapNode->hasNotSameHash(keyHash)))
         actualMapNode = actualMapNode->getNext();
-
     if(actualMapNode == nullptr)
         this->buckets[this->getBucketSlot(keyHash)] = new Node(value, keyHash, valueSize);
     else if(actualMapNode->hasNoNext() && actualMapNode->isNotDeleted() && actualMapNode->hasNotSameHash(keyHash))

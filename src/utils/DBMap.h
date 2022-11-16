@@ -36,6 +36,7 @@ public:
         this->next = newNext;
     }
 
+    char * getValue() const { return this->value; }
     MapEntry toEntry() const { return MapEntry{value, valueSize}; }
     Node * getNext() const { return this->next; }
     bool isNotDeleted() const { return !this->deleted; }
@@ -47,7 +48,9 @@ public:
 
 private:
     void deleteDataPointer() {
-        for(int i = 0; i < this->valueSize; i++)
+        printf("size of %llu\n", sizeof(this->value));
+
+        for(int i = 0; i <= this->valueSize / sizeof(this->value); i++)
             delete (this->value + i);
     }
 };
@@ -78,10 +81,10 @@ private:
         Node * actualMapNode = this->getBucket(keyHash);
 
         while (actualMapNode != nullptr && (actualMapNode->hasNext() || actualMapNode->isNotDeleted()))
-            if(actualMapNode->hasSameHash(keyHash))
+            if(actualMapNode->hasSameHash(keyHash) && actualMapNode->isNotDeleted())
                 return actualMapNode;
 
-        return (actualMapNode != nullptr && actualMapNode->hasSameHash(keyHash)) ?
+        return (actualMapNode != nullptr && actualMapNode->hasSameHash(keyHash) && actualMapNode->isNotDeleted()) ?
             actualMapNode :
             nullptr;
     }

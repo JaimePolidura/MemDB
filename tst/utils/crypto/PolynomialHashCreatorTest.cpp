@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "utils/PolynomialHashCreator.h"
+#include "utils/crypto/PolynomialHashCreator.h"
 
 TEST(PolynomialHashCreator, PolynomialHashCreatorReturnsSameValueForSameArgs){
     PolynomialHashCreator polynomialHashCreator = {31};

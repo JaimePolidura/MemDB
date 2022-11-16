@@ -265,8 +265,8 @@ tst/CMakeFiles/memdb_tst.dir/main.cpp.obj
  C:/programacion/MemDB/libs/googletest/googletest/include/gtest/gtest_pred_impl.h
  C:/programacion/MemDB/libs/googletest/googletest/include/gtest/gtest_prod.h
 
-tst/CMakeFiles/memdb_tst.dir/utils/DBMapTest.cpp.obj
- C:/programacion/MemDB/tst/utils/DBMapTest.cpp
+tst/CMakeFiles/memdb_tst.dir/utils/crypto/PolynomialHashCreatorTest.cpp.obj
+ C:/programacion/MemDB/tst/utils/crypto/PolynomialHashCreatorTest.cpp
  C:/programacion/MemDB/libs/googletest/googletest/include/gtest/gtest.h
  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/cstddef
  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32/bits/c++config.h
@@ -528,10 +528,10 @@ tst/CMakeFiles/memdb_tst.dir/utils/DBMapTest.cpp.obj
  C:/programacion/MemDB/libs/googletest/googletest/include/gtest/gtest-typed-test.h
  C:/programacion/MemDB/libs/googletest/googletest/include/gtest/gtest_pred_impl.h
  C:/programacion/MemDB/libs/googletest/googletest/include/gtest/gtest_prod.h
- C:/programacion/MemDB/src/utils/DBMap.h
- C:/programacion/MemDB/src/utils/Map.h
- C:/programacion/MemDB/src/utils/HashCreator.h
- C:/programacion/MemDB/src/utils/PolynomialHashCreator.h
+ C:/programacion/MemDB/src/utils/crypto/PolynomialHashCreator.h
+ C:/programacion/MemDB/src/utils/crypto/HashCreator.h
+ C:/programacion/MemDB/src/utils/datastructures/DBMap.h
+ C:/programacion/MemDB/src/utils/datastructures/Map.h
  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/tgmath.h
  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/ctgmath
  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/cmath
@@ -551,8 +551,8 @@ tst/CMakeFiles/memdb_tst.dir/utils/DBMapTest.cpp.obj
  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/tr1/riemann_zeta.tcc
  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/complex
 
-tst/CMakeFiles/memdb_tst.dir/utils/PolynomialHashCreatorTest.cpp.obj
- C:/programacion/MemDB/tst/utils/PolynomialHashCreatorTest.cpp
+tst/CMakeFiles/memdb_tst.dir/utils/datastructures/DBMapTest.cpp.obj
+ C:/programacion/MemDB/tst/utils/datastructures/DBMapTest.cpp
  C:/programacion/MemDB/libs/googletest/googletest/include/gtest/gtest.h
  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/cstddef
  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32/bits/c++config.h
@@ -814,10 +814,10 @@ tst/CMakeFiles/memdb_tst.dir/utils/PolynomialHashCreatorTest.cpp.obj
  C:/programacion/MemDB/libs/googletest/googletest/include/gtest/gtest-typed-test.h
  C:/programacion/MemDB/libs/googletest/googletest/include/gtest/gtest_pred_impl.h
  C:/programacion/MemDB/libs/googletest/googletest/include/gtest/gtest_prod.h
- C:/programacion/MemDB/src/utils/PolynomialHashCreator.h
- C:/programacion/MemDB/src/utils/HashCreator.h
- C:/programacion/MemDB/src/utils/DBMap.h
- C:/programacion/MemDB/src/utils/Map.h
+ C:/programacion/MemDB/src/utils/datastructures/DBMap.h
+ C:/programacion/MemDB/src/utils/datastructures/Map.h
+ C:/programacion/MemDB/src/utils/crypto/HashCreator.h
+ C:/programacion/MemDB/src/utils/crypto/PolynomialHashCreator.h
  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/tgmath.h
  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/ctgmath
  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/cmath

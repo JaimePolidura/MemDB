@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
-#include "utils/DBMap.h"
-#include "utils/PolynomialHashCreator.h"
+#include "utils/datastructures/DBMap.h"
+#include "utils/crypto/PolynomialHashCreator.h"
 #include "string"
-#include "utils/HashCreator.h"
+#include "utils/crypto/HashCreator.h"
 
 struct Value {
     int value;

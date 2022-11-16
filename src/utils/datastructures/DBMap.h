@@ -2,7 +2,7 @@
 
 #include "Map.h"
 #include "optional"
-#include "HashCreator.h"
+#include "utils/crypto/HashCreator.h"
 
 class Node {
 private:
@@ -36,7 +36,6 @@ public:
         this->next = newNext;
     }
 
-    char * getValue() const { return this->value; }
     MapEntry toEntry() const { return MapEntry{value, valueSize}; }
     Node * getNext() const { return this->next; }
     bool isNotDeleted() const { return !this->deleted; }
@@ -48,8 +47,6 @@ public:
 
 private:
     void deleteDataPointer() {
-        printf("size of %llu\n", sizeof(this->value));
-
         for(int i = 0; i <= this->valueSize / sizeof(this->value); i++)
             delete (this->value + i);
     }

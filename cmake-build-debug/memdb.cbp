@@ -440,41 +440,68 @@
 		<Unit filename="C:/programacion/MemDB/libs/googletest/googletest/src/gtest_main.cc">
 			<Option target="gtest_main"/>
 		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/users">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/users/User.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/users/UsersService.cpp">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/users/UsersService.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/utils">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/DBMap.cpp">
+		<Unit filename="C:/programacion/MemDB/src/utils/crypto">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/DBMap.h">
+		<Unit filename="C:/programacion/MemDB/src/utils/crypto/HashCreator.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/HashCreator.h">
+		<Unit filename="C:/programacion/MemDB/src/utils/crypto/PolynomialHashCreator.cpp">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/Map.h">
+		<Unit filename="C:/programacion/MemDB/src/utils/crypto/PolynomialHashCreator.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/PolynomialHashCreator.cpp">
+		<Unit filename="C:/programacion/MemDB/src/utils/datastructures">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/PolynomialHashCreator.h">
+		<Unit filename="C:/programacion/MemDB/src/utils/datastructures/DBMap.cpp">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/utils/datastructures/DBMap.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/utils/datastructures/Map.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/main.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/tst/utils/DBMapTest.cpp">
+		<Unit filename="C:/programacion/MemDB/tst/users/UsersServiceTest.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/tst/utils/PolynomialHashCreatorTest.cpp">
+		<Unit filename="C:/programacion/MemDB/tst/utils/crypto/PolynomialHashCreatorTest.cpp">
+			<Option target="memdb_tst"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/tst/utils/datastructures/DBMapTest.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/CMakeLists.txt">

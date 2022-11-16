@@ -188,59 +188,86 @@ memdb_lib/fast:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/build
 .PHONY : memdb_lib/fast
 
-utils/DBMap.obj: utils/DBMap.cpp.obj
-.PHONY : utils/DBMap.obj
+users/UsersService.obj: users/UsersService.cpp.obj
+.PHONY : users/UsersService.obj
 
 # target to build an object file
-utils/DBMap.cpp.obj:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/DBMap.cpp.obj
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/DBMap.cpp.obj
-.PHONY : utils/DBMap.cpp.obj
+users/UsersService.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/users/UsersService.cpp.obj
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/users/UsersService.cpp.obj
+.PHONY : users/UsersService.cpp.obj
 
-utils/DBMap.i: utils/DBMap.cpp.i
-.PHONY : utils/DBMap.i
+users/UsersService.i: users/UsersService.cpp.i
+.PHONY : users/UsersService.i
 
 # target to preprocess a source file
-utils/DBMap.cpp.i:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/DBMap.cpp.i
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/DBMap.cpp.i
-.PHONY : utils/DBMap.cpp.i
+users/UsersService.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/users/UsersService.cpp.i
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/users/UsersService.cpp.i
+.PHONY : users/UsersService.cpp.i
 
-utils/DBMap.s: utils/DBMap.cpp.s
-.PHONY : utils/DBMap.s
+users/UsersService.s: users/UsersService.cpp.s
+.PHONY : users/UsersService.s
 
 # target to generate assembly for a file
-utils/DBMap.cpp.s:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/DBMap.cpp.s
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/DBMap.cpp.s
-.PHONY : utils/DBMap.cpp.s
+users/UsersService.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/users/UsersService.cpp.s
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/users/UsersService.cpp.s
+.PHONY : users/UsersService.cpp.s
 
-utils/PolynomialHashCreator.obj: utils/PolynomialHashCreator.cpp.obj
-.PHONY : utils/PolynomialHashCreator.obj
+utils/crypto/PolynomialHashCreator.obj: utils/crypto/PolynomialHashCreator.cpp.obj
+.PHONY : utils/crypto/PolynomialHashCreator.obj
 
 # target to build an object file
-utils/PolynomialHashCreator.cpp.obj:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/PolynomialHashCreator.cpp.obj
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/PolynomialHashCreator.cpp.obj
-.PHONY : utils/PolynomialHashCreator.cpp.obj
+utils/crypto/PolynomialHashCreator.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/crypto/PolynomialHashCreator.cpp.obj
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/crypto/PolynomialHashCreator.cpp.obj
+.PHONY : utils/crypto/PolynomialHashCreator.cpp.obj
 
-utils/PolynomialHashCreator.i: utils/PolynomialHashCreator.cpp.i
-.PHONY : utils/PolynomialHashCreator.i
+utils/crypto/PolynomialHashCreator.i: utils/crypto/PolynomialHashCreator.cpp.i
+.PHONY : utils/crypto/PolynomialHashCreator.i
 
 # target to preprocess a source file
-utils/PolynomialHashCreator.cpp.i:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/PolynomialHashCreator.cpp.i
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/PolynomialHashCreator.cpp.i
-.PHONY : utils/PolynomialHashCreator.cpp.i
+utils/crypto/PolynomialHashCreator.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/crypto/PolynomialHashCreator.cpp.i
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/crypto/PolynomialHashCreator.cpp.i
+.PHONY : utils/crypto/PolynomialHashCreator.cpp.i
 
-utils/PolynomialHashCreator.s: utils/PolynomialHashCreator.cpp.s
-.PHONY : utils/PolynomialHashCreator.s
+utils/crypto/PolynomialHashCreator.s: utils/crypto/PolynomialHashCreator.cpp.s
+.PHONY : utils/crypto/PolynomialHashCreator.s
 
 # target to generate assembly for a file
-utils/PolynomialHashCreator.cpp.s:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/PolynomialHashCreator.cpp.s
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/PolynomialHashCreator.cpp.s
-.PHONY : utils/PolynomialHashCreator.cpp.s
+utils/crypto/PolynomialHashCreator.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/crypto/PolynomialHashCreator.cpp.s
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/crypto/PolynomialHashCreator.cpp.s
+.PHONY : utils/crypto/PolynomialHashCreator.cpp.s
+
+utils/datastructures/DBMap.obj: utils/datastructures/DBMap.cpp.obj
+.PHONY : utils/datastructures/DBMap.obj
+
+# target to build an object file
+utils/datastructures/DBMap.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/datastructures/DBMap.cpp.obj
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/datastructures/DBMap.cpp.obj
+.PHONY : utils/datastructures/DBMap.cpp.obj
+
+utils/datastructures/DBMap.i: utils/datastructures/DBMap.cpp.i
+.PHONY : utils/datastructures/DBMap.i
+
+# target to preprocess a source file
+utils/datastructures/DBMap.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/datastructures/DBMap.cpp.i
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/datastructures/DBMap.cpp.i
+.PHONY : utils/datastructures/DBMap.cpp.i
+
+utils/datastructures/DBMap.s: utils/datastructures/DBMap.cpp.s
+.PHONY : utils/datastructures/DBMap.s
+
+# target to generate assembly for a file
+utils/datastructures/DBMap.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/datastructures/DBMap.cpp.s
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/datastructures/DBMap.cpp.s
+.PHONY : utils/datastructures/DBMap.cpp.s
 
 # Help Target
 help:
@@ -256,12 +283,15 @@ help:
 	@echo ... rebuild_cache
 	@echo ... memdb_lib
 	@echo ... memdb_run
-	@echo ... utils/DBMap.obj
-	@echo ... utils/DBMap.i
-	@echo ... utils/DBMap.s
-	@echo ... utils/PolynomialHashCreator.obj
-	@echo ... utils/PolynomialHashCreator.i
-	@echo ... utils/PolynomialHashCreator.s
+	@echo ... users/UsersService.obj
+	@echo ... users/UsersService.i
+	@echo ... users/UsersService.s
+	@echo ... utils/crypto/PolynomialHashCreator.obj
+	@echo ... utils/crypto/PolynomialHashCreator.i
+	@echo ... utils/crypto/PolynomialHashCreator.s
+	@echo ... utils/datastructures/DBMap.obj
+	@echo ... utils/datastructures/DBMap.i
+	@echo ... utils/datastructures/DBMap.s
 .PHONY : help
 
 

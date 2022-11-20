@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/programacion/MemDB/cmake-build-debug/_deps/asio-cmake-subbuild/CMakeFiles/asio-cmake-populate"
+		},
+		{
+			"file" : "C:/programacion/MemDB/cmake-build-debug/_deps/asio-cmake-subbuild/CMakeFiles/asio-cmake-populate.rule"
+		},
+		{
+			"file" : "C:/programacion/MemDB/cmake-build-debug/_deps/asio-cmake-subbuild/CMakeFiles/asio-cmake-populate-complete.rule"
+		},
+		{
+			"file" : "C:/programacion/MemDB/cmake-build-debug/_deps/asio-cmake-subbuild/asio-cmake-populate-prefix/src/asio-cmake-populate-stamp/asio-cmake-populate-build.rule"
+		},
+		{
+			"file" : "C:/programacion/MemDB/cmake-build-debug/_deps/asio-cmake-subbuild/asio-cmake-populate-prefix/src/asio-cmake-populate-stamp/asio-cmake-populate-configure.rule"
+		},
+		{
+			"file" : "C:/programacion/MemDB/cmake-build-debug/_deps/asio-cmake-subbuild/asio-cmake-populate-prefix/src/asio-cmake-populate-stamp/asio-cmake-populate-download.rule"
+		},
+		{
+			"file" : "C:/programacion/MemDB/cmake-build-debug/_deps/asio-cmake-subbuild/asio-cmake-populate-prefix/src/asio-cmake-populate-stamp/asio-cmake-populate-install.rule"
+		},
+		{
+			"file" : "C:/programacion/MemDB/cmake-build-debug/_deps/asio-cmake-subbuild/asio-cmake-populate-prefix/src/asio-cmake-populate-stamp/asio-cmake-populate-mkdir.rule"
+		},
+		{
+			"file" : "C:/programacion/MemDB/cmake-build-debug/_deps/asio-cmake-subbuild/asio-cmake-populate-prefix/src/asio-cmake-populate-stamp/asio-cmake-populate-patch.rule"
+		},
+		{
+			"file" : "C:/programacion/MemDB/cmake-build-debug/_deps/asio-cmake-subbuild/asio-cmake-populate-prefix/src/asio-cmake-populate-stamp/asio-cmake-populate-test.rule"
+		},
+		{
+			"file" : "C:/programacion/MemDB/cmake-build-debug/_deps/asio-cmake-subbuild/asio-cmake-populate-prefix/src/asio-cmake-populate-stamp/asio-cmake-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"asio-cmake-populate"
+		],
+		"name" : "asio-cmake-populate"
+	}
+}

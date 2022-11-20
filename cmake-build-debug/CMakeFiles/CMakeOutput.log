@@ -474,3 +474,55 @@ Parsed CXX implicit link information from above output:
   implicit fwks: []
 
 
+Determining if the include file pthread.h exists passed with the following output:
+Change Dir: C:/programacion/MemDB/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/mingw32-make.exe -f Makefile cmTC_5e5da/fast && C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/mingw32-make.exe  -f CMakeFiles\cmTC_5e5da.dir\build.make CMakeFiles/cmTC_5e5da.dir/build
+mingw32-make[1]: Entering directory 'C:/programacion/MemDB/cmake-build-debug/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_5e5da.dir/CheckIncludeFile.c.obj
+C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\gcc.exe    -o CMakeFiles\cmTC_5e5da.dir\CheckIncludeFile.c.obj -c C:\programacion\MemDB\cmake-build-debug\CMakeFiles\CMakeTmp\CheckIncludeFile.c
+Linking C executable cmTC_5e5da.exe
+C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\cmake\win\bin\cmake.exe -E cmake_link_script CMakeFiles\cmTC_5e5da.dir\link.txt --verbose=1
+C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\cmake\win\bin\cmake.exe -E rm -f CMakeFiles\cmTC_5e5da.dir/objects.a
+C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\ar.exe qc CMakeFiles\cmTC_5e5da.dir/objects.a @CMakeFiles\cmTC_5e5da.dir\objects1.rsp
+C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\gcc.exe -Wl,--whole-archive CMakeFiles\cmTC_5e5da.dir/objects.a -Wl,--no-whole-archive -o cmTC_5e5da.exe -Wl,--out-implib,libcmTC_5e5da.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\cmTC_5e5da.dir\linklibs.rsp
+mingw32-make[1]: Leaving directory 'C:/programacion/MemDB/cmake-build-debug/CMakeFiles/CMakeTmp'
+
+
+
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD succeeded with the following output:
+Change Dir: C:/programacion/MemDB/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/mingw32-make.exe -f Makefile cmTC_661ba/fast && C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/mingw32-make.exe  -f CMakeFiles\cmTC_661ba.dir\build.make CMakeFiles/cmTC_661ba.dir/build
+mingw32-make[1]: Entering directory 'C:/programacion/MemDB/cmake-build-debug/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_661ba.dir/src.c.obj
+C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\gcc.exe -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles\cmTC_661ba.dir\src.c.obj -c C:\programacion\MemDB\cmake-build-debug\CMakeFiles\CMakeTmp\src.c
+Linking C executable cmTC_661ba.exe
+C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\cmake\win\bin\cmake.exe -E cmake_link_script CMakeFiles\cmTC_661ba.dir\link.txt --verbose=1
+C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\cmake\win\bin\cmake.exe -E rm -f CMakeFiles\cmTC_661ba.dir/objects.a
+C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\ar.exe qc CMakeFiles\cmTC_661ba.dir/objects.a @CMakeFiles\cmTC_661ba.dir\objects1.rsp
+C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\gcc.exe -Wl,--whole-archive CMakeFiles\cmTC_661ba.dir/objects.a -Wl,--no-whole-archive -o cmTC_661ba.exe -Wl,--out-implib,libcmTC_661ba.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\cmTC_661ba.dir\linklibs.rsp
+mingw32-make[1]: Leaving directory 'C:/programacion/MemDB/cmake-build-debug/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+#include <pthread.h>
+
+static void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_cancel(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+

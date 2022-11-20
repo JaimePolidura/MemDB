@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="boost_asio"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\libs\;CMake Files\libs\boost_asio_1_24_0\;CMake Files\libs\boost_asio_1_24_0\libs\;CMake Files\libs\boost_asio_1_24_0\libs\asio\;CMake Files\libs\boost_asio_1_24_0\libs\system\;CMake Files\libs\googletest\;CMake Files\libs\googletest\googlemock\;CMake Files\libs\googletest\googlemock\cmake\;CMake Files\libs\googletest\googletest\;CMake Files\libs\googletest\googletest\cmake\;CMake Files\src\;CMake Files\tst\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="C:/programacion/MemDB/cmake-build-debug/libs/boost_asio_1_24_0/libs/asio"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/mingw32-make.exe -f &quot;C:/programacion/MemDB/cmake-build-debug/libs/boost_asio_1_24_0/libs/asio/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/mingw32-make.exe -f &quot;C:/programacion/MemDB/cmake-build-debug/libs/boost_asio_1_24_0/libs/asio/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/mingw32-make.exe -f &quot;C:/programacion/MemDB/cmake-build-debug/libs/boost_asio_1_24_0/libs/asio/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/mingw32-make.exe -f &quot;C:/programacion/MemDB/cmake-build-debug/libs/boost_asio_1_24_0/libs/asio/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="C:/programacion/MemDB/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/libs/boost_asio_1_24_0/libs/asio/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libs\boost_asio_1_24_0\libs\asio\"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/libs/boost_asio_1_24_0/libs/system/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libs\boost_asio_1_24_0\libs\system\"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/libs/googletest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libs\googletest\"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/libs/googletest/googlemock/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libs\googletest\googlemock\"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/libs/googletest/googlemock/cmake/gmock.pc.in">
+			<Option virtualFolder="CMake Files\libs\googletest\googlemock\cmake\"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/libs/googletest/googlemock/cmake/gmock_main.pc.in">
+			<Option virtualFolder="CMake Files\libs\googletest\googlemock\cmake\"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/libs/googletest/googletest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libs\googletest\googletest\"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/libs/googletest/googletest/cmake/Config.cmake.in">
+			<Option virtualFolder="CMake Files\libs\googletest\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/libs/googletest/googletest/cmake/gtest.pc.in">
+			<Option virtualFolder="CMake Files\libs\googletest\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/libs/googletest/googletest/cmake/gtest_main.pc.in">
+			<Option virtualFolder="CMake Files\libs\googletest\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/libs/googletest/googletest/cmake/internal_utils.cmake">
+			<Option virtualFolder="CMake Files\libs\googletest\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/tst/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\tst\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

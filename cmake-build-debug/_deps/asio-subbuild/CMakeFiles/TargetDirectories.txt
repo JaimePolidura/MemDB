@@ -1,0 +1,3 @@
+C:/programacion/MemDB/cmake-build-debug/_deps/asio-subbuild/CMakeFiles/asio-populate.dir
+C:/programacion/MemDB/cmake-build-debug/_deps/asio-subbuild/CMakeFiles/edit_cache.dir
+C:/programacion/MemDB/cmake-build-debug/_deps/asio-subbuild/CMakeFiles/rebuild_cache.dir

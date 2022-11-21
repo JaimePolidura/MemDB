@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/memdb_lib.dir/connection/TCPServer.cpp.obj"
   "CMakeFiles/memdb_lib.dir/connection/TCPServer.cpp.obj.d"
+  "CMakeFiles/memdb_lib.dir/main.cpp.obj"
+  "CMakeFiles/memdb_lib.dir/main.cpp.obj.d"
   "CMakeFiles/memdb_lib.dir/users/UsersService.cpp.obj"
   "CMakeFiles/memdb_lib.dir/users/UsersService.cpp.obj.d"
   "CMakeFiles/memdb_lib.dir/utils/crypto/PolynomialHashCreator.cpp.obj"

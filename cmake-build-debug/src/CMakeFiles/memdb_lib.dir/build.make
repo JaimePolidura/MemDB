@@ -83,11 +83,26 @@ src/CMakeFiles/memdb_lib.dir/connection/TCPServer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_lib.dir/connection/TCPServer.cpp.s"
 	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\src\connection\TCPServer.cpp -o CMakeFiles\memdb_lib.dir\connection\TCPServer.cpp.s
 
+src/CMakeFiles/memdb_lib.dir/main.cpp.obj: src/CMakeFiles/memdb_lib.dir/flags.make
+src/CMakeFiles/memdb_lib.dir/main.cpp.obj: src/CMakeFiles/memdb_lib.dir/includes_CXX.rsp
+src/CMakeFiles/memdb_lib.dir/main.cpp.obj: ../src/main.cpp
+src/CMakeFiles/memdb_lib.dir/main.cpp.obj: src/CMakeFiles/memdb_lib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object src/CMakeFiles/memdb_lib.dir/main.cpp.obj"
+	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/memdb_lib.dir/main.cpp.obj -MF CMakeFiles\memdb_lib.dir\main.cpp.obj.d -o CMakeFiles\memdb_lib.dir\main.cpp.obj -c C:\programacion\MemDB\src\main.cpp
+
+src/CMakeFiles/memdb_lib.dir/main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/memdb_lib.dir/main.cpp.i"
+	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\programacion\MemDB\src\main.cpp > CMakeFiles\memdb_lib.dir\main.cpp.i
+
+src/CMakeFiles/memdb_lib.dir/main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_lib.dir/main.cpp.s"
+	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\src\main.cpp -o CMakeFiles\memdb_lib.dir\main.cpp.s
+
 src/CMakeFiles/memdb_lib.dir/users/UsersService.cpp.obj: src/CMakeFiles/memdb_lib.dir/flags.make
 src/CMakeFiles/memdb_lib.dir/users/UsersService.cpp.obj: src/CMakeFiles/memdb_lib.dir/includes_CXX.rsp
 src/CMakeFiles/memdb_lib.dir/users/UsersService.cpp.obj: ../src/users/UsersService.cpp
 src/CMakeFiles/memdb_lib.dir/users/UsersService.cpp.obj: src/CMakeFiles/memdb_lib.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object src/CMakeFiles/memdb_lib.dir/users/UsersService.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object src/CMakeFiles/memdb_lib.dir/users/UsersService.cpp.obj"
 	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/memdb_lib.dir/users/UsersService.cpp.obj -MF CMakeFiles\memdb_lib.dir\users\UsersService.cpp.obj.d -o CMakeFiles\memdb_lib.dir\users\UsersService.cpp.obj -c C:\programacion\MemDB\src\users\UsersService.cpp
 
 src/CMakeFiles/memdb_lib.dir/users/UsersService.cpp.i: cmake_force
@@ -102,7 +117,7 @@ src/CMakeFiles/memdb_lib.dir/utils/crypto/PolynomialHashCreator.cpp.obj: src/CMa
 src/CMakeFiles/memdb_lib.dir/utils/crypto/PolynomialHashCreator.cpp.obj: src/CMakeFiles/memdb_lib.dir/includes_CXX.rsp
 src/CMakeFiles/memdb_lib.dir/utils/crypto/PolynomialHashCreator.cpp.obj: ../src/utils/crypto/PolynomialHashCreator.cpp
 src/CMakeFiles/memdb_lib.dir/utils/crypto/PolynomialHashCreator.cpp.obj: src/CMakeFiles/memdb_lib.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object src/CMakeFiles/memdb_lib.dir/utils/crypto/PolynomialHashCreator.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object src/CMakeFiles/memdb_lib.dir/utils/crypto/PolynomialHashCreator.cpp.obj"
 	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/memdb_lib.dir/utils/crypto/PolynomialHashCreator.cpp.obj -MF CMakeFiles\memdb_lib.dir\utils\crypto\PolynomialHashCreator.cpp.obj.d -o CMakeFiles\memdb_lib.dir\utils\crypto\PolynomialHashCreator.cpp.obj -c C:\programacion\MemDB\src\utils\crypto\PolynomialHashCreator.cpp
 
 src/CMakeFiles/memdb_lib.dir/utils/crypto/PolynomialHashCreator.cpp.i: cmake_force
@@ -117,7 +132,7 @@ src/CMakeFiles/memdb_lib.dir/utils/datastructures/DBMap.cpp.obj: src/CMakeFiles/
 src/CMakeFiles/memdb_lib.dir/utils/datastructures/DBMap.cpp.obj: src/CMakeFiles/memdb_lib.dir/includes_CXX.rsp
 src/CMakeFiles/memdb_lib.dir/utils/datastructures/DBMap.cpp.obj: ../src/utils/datastructures/DBMap.cpp
 src/CMakeFiles/memdb_lib.dir/utils/datastructures/DBMap.cpp.obj: src/CMakeFiles/memdb_lib.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object src/CMakeFiles/memdb_lib.dir/utils/datastructures/DBMap.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object src/CMakeFiles/memdb_lib.dir/utils/datastructures/DBMap.cpp.obj"
 	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/memdb_lib.dir/utils/datastructures/DBMap.cpp.obj -MF CMakeFiles\memdb_lib.dir\utils\datastructures\DBMap.cpp.obj.d -o CMakeFiles\memdb_lib.dir\utils\datastructures\DBMap.cpp.obj -c C:\programacion\MemDB\src\utils\datastructures\DBMap.cpp
 
 src/CMakeFiles/memdb_lib.dir/utils/datastructures/DBMap.cpp.i: cmake_force
@@ -131,6 +146,7 @@ src/CMakeFiles/memdb_lib.dir/utils/datastructures/DBMap.cpp.s: cmake_force
 # Object files for target memdb_lib
 memdb_lib_OBJECTS = \
 "CMakeFiles/memdb_lib.dir/connection/TCPServer.cpp.obj" \
+"CMakeFiles/memdb_lib.dir/main.cpp.obj" \
 "CMakeFiles/memdb_lib.dir/users/UsersService.cpp.obj" \
 "CMakeFiles/memdb_lib.dir/utils/crypto/PolynomialHashCreator.cpp.obj" \
 "CMakeFiles/memdb_lib.dir/utils/datastructures/DBMap.cpp.obj"
@@ -139,12 +155,13 @@ memdb_lib_OBJECTS = \
 memdb_lib_EXTERNAL_OBJECTS =
 
 src/libmemdb_lib.a: src/CMakeFiles/memdb_lib.dir/connection/TCPServer.cpp.obj
+src/libmemdb_lib.a: src/CMakeFiles/memdb_lib.dir/main.cpp.obj
 src/libmemdb_lib.a: src/CMakeFiles/memdb_lib.dir/users/UsersService.cpp.obj
 src/libmemdb_lib.a: src/CMakeFiles/memdb_lib.dir/utils/crypto/PolynomialHashCreator.cpp.obj
 src/libmemdb_lib.a: src/CMakeFiles/memdb_lib.dir/utils/datastructures/DBMap.cpp.obj
 src/libmemdb_lib.a: src/CMakeFiles/memdb_lib.dir/build.make
 src/libmemdb_lib.a: src/CMakeFiles/memdb_lib.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX static library libmemdb_lib.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX static library libmemdb_lib.a"
 	cd /d C:\programacion\MemDB\cmake-build-debug\src && $(CMAKE_COMMAND) -P CMakeFiles\memdb_lib.dir\cmake_clean_target.cmake
 	cd /d C:\programacion\MemDB\cmake-build-debug\src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\memdb_lib.dir\link.txt --verbose=$(VERBOSE)
 

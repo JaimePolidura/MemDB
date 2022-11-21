@@ -1,21 +1,9 @@
 #include <boost/asio.hpp>
-#include <iostream>
 #include <string>
+#include "TCPServer.h"
 
-using namespace boost::asio;
+TCPServer::TCPServer(const std::string &ip, int port): ip(ip), port(port) {}
 
-class TCPServer {
-private:
-    ip::tcp::acceptor acceptator;
-    io_context ioContext;
+void TCPServer::run() {
 
-public:
-    TCPServer(std::string ip, int port): ioContext(), acceptator(ioContext, ip::tcp::endpoint(ip::tcp::v4(), port)) {}
-
-    void run() {
-        while (true) {
-            auto connection = this->acceptator.accept();
-
-        }
-    }
-};
+}

@@ -2943,7 +2943,7 @@ auto Second(T& x, Rank0) -> decltype((x.second)) {  // NOLINT
 // Implements Key(inner_matcher) for the given argument pair type.
 // Key(inner_matcher) matches an std::pair whose 'first' field matches
 // inner_matcher.  For example, Contains(Key(Ge(5))) can be used to match an
-// std::map that contains at least one element whose key is >= 5.
+// std::map that contains at least one element whose authKey is >= 5.
 template <typename PairType>
 class KeyMatcherImpl : public MatcherInterface<PairType> {
  public:
@@ -2955,7 +2955,7 @@ class KeyMatcherImpl : public MatcherInterface<PairType> {
       : inner_matcher_(
             testing::SafeMatcherCast<const KeyType&>(inner_matcher)) {}
 
-  // Returns true if and only if 'key_value.first' (the key) matches the inner
+  // Returns true if and only if 'key_value.first' (the authKey) matches the inner
   // matcher.
   bool MatchAndExplain(PairType key_value,
                        MatchResultListener* listener) const override {
@@ -2971,13 +2971,13 @@ class KeyMatcherImpl : public MatcherInterface<PairType> {
 
   // Describes what this matcher does.
   void DescribeTo(::std::ostream* os) const override {
-    *os << "has a key that ";
+    *os << "has a authKey that ";
     inner_matcher_.DescribeTo(os);
   }
 
   // Describes what the negation of this matcher does.
   void DescribeNegationTo(::std::ostream* os) const override {
-    *os << "doesn't have a key that ";
+    *os << "doesn't have a authKey that ";
     inner_matcher_.DescribeTo(os);
   }
 
@@ -4989,7 +4989,7 @@ inline internal::EachMatcher<M> Each(M matcher) {
 
 // Key(inner_matcher) matches an std::pair whose 'first' field matches
 // inner_matcher.  For example, Contains(Key(Ge(5))) can be used to match an
-// std::map that contains at least one element whose key is >= 5.
+// std::map that contains at least one element whose authKey is >= 5.
 template <typename M>
 inline internal::KeyMatcher<M> Key(M inner_matcher) {
   return internal::KeyMatcher<M>(inner_matcher);
@@ -4998,7 +4998,7 @@ inline internal::KeyMatcher<M> Key(M inner_matcher) {
 // Pair(first_matcher, second_matcher) matches a std::pair whose 'first' field
 // matches first_matcher and whose 'second' field matches second_matcher.  For
 // example, EXPECT_THAT(map_type, ElementsAre(Pair(Ge(5), "foo"))) can be used
-// to match a std::map<int, string> that contains exactly one element whose key
+// to match a std::map<int, string> that contains exactly one element whose authKey
 // is >= 5 and whose value equals "foo".
 template <typename FirstMatcher, typename SecondMatcher>
 inline internal::PairMatcher<FirstMatcher, SecondMatcher> Pair(

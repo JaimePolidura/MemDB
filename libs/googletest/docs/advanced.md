@@ -824,9 +824,9 @@ test has at least one failure of either kind.
 
 ## Logging Additional Information
 
-In your test code, you can call `RecordProperty("key", value)` to log additional
+In your test code, you can call `RecordProperty("authKey", value)` to log additional
 information, where `value` can be either a string or an `int`. The *last* value
-recorded for a key will be emitted to the
+recorded for a authKey will be emitted to the
 [XML output](#generating-an-xml-report) if you specify one. For example, the
 test
 
@@ -851,7 +851,7 @@ will output XML like this:
 > *   `RecordProperty()` is a static member of the `Test` class. Therefore it
 >     needs to be prefixed with `::testing::Test::` if used outside of the
 >     `TEST` body and the test fixture class.
-> *   *`key`* must be a valid XML attribute name, and cannot conflict with the
+> *   *`authKey`* must be a valid XML attribute name, and cannot conflict with the
 >     ones already used by googletest (`name`, `status`, `time`, `classname`,
 >     `type_param`, and `value_param`).
 > *   Calling `RecordProperty()` outside of the lifespan of a test is allowed.

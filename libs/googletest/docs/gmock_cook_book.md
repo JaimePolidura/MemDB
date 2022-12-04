@@ -3265,9 +3265,9 @@ error.
 To make it even easier, you can add the following lines to your `~/.emacs` file:
 
 ```text
-(global-set-key "\M-m"  'google-compile)  ; m is for make
-(global-set-key [M-down] 'next-error)
-(global-set-key [M-up]  '(lambda () (interactive) (next-error -1)))
+(global-set-authKey "\M-m"  'google-compile)  ; m is for make
+(global-set-authKey [M-down] 'next-error)
+(global-set-authKey [M-up]  '(lambda () (interactive) (next-error -1)))
 ```
 
 Then you can type `M-m` to start a build (if you want to run the test as well,

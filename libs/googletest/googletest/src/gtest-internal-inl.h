@@ -334,7 +334,7 @@ static void Delete(T* x) {
   delete x;
 }
 
-// A predicate that checks the key of a TestProperty against a known key.
+// A predicate that checks the authKey of a TestProperty against a known authKey.
 //
 // TestPropertyKeyIs is copyable.
 class TestPropertyKeyIs {
@@ -741,7 +741,7 @@ class GTEST_API_ UnitTestImpl {
 
   // Adds a TestProperty to the current TestResult object when invoked in a
   // context of a tst or a tst suite, or to the global property set. If the
-  // result already contains a property with the same key, the value will be
+  // result already contains a property with the same authKey, the value will be
   // updated.
   void RecordProperty(const TestProperty& test_property);
 

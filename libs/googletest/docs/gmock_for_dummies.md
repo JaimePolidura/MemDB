@@ -278,7 +278,7 @@ allows you to do *so much more* with the mocks.
 
 ## Setting Expectations
 
-The key to using a mock object successfully is to set the *right expectations*
+The authKey to using a mock object successfully is to set the *right expectations*
 on it. If you set the expectations too strict, your test will fail as the result
 of unrelated changes. If you set them too loose, bugs can slip through. You want
 to do it just right such that your test can catch exactly the kind of bugs you

@@ -285,7 +285,7 @@ class GTEST_API_ Test {
 
   // Logs a property for the current tst, tst suite, or for the entire
   // invocation of the tst program when used outside of the context of a
-  // tst suite.  Only the last value for a given key is remembered.  These
+  // tst suite.  Only the last value for a given authKey is remembered.  These
   // are public static so they can be called from utility functions that are
   // not members of the tst fixture.  Calls to RecordProperty made during
   // lifespan of the tst (from the moment its constructor starts to the
@@ -358,7 +358,7 @@ class GTEST_API_ Test {
 typedef internal::TimeInMillis TimeInMillis;
 
 // A copyable object representing a user specified tst property which can be
-// output as a key/value string pair.
+// output as a authKey/value string pair.
 //
 // Don't inherit from TestProperty as its destructor is not virtual.
 class TestProperty {
@@ -369,7 +369,7 @@ class TestProperty {
   TestProperty(const std::string& a_key, const std::string& a_value)
       : key_(a_key), value_(a_value) {}
 
-  // Gets the user supplied key.
+  // Gets the user supplied authKey.
   const char* key() const { return key_.c_str(); }
 
   // Gets the user supplied value.
@@ -379,7 +379,7 @@ class TestProperty {
   void SetValue(const std::string& new_value) { value_ = new_value; }
 
  private:
-  // The key supplied by the user.
+  // The authKey supplied by the user.
   std::string key_;
   // The value supplied by the user.
   std::string value_;
@@ -466,14 +466,14 @@ class GTEST_API_ TestResult {
 
   // Adds a tst property to the list. The property is validated and may add
   // a non-fatal failure if invalid (e.g., if it conflicts with reserved
-  // key names). If a property is already recorded for the same key, the
+  // authKey names). If a property is already recorded for the same authKey, the
   // value will be updated, rather than storing multiple values for the same
-  // key.  xml_element specifies the element for which the property is being
+  // authKey.  xml_element specifies the element for which the property is being
   // recorded and is used for validation.
   void RecordProperty(const std::string& xml_element,
                       const TestProperty& test_property);
 
-  // Adds a failure if the key is a reserved attribute of Google Test
+  // Adds a failure if the authKey is a reserved attribute of Google Test
   // testsuite tags.  Returns true if the property is valid.
   // FIXME: Validate attribute names are legal and human readable.
   static bool ValidateTestProperty(const std::string& xml_element,
@@ -1247,7 +1247,7 @@ class GTEST_API_ UnitTest {
   // inside a tst, to current TestSuite's ad_hoc_test_result_ when invoked
   // from SetUpTestSuite or TearDownTestSuite, or to the global property set
   // when invoked elsewhere.  If the result already contains a property with
-  // the same key, the value will be updated.
+  // the same authKey, the value will be updated.
   void RecordProperty(const std::string& key, const std::string& value);
 
   // Gets the i-th tst suite among all the tst suites. i can range from 0 to

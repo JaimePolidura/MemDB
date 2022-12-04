@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
-#include "users/UsersService.h"
+#include "users/UsersRepository.h"
 
 TEST(UsersService, ShouldSaveAndGet) {
-    UsersService usersService{};
+    UsersRepository usersService{};
     const char * userKey = "hola";
     usersService.save(4, userKey);
 

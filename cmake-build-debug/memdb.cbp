@@ -448,10 +448,6 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/connection/TCPServer.cpp">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/connection/TCPServer.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>

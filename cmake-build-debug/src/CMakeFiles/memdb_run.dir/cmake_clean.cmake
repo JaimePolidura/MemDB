@@ -1,6 +1,4 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/memdb_run.dir/connection/TCPServer.cpp.obj"
-  "CMakeFiles/memdb_run.dir/connection/TCPServer.cpp.obj.d"
   "CMakeFiles/memdb_run.dir/main.cpp.obj"
   "CMakeFiles/memdb_run.dir/main.cpp.obj.d"
   "CMakeFiles/memdb_run.dir/users/UsersService.cpp.obj"

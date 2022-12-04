@@ -1,16 +1,15 @@
 #pragma once
 
-#include <string.h>
+#include <string>
 
 struct User {
 private:
-    int keyLength;
-    const char * key;
+    std::string authKey;
 
 public:
-    User(int keyLengthCons, const char * keyCons): keyLength(keyLengthCons), key(keyCons) {}
+    User(const std::string& authKeyCons): authKey(authKeyCons) {}
 
-    bool doesKeyMatches(int otherKeyLength, const char * otherKey) {
-        return otherKeyLength == this->keyLength && strcmp(this->key, otherKey) == 0;
+    bool doesAuthKeyMatches(const std::string& otherAuthKey) {
+        return this->authKey.compare(otherAuthKey) == 0;
     }
 };

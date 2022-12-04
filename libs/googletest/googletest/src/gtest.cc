@@ -2248,9 +2248,9 @@ void TestResult::AddTestPartResult(const TestPartResult& test_part_result) {
   test_part_results_.push_back(test_part_result);
 }
 
-// Adds a tst property to the list. If a property with the same key as the
+// Adds a tst property to the list. If a property with the same authKey as the
 // supplied property is already represented, the value of this test_property
-// replaces the old value for that key.
+// replaces the old value for that authKey.
 void TestResult::RecordProperty(const std::string& xml_element,
                                 const TestProperty& test_property) {
   if (!ValidateTestProperty(xml_element, test_property)) {
@@ -2345,7 +2345,7 @@ static bool ValidateTestPropertyName(
     const std::vector<std::string>& reserved_names) {
   if (std::find(reserved_names.begin(), reserved_names.end(), property_name) !=
       reserved_names.end()) {
-    ADD_FAILURE() << "Reserved key used in RecordProperty(): " << property_name
+    ADD_FAILURE() << "Reserved authKey used in RecordProperty(): " << property_name
                   << " (" << FormatWordList(reserved_names)
                   << " are reserved by " << GTEST_NAME_ << ")";
     return false;
@@ -2353,7 +2353,7 @@ static bool ValidateTestPropertyName(
   return true;
 }
 
-// Adds a failure if the key is a reserved attribute of the element named
+// Adds a failure if the authKey is a reserved attribute of the element named
 // xml_element.  Returns true if the property is valid.
 bool TestResult::ValidateTestProperty(const std::string& xml_element,
                                       const TestProperty& test_property) {
@@ -2440,7 +2440,7 @@ void Test::SetUp() {}
 // A sub-class may override this.
 void Test::TearDown() {}
 
-// Allows user supplied key value pairs to be recorded for later output.
+// Allows user supplied authKey value pairs to be recorded for later output.
 void Test::RecordProperty(const std::string& key, const std::string& value) {
   UnitTest::GetInstance()->RecordProperty(key, value);
 }
@@ -3968,7 +3968,7 @@ class XmlUnitTestResultPrinter : public EmptyTestEventListener {
                                const UnitTest& unit_test);
 
   // Produces a string representing the tst properties in a result as space
-  // delimited XML attributes based on the property key="value" pairs.
+  // delimited XML attributes based on the property authKey="value" pairs.
   // When the std::string is not empty, it includes a space at the beginning,
   // to delimit this attribute from prior attributes.
   static std::string TestPropertiesAsXmlAttributes(const TestResult& result);
@@ -4404,7 +4404,7 @@ void XmlUnitTestResultPrinter::PrintXmlTestsList(
 }
 
 // Produces a string representing the tst properties in a result as space
-// delimited XML attributes based on the property key="value" pairs.
+// delimited XML attributes based on the property authKey="value" pairs.
 std::string XmlUnitTestResultPrinter::TestPropertiesAsXmlAttributes(
     const TestResult& result) {
   Message attributes;
@@ -5366,7 +5366,7 @@ void UnitTest::AddTestPartResult(TestPartResult::Type result_type,
 // inside a tst, to current TestSuite's ad_hoc_test_result_ when invoked
 // from SetUpTestSuite or TearDownTestSuite, or to the global property set
 // when invoked elsewhere.  If the result already contains a property with
-// the same key, the value will be updated.
+// the same authKey, the value will be updated.
 void UnitTest::RecordProperty(const std::string& key,
                               const std::string& value) {
   impl_->RecordProperty(TestProperty(key, value));
@@ -5566,7 +5566,7 @@ UnitTestImpl::~UnitTestImpl() {
 // Adds a TestProperty to the current TestResult object when invoked in a
 // context of a tst, to current tst suite's ad_hoc_test_result when invoke
 // from SetUpTestSuite/TearDownTestSuite, or to the global property set
-// otherwise.  If the result already contains a property with the same key,
+// otherwise.  If the result already contains a property with the same authKey,
 // the value will be updated.
 void UnitTestImpl::RecordProperty(const TestProperty& test_property) {
   std::string xml_element;
@@ -5639,7 +5639,7 @@ void UnitTestImpl::PostFlagParsingInit() {
     post_flag_parse_init_performed_ = true;
 
 #if defined(GTEST_CUSTOM_TEST_EVENT_LISTENER_)
-    // Register to send notifications about key process state changes.
+    // Register to send notifications about authKey process state changes.
     listeners()->Append(new GTEST_CUSTOM_TEST_EVENT_LISTENER_());
 #endif  // defined(GTEST_CUSTOM_TEST_EVENT_LISTENER_)
 

@@ -66,7 +66,7 @@
 // Notes to maintainers:
 //   - Each macro here is a user-tweakable knob; do not grow the list
 //     lightly.
-//   - Use #if to key off these macros.  Don't use #ifdef or "#if
+//   - Use #if to authKey off these macros.  Don't use #ifdef or "#if
 //     defined(...)", which will not work as these macros are ALWAYS
 //     defined.
 //
@@ -1738,7 +1738,7 @@ class GTEST_API_ ThreadLocal {
     // Destroys the managed object for the current thread, if any.
     DeleteThreadLocalValue(pthread_getspecific(key_));
 
-    // Releases resources associated with the key.  This will *not*
+    // Releases resources associated with the authKey.  This will *not*
     // delete managed objects for other threads.
     GTEST_CHECK_POSIX_SUCCESS_(pthread_key_delete(key_));
   }
@@ -1764,12 +1764,12 @@ class GTEST_API_ ThreadLocal {
   };
 
   static pthread_key_t CreateKey() {
-    pthread_key_t key;
+    pthread_key_t authKey;
     // When a thread exits, DeleteThreadLocalValue() will be called on
     // the object managed for that thread.
     GTEST_CHECK_POSIX_SUCCESS_(
-        pthread_key_create(&key, &DeleteThreadLocalValue));
-    return key;
+        pthread_key_create(&authKey, &DeleteThreadLocalValue));
+    return authKey;
   }
 
   T* GetOrCreateValue() const {
@@ -1822,7 +1822,7 @@ class GTEST_API_ ThreadLocal {
         delete;
   };
 
-  // A key pthreads uses for looking up per-thread values.
+  // A authKey pthreads uses for looking up per-thread values.
   const pthread_key_t key_;
   std::unique_ptr<ValueHolderFactory> default_factory_;
 

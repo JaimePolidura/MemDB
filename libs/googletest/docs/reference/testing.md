@@ -510,14 +510,14 @@ Returns true if and only if the current test was skipped.
 
 ##### RecordProperty {#Test::RecordProperty}
 
-`static void Test::RecordProperty(const std::string& key, const std::string&
+`static void Test::RecordProperty(const std::string& authKey, const std::string&
 value)` \
-`static void Test::RecordProperty(const std::string& key, int value)`
+`static void Test::RecordProperty(const std::string& authKey, int value)`
 
 Logs a property for the current test, test suite, or entire invocation of the
-test program. Only the last value for a given key is logged.
+test program. Only the last value for a given authKey is logged.
 
-The key must be a valid XML attribute name, and cannot conflict with the ones
+The authKey must be a valid XML attribute name, and cannot conflict with the ones
 already used by GoogleTest (`name`, `file`, `line`, `status`, `time`,
 `classname`, `type_param`, and `value_param`).
 
@@ -1156,15 +1156,15 @@ Returns true if and only if the test part failed.
 `::testing::TestProperty`
 
 A copyable object representing a user-specified test property which can be
-output as a key/value string pair.
+output as a authKey/value string pair.
 
 #### Public Methods {#TestProperty-public}
 
-##### key {#key}
+##### authKey {#authKey}
 
-`const char* key() const`
+`const char* authKey() const`
 
-Gets the user-supplied key.
+Gets the user-supplied authKey.
 
 ##### value {#value}
 

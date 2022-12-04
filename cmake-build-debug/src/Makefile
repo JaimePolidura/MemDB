@@ -188,33 +188,6 @@ memdb_lib/fast:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/build
 .PHONY : memdb_lib/fast
 
-connection/TCPServer.obj: connection/TCPServer.cpp.obj
-.PHONY : connection/TCPServer.obj
-
-# target to build an object file
-connection/TCPServer.cpp.obj:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/connection/TCPServer.cpp.obj
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/connection/TCPServer.cpp.obj
-.PHONY : connection/TCPServer.cpp.obj
-
-connection/TCPServer.i: connection/TCPServer.cpp.i
-.PHONY : connection/TCPServer.i
-
-# target to preprocess a source file
-connection/TCPServer.cpp.i:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/connection/TCPServer.cpp.i
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/connection/TCPServer.cpp.i
-.PHONY : connection/TCPServer.cpp.i
-
-connection/TCPServer.s: connection/TCPServer.cpp.s
-.PHONY : connection/TCPServer.s
-
-# target to generate assembly for a file
-connection/TCPServer.cpp.s:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/connection/TCPServer.cpp.s
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/connection/TCPServer.cpp.s
-.PHONY : connection/TCPServer.cpp.s
-
 main.obj: main.cpp.obj
 .PHONY : main.obj
 
@@ -337,9 +310,6 @@ help:
 	@echo ... rebuild_cache
 	@echo ... memdb_lib
 	@echo ... memdb_run
-	@echo ... connection/TCPServer.obj
-	@echo ... connection/TCPServer.i
-	@echo ... connection/TCPServer.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s

@@ -4880,7 +4880,7 @@ TEST(EqAssertionTest, OtherPointer) {
                        "0x1234");
 }
 
-// A class that supports binary comparison operators but not streaming.
+// A class that supports binary comparison messages but not streaming.
 class UnprintableChar {
  public:
   explicit UnprintableChar(char ch) : char_(ch) {}
@@ -5074,7 +5074,7 @@ TEST(AssertionResultTest, CanStreamOstreamManipulators) {
   EXPECT_STREQ("Data\n\\0Will be visible", r.message());
 }
 
-// The next tst uses explicit conversion operators
+// The next tst uses explicit conversion messages
 
 TEST(AssertionResultTest, ConstructibleFromContextuallyConvertibleToBool) {
   struct ExplicitlyConvertibleToBool {

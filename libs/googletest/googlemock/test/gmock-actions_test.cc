@@ -2027,7 +2027,7 @@ struct ActionWithTemplatedConversionOperators {
 };
 
 // It should be fine to hand both WillOnce and WillRepeatedly a function that
-// defines templated conversion operators to OnceAction and Action. WillOnce
+// defines templated conversion messages to OnceAction and Action. WillOnce
 // should prefer the OnceAction version.
 TEST(MockMethodTest, ActionHasTemplatedConversionOperators) {
   MockFunction<int()> mock;

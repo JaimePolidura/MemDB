@@ -215,32 +215,32 @@ main.cpp.s:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/main.cpp.s
 .PHONY : main.cpp.s
 
-users/UsersService.obj: users/UsersService.cpp.obj
-.PHONY : users/UsersService.obj
+users/UsersRepository.obj: users/UsersRepository.cpp.obj
+.PHONY : users/UsersRepository.obj
 
 # target to build an object file
-users/UsersService.cpp.obj:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/users/UsersService.cpp.obj
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/users/UsersService.cpp.obj
-.PHONY : users/UsersService.cpp.obj
+users/UsersRepository.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/users/UsersRepository.cpp.obj
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/users/UsersRepository.cpp.obj
+.PHONY : users/UsersRepository.cpp.obj
 
-users/UsersService.i: users/UsersService.cpp.i
-.PHONY : users/UsersService.i
+users/UsersRepository.i: users/UsersRepository.cpp.i
+.PHONY : users/UsersRepository.i
 
 # target to preprocess a source file
-users/UsersService.cpp.i:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/users/UsersService.cpp.i
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/users/UsersService.cpp.i
-.PHONY : users/UsersService.cpp.i
+users/UsersRepository.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/users/UsersRepository.cpp.i
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/users/UsersRepository.cpp.i
+.PHONY : users/UsersRepository.cpp.i
 
-users/UsersService.s: users/UsersService.cpp.s
-.PHONY : users/UsersService.s
+users/UsersRepository.s: users/UsersRepository.cpp.s
+.PHONY : users/UsersRepository.s
 
 # target to generate assembly for a file
-users/UsersService.cpp.s:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/users/UsersService.cpp.s
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/users/UsersService.cpp.s
-.PHONY : users/UsersService.cpp.s
+users/UsersRepository.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/users/UsersRepository.cpp.s
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/users/UsersRepository.cpp.s
+.PHONY : users/UsersRepository.cpp.s
 
 utils/crypto/PolynomialHashCreator.obj: utils/crypto/PolynomialHashCreator.cpp.obj
 .PHONY : utils/crypto/PolynomialHashCreator.obj
@@ -313,9 +313,9 @@ help:
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
-	@echo ... users/UsersService.obj
-	@echo ... users/UsersService.i
-	@echo ... users/UsersService.s
+	@echo ... users/UsersRepository.obj
+	@echo ... users/UsersRepository.i
+	@echo ... users/UsersRepository.s
 	@echo ... utils/crypto/PolynomialHashCreator.obj
 	@echo ... utils/crypto/PolynomialHashCreator.i
 	@echo ... utils/crypto/PolynomialHashCreator.s

@@ -346,7 +346,7 @@ struct is_implicitly_convertible {
 };
 
 // Like std::invoke_result_t from C++17, but works only for objects with call
-// operators (not e.g. member function pointers, which we don't need specific
+// messages (not e.g. member function pointers, which we don't need specific
 // support for in OnceAction because std::function deals with them).
 template <typename F, typename... Args>
 using call_result_t = decltype(std::declval<F>()(std::declval<Args>()...));
@@ -365,7 +365,7 @@ struct is_callable_r_impl<void_t<call_result_t<F, Args...>>, R, F, Args...>
           is_implicitly_convertible<call_result_t<F, Args...>, R>>::type {};
 
 // Like std::is_invocable_r from C++17, but works only for objects with call
-// operators. See the note on call_result_t.
+// messages. See the note on call_result_t.
 template <typename R, typename F, typename... Args>
 using is_callable_r = is_callable_r_impl<void, R, F, Args...>;
 
@@ -1414,9 +1414,9 @@ struct WithArgsAction {
   using InnerSignature =
       R(typename std::tuple_element<I, std::tuple<Args...>>::type...);
 
-  // Rather than a call operator, we must define conversion operators to
+  // Rather than a call operator, we must define conversion messages to
   // particular action types. This is necessary for embedded actions like
-  // DoDefault(), which rely on an action conversion operators rather than
+  // DoDefault(), which rely on an action conversion messages rather than
   // providing a call operator because even with a particular set of arguments
   // they don't have a fixed return type.
 
@@ -1483,9 +1483,9 @@ class DoAllAction<FinalAction> {
   explicit DoAllAction(UserConstructorTag, T&& action)
       : final_action_(std::forward<T>(action)) {}
 
-  // Rather than a call operator, we must define conversion operators to
+  // Rather than a call operator, we must define conversion messages to
   // particular action types. This is necessary for embedded actions like
-  // DoDefault(), which rely on an action conversion operators rather than
+  // DoDefault(), which rely on an action conversion messages rather than
   // providing a call operator because even with a particular set of arguments
   // they don't have a fixed return type.
 

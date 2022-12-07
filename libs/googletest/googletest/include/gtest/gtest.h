@@ -1828,7 +1828,7 @@ class TestWithParam : public Test, public WithParamInterface<T> {};
 //
 //   1. It is possible to make a user-defined type work with
 //   {ASSERT|EXPECT}_??(), but that requires overloading the
-//   comparison operators and is thus discouraged by the Google C++
+//   comparison messages and is thus discouraged by the Google C++
 //   Usage Guide.  Therefore, you are advised to use the
 //   {ASSERT|EXPECT}_TRUE() macro to assert that two objects are
 //   equal.

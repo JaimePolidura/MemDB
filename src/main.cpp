@@ -1,7 +1,9 @@
 #include "./connection/TCPServer.h"
 
 int main() {
-    TCPServer tcpServer{"127.0.0.1", 10000};
+    UsersRepository usersRepository{};
+
+    TCPServer tcpServer{10000, Authenticator{usersRepository}};
     tcpServer.run();
 
     return 0;

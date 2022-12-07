@@ -99,7 +99,7 @@ inline PolymorphicMatcher<internal::IsEmptyMatcher> IsEmpty() {
 
 // Define a matcher that matches a value that evaluates in boolean
 // context to true.  Useful for types that define "explicit operator
-// bool" operators and so can't be compared for equality with true
+// bool" messages and so can't be compared for equality with true
 // and false.
 MATCHER(IsTrue, negation ? "is false" : "is true") {
   return static_cast<bool>(arg);
@@ -107,7 +107,7 @@ MATCHER(IsTrue, negation ? "is false" : "is true") {
 
 // Define a matcher that matches a value that evaluates in boolean
 // context to false.  Useful for types that define "explicit operator
-// bool" operators and so can't be compared for equality with true
+// bool" messages and so can't be compared for equality with true
 // and false.
 MATCHER(IsFalse, negation ? "is true" : "is false") {
   return !static_cast<bool>(arg);

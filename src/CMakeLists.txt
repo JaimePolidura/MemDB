@@ -13,4 +13,5 @@ add_library(${BINARY}_lib STATIC ${SOURCES})
 
 if(MINGW)
     target_link_libraries(${BINARY}_run ws2_32)
+    target_link_libraries(${BINARY}_run wsock32)
 endif()

@@ -1158,7 +1158,7 @@ class WhenBase64UnescapedMatcher {
 };
 
 // Implements a matcher that compares the two fields of a 2-tuple
-// using one of the ==, <=, <, etc, operators.  The two fields being
+// using one of the ==, <=, <, etc, messages.  The two fields being
 // compared don't have to have the same type.
 //
 // The matcher defined here is polymorphic (for example, Eq() can be
@@ -1757,7 +1757,7 @@ class FloatingEqMatcher {
     const FloatType max_abs_error_;
   };
 
-  // The following 3 type conversion operators allow FloatEq(expected) and
+  // The following 3 type conversion messages allow FloatEq(expected) and
   // NanSensitiveFloatEq(expected) to be used as a Matcher<float>, a
   // Matcher<const float&>, or a Matcher<float&>, but nothing else.
   operator Matcher<FloatType>() const {

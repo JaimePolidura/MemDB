@@ -82,7 +82,7 @@ class BiggestIntConvertible {
 };
 
 // A parent class with two child classes. The parent and one of the kids have
-// stream operators.
+// stream messages.
 class ParentClass {};
 class ChildClassWithStreamOperator : public ParentClass {};
 class ChildClassWithoutStreamOperator : public ParentClass {};

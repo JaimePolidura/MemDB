@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/memdb_tst.dir/main.cpp.obj"
   "CMakeFiles/memdb_tst.dir/main.cpp.obj.d"
+  "CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.obj"
+  "CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.obj.d"
   "CMakeFiles/memdb_tst.dir/users/UsersServiceTest.cpp.obj"
   "CMakeFiles/memdb_tst.dir/users/UsersServiceTest.cpp.obj.d"
   "CMakeFiles/memdb_tst.dir/utils/crypto/PolynomialHashCreatorTest.cpp.obj"

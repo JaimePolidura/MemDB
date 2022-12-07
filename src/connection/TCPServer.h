@@ -35,32 +35,6 @@ private:
     }
 
     void handleNewConnection(boost::asio::ip::tcp::socket& socket) {
-        boost::system::error_code ec;
-        size_t bytes = socket.available();
-        std::vector<char> vBuffer(bytes);
-
-        socket.read_some(boost::asio::buffer(vBuffer.data(), vBuffer.size()), ec);
-
-        unsigned short authHeaderLength = (unsigned short) vBuffer[0] >> 2;
-
-        char authKeyBuffer [authHeaderLength];
-        for(int i = 0; i < authHeaderLength; i++)
-            authKeyBuffer[i] = vBuffer[i + 1];
-
-        bool authenticationResult = this->authenicator.authenticate(authKeyBuffer);
-        if(!authenticationResult){
-            socket.close(ec);
-            return;
-        }
-
         //TODO Proceed
-    }
-
-    unsigned short getLength(const std::vector<char>& buffer, int pos) {
-        return (unsigned short) buffer[pos] >> 2;
-    }
-
-    bool getFlag(const std::vector<char>& buffer, int pos, char flagMask) {
-        return (buffer[pos] << 6) & flagMask;
     }
 };

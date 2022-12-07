@@ -4,9 +4,9 @@
 TEST(UsersService, ShouldSaveAndGet) {
     UsersRepository usersService{};
     const char * userKey = "hola";
-    usersService.save(4, userKey);
+    usersService.save(User{userKey});
 
-    ASSERT_FALSE(usersService.exists(5, "prueba"));
-    ASSERT_FALSE(usersService.exists(4, "hold"));
-    ASSERT_TRUE(usersService.exists(4, "hola"));
+    ASSERT_FALSE(usersService.existsByAuthKey("prueba"));
+    ASSERT_FALSE(usersService.existsByAuthKey("hold"));
+    ASSERT_TRUE(usersService.existsByAuthKey("hola"));
 }

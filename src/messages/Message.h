@@ -40,8 +40,8 @@ public:
 
 
 struct Message {
-    AuthenticationBody authentication;
-    OperationBody operation;
+    const AuthenticationBody * authentication;
+    const OperationBody * operation;
 
     Message() = default;
 };

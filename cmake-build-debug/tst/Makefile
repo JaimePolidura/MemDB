@@ -198,6 +198,30 @@ main.cpp.s:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+messages/MessageParserTest.obj: messages/MessageParserTest.cpp.obj
+.PHONY : messages/MessageParserTest.obj
+
+# target to build an object file
+messages/MessageParserTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.obj
+.PHONY : messages/MessageParserTest.cpp.obj
+
+messages/MessageParserTest.i: messages/MessageParserTest.cpp.i
+.PHONY : messages/MessageParserTest.i
+
+# target to preprocess a source file
+messages/MessageParserTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.i
+.PHONY : messages/MessageParserTest.cpp.i
+
+messages/MessageParserTest.s: messages/MessageParserTest.cpp.s
+.PHONY : messages/MessageParserTest.s
+
+# target to generate assembly for a file
+messages/MessageParserTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.s
+.PHONY : messages/MessageParserTest.cpp.s
+
 users/UsersServiceTest.obj: users/UsersServiceTest.cpp.obj
 .PHONY : users/UsersServiceTest.obj
 
@@ -286,6 +310,9 @@ help:
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
+	@echo ... messages/MessageParserTest.obj
+	@echo ... messages/MessageParserTest.i
+	@echo ... messages/MessageParserTest.s
 	@echo ... users/UsersServiceTest.obj
 	@echo ... users/UsersServiceTest.i
 	@echo ... users/UsersServiceTest.s

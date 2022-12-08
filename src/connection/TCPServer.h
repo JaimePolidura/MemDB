@@ -4,6 +4,7 @@
 #include <boost/asio.hpp>
 #include "../Users/Authenticator.h"
 #include "../Messages/MessageParser.h"
+#include "TCPConnection.h"
 
 using namespace boost::asio;
 
@@ -26,8 +27,8 @@ public:
             this->waitForConnectoins();
 
             this->ioContext.run();
-        }catch (std::exception& e) {
-            printf("[Server] fatal error\n");
+        }catch (const std::exception& e) {
+            printf("[Server] fatal error %s\n", e.what());
         }
     }
 
@@ -36,12 +37,16 @@ private:
         this->acceptator.async_accept([this](std::error_code ec, ip::tcp::socket socket) {
             printf("[Server] Accepted connection\n");
 
-            size_t bytes = socket.available();
-            std::vector<uint8_t> buffer(bytes);
+            std::shared_ptr<TCPConnection> connection = std::make_shared<TCPConnection>(std::move(socket));
 
-            socket.async_read_some(boost::asio::buffer(buffer), [this](const boost::system::error_code& error, std::size_t bytesRead) {
-                printf("[Server] Read %llu bytes\n", bytesRead);
-            });
+            connection->read();
+
+//            socket.async_read_some(boost::asio::buffer(buffer), [&buffer](const boost::system::error_code& ec, std::size_t bytesRead) {
+//                if(!ec && ec != boost::asio::error::eof){
+//                    printf("[Server] Read %llu bytes\n", bytesRead);
+//                    printf("[Server] Read message: %s\n", buffer.data());
+//                }
+//            });
 
             this->waitForConnectoins();
         });

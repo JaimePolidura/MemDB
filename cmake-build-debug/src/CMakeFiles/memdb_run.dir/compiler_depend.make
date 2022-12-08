@@ -1392,7 +1392,9 @@ src/CMakeFiles/memdb_run.dir/main.cpp.obj: ../src/main.cpp \
   ../src/users/User.h \
   ../src/messages/MessageParser.h \
   ../src/messages/Message.h \
-  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bitset
+  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bitset \
+  ../src/connection/TCPConnection.h \
+  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/iostream
 
 src/CMakeFiles/memdb_run.dir/users/UsersRepository.cpp.obj: ../src/users/UsersRepository.cpp \
   ../src/users/UsersRepository.h \
@@ -4622,6 +4624,10 @@ C:/libs/C++/boost_1_80_0/boost/asio/impl/write_at.hpp:
 ../src/users/User.h:
 
 ../src/messages/Message.h:
+
+../src/connection/TCPConnection.h:
+
+C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/iostream:
 
 ../src/users/UsersRepository.cpp:
 

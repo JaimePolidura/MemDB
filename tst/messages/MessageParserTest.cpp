@@ -2,41 +2,6 @@
 #include "messages/Message.h"
 #include "messages/MessageParser.h"
 
-TEST(MessageParser, WithCompoundArgs) {
-    MessageParser messageParser{};
-
-    std::vector<uint8_t> buffer = {
-            0x0C, //000011 00 -> Lengh: 3 Flag1: 0 Flag2: 0
-            0x4C, //L
-            0x4F, //O
-            0x4C, //L
-            0x0B, //000010 11 -> Operator number: 2, Flag1: 1, Flag2: 1
-            0x01, //Arg nº1 00000001
-            0x01, //Arg nº2 00000001 257 longitud total
-    };
-
-    buffer.reserve(261);
-
-    for(int i = 0; i < 257; i++)
-        buffer.push_back(0x41);
-
-    buffer.push_back(0x01); // Length: 1
-    buffer.push_back(0x00); // Length 0
-    buffer.push_back(0x42); // B
-
-    std::shared_ptr<Message> parsedMessage = messageParser.parse(buffer);
-
-    ASSERT_EQ(parsedMessage->operation->numberArgs, 2);
-
-    OperatorArgument * firstArg = parsedMessage->operation->args;
-    ASSERT_EQ(firstArg->lengthArg, 257);
-    for(int i = 0; i < firstArg->lengthArg; i++)
-        ASSERT_TRUE(* (firstArg->arg + i) == 'A');
-
-    OperatorArgument * secondArg = parsedMessage->operation->args + 1;
-    ASSERT_EQ(secondArg->lengthArg, 1);
-    ASSERT_TRUE(* secondArg->arg == 'B');
-}
 
 TEST(MessageParser, WithArgs) {
     MessageParser messageParser{};

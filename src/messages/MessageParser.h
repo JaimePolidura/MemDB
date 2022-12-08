@@ -46,8 +46,8 @@ private:
         std::vector<OperatorArgument> arguments;
 
         while (lastIndexChecked + 1 < buffer.size()) {
-            unsigned short argLength = this->getValue(buffer, lastIndexChecked, flagOperation1);
-            int argValuePosition = lastIndexChecked + (flagOperation1 ? 2 : 1);
+            unsigned short argLength = (unsigned short) buffer[lastIndexChecked];
+            int argValuePosition = lastIndexChecked + 1;
             char * argValue = this->fill(buffer, argValuePosition, argValuePosition + argLength);
 
             lastIndexChecked = argValuePosition + argLength;
@@ -66,12 +66,6 @@ private:
             toFill[i - initialPos] = buffer[i];
 
         return toFill;
-    }
-
-    unsigned short getValue(const std::vector<uint8_t>& vector, int pos, bool occupiesTwoSlots = false) {
-        return (unsigned short) ( occupiesTwoSlots && vector[pos + 1] != 0x00 ? //Lenght of arg occupies two bytes and second byte is not null (0x00)
-                ((unsigned short) vector[pos]) << 8 | vector[pos + 1] :
-                vector[pos]);
     }
 
     unsigned short getValueWithoutFlags(const std::vector<uint8_t>& buffer, int pos) {

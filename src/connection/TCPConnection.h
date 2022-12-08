@@ -5,26 +5,26 @@
 #include <memory>
 #include <utility>
 #include <boost/asio.hpp>
+#include <iostream>
 
 using namespace boost::asio;
 
 class TCPConnection : public std::enable_shared_from_this<TCPConnection> {
 private:
     ip::tcp::socket socket;
-    char data[2];
+    uint8_t messageBuffer[1500];
+    MessageParser messageParser;
 
 public:
     explicit TCPConnection(ip::tcp::socket socket) : socket{std::move(socket)} {}
 
     void read() {
-        std::shared_ptr<TCPConnection> self {shared_from_this()};
+        std::shared_ptr<TCPConnection> self = shared_from_this();
 
-        this->socket.async_read_some(boost::asio::buffer(data, 2), [this, self](boost::system::error_code ec, std::size_t length){
-            printf("Read bytes %llu\n", length);
+        this->socket.async_read_some(boost::asio::buffer(messageBuffer, 1500), [this, self](boost::system::error_code ec, std::size_t length){
+            if(ec) return;
 
-            if(!ec){
-                printf("Message: %s\n", this->data);
-            }
+            printf("[SERVER] Read message with bytes: %llu\n", length);
         });
     }
 };

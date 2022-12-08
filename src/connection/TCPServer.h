@@ -14,41 +14,33 @@ private:
     Authenticator authenicator;
     io_context ioContext;
     ip::tcp::acceptor acceptator;
-    MessageParser messageParser;
 
 public:
     TCPServer(short unsigned port, Authenticator authenicator): port(port), authenicator(std::move(authenicator)),
                                                                 acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}) {};
 
     void run() {
-        printf("[Server] Waiting for conenctions...\n");
+        printf("[SERVER] Waiting for conenctions...\n");
 
         try{
-            this->waitForConnectoins();
+            this->acceptNewConnections();
 
             this->ioContext.run();
         }catch (const std::exception& e) {
-            printf("[Server] fatal error %s\n", e.what());
+            printf("[SERVER] fatal error %s\n", e.what());
         }
     }
 
 private:
-    void waitForConnectoins() {
+    void acceptNewConnections() {
         this->acceptator.async_accept([this](std::error_code ec, ip::tcp::socket socket) {
-            printf("[Server] Accepted connection\n");
+            printf("[SERVER] Accepted connection\n");
 
             std::shared_ptr<TCPConnection> connection = std::make_shared<TCPConnection>(std::move(socket));
 
             connection->read();
 
-//            socket.async_read_some(boost::asio::buffer(buffer), [&buffer](const boost::system::error_code& ec, std::size_t bytesRead) {
-//                if(!ec && ec != boost::asio::error::eof){
-//                    printf("[Server] Read %llu bytes\n", bytesRead);
-//                    printf("[Server] Read message: %s\n", buffer.data());
-//                }
-//            });
-
-            this->waitForConnectoins();
+            this->acceptNewConnections();
         });
     }
 };

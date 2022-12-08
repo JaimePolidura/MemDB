@@ -1389,7 +1389,12 @@ src/CMakeFiles/memdb_lib.dir/main.cpp.obj: ../src/main.cpp \
   C:/libs/C++/boost_1_80_0/boost/asio/impl/write_at.hpp \
   ../src/users/Authenticator.h \
   ../src/users/UsersRepository.h \
-  ../src/users/User.h
+  ../src/users/User.h \
+  ../src/messages/MessageParser.h \
+  ../src/messages/Message.h \
+  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bitset \
+  ../src/connection/TCPConnection.h \
+  C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/iostream
 
 src/CMakeFiles/memdb_lib.dir/users/UsersRepository.cpp.obj: ../src/users/UsersRepository.cpp \
   ../src/users/UsersRepository.h \
@@ -2323,6 +2328,8 @@ C:/libs/C++/boost_1_80_0/boost/preprocessor/facilities/is_empty_variadic.hpp:
 C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/x86_64-w64-mingw32/include/systemtopologyapi.h:
 
 C:/libs/C++/boost_1_80_0/boost/date_time/period.hpp:
+
+../src/messages/MessageParser.h:
 
 C:/libs/C++/boost_1_80_0/boost/predef/os/bsd/free.h:
 
@@ -3584,6 +3591,8 @@ C:/libs/C++/boost_1_80_0/boost/asio/execution/impl/bad_executor.ipp:
 
 C:/libs/C++/boost_1_80_0/boost/asio/detail/executor_function.hpp:
 
+C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bitset:
+
 C:/libs/C++/boost_1_80_0/boost/asio/detail/non_const_lvalue.hpp:
 
 C:/libs/C++/boost_1_80_0/boost/asio/detail/scoped_ptr.hpp:
@@ -4613,6 +4622,12 @@ C:/libs/C++/boost_1_80_0/boost/asio/impl/write_at.hpp:
 ../src/users/UsersRepository.h:
 
 ../src/users/User.h:
+
+../src/messages/Message.h:
+
+../src/connection/TCPConnection.h:
+
+C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/iostream:
 
 ../src/users/UsersRepository.cpp:
 

@@ -1,5 +1,5 @@
 #include <iostream>
-#include "utils/datastructures/DBMap.cpp"
+#include "utils/datastructures/maps/DBMap.cpp"
 
 int main() {
     std::cout << "Hello, World!" << std::endl;

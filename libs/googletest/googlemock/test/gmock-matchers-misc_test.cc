@@ -328,7 +328,7 @@ TEST(ContainerEqExtraTest, MultiSetOfIntDuplicateDifference) {
 }
 
 // Tests that ContainerEq works for non-trivial associative containers,
-// like maps.
+// like map.
 TEST(ContainerEqExtraTest, WorksForMaps) {
   map<int, std::string> my_map;
   my_map[0] = "a";

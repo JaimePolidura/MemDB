@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "utils/datastructures/DBMap.h"
+#include "utils/datastructures/map/DBMap.h"
 #include "utils/crypto/PolynomialHashCreator.h"
 #include "string"
 #include "utils/crypto/HashCreator.h"

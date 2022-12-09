@@ -67,8 +67,8 @@ def SetEnvVar(env_var, value):
 # complaint.
 TestCase = _test_module.TestCase  # pylint: disable=C6409
 
-# Initially maps a flag to its default value. After
-# _ParseAndStripGTestFlags() is called, maps a flag to its actual value.
+# Initially map a flag to its default value. After
+# _ParseAndStripGTestFlags() is called, map a flag to its actual value.
 _flag_map = {'source_dir': os.path.dirname(sys.argv[0]),
              'build_dir': os.path.dirname(sys.argv[0])}
 _gtest_flags_are_parsed = False

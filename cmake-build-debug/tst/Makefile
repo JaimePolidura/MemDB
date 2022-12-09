@@ -270,29 +270,29 @@ utils/crypto/PolynomialHashCreatorTest.cpp.s:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/crypto/PolynomialHashCreatorTest.cpp.s
 .PHONY : utils/crypto/PolynomialHashCreatorTest.cpp.s
 
-utils/datastructures/DBMapTest.obj: utils/datastructures/DBMapTest.cpp.obj
-.PHONY : utils/datastructures/DBMapTest.obj
+utils/datastructures/map/DBMapTest.obj: utils/datastructures/map/DBMapTest.cpp.obj
+.PHONY : utils/datastructures/map/DBMapTest.obj
 
 # target to build an object file
-utils/datastructures/DBMapTest.cpp.obj:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/DBMapTest.cpp.obj
-.PHONY : utils/datastructures/DBMapTest.cpp.obj
+utils/datastructures/map/DBMapTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.obj
+.PHONY : utils/datastructures/map/DBMapTest.cpp.obj
 
-utils/datastructures/DBMapTest.i: utils/datastructures/DBMapTest.cpp.i
-.PHONY : utils/datastructures/DBMapTest.i
+utils/datastructures/map/DBMapTest.i: utils/datastructures/map/DBMapTest.cpp.i
+.PHONY : utils/datastructures/map/DBMapTest.i
 
 # target to preprocess a source file
-utils/datastructures/DBMapTest.cpp.i:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/DBMapTest.cpp.i
-.PHONY : utils/datastructures/DBMapTest.cpp.i
+utils/datastructures/map/DBMapTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.i
+.PHONY : utils/datastructures/map/DBMapTest.cpp.i
 
-utils/datastructures/DBMapTest.s: utils/datastructures/DBMapTest.cpp.s
-.PHONY : utils/datastructures/DBMapTest.s
+utils/datastructures/map/DBMapTest.s: utils/datastructures/map/DBMapTest.cpp.s
+.PHONY : utils/datastructures/map/DBMapTest.s
 
 # target to generate assembly for a file
-utils/datastructures/DBMapTest.cpp.s:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/DBMapTest.cpp.s
-.PHONY : utils/datastructures/DBMapTest.cpp.s
+utils/datastructures/map/DBMapTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.s
+.PHONY : utils/datastructures/map/DBMapTest.cpp.s
 
 # Help Target
 help:
@@ -319,9 +319,9 @@ help:
 	@echo ... utils/crypto/PolynomialHashCreatorTest.obj
 	@echo ... utils/crypto/PolynomialHashCreatorTest.i
 	@echo ... utils/crypto/PolynomialHashCreatorTest.s
-	@echo ... utils/datastructures/DBMapTest.obj
-	@echo ... utils/datastructures/DBMapTest.i
-	@echo ... utils/datastructures/DBMapTest.s
+	@echo ... utils/datastructures/map/DBMapTest.obj
+	@echo ... utils/datastructures/map/DBMapTest.i
+	@echo ... utils/datastructures/map/DBMapTest.s
 .PHONY : help
 
 

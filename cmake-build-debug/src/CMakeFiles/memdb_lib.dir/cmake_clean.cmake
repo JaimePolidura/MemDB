@@ -5,8 +5,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/memdb_lib.dir/users/UsersRepository.cpp.obj.d"
   "CMakeFiles/memdb_lib.dir/utils/crypto/PolynomialHashCreator.cpp.obj"
   "CMakeFiles/memdb_lib.dir/utils/crypto/PolynomialHashCreator.cpp.obj.d"
-  "CMakeFiles/memdb_lib.dir/utils/datastructures/DBMap.cpp.obj"
-  "CMakeFiles/memdb_lib.dir/utils/datastructures/DBMap.cpp.obj.d"
+  "CMakeFiles/memdb_lib.dir/utils/datastructures/map/DBMap.cpp.obj"
+  "CMakeFiles/memdb_lib.dir/utils/datastructures/map/DBMap.cpp.obj.d"
   "libmemdb_lib.a"
   "libmemdb_lib.pdb"
 )

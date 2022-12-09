@@ -448,6 +448,10 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/connection/TCPConnection.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/connection/TCPServer.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
@@ -512,15 +516,23 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/datastructures/DBMap.cpp">
+		<Unit filename="C:/programacion/MemDB/src/utils/datastructures/map">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/datastructures/DBMap.h">
+		<Unit filename="C:/programacion/MemDB/src/utils/datastructures/map/DBMap.cpp">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/datastructures/Map.h">
+		<Unit filename="C:/programacion/MemDB/src/utils/datastructures/map/DBMap.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/utils/datastructures/map/Map.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/utils/datastructures/queue">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
@@ -536,7 +548,7 @@
 		<Unit filename="C:/programacion/MemDB/tst/utils/crypto/PolynomialHashCreatorTest.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/tst/utils/datastructures/DBMapTest.cpp">
+		<Unit filename="C:/programacion/MemDB/tst/utils/datastructures/map/DBMapTest.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/CMakeLists.txt">

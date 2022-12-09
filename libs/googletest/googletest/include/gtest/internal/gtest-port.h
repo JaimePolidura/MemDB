@@ -237,7 +237,7 @@
 //                         string.
 //
 // Integer types:
-//   TypeWithSize   - maps an integer to a int type.
+//   TypeWithSize   - map an integer to a int type.
 //   TimeInMillis   - integers of known sizes.
 //   BiggestInt     - the biggest signed integer type.
 //
@@ -2139,7 +2139,7 @@ using BiggestInt = long long;  // NOLINT
 constexpr BiggestInt kMaxBiggestInt = (std::numeric_limits<BiggestInt>::max)();
 
 // This template class serves as a compile-time function from valueSize to
-// type.  It maps a valueSize in bytes to a primitive type with that
+// type.  It map a valueSize in bytes to a primitive type with that
 // valueSize. e.g.
 //
 //   TypeWithSize<4>::UInt

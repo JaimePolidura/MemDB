@@ -573,7 +573,7 @@ class ThreadLocalRegistryImpl {
   }
 
  private:
-  // In a particular thread, maps a ThreadLocal object to its value.
+  // In a particular thread, map a ThreadLocal object to its value.
   typedef std::map<const ThreadLocalBase*,
                    std::shared_ptr<ThreadLocalValueHolderBase> >
       ThreadLocalValues;

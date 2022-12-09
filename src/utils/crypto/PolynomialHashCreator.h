@@ -1,7 +1,7 @@
 #pragma once
 
 #include "HashCreator.h"
-#include "utils/datastructures/DBMap.h"
+#include "utils/datastructures/map/DBMap.h"
 #include <string>
 #include <tgmath.h>
 

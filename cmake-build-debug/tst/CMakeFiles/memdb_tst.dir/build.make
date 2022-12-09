@@ -128,20 +128,20 @@ tst/CMakeFiles/memdb_tst.dir/utils/crypto/PolynomialHashCreatorTest.cpp.s: cmake
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_tst.dir/utils/crypto/PolynomialHashCreatorTest.cpp.s"
 	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\tst\utils\crypto\PolynomialHashCreatorTest.cpp -o CMakeFiles\memdb_tst.dir\utils\crypto\PolynomialHashCreatorTest.cpp.s
 
-tst/CMakeFiles/memdb_tst.dir/utils/datastructures/DBMapTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/flags.make
-tst/CMakeFiles/memdb_tst.dir/utils/datastructures/DBMapTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/includes_CXX.rsp
-tst/CMakeFiles/memdb_tst.dir/utils/datastructures/DBMapTest.cpp.obj: ../tst/utils/datastructures/DBMapTest.cpp
-tst/CMakeFiles/memdb_tst.dir/utils/datastructures/DBMapTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object tst/CMakeFiles/memdb_tst.dir/utils/datastructures/DBMapTest.cpp.obj"
-	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT tst/CMakeFiles/memdb_tst.dir/utils/datastructures/DBMapTest.cpp.obj -MF CMakeFiles\memdb_tst.dir\utils\datastructures\DBMapTest.cpp.obj.d -o CMakeFiles\memdb_tst.dir\utils\datastructures\DBMapTest.cpp.obj -c C:\programacion\MemDB\tst\utils\datastructures\DBMapTest.cpp
+tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/flags.make
+tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/includes_CXX.rsp
+tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.obj: ../tst/utils/datastructures/map/DBMapTest.cpp
+tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.obj"
+	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.obj -MF CMakeFiles\memdb_tst.dir\utils\datastructures\map\DBMapTest.cpp.obj.d -o CMakeFiles\memdb_tst.dir\utils\datastructures\map\DBMapTest.cpp.obj -c C:\programacion\MemDB\tst\utils\datastructures\map\DBMapTest.cpp
 
-tst/CMakeFiles/memdb_tst.dir/utils/datastructures/DBMapTest.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/memdb_tst.dir/utils/datastructures/DBMapTest.cpp.i"
-	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\programacion\MemDB\tst\utils\datastructures\DBMapTest.cpp > CMakeFiles\memdb_tst.dir\utils\datastructures\DBMapTest.cpp.i
+tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.i"
+	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\programacion\MemDB\tst\utils\datastructures\map\DBMapTest.cpp > CMakeFiles\memdb_tst.dir\utils\datastructures\map\DBMapTest.cpp.i
 
-tst/CMakeFiles/memdb_tst.dir/utils/datastructures/DBMapTest.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_tst.dir/utils/datastructures/DBMapTest.cpp.s"
-	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\tst\utils\datastructures\DBMapTest.cpp -o CMakeFiles\memdb_tst.dir\utils\datastructures\DBMapTest.cpp.s
+tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.s"
+	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\tst\utils\datastructures\map\DBMapTest.cpp -o CMakeFiles\memdb_tst.dir\utils\datastructures\map\DBMapTest.cpp.s
 
 # Object files for target memdb_tst
 memdb_tst_OBJECTS = \
@@ -149,7 +149,7 @@ memdb_tst_OBJECTS = \
 "CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.obj" \
 "CMakeFiles/memdb_tst.dir/users/UsersServiceTest.cpp.obj" \
 "CMakeFiles/memdb_tst.dir/utils/crypto/PolynomialHashCreatorTest.cpp.obj" \
-"CMakeFiles/memdb_tst.dir/utils/datastructures/DBMapTest.cpp.obj"
+"CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.obj"
 
 # External object files for target memdb_tst
 memdb_tst_EXTERNAL_OBJECTS =
@@ -158,7 +158,7 @@ tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/main.cpp.obj
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.obj
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/users/UsersServiceTest.cpp.obj
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/utils/crypto/PolynomialHashCreatorTest.cpp.obj
-tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/utils/datastructures/DBMapTest.cpp.obj
+tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.obj
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/build.make
 tst/memdb_tst.exe: src/libmemdb_lib.a
 tst/memdb_tst.exe: lib/libgtest.a

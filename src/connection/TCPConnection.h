@@ -29,6 +29,8 @@ public:
             std::vector<uint8_t> vectorBuffer(this->messageBuffer, this->messageBuffer + length);
 
             std::shared_ptr<Message> message = this->messageParser.parse(vectorBuffer);
+
+            this->read();
         });
     }
 };

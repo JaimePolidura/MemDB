@@ -1,9 +1,27 @@
 #include "gtest/gtest.h"
 #include "utils/datastructures/queue/BlockingQueue.h"
-#include <memory>
 #include <vector>
 
-TEST(LockFreeQueue, ShouldEnqueueAndDequeue) {
+TEST(BlockingQueue, ShouldBlockAndDequeue) {
+    BlockingQueue<int> queue{};
+
+    std::thread tDequeuer([&queue]{
+        int toDequeue = queue.dequeue();
+
+        ASSERT_EQ(toDequeue, 10);
+        ASSERT_TRUE(queue.getSize() == 0);
+    });
+
+    std::thread tEnqueuer([&queue]{
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        queue.enqueue(10);
+    });
+
+    tEnqueuer.join();
+    tDequeuer.join();
+}
+
+TEST(BlockingQueue, ShouldEnqueueAndDequeue) {
     BlockingQueue<int> queue{};
 
     queue.enqueue(1);
@@ -25,7 +43,7 @@ TEST(LockFreeQueue, ShouldEnqueueAndDequeue) {
     ASSERT_EQ(queue.getSize(), 0);
 }
 
-TEST(LockFreeQueue, SizeShouldBeZero) {
+TEST(BlockingQueue, SizeShouldBeZero) {
     BlockingQueue<int> queue{};
 
     ASSERT_EQ(queue.getSize(), 0);

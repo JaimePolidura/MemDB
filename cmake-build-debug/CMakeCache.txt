@@ -17,89 +17,11 @@
 //Builds the googlemock subproject
 BUILD_GMOCK:BOOL=ON
 
-//Boost 1.80.0 library (debug)
-Boost_1.80.0_LIBRARY_DEBUG:FILEPATH=Boost_1.80.0_LIBRARY_DEBUG-NOTFOUND
-
-//Boost 1.80.0 library (release)
-Boost_1.80.0_LIBRARY_RELEASE:FILEPATH=Boost_1.80.0_LIBRARY_RELEASE-NOTFOUND
-
-//Boost asio library (debug)
-Boost_ASIO_LIBRARY_DEBUG:FILEPATH=Boost_ASIO_LIBRARY_DEBUG-NOTFOUND
-
-//Boost asio library (release)
-Boost_ASIO_LIBRARY_RELEASE:FILEPATH=Boost_ASIO_LIBRARY_RELEASE-NOTFOUND
-
-//Boost atomic library (debug)
-Boost_ATOMIC_LIBRARY_DEBUG:FILEPATH=Boost_ATOMIC_LIBRARY_DEBUG-NOTFOUND
-
-//Boost atomic library (release)
-Boost_ATOMIC_LIBRARY_RELEASE:FILEPATH=Boost_ATOMIC_LIBRARY_RELEASE-NOTFOUND
-
-//Boost chrono library (debug)
-Boost_CHRONO_LIBRARY_DEBUG:FILEPATH=Boost_CHRONO_LIBRARY_DEBUG-NOTFOUND
-
-//Boost chrono library (release)
-Boost_CHRONO_LIBRARY_RELEASE:FILEPATH=Boost_CHRONO_LIBRARY_RELEASE-NOTFOUND
-
-//Boost components library (debug)
-Boost_COMPONENTS_LIBRARY_DEBUG:FILEPATH=Boost_COMPONENTS_LIBRARY_DEBUG-NOTFOUND
-
-//Boost components library (release)
-Boost_COMPONENTS_LIBRARY_RELEASE:FILEPATH=Boost_COMPONENTS_LIBRARY_RELEASE-NOTFOUND
-
 //The directory containing a CMake configuration file for Boost.
 Boost_DIR:PATH=Boost_DIR-NOTFOUND
 
 //Path to a file.
 Boost_INCLUDE_DIR:PATH=C:/libs/C++/boost_1_80_0
-
-//Boost like library (debug)
-Boost_LIKE_LIBRARY_DEBUG:FILEPATH=Boost_LIKE_LIBRARY_DEBUG-NOTFOUND
-
-//Boost like library (release)
-Boost_LIKE_LIBRARY_RELEASE:FILEPATH=Boost_LIKE_LIBRARY_RELEASE-NOTFOUND
-
-//Boost link library (debug)
-Boost_LINK_LIBRARY_DEBUG:FILEPATH=Boost_LINK_LIBRARY_DEBUG-NOTFOUND
-
-//Boost link library (release)
-Boost_LINK_LIBRARY_RELEASE:FILEPATH=Boost_LINK_LIBRARY_RELEASE-NOTFOUND
-
-//Boost system library (debug)
-Boost_SYSTEM_LIBRARY_DEBUG:FILEPATH=Boost_SYSTEM_LIBRARY_DEBUG-NOTFOUND
-
-//Boost system library (release)
-Boost_SYSTEM_LIBRARY_RELEASE:FILEPATH=Boost_SYSTEM_LIBRARY_RELEASE-NOTFOUND
-
-//Boost thread library (debug)
-Boost_THREAD_LIBRARY_DEBUG:FILEPATH=Boost_THREAD_LIBRARY_DEBUG-NOTFOUND
-
-//Boost thread library (release)
-Boost_THREAD_LIBRARY_RELEASE:FILEPATH=Boost_THREAD_LIBRARY_RELEASE-NOTFOUND
-
-//Boost to library (debug)
-Boost_TO_LIBRARY_DEBUG:FILEPATH=Boost_TO_LIBRARY_DEBUG-NOTFOUND
-
-//Boost to library (release)
-Boost_TO_LIBRARY_RELEASE:FILEPATH=Boost_TO_LIBRARY_RELEASE-NOTFOUND
-
-//Boost with library (debug)
-Boost_WITH_LIBRARY_DEBUG:FILEPATH=Boost_WITH_LIBRARY_DEBUG-NOTFOUND
-
-//Boost with library (release)
-Boost_WITH_LIBRARY_RELEASE:FILEPATH=Boost_WITH_LIBRARY_RELEASE-NOTFOUND
-
-//Boost would library (debug)
-Boost_WOULD_LIBRARY_DEBUG:FILEPATH=Boost_WOULD_LIBRARY_DEBUG-NOTFOUND
-
-//Boost would library (release)
-Boost_WOULD_LIBRARY_RELEASE:FILEPATH=Boost_WOULD_LIBRARY_RELEASE-NOTFOUND
-
-//Boost you library (debug)
-Boost_YOU_LIBRARY_DEBUG:FILEPATH=Boost_YOU_LIBRARY_DEBUG-NOTFOUND
-
-//Boost you library (release)
-Boost_YOU_LIBRARY_RELEASE:FILEPATH=Boost_YOU_LIBRARY_RELEASE-NOTFOUND
 
 //Path to a program.
 CMAKE_ADDR2LINE:FILEPATH=C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/addr2line.exe
@@ -241,7 +163,7 @@ CMAKE_INSTALL_MANDIR:PATH=
 CMAKE_INSTALL_OLDINCLUDEDIR:PATH=/usr/include
 
 //Install path prefix, prepended onto install directories.
-CMAKE_INSTALL_PREFIX:PATH=C:/Program Files (x86)/untitled
+CMAKE_INSTALL_PREFIX:PATH=C:/Program Files (x86)/memdb
 
 //Run-time variable data (LOCALSTATEDIR/run)
 CMAKE_INSTALL_RUNSTATEDIR:PATH=
@@ -394,36 +316,6 @@ CMAKE_STRIP:FILEPATH=C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/c
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
-//Directory under which to collect all populated content
-FETCHCONTENT_BASE_DIR:PATH=C:/programacion/MemDB/cmake-build-debug/_deps
-
-//Disables all attempts to download or update content and assumes
-// source dirs already exist
-FETCHCONTENT_FULLY_DISCONNECTED:BOOL=OFF
-
-//Enables QUIET option for all content population
-FETCHCONTENT_QUIET:BOOL=ON
-
-//When not empty, overrides where to find pre-populated content
-// for asio
-FETCHCONTENT_SOURCE_DIR_ASIO:PATH=
-
-//When not empty, overrides where to find pre-populated content
-// for asio-cmake
-FETCHCONTENT_SOURCE_DIR_ASIO-CMAKE:PATH=
-
-//Enables UPDATE_DISCONNECTED behavior for all content population
-FETCHCONTENT_UPDATES_DISCONNECTED:BOOL=OFF
-
-//Enables UPDATE_DISCONNECTED behavior just for population of asio
-FETCHCONTENT_UPDATES_DISCONNECTED_ASIO:BOOL=OFF
-
-//Enables UPDATE_DISCONNECTED behavior just for population of asio-cmake
-FETCHCONTENT_UPDATES_DISCONNECTED_ASIO-CMAKE:BOOL=OFF
-
-//Git command line client
-GIT_EXECUTABLE:FILEPATH=C:/Program Files/Git/cmd/git.exe
-
 //Use Abseil and RE2. Requires Abseil and RE2 to be separately
 // added to the build.
 GTEST_HAS_ABSL:BOOL=OFF
@@ -431,33 +323,6 @@ GTEST_HAS_ABSL:BOOL=OFF
 //Enable installation of googletest. (Projects embedding googletest
 // may want to turn this OFF.)
 INSTALL_GTEST:BOOL=ON
-
-//Value Computed by CMake
-asio-cmake_BINARY_DIR:STATIC=C:/programacion/MemDB/cmake-build-debug/_deps/asio-cmake-build
-
-//Value Computed by CMake
-asio-cmake_IS_TOP_LEVEL:STATIC=OFF
-
-//Value Computed by CMake
-asio-cmake_SOURCE_DIR:STATIC=C:/programacion/MemDB/cmake-build-debug/_deps/asio-cmake-src
-
-//Value Computed by CMake
-boost_asio_BINARY_DIR:STATIC=C:/programacion/MemDB/cmake-build-debug/libs/boost_asio_1_24_0/libs/asio
-
-//Value Computed by CMake
-boost_asio_IS_TOP_LEVEL:STATIC=OFF
-
-//Value Computed by CMake
-boost_asio_SOURCE_DIR:STATIC=C:/programacion/MemDB/libs/boost_asio_1_24_0/libs/asio
-
-//Value Computed by CMake
-boost_system_BINARY_DIR:STATIC=C:/programacion/MemDB/cmake-build-debug/libs/boost_asio_1_24_0/libs/system
-
-//Value Computed by CMake
-boost_system_IS_TOP_LEVEL:STATIC=OFF
-
-//Value Computed by CMake
-boost_system_SOURCE_DIR:STATIC=C:/programacion/MemDB/libs/boost_asio_1_24_0/libs/system
 
 //Value Computed by CMake
 gmock_BINARY_DIR:STATIC=C:/programacion/MemDB/cmake-build-debug/libs/googletest/googlemock
@@ -523,76 +388,15 @@ memdb_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 memdb_SOURCE_DIR:STATIC=C:/programacion/MemDB
 
-//Value Computed by CMake
-untitled_BINARY_DIR:STATIC=C:/programacion/MemDB/cmake-build-debug
-
-//Value Computed by CMake
-untitled_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-untitled_SOURCE_DIR:STATIC=C:/programacion/MemDB
-
 
 ########################
 # INTERNAL cache entries
 ########################
 
-//ADVANCED property for variable: Boost_1.80.0_LIBRARY_DEBUG
-Boost_1.80.0_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_1.80.0_LIBRARY_RELEASE
-Boost_1.80.0_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_ASIO_LIBRARY_DEBUG
-Boost_ASIO_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_ASIO_LIBRARY_RELEASE
-Boost_ASIO_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_ATOMIC_LIBRARY_DEBUG
-Boost_ATOMIC_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_ATOMIC_LIBRARY_RELEASE
-Boost_ATOMIC_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_CHRONO_LIBRARY_DEBUG
-Boost_CHRONO_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_CHRONO_LIBRARY_RELEASE
-Boost_CHRONO_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_COMPONENTS_LIBRARY_DEBUG
-Boost_COMPONENTS_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_COMPONENTS_LIBRARY_RELEASE
-Boost_COMPONENTS_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_DIR
 Boost_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_INCLUDE_DIR
 Boost_INCLUDE_DIR-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_LIKE_LIBRARY_DEBUG
-Boost_LIKE_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_LIKE_LIBRARY_RELEASE
-Boost_LIKE_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_LINK_LIBRARY_DEBUG
-Boost_LINK_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_LINK_LIBRARY_RELEASE
-Boost_LINK_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_SYSTEM_LIBRARY_DEBUG
-Boost_SYSTEM_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_SYSTEM_LIBRARY_RELEASE
-Boost_SYSTEM_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_THREAD_LIBRARY_DEBUG
-Boost_THREAD_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_THREAD_LIBRARY_RELEASE
-Boost_THREAD_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_TO_LIBRARY_DEBUG
-Boost_TO_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_TO_LIBRARY_RELEASE
-Boost_TO_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_WITH_LIBRARY_DEBUG
-Boost_WITH_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_WITH_LIBRARY_RELEASE
-Boost_WITH_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_WOULD_LIBRARY_DEBUG
-Boost_WOULD_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_WOULD_LIBRARY_RELEASE
-Boost_WOULD_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_YOU_LIBRARY_DEBUG
-Boost_YOU_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_YOU_LIBRARY_RELEASE
-Boost_YOU_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_ADDR2LINE
 CMAKE_ADDR2LINE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_AR
@@ -681,10 +485,6 @@ CMAKE_GENERATOR_INSTANCE:INTERNAL=
 CMAKE_GENERATOR_PLATFORM:INTERNAL=
 //Name of generator toolset.
 CMAKE_GENERATOR_TOOLSET:INTERNAL=
-//Test CMAKE_HAVE_LIBC_PTHREAD
-CMAKE_HAVE_LIBC_PTHREAD:INTERNAL=1
-//Have include pthread.h
-CMAKE_HAVE_PTHREAD_H:INTERNAL=1
 //Source directory with the top level CMakeLists.txt file for this
 // project
 CMAKE_HOME_DIRECTORY:INTERNAL=C:/programacion/MemDB
@@ -793,10 +593,6 @@ CMAKE_STRIP-ADVANCED:INTERNAL=1
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Details about finding Boost
 FIND_PACKAGE_MESSAGE_DETAILS_Boost:INTERNAL=[C:/libs/C++/boost_1_80_0][c ][v1.80.0(1.80.0)]
-//Details about finding Threads
-FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
-//ADVANCED property for variable: GIT_EXECUTABLE
-GIT_EXECUTABLE-ADVANCED:INTERNAL=1
 //Components requested for this build tree.
 _Boost_COMPONENTS_SEARCHED:INTERNAL=
 //Last used Boost_INCLUDE_DIR value.
@@ -806,7 +602,7 @@ _Boost_NAMESPACE_LAST:INTERNAL=boost
 //Last used Boost_USE_MULTITHREADED value.
 _Boost_USE_MULTITHREADED_LAST:INTERNAL=TRUE
 //CMAKE_INSTALL_PREFIX during last run
-_GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX:INTERNAL=C:/Program Files (x86)/untitled
+_GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX:INTERNAL=C:/Program Files (x86)/memdb
 //Path to a program.
 _Python_EXECUTABLE:INTERNAL=_Python_EXECUTABLE-NOTFOUND
 cmake_package_name:INTERNAL=GTest

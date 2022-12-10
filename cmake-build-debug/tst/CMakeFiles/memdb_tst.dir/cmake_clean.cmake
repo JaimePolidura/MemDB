@@ -9,6 +9,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/memdb_tst.dir/utils/crypto/PolynomialHashCreatorTest.cpp.obj.d"
   "CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.obj"
   "CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.obj.d"
+  "CMakeFiles/memdb_tst.dir/utils/datastructures/queue/BlockingQueueTest.cpp.obj"
+  "CMakeFiles/memdb_tst.dir/utils/datastructures/queue/BlockingQueueTest.cpp.obj.d"
   "libmemdb_tst.dll.a"
   "memdb_tst.exe"
   "memdb_tst.exe.manifest"

@@ -294,6 +294,30 @@ utils/datastructures/map/DBMapTest.cpp.s:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.s
 .PHONY : utils/datastructures/map/DBMapTest.cpp.s
 
+utils/datastructures/queue/BlockingQueueTest.obj: utils/datastructures/queue/BlockingQueueTest.cpp.obj
+.PHONY : utils/datastructures/queue/BlockingQueueTest.obj
+
+# target to build an object file
+utils/datastructures/queue/BlockingQueueTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/queue/BlockingQueueTest.cpp.obj
+.PHONY : utils/datastructures/queue/BlockingQueueTest.cpp.obj
+
+utils/datastructures/queue/BlockingQueueTest.i: utils/datastructures/queue/BlockingQueueTest.cpp.i
+.PHONY : utils/datastructures/queue/BlockingQueueTest.i
+
+# target to preprocess a source file
+utils/datastructures/queue/BlockingQueueTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/queue/BlockingQueueTest.cpp.i
+.PHONY : utils/datastructures/queue/BlockingQueueTest.cpp.i
+
+utils/datastructures/queue/BlockingQueueTest.s: utils/datastructures/queue/BlockingQueueTest.cpp.s
+.PHONY : utils/datastructures/queue/BlockingQueueTest.s
+
+# target to generate assembly for a file
+utils/datastructures/queue/BlockingQueueTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/queue/BlockingQueueTest.cpp.s
+.PHONY : utils/datastructures/queue/BlockingQueueTest.cpp.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -322,6 +346,9 @@ help:
 	@echo ... utils/datastructures/map/DBMapTest.obj
 	@echo ... utils/datastructures/map/DBMapTest.i
 	@echo ... utils/datastructures/map/DBMapTest.s
+	@echo ... utils/datastructures/queue/BlockingQueueTest.obj
+	@echo ... utils/datastructures/queue/BlockingQueueTest.i
+	@echo ... utils/datastructures/queue/BlockingQueueTest.s
 .PHONY : help
 
 

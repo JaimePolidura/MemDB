@@ -862,7 +862,7 @@ class GTEST_API_ ExpectationBase {
   bool repeated_action_specified_;  // True if a WillRepeatedly() was specified.
   bool retires_on_saturation_;
   Clause last_clause_;
-  mutable bool action_count_checked_;  // Under mutex_.
+  mutable bool action_count_checked_;  // Under lock.
   mutable Mutex mutex_;                // Protects action_count_checked_.
 };                                     // class ExpectationBase
 

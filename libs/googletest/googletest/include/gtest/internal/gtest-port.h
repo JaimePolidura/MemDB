@@ -1620,7 +1620,7 @@ class MutexBase {
  public:
   // Acquires this mutex.
   void Lock() {
-    GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_lock(&mutex_));
+    GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_lock(&lock));
     owner_ = pthread_self();
     has_owner_ = true;
   }
@@ -1632,7 +1632,7 @@ class MutexBase {
     // the caller's responsibility to ensure that the current thread holds the
     // mutex when this is called.
     has_owner_ = false;
-    GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_unlock(&mutex_));
+    GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_unlock(&lock));
   }
 
   // Does nothing if the current thread holds the mutex. Otherwise, crashes
@@ -1648,7 +1648,7 @@ class MutexBase {
   // This means MutexBase has to be a POD and its member variables
   // have to be public.
  public:
-  pthread_mutex_t mutex_;  // The underlying pthread mutex.
+  pthread_mutex_t lock;  // The underlying pthread mutex.
   // has_owner_ indicates whether the owner_ field below contains a valid thread
   // ID and is therefore safe to inspect (e.g., to use in pthread_equal()). All
   // accesses to the owner_ field should be protected by a check of this field.
@@ -1677,10 +1677,10 @@ class MutexBase {
 class Mutex : public MutexBase {
  public:
   Mutex() {
-    GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_init(&mutex_, nullptr));
+    GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_init(&lock, nullptr));
     has_owner_ = false;
   }
-  ~Mutex() { GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_destroy(&mutex_)); }
+  ~Mutex() { GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_destroy(&lock)); }
 
  private:
   Mutex(const Mutex&) = delete;
@@ -1694,12 +1694,12 @@ class Mutex : public MutexBase {
 // "MutexLock l(&mu)".  Hence the typedef trick below.
 class GTestMutexLock {
  public:
-  explicit GTestMutexLock(MutexBase* mutex) : mutex_(mutex) { mutex_->Lock(); }
+  explicit GTestMutexLock(MutexBase* mutex) : lock(mutex) { lock->Lock(); }
 
-  ~GTestMutexLock() { mutex_->Unlock(); }
+  ~GTestMutexLock() { lock->Unlock(); }
 
  private:
-  MutexBase* const mutex_;
+  MutexBase* const lock;
 
   GTestMutexLock(const GTestMutexLock&) = delete;
   GTestMutexLock& operator=(const GTestMutexLock&) = delete;

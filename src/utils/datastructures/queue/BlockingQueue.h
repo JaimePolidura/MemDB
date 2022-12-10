@@ -10,10 +10,12 @@ class Node {
 public:
     std::shared_ptr<Node<T>> next;
     std::shared_ptr<Node<T>> prev;
-    T& data;
+    T data;
 
 public:
     Node(const T& dataCons, std::shared_ptr<Node<T>> nextCons, std::shared_ptr<Node<T>> prevCons): data(dataCons), next(nextCons), prev(prevCons) {}
+
+    Node(T&& dataCons, std::shared_ptr<Node<T>> nextCons, std::shared_ptr<Node<T>> prevCons): data(dataCons), next(nextCons), prev(prevCons) {}
 };
 
 template<typename T>
@@ -26,14 +28,12 @@ private:
     int size;
 
 public:
-    void enqueue(T&& data) noexcept {
-        this->enqueue(std::move(data));
-    }
-
     void enqueue(const T& data) {
+        T copyOfData = data;
+
         this->lock.lock();
 
-        std::shared_ptr<Node<T>> newNodeToEnqueue = std::make_shared<Node<T>>(data, nullptr, nullptr);
+        std::shared_ptr<Node<T>> newNodeToEnqueue = std::make_shared<Node<T>>(copyOfData, nullptr, nullptr);
 
         if(this->size == 0){
             this->head = this->tail = newNodeToEnqueue;

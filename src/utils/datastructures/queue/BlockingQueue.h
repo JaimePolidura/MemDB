@@ -25,6 +25,7 @@ private:
     std::shared_ptr<Node<T>> tail; //Pointing to last element added
     std::condition_variable notEmtpyCondition;
     std::mutex lock;
+    bool stop;
     int size;
 
 public:
@@ -54,9 +55,17 @@ public:
         this->lock.unlock();
     }
 
+    void stopNow() {
+        this->stop = true;
+        this->notEmtpyCondition.notify_all();
+    }
+
     T& dequeue() {
         std::unique_lock uniqueLock(this->lock);
-        this->notEmtpyCondition.wait(uniqueLock, [this]{return this->size > 0;});
+        this->notEmtpyCondition.wait(uniqueLock, [this]{ return this->size > 0 || stop; });
+
+        if(this->stop)
+            return this->head->data;
 
         std::shared_ptr<Node<T>> nodeToDequeue = this->head;
         this->head = this->head->prev;

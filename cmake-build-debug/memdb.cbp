@@ -544,11 +544,19 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/threads/CachedThreadPool.h">
+		<Unit filename="C:/programacion/MemDB/src/utils/threads/Exchanger.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/threads/Exchanger.h">
+		<Unit filename="C:/programacion/MemDB/src/utils/threads/dynamicthreadpool">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/utils/threads/dynamicthreadpool/DynamicThreadPool.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/utils/threads/dynamicthreadpool/DynamicThreadPoolWorker.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
@@ -571,6 +579,9 @@
 			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/utils/threads/ExchangerTest.cpp">
+			<Option target="memdb_tst"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/tst/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/CMakeLists.txt">

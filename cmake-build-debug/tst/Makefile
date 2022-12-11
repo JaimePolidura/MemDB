@@ -342,6 +342,30 @@ utils/threads/ExchangerTest.cpp.s:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/threads/ExchangerTest.cpp.s
 .PHONY : utils/threads/ExchangerTest.cpp.s
 
+utils/threads/dynamicthreadpool/DynamicThreadPoolTest.obj: utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj
+.PHONY : utils/threads/dynamicthreadpool/DynamicThreadPoolTest.obj
+
+# target to build an object file
+utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj
+.PHONY : utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj
+
+utils/threads/dynamicthreadpool/DynamicThreadPoolTest.i: utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.i
+.PHONY : utils/threads/dynamicthreadpool/DynamicThreadPoolTest.i
+
+# target to preprocess a source file
+utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.i
+.PHONY : utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.i
+
+utils/threads/dynamicthreadpool/DynamicThreadPoolTest.s: utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.s
+.PHONY : utils/threads/dynamicthreadpool/DynamicThreadPoolTest.s
+
+# target to generate assembly for a file
+utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.s
+.PHONY : utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -376,6 +400,9 @@ help:
 	@echo ... utils/threads/ExchangerTest.obj
 	@echo ... utils/threads/ExchangerTest.i
 	@echo ... utils/threads/ExchangerTest.s
+	@echo ... utils/threads/dynamicthreadpool/DynamicThreadPoolTest.obj
+	@echo ... utils/threads/dynamicthreadpool/DynamicThreadPoolTest.i
+	@echo ... utils/threads/dynamicthreadpool/DynamicThreadPoolTest.s
 .PHONY : help
 
 

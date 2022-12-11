@@ -22,14 +22,13 @@ private:
     int minThreads;
 
 public:
-    DynamicThreadPool(float activityFactorCons, int maxThreadsCons, int minThreadsCons, int inspectionPerTaskEnqueuedCons): actityFactor(activityFactorCons),
-        maxThreads(maxThreadsCons), minThreads(minThreadsCons), inspectionPerTaskEnqueued(inspectionPerTaskEnqueuedCons) {}
+    DynamicThreadPool(float activityFactorCons, int maxThreadsCons, int minThreadsCons, int inspectionPerTaskEnqueuedCons): actityFactor(activityFactorCons), maxThreads(maxThreadsCons),
+        minThreads(minThreadsCons), inspectionPerTaskEnqueued(inspectionPerTaskEnqueuedCons), pendingTask(std::make_shared<BlockingQueue<std::function<void()>>>()) {
 
-    void start() {
-        this->createWorkers(this->minThreads);
+        this->start();
     }
 
-    void submit(const std::function<void()>& task) {
+    void submit(std::function<void()> task) {
         this->numberTaskEnqueued++;
 
         this->pendingTask->enqueue(task);
@@ -38,7 +37,31 @@ public:
             this->makeAutoScaleInspection();
     }
 
+    void joinAll() {
+        for(const std::shared_ptr<DynamicThreadPoolWorker>& worker : this->workers){
+            worker->joinThread();
+        }
+    }
+
+    void stop() {
+        for(const std::shared_ptr<DynamicThreadPoolWorker>& worker : this->workers){
+            worker->stop();
+        }
+    }
+
+    void stopNow() {
+        for(const std::shared_ptr<DynamicThreadPoolWorker>& worker : this->workers){
+            worker->stop();
+        }
+
+        this->pendingTask->stopNow();
+    }
+
 private:
+    void start() {
+        this->createWorkers(this->minThreads);
+    }
+
     void makeAutoScaleInspection() {
         if(!this->autoScaleLock.try_lock())
             return;
@@ -50,7 +73,7 @@ private:
 
         int newNumberOfWorkersNotAdjusted = nActiveWorkers / this->actityFactor;
         int newNumberOfWorkersAdjusted = newNumberOfWorkersNotAdjusted < this->minThreads ? this->minThreads :
-                                         (newNumberOfWorkersNotAdjusted > this->maxThreads ? this->maxThreads : newNumberOfWorkersAdjusted);
+                                         (newNumberOfWorkersNotAdjusted > this->maxThreads ? this->maxThreads : newNumberOfWorkersNotAdjusted);
         int numberWorkersToChange = newNumberOfWorkersAdjusted - nTotalWorkers;
 
         if(numberWorkersToChange > 0)

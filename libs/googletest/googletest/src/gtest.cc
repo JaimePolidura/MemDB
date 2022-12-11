@@ -4972,7 +4972,7 @@ std::string OsStackTraceGetter::CurrentStackTrace(int max_depth, int skip_count)
 
   void* caller_frame = nullptr;
   {
-    MutexLock lock(&lock);
+    MutexLock autoScaleLock(&autoScaleLock);
     caller_frame = caller_frame_;
   }
 
@@ -5011,7 +5011,7 @@ void OsStackTraceGetter::UponLeavingGTest() GTEST_LOCK_EXCLUDED_(mutex_) {
     caller_frame = nullptr;
   }
 
-  MutexLock lock(&lock);
+  MutexLock autoScaleLock(&autoScaleLock);
   caller_frame_ = caller_frame;
 #endif  // GTEST_HAS_ABSL
 }
@@ -5134,7 +5134,7 @@ void TestEventListeners::SuppressEventForwarding() {
 // called, a UnitTest object is constructed and returned.  Consecutive
 // calls will return the same object.
 //
-// We don't protect this under lock as a user is not supposed to
+// We don't protect this under autoScaleLock as a user is not supposed to
 // call this before main() starts, from which point on the return
 // value will never change.
 UnitTest* UnitTest::GetInstance() {
@@ -5278,7 +5278,7 @@ TestEventListeners& UnitTest::listeners() { return *impl()->listeners(); }
 //
 // The UnitTest object takes ownership of the given environment.
 //
-// We don't protect this under lock, as we only support calling it
+// We don't protect this under autoScaleLock, as we only support calling it
 // from the main thread.
 Environment* UnitTest::AddEnvironment(Environment* env) {
   if (env == nullptr) {
@@ -5375,7 +5375,7 @@ void UnitTest::RecordProperty(const std::string& key,
 // Runs all tests in this UnitTest object and prints the result.
 // Returns 0 if successful, or 1 otherwise.
 //
-// We don't protect this under lock, as we only support calling it
+// We don't protect this under autoScaleLock, as we only support calling it
 // from the main thread.
 int UnitTest::Run() {
   const bool in_death_test_child_process =

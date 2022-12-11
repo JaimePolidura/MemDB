@@ -862,7 +862,7 @@ class GTEST_API_ ExpectationBase {
   bool repeated_action_specified_;  // True if a WillRepeatedly() was specified.
   bool retires_on_saturation_;
   Clause last_clause_;
-  mutable bool action_count_checked_;  // Under lock.
+  mutable bool action_count_checked_;  // Under autoScaleLock.
   mutable Mutex mutex_;                // Protects action_count_checked_.
 };                                     // class ExpectationBase
 
@@ -1600,7 +1600,7 @@ class FunctionMocker<R(Args...)> final : public UntypedFunctionMockerBase {
   // However, performing the action has to be left out of the critical
   // section.  The reason is that we have no control on what the
   // action does (it can invoke an arbitrary user function or even a
-  // mock function) and excessive locking could cause a dead lock.
+  // mock function) and excessive locking could cause a dead autoScaleLock.
   const ExpectationBase* UntypedFindMatchingExpectation(
       const void* untyped_args, const void** untyped_action, bool* is_excessive,
       ::std::ostream* what, ::std::ostream* why) override

@@ -7,7 +7,7 @@
 template<typename T>
 class Exchanger {
 private:
-    std::shared_ptr<T> item;
+    T item;
     std::condition_variable itemDequeued;
     std::condition_variable itemQueued;
     std::mutex lock;
@@ -15,24 +15,40 @@ private:
 public:
     Exchanger(): item(nullptr) {}
 
-    void enqueue(std::shared_ptr<T> itemToExchange) {
+    void asyncEnqueue(const T& itemToExchange) {
         std::unique_lock uniqueLock(this->lock);
 
         this->item = itemToExchange;
 
         this->itemQueued.notify_all();
 
-        this->itemDequeued.wait(uniqueLock, [this]{ return this->item.get() == nullptr;});
+        this->lock.unlock();
+    }
+
+    void enqueue(const T& itemToExchange) {
+        std::unique_lock uniqueLock(this->lock);
+
+        this->item = itemToExchange;
+
+        this->itemQueued.notify_all();
+
+        this->itemDequeued.wait(uniqueLock, [this]{ return this->item == nullptr;});
 
         this->lock.unlock();
     }
 
-    std::shared_ptr<T> dequeue() {
+    std::optional<T> tryDequeue() {
+        return this->item != nullptr ?
+            this->dequeue() :
+            std::nullopt;
+    }
+
+    T dequeue() {
         std::unique_lock uniqueLock(this->lock);
 
-        this->itemQueued.wait(uniqueLock, [this]{ return this->item.get() != nullptr;});
+        this->itemQueued.wait(uniqueLock, [this]{ return this->item != nullptr;});
 
-        std::shared_ptr<T> itemToDequeue = this->item;
+        T itemToDequeue = this->item;
 
         this->item = nullptr;
 

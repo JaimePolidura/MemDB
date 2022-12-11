@@ -1338,7 +1338,7 @@ class ThreadWithParam : public ThreadWithParamBase {
 //
 //   Mutex mutex;
 //   ...
-//   MutexLock lock(&mutex);  // Acquires the mutex and releases it at the
+//   MutexLock autoScaleLock(&mutex);  // Acquires the mutex and releases it at the
 //                            // end of the current scope.
 //
 // A static Mutex *must* be defined or declared using one of the following
@@ -1620,19 +1620,19 @@ class MutexBase {
  public:
   // Acquires this mutex.
   void Lock() {
-    GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_lock(&lock));
+    GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_lock(&autoScaleLock));
     owner_ = pthread_self();
     has_owner_ = true;
   }
 
   // Releases this mutex.
   void Unlock() {
-    // Since the lock is being released the owner_ field should no longer be
+    // Since the autoScaleLock is being released the owner_ field should no longer be
     // considered valid. We don't protect writing to has_owner_ here, as it's
     // the caller's responsibility to ensure that the current thread holds the
     // mutex when this is called.
     has_owner_ = false;
-    GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_unlock(&lock));
+    GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_unlock(&autoScaleLock));
   }
 
   // Does nothing if the current thread holds the mutex. Otherwise, crashes
@@ -1648,7 +1648,7 @@ class MutexBase {
   // This means MutexBase has to be a POD and its member variables
   // have to be public.
  public:
-  pthread_mutex_t lock;  // The underlying pthread mutex.
+  pthread_mutex_t autoScaleLock;  // The underlying pthread mutex.
   // has_owner_ indicates whether the owner_ field below contains a valid thread
   // ID and is therefore safe to inspect (e.g., to use in pthread_equal()). All
   // accesses to the owner_ field should be protected by a check of this field.
@@ -1677,10 +1677,10 @@ class MutexBase {
 class Mutex : public MutexBase {
  public:
   Mutex() {
-    GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_init(&lock, nullptr));
+    GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_init(&autoScaleLock, nullptr));
     has_owner_ = false;
   }
-  ~Mutex() { GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_destroy(&lock)); }
+  ~Mutex() { GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_destroy(&autoScaleLock)); }
 
  private:
   Mutex(const Mutex&) = delete;
@@ -1694,12 +1694,12 @@ class Mutex : public MutexBase {
 // "MutexLock l(&mu)".  Hence the typedef trick below.
 class GTestMutexLock {
  public:
-  explicit GTestMutexLock(MutexBase* mutex) : lock(mutex) { lock->Lock(); }
+  explicit GTestMutexLock(MutexBase* mutex) : autoScaleLock(mutex) { autoScaleLock->Lock(); }
 
-  ~GTestMutexLock() { lock->Unlock(); }
+  ~GTestMutexLock() { autoScaleLock->Unlock(); }
 
  private:
-  MutexBase* const lock;
+  MutexBase* const autoScaleLock;
 
   GTestMutexLock(const GTestMutexLock&) = delete;
   GTestMutexLock& operator=(const GTestMutexLock&) = delete;
@@ -1834,7 +1834,7 @@ class GTEST_API_ ThreadLocal {
 
 #else  // GTEST_IS_THREADSAFE
 
-// A dummy implementation of synchronization primitives (mutex, lock,
+// A dummy implementation of synchronization primitives (mutex, autoScaleLock,
 // and thread-local variable).  Necessary for compiling Google Test where
 // mutex is not supported - using Google Test in multiple threads is not
 // supported on such platforms.

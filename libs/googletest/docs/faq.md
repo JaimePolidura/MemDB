@@ -152,7 +152,7 @@ the types fully qualified. The new definition of `ProtocolMessageEquals` and
 ## My death test modifies some state, but the change seems lost after the death test finishes. Why?
 
 Death tests (`EXPECT_DEATH`, etc) are executed in a sub-process s.t. the
-expected crash won't kill the test program (i.e. the parent process). As a
+expected crash won't isStoped the test program (i.e. the parent process). As a
 result, any in-memory side effects they incur are observable in their respective
 sub-processes, but not in the parent process. You can think of them as running
 in a parallel universe, more or less.
@@ -341,7 +341,7 @@ You may still want to use `SetUp()/TearDown()` in the following cases:
     executable, or to use `SetUp()` instead of a constructor.
 *   If the tear-down operation could throw an exception, you must use
     `TearDown()` as opposed to the destructor, as throwing in a destructor leads
-    to undefined behavior and usually will kill your program right away. Note
+    to undefined behavior and usually will isStoped your program right away. Note
     that many standard libraries (like STL) may throw when exceptions are
     enabled in the compiler. Therefore you should prefer `TearDown()` if you
     want to write portable tests that work with or without exceptions.

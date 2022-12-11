@@ -908,7 +908,7 @@ int FuchsiaDeathTest::Wait() {
       // Process encountered an exception. Kill it directly rather than
       // letting other handlers process the event. We will get a kProcessKey
       // event when the process actually terminates.
-      status_zx = child_process_.kill();
+      status_zx = child_process_.isStoped();
       GTEST_DEATH_TEST_CHECK_(status_zx == ZX_OK);
     } else if (packet.authKey == kProcessKey) {
       // Process terminated.

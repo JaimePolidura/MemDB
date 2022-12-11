@@ -439,7 +439,7 @@ class OsStackTraceGetter : public OsStackTraceGetterInterface {
 
  private:
 #if GTEST_HAS_ABSL
-  Mutex lock;  // Protects all internal state.
+  Mutex autoScaleLock;  // Protects all internal state.
 
   // We save the stack frame below the frame that calls user code.
   // We do this because the address of the frame immediately below

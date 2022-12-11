@@ -523,7 +523,7 @@ class ThreadLocalRegistryImpl {
   static void OnThreadLocalDestroyed(
       const ThreadLocalBase* thread_local_instance) {
     std::vector<std::shared_ptr<ThreadLocalValueHolderBase> > value_holders;
-    // Clean up the ThreadLocalValues value structure while holding the lock, but
+    // Clean up the ThreadLocalValues value structure while holding the autoScaleLock, but
     // defer the destruction of the ThreadLocalValueHolderBases.
     {
       MutexLock lock(&mutex_);
@@ -543,7 +543,7 @@ class ThreadLocalRegistryImpl {
         }
       }
     }
-    // Outside the lock, let the destructor for 'value_holders' deallocate the
+    // Outside the autoScaleLock, let the destructor for 'value_holders' deallocate the
     // ThreadLocalValueHolderBases.
   }
 
@@ -551,7 +551,7 @@ class ThreadLocalRegistryImpl {
     GTEST_CHECK_(thread_id != 0) << ::GetLastError();
     std::vector<std::shared_ptr<ThreadLocalValueHolderBase> > value_holders;
     // Clean up the ThreadIdToThreadLocals value structure while holding the
-    // lock, but defer the destruction of the ThreadLocalValueHolderBases.
+    // autoScaleLock, but defer the destruction of the ThreadLocalValueHolderBases.
     {
       MutexLock lock(&mutex_);
       ThreadIdToThreadLocals* const thread_to_thread_locals =
@@ -568,7 +568,7 @@ class ThreadLocalRegistryImpl {
         thread_to_thread_locals->erase(thread_local_pos);
       }
     }
-    // Outside the lock, let the destructor for 'value_holders' deallocate the
+    // Outside the autoScaleLock, let the destructor for 'value_holders' deallocate the
     // ThreadLocalValueHolderBases.
   }
 

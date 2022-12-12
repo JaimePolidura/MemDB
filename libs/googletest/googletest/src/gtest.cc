@@ -137,7 +137,7 @@
 #include "absl/debugging/failure_signal_handler.h"
 #include "absl/debugging/stacktrace.h"
 #include "absl/debugging/symbolize.h"
-#include "absl/flags/parse.h"
+#include "absl/flags/deserialize.h"
 #include "absl/flags/usage.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_replace.h"
@@ -6146,7 +6146,7 @@ void UnitTestImpl::ListTestsMatchingFilter() {
           if (test_suite->type_param() != nullptr) {
             printf("  # %s = ", kTypeParamLabel);
             // We print the type parameter on a single line to make
-            // the output easy to parse by a program.
+            // the output easy to deserialize by a program.
             PrintOnOneLine(test_suite->type_param(), kMaxParamLength);
           }
           printf("\n");
@@ -6155,7 +6155,7 @@ void UnitTestImpl::ListTestsMatchingFilter() {
         if (test_info->value_param() != nullptr) {
           printf("  # %s = ", kValueParamLabel);
           // We print the value parameter on a single line to make the
-          // output easy to parse by a program.
+          // output easy to deserialize by a program.
           PrintOnOneLine(test_info->value_param(), kMaxParamLength);
         }
         printf("\n");

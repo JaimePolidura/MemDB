@@ -5,22 +5,22 @@
 #include <vector>
 #include <bitset>
 
-class ResponseParser {
+class RequestDeserializer {
 private:
     static const uint8_t FLAG1_MASK = 0x20; //1000 0000
     static const uint8_t FLAG2_MASK = 0x10; //0100 0000
 
 public:
-    std::shared_ptr<Request> parse(const std::vector<uint8_t>& buffer) {
+    std::shared_ptr<Request> deserialize(const std::vector<uint8_t>& buffer) {
         std::shared_ptr<Request> request = std::make_shared<Request>();
-        request->authentication = this->parseAuthenticacion(buffer);
-        request->operation = this->parseOperation(buffer);
+        request->authentication = this->deserializeAuthenticacion(buffer);
+        request->operation = this->deserializeOperation(buffer);
 
         return request;
     }
 
 private:
-    const AuthenticationBody * parseAuthenticacion(const std::vector<uint8_t>& buffer) {
+    const AuthenticationBody * deserializeAuthenticacion(const std::vector<uint8_t>& buffer) {
         uint8_t authLength = this->getValueWithoutFlags(buffer, 0);
         uint8_t * authKey = this->fill(buffer, 1, authLength);
         bool flagAuth1 = this->getFlag(buffer, 0, FLAG1_MASK);
@@ -29,7 +29,7 @@ private:
         return new AuthenticationBody{std::string((char *) authKey, authLength), flagAuth1, flagAuth2};
     }
 
-    const OperationBody * parseOperation(const std::vector<uint8_t>& buffer) {
+    const OperationBody * deserializeOperation(const std::vector<uint8_t>& buffer) {
         int authLength = this->getValueWithoutFlags(buffer, 0);
         int operationBufferInitialPos = authLength + 1;
 

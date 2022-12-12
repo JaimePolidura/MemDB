@@ -55,7 +55,7 @@ class FooTest : public testing::Test {
 
 // Next, associate a list of types with the tst suite, which will be
 // repeated for each type in the list.  The typedef is necessary for
-// the macro to parse correctly.
+// the macro to deserialize correctly.
 typedef testing::Types<char, int, unsigned int> MyTypes;
 TYPED_TEST_SUITE(FooTest, MyTypes);
 

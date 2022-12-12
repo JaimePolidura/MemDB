@@ -1269,7 +1269,7 @@ TYPED_TEST_SUITE(FooTest, MyTypes);
 ```
 
 The type alias (`using` or `typedef`) is necessary for the `TYPED_TEST_SUITE`
-macro to parse correctly. Otherwise the compiler will think that each comma in
+macro to deserialize correctly. Otherwise the compiler will think that each comma in
 the type list introduces a new macro argument.
 
 Then, use `TYPED_TEST()` instead of `TEST_F()` to define a typed test for this

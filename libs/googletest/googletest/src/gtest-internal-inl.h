@@ -993,7 +993,7 @@ GTEST_API_ void ParseGoogleTestFlagsOnly(int* argc, wchar_t** argv);
 // platform.
 GTEST_API_ std::string GetLastErrnoDescription();
 
-// Attempts to parse a string into a positive integer pointed to by the
+// Attempts to deserialize a string into a positive integer pointed to by the
 // number parameter.  Returns true if that is possible.
 // GTEST_HAS_DEATH_TEST implies that we have ::std::string, so we can use
 // it here.

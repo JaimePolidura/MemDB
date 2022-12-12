@@ -1,10 +1,10 @@
 #include "gtest/gtest.h"
 #include "messages/request/Request.h"
-#include "messages/request/ResponseParser.h"
+#include "messages/request/RequestDeserializer.h"
 #include <string>
 
-TEST(RequesteParser, WithArgs) {
-    ResponseParser requestParser{};
+TEST(RequesteRequestDeserializer, WithArgs) {
+    RequestDeserializer requestDeserializer{};
 
     std::vector<uint8_t> buffer = {
             0x0C, //000011 00 -> Lengh: 3 Flag1: 0 Flag2: 0
@@ -22,21 +22,21 @@ TEST(RequesteParser, WithArgs) {
     std::string arg1Expected = "A";
     std::string arg2Expected = "BC";
 
-    std::shared_ptr<Request> parsedRequest = requestParser.parse(buffer);
+    std::shared_ptr<Request> deserializedRequest = requestDeserializer.deserialize(buffer);
 
-    ASSERT_EQ(parsedRequest->operation->numberArgs, 2);
+    ASSERT_EQ(deserializedRequest->operation->numberArgs, 2);
 
-    OperatorArgument * firstArg = parsedRequest->operation->args;
+    OperatorArgument * firstArg = deserializedRequest->operation->args;
     ASSERT_EQ(firstArg->lengthArg, 1);
     ASSERT_TRUE(arg1Expected.compare(std::string((char *) firstArg->arg, firstArg->lengthArg)) == 0);
 
-    OperatorArgument * secondArg = parsedRequest->operation->args + 1;
+    OperatorArgument * secondArg = deserializedRequest->operation->args + 1;
     ASSERT_EQ(secondArg->lengthArg, 2);
     ASSERT_TRUE(arg2Expected.compare(std::string((char *) secondArg->arg, secondArg->lengthArg)) == 0);
 }
 
-TEST(RequesteParser, EmptyArgs) {
-    ResponseParser requestParsaer{};
+TEST(RequesteRequestDeserializer, EmptyArgs) {
+    RequestDeserializer requestDeserializer{};
 
     std::vector<uint8_t> buffer = {
             0x0E, //00001110 -> Lengh: 3 Flag1: 1 Flag2: 0
@@ -46,16 +46,16 @@ TEST(RequesteParser, EmptyArgs) {
             0x09 //000010 01 -> Operator number: 2, Flag1: 0, Flag2: 1
     };
 
-    std::shared_ptr<Request> parsedRequest = requestParsaer.parse(buffer);
+    std::shared_ptr<Request> deserializerRequest = requestDeserializer.deserialize(buffer);
 
-    ASSERT_TRUE(parsedRequest->authentication->flag1);
-    ASSERT_FALSE(parsedRequest->authentication->flag2);
-    ASSERT_EQ(parsedRequest->authentication->authKey.size(), 3);
+    ASSERT_TRUE(deserializerRequest->authentication->flag1);
+    ASSERT_FALSE(deserializerRequest->authentication->flag2);
+    ASSERT_EQ(deserializerRequest->authentication->authKey.size(), 3);
 
     std::string authKey = "LOL";
-    ASSERT_TRUE(authKey.compare(parsedRequest->authentication->authKey) == 0);
+    ASSERT_TRUE(authKey.compare(deserializerRequest->authentication->authKey) == 0);
 
-    ASSERT_FALSE(parsedRequest->operation->flag1);
-    ASSERT_TRUE(parsedRequest->operation->flag2);
-    ASSERT_TRUE(parsedRequest->operation->operatorNumber == 2);
+    ASSERT_FALSE(deserializerRequest->operation->flag1);
+    ASSERT_TRUE(deserializerRequest->operation->flag2);
+    ASSERT_TRUE(deserializerRequest->operation->operatorNumber == 2);
 }

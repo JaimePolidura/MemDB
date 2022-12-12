@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <stdint.h>
 
 struct OperatorArgument {
     uint8_t * arg;

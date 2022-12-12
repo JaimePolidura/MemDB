@@ -4,7 +4,7 @@
 #include <boost/asio.hpp>
 
 #include "../Users/Authenticator.h"
-#include "messages/request/ResponseParser.h"
+#include "messages/request/RequestDeserializer.h"
 #include "../utils/threads/dynamicthreadpool/DynamicThreadPool.h"
 #include "TCPConnection.h"
 
@@ -13,8 +13,8 @@ using namespace boost::asio;
 class TCPServer {
 private:
     std::shared_ptr<DynamicThreadPool> tcpConnectionThreadPool;
+    RequestDeserializer requestDeserializer;
     ip::tcp::acceptor acceptator;
-    ResponseParser requestParser;
     Authenticator authenicator;
     io_context ioContext;
     uint16_t port;
@@ -45,7 +45,7 @@ private:
 
             connection->read(); //Start reading, IO async operation, not blocking
 
-            connection->onRequest([&](const std::vector<uint8_t> requestRawBuffer) {
+            connection->onRequest([&](const std::vector<uint8_t>& requestRawBuffer) {
                 this->tcpConnectionThreadPool->submit([&] { this->onNewPackage(requestRawBuffer, connection); });
             });
 
@@ -54,7 +54,7 @@ private:
     }
 
     void onNewPackage(const std::vector<uint8_t>& requestRawBuffer, const std::shared_ptr<TCPConnection>& connection) {
-        std::shared_ptr<Request> request = this->requestParser.parse(requestRawBuffer);
+        std::shared_ptr<Request> request = this->requestDeserializer.deserialize(requestRawBuffer);
         bool authenticationValid = this->authenicator.authenticate(request->authentication->authKey);
 
         if(!authenticationValid){

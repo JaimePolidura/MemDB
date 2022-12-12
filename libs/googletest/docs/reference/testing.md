@@ -165,7 +165,7 @@ TYPED_TEST_SUITE(MyFixture, MyTypes);
 ```
 
 The type alias (`using` or `typedef`) is necessary for the `TYPED_TEST_SUITE`
-macro to parse correctly.
+macro to deserialize correctly.
 
 See also [`TYPED_TEST`](#TYPED_TEST) and
 [Typed Tests](../advanced.md#typed-tests) for more information.
@@ -287,7 +287,7 @@ INSTANTIATE_TYPED_TEST_SUITE_P(MyInstantiation, MyFixture, MyTypes);
 ```
 
 The type alias (`using` or `typedef`) is necessary for the
-`INSTANTIATE_TYPED_TEST_SUITE_P` macro to parse correctly.
+`INSTANTIATE_TYPED_TEST_SUITE_P` macro to deserialize correctly.
 
 For more information, see
 [Type-Parameterized Tests](../advanced.md#type-parameterized-tests).

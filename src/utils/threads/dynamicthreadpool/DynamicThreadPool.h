@@ -37,24 +37,15 @@ public:
             this->makeAutoScaleInspection();
     }
 
-    void joinAll() {
-        for(const std::shared_ptr<DynamicThreadPoolWorker>& worker : this->workers){
-            worker->joinThread();
-        }
-    }
-
     void stop() {
-        for(const std::shared_ptr<DynamicThreadPoolWorker>& worker : this->workers){
+        for(const std::shared_ptr<DynamicThreadPoolWorker>& worker : this->workers)
             worker->stop();
-        }
-    }
-
-    void stopNow() {
-        for(const std::shared_ptr<DynamicThreadPoolWorker>& worker : this->workers){
-            worker->stop();
-        }
 
         this->pendingTask->stopNow();
+    }
+
+    int getNumberWorkers() {
+        return this->workers.size();
     }
 
 private:
@@ -67,7 +58,7 @@ private:
             return;
 
         int nTotalWorkers = this->workers.size();
-        int nActiveWorkers = std::count_if(this->workers.begin(),
+        int nActiveWorkers = 1 + std::count_if(this->workers.begin(),
                                              this->workers.end(),
                                              [](std::shared_ptr<DynamicThreadPoolWorker>& worker){return worker->getState() == ACTIVE;});
 

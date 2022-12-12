@@ -16,12 +16,12 @@ private:
     std::shared_ptr<BlockingQueue<std::function<void()>>> pendingTasks;
     Exchanger<std::function<void()>> fastPath;
     std::thread thread;
-    WorkerState state;
-    bool isStoped;
+    volatile WorkerState state;
+    volatile bool isStoped;
 
 public:
     DynamicThreadPoolWorker(std::shared_ptr<BlockingQueue<std::function<void()>>> pendingTasks):
-        pendingTasks(std::move(pendingTasks)), isStoped(false) {}
+        pendingTasks(std::move(pendingTasks)), isStoped(false), state(INACTIVE) {}
 
     void startThreadWithInitialTask(std::shared_ptr<std::function<void()>> initialTask) {
         this->fastPath.asyncEnqueue(std::move(initialTask));
@@ -32,21 +32,15 @@ public:
         this->thread = std::thread([this]{this->run();});
     }
 
-    void joinThread() {
-        this->thread;
-    }
-
     void run() {
         while (!this->isStoped) {
-            this->state = INACTIVE;
-
             std::function<void()> task = this->pendingTasks->dequeue();
             if(this->isStoped)
                 return;
 
             this->state = ACTIVE;
-
             task();
+            this->state = INACTIVE;
         }
     }
 

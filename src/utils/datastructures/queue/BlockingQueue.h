@@ -50,14 +50,19 @@ public:
 
         this->size++;
 
-        this->notEmtpyCondition.notify_one();
-
         this->lock.unlock();
+
+
+        this->notEmtpyCondition.notify_all();
     }
 
     void stopNow() {
+        this->lock.lock();
+
         this->stop = true;
         this->notEmtpyCondition.notify_all();
+
+        this->lock.unlock();
     }
 
     T& dequeue() {

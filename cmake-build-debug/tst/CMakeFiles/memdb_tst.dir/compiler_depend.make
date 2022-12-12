@@ -264,7 +264,7 @@ tst/CMakeFiles/memdb_tst.dir/main.cpp.obj: ../tst/main.cpp \
   ../libs/googletest/googletest/include/gtest/gtest_pred_impl.h \
   ../libs/googletest/googletest/include/gtest/gtest_prod.h
 
-tst/CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.obj: ../tst/messages/MessageParserTest.cpp \
+tst/CMakeFiles/memdb_tst.dir/messages/request/RequestParserTest.cpp.obj: ../tst/messages/request/RequestParserTest.cpp \
   ../libs/googletest/googletest/include/gtest/gtest.h \
   C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/cstddef \
   C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32/bits/c++config.h \
@@ -526,8 +526,8 @@ tst/CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.obj: ../tst/messages
   ../libs/googletest/googletest/include/gtest/gtest-typed-test.h \
   ../libs/googletest/googletest/include/gtest/gtest_pred_impl.h \
   ../libs/googletest/googletest/include/gtest/gtest_prod.h \
-  ../src/messages/Message.h \
-  ../src/messages/MessageParser.h \
+  ../src/messages/request/Request.h \
+  ../src/messages/request/ResponseParser.h \
   C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bitset
 
 tst/CMakeFiles/memdb_tst.dir/users/UsersServiceTest.cpp.obj: ../tst/users/UsersServiceTest.cpp \
@@ -2459,8 +2459,6 @@ C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/m
 
 C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/x86_64-w64-mingw32/include/pthread_compat.h:
 
-../tst/messages/MessageParserTest.cpp:
-
 C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/x86_64-w64-mingw32/include/pthread_unistd.h:
 
 C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32/bits/atomic_word.h:
@@ -2484,8 +2482,6 @@ C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/m
 C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/mm_malloc.h:
 
 C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/algorithmfwd.h:
-
-../src/messages/MessageParser.h:
 
 C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/ratio:
 
@@ -2621,8 +2617,6 @@ C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/m
 
 C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/locale:
 
-../src/messages/Message.h:
-
 C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/locale_facets_nonio.h:
 
 C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/ctime:
@@ -2720,6 +2714,12 @@ C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/m
 ../libs/googletest/googletest/include/gtest/gtest_pred_impl.h:
 
 ../libs/googletest/googletest/include/gtest/gtest_prod.h:
+
+../tst/messages/request/RequestParserTest.cpp:
+
+../src/messages/request/Request.h:
+
+../src/messages/request/ResponseParser.h:
 
 C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bitset:
 

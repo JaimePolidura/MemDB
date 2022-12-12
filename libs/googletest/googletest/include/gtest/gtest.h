@@ -1595,7 +1595,7 @@ class GTEST_API_ AssertHelper {
                const char* message);
   ~AssertHelper();
 
-  // Message assignment is a semantic trick to enable assertion
+  // Request assignment is a semantic trick to enable assertion
   // streaming; see the GTEST_MESSAGE_ macro below.
   void operator=(const Message& message) const;
 
@@ -2048,7 +2048,7 @@ class GTEST_API_ ScopedTrace {
   // The c'tor pushes the given source file location and message onto
   // a trace stack maintained by Google Test.
 
-  // Template version. Uses Message() to convert the values into strings.
+  // Template version. Uses Request() to convert the values into strings.
   // Slow, but flexible.
   template <typename T>
   ScopedTrace(const char* file, int line, const T& message) {

@@ -83,20 +83,20 @@ tst/CMakeFiles/memdb_tst.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_tst.dir/main.cpp.s"
 	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\tst\main.cpp -o CMakeFiles\memdb_tst.dir\main.cpp.s
 
-tst/CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/flags.make
-tst/CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/includes_CXX.rsp
-tst/CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.obj: ../tst/messages/MessageParserTest.cpp
-tst/CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object tst/CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.obj"
-	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT tst/CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.obj -MF CMakeFiles\memdb_tst.dir\messages\MessageParserTest.cpp.obj.d -o CMakeFiles\memdb_tst.dir\messages\MessageParserTest.cpp.obj -c C:\programacion\MemDB\tst\messages\MessageParserTest.cpp
+tst/CMakeFiles/memdb_tst.dir/messages/request/RequestParserTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/flags.make
+tst/CMakeFiles/memdb_tst.dir/messages/request/RequestParserTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/includes_CXX.rsp
+tst/CMakeFiles/memdb_tst.dir/messages/request/RequestParserTest.cpp.obj: ../tst/messages/request/RequestParserTest.cpp
+tst/CMakeFiles/memdb_tst.dir/messages/request/RequestParserTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object tst/CMakeFiles/memdb_tst.dir/messages/request/RequestParserTest.cpp.obj"
+	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT tst/CMakeFiles/memdb_tst.dir/messages/request/RequestParserTest.cpp.obj -MF CMakeFiles\memdb_tst.dir\messages\request\RequestParserTest.cpp.obj.d -o CMakeFiles\memdb_tst.dir\messages\request\RequestParserTest.cpp.obj -c C:\programacion\MemDB\tst\messages\request\RequestParserTest.cpp
 
-tst/CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.i"
-	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\programacion\MemDB\tst\messages\MessageParserTest.cpp > CMakeFiles\memdb_tst.dir\messages\MessageParserTest.cpp.i
+tst/CMakeFiles/memdb_tst.dir/messages/request/RequestParserTest.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/memdb_tst.dir/messages/request/RequestParserTest.cpp.i"
+	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\programacion\MemDB\tst\messages\request\RequestParserTest.cpp > CMakeFiles\memdb_tst.dir\messages\request\RequestParserTest.cpp.i
 
-tst/CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.s"
-	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\tst\messages\MessageParserTest.cpp -o CMakeFiles\memdb_tst.dir\messages\MessageParserTest.cpp.s
+tst/CMakeFiles/memdb_tst.dir/messages/request/RequestParserTest.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_tst.dir/messages/request/RequestParserTest.cpp.s"
+	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\tst\messages\request\RequestParserTest.cpp -o CMakeFiles\memdb_tst.dir\messages\request\RequestParserTest.cpp.s
 
 tst/CMakeFiles/memdb_tst.dir/users/UsersServiceTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/flags.make
 tst/CMakeFiles/memdb_tst.dir/users/UsersServiceTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/includes_CXX.rsp
@@ -191,7 +191,7 @@ tst/CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTe
 # Object files for target memdb_tst
 memdb_tst_OBJECTS = \
 "CMakeFiles/memdb_tst.dir/main.cpp.obj" \
-"CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.obj" \
+"CMakeFiles/memdb_tst.dir/messages/request/RequestParserTest.cpp.obj" \
 "CMakeFiles/memdb_tst.dir/users/UsersServiceTest.cpp.obj" \
 "CMakeFiles/memdb_tst.dir/utils/crypto/PolynomialHashCreatorTest.cpp.obj" \
 "CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.obj" \
@@ -203,7 +203,7 @@ memdb_tst_OBJECTS = \
 memdb_tst_EXTERNAL_OBJECTS =
 
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/main.cpp.obj
-tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/messages/MessageParserTest.cpp.obj
+tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/messages/request/RequestParserTest.cpp.obj
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/users/UsersServiceTest.cpp.obj
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/utils/crypto/PolynomialHashCreatorTest.cpp.obj
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.obj

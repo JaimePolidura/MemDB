@@ -8,13 +8,36 @@
 
 - Cada usuario de autentica con una authKey, que enviara al abrir la conexion TCP. Podra tener como maximo 256 caracteres.
 
-## Formato mensaje
+## Formato peticion
 
 ````
-           1 byte
+             1 byte
 +-------------------------------+
 | Length auth authKey | f1 | f2 |   
 +-------------------------------+   
-|           ...                 | 
+|             ...               | 
++-------------------------------+
+| Opererator number   | f1 | f2 |   
++-------------------------------+   
+| Length argument 1º            | 
++-------------------------------+
+|             ...               | 
++-------------------------------+
+| Length argument 2º            | 
++-------------------------------+
+|             ...               | 
++-------------------------------+
+````
+
+## Formato respuesta
+
+````
+             1 byte
++-------------------------------+
+| Error type              | suc |   
++-------------------------------+   
+| Length response               |
++-------------------------------+
+|             ...               | 
 +-------------------------------+
 ````

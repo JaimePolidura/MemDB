@@ -57,7 +57,7 @@ TEST(DBMap, ShouldPutAndContains) {
 
 Value * insertValueInMap(DBMap * dbmap, const std::string &key, int value){
     Value * value1 = new Value(value);
-    dbmap->put(key, (char *) value1, sizeof(Value));
+    dbmap->put(key, (uint8_t *) value1, sizeof(Value));
 
     return value1;
 }

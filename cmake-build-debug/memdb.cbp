@@ -456,6 +456,30 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/database">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/database/operators">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/database/operators/GetOperator.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/database/operators/Operator.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/database/operators/OperatorRegistry.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/database/operators/SetOperator.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/main.cpp">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
@@ -464,11 +488,19 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/messages/Message.h">
+		<Unit filename="C:/programacion/MemDB/src/messages/request">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/messages/MessageParser.h">
+		<Unit filename="C:/programacion/MemDB/src/messages/request/Request.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/messages/request/ResponseParser.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/messages/response">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
@@ -563,7 +595,7 @@
 		<Unit filename="C:/programacion/MemDB/tst/main.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/tst/messages/MessageParserTest.cpp">
+		<Unit filename="C:/programacion/MemDB/tst/messages/request/RequestParserTest.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/users/UsersServiceTest.cpp">

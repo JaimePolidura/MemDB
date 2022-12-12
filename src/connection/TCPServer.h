@@ -2,22 +2,27 @@
 
 #include <string>
 #include <boost/asio.hpp>
+
 #include "../Users/Authenticator.h"
-#include "../Messages/MessageParser.h"
+#include "messages/request/ResponseParser.h"
+#include "../utils/threads/dynamicthreadpool/DynamicThreadPool.h"
 #include "TCPConnection.h"
 
 using namespace boost::asio;
 
 class TCPServer {
 private:
-    short unsigned port;
+    std::shared_ptr<DynamicThreadPool> tcpConnectionThreadPool;
+    ip::tcp::acceptor acceptator;
+    ResponseParser requestParser;
     Authenticator authenicator;
     io_context ioContext;
-    ip::tcp::acceptor acceptator;
+    uint16_t port;
 
 public:
-    TCPServer(short unsigned port, Authenticator authenicator): port(port), authenicator(std::move(authenicator)),
-                                                                acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}) {};
+    TCPServer(uint16_t port, Authenticator authenicator, std::shared_ptr<DynamicThreadPool> tcpConnectionThreadPool):
+        port(port), authenicator(std::move(authenicator)), acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}),
+        tcpConnectionThreadPool(tcpConnectionThreadPool) {};
 
     void run() {
         printf("[SERVER] Waiting for conenctions...\n");
@@ -38,9 +43,25 @@ private:
 
             std::shared_ptr<TCPConnection> connection = std::make_shared<TCPConnection>(std::move(socket));
 
-            connection->read();
+            connection->read(); //Start reading, IO async operation, not blocking
+
+            connection->onRequest([&](const std::vector<uint8_t> requestRawBuffer) {
+                this->tcpConnectionThreadPool->submit([&] { this->onNewPackage(requestRawBuffer, connection); });
+            });
 
             this->acceptNewConnections();
         });
+    }
+
+    void onNewPackage(const std::vector<uint8_t>& requestRawBuffer, const std::shared_ptr<TCPConnection>& connection) {
+        std::shared_ptr<Request> request = this->requestParser.parse(requestRawBuffer);
+        bool authenticationValid = this->authenicator.authenticate(request->authentication->authKey);
+
+        if(!authenticationValid){
+            //TODO Send error
+            return;
+        }
+
+        //TODO Dispatch request
     }
 };

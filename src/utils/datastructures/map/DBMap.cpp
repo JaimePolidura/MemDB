@@ -7,7 +7,7 @@
 
 DBMap::DBMap(HashCreator<std::string> * hashCreatorCons): hashCreator{hashCreatorCons}, size{0} {}
 
-void DBMap::put(const std::string &key, char * value, size_t valueSize) {
+void DBMap::put(const std::string &key, uint8_t * value, size_t valueSize) {
     int keyHash = this->hashCreator->create(key);
     Node * actualMapNode = this->getBucket(keyHash);
 
@@ -25,7 +25,7 @@ void DBMap::put(const std::string &key, char * value, size_t valueSize) {
     this->size++;
 }
 
-std::optional<MapEntry> DBMap::get(const std::string &key) {
+std::optional<MapEntry> DBMap::get(const std::string &key) const {
     Node * nodeFoundForKey = this->getNodeByKeyHash(this->hashCreator->create(key));
 
     return nodeFoundForKey!= nullptr ? std::optional<MapEntry>{nodeFoundForKey->toEntry()} : std::nullopt;
@@ -40,10 +40,10 @@ std::optional<MapEntry> DBMap::remove(const std::string &key) {
     return nodeFoundForKey != nullptr ? std::optional<MapEntry>{nodeFoundForKey->toEntry()} : std::nullopt;
 }
 
-bool DBMap::contains(const std::string &key) {
+bool DBMap::contains(const std::string &key) const {
     return this->getNodeByKeyHash(this->hashCreator->create(key)) != nullptr;
 }
 
-int DBMap::getSize() {
+int DBMap::getSize() const{
     return this->size;
 }

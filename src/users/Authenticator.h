@@ -1,17 +1,18 @@
 #pragma once
 
 #include <utility>
+#include <memory>
 
 #include "UsersRepository.h"
 
 class Authenticator {
 private:
-    UsersRepository usersRepository;
+    std::shared_ptr<UsersRepository> usersRepository;
 
 public:
-    Authenticator(UsersRepository usersService): usersRepository(std::move(usersService)) {}
+    Authenticator(std::shared_ptr<UsersRepository> usersRepository): usersRepository(usersRepository) {}
 
     bool authenticate(const std::string& otherAuthKey) {
-        return this->usersRepository.existsByAuthKey(otherAuthKey);
+        return this->usersRepository->existsByAuthKey(otherAuthKey);
     }
 };

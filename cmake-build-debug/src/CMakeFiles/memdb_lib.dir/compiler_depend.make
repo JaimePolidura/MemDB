@@ -1390,9 +1390,13 @@ src/CMakeFiles/memdb_lib.dir/main.cpp.obj: ../src/main.cpp \
   ../src/users/Authenticator.h \
   ../src/users/UsersRepository.h \
   ../src/users/User.h \
-  ../src/messages/MessageParser.h \
-  ../src/messages/Message.h \
+  ../src/messages/request/ResponseParser.h \
+  ../src/messages/request/Request.h \
   C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bitset \
+  ../src/utils/threads/dynamicthreadpool/DynamicThreadPool.h \
+  ../src/utils/datastructures/queue/BlockingQueue.h \
+  ../src/utils/threads/Exchanger.h \
+  ../src/utils/threads/dynamicthreadpool/DynamicThreadPoolWorker.h \
   ../src/connection/TCPConnection.h \
   C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/iostream
 
@@ -2326,8 +2330,6 @@ C:/libs/C++/boost_1_80_0/boost/preprocessor/facilities/is_empty_variadic.hpp:
 C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/x86_64-w64-mingw32/include/systemtopologyapi.h:
 
 C:/libs/C++/boost_1_80_0/boost/date_time/period.hpp:
-
-../src/messages/MessageParser.h:
 
 C:/libs/C++/boost_1_80_0/boost/predef/os/bsd/free.h:
 
@@ -3427,6 +3429,8 @@ C:/libs/C++/boost_1_80_0/boost/preprocessor/config/limits.hpp:
 
 C:/libs/C++/boost_1_80_0/boost/preprocessor/facilities/expand.hpp:
 
+../src/utils/threads/dynamicthreadpool/DynamicThreadPool.h:
+
 C:/libs/C++/boost_1_80_0/boost/numeric/conversion/detail/preprocessed/numeric_cast_traits_long_long.hpp:
 
 C:/libs/C++/boost_1_80_0/boost/predef/platform/windows_server.h:
@@ -3743,6 +3747,8 @@ C:/libs/C++/boost_1_80_0/boost/asio/detail/bind_handler.hpp:
 
 C:/libs/C++/boost_1_80_0/boost/asio/detail/win_iocp_socket_recvmsg_op.hpp:
 
+../src/messages/request/Request.h:
+
 C:/libs/C++/boost_1_80_0/boost/predef/language.h:
 
 C:/libs/C++/boost_1_80_0/boost/asio/this_coro.hpp:
@@ -3924,6 +3930,8 @@ C:/libs/C++/boost_1_80_0/boost/type_traits/is_base_and_derived.hpp:
 C:/libs/C++/boost_1_80_0/boost/type_traits/remove_cv.hpp:
 
 C:/libs/C++/boost_1_80_0/boost/type_traits/is_class.hpp:
+
+../src/utils/threads/Exchanger.h:
 
 C:/libs/C++/boost_1_80_0/boost/date_time/gregorian/greg_day_of_year.hpp:
 
@@ -4621,7 +4629,11 @@ C:/libs/C++/boost_1_80_0/boost/asio/impl/write_at.hpp:
 
 ../src/users/User.h:
 
-../src/messages/Message.h:
+../src/messages/request/ResponseParser.h:
+
+../src/utils/datastructures/queue/BlockingQueue.h:
+
+../src/utils/threads/dynamicthreadpool/DynamicThreadPoolWorker.h:
 
 ../src/connection/TCPConnection.h:
 

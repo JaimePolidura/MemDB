@@ -441,7 +441,7 @@ AssertHelper::AssertHelper(TestPartResult::Type type, const char* file,
 
 AssertHelper::~AssertHelper() { delete data_; }
 
-// Message assignment, for assertion streaming support.
+// Request assignment, for assertion streaming support.
 void AssertHelper::operator=(const Message& message) const {
   UnitTest::GetInstance()->AddTestPartResult(
       data_->type, data_->file, data_->line,
@@ -1200,7 +1200,7 @@ bool String::CStringEquals(const char* lhs, const char* rhs) {
 #if GTEST_HAS_STD_WSTRING
 
 // Converts an array of wide chars to a narrow string using the UTF-8
-// encoding, and streams the result to the given Message object.
+// encoding, and streams the result to the given Request object.
 static void StreamWideCharsToMessage(const wchar_t* wstr, size_t length,
                                      Message* msg) {
   for (size_t i = 0; i != length;) {  // NOLINT
@@ -1235,18 +1235,18 @@ void SplitString(const ::std::string& str, char delimiter,
 
 }  // namespace internal
 
-// Constructs an empty Message.
+// Constructs an empty Request.
 // We allocate the stringstream separately because otherwise each use of
 // ASSERT/EXPECT in a procedure adds over 200 bytes to the procedure's
 // stack frame leading to huge stack frames in some cases; gcc does not reuse
 // the stack space.
 Message::Message() : ss_(new ::std::stringstream) {
   // By default, we want there to be enough precision when printing
-  // a double to a Message.
+  // a double to a Request.
   *ss_ << std::setprecision(std::numeric_limits<double>::digits10 + 2);
 }
 
-// These two overloads allow streaming a wide C string to a Message
+// These two overloads allow streaming a wide C string to a Request
 // using the UTF-8 encoding.
 Message& Message::operator<<(const wchar_t* wide_c_str) {
   return *this << internal::String::ShowWideCString(wide_c_str);
@@ -1257,7 +1257,7 @@ Message& Message::operator<<(wchar_t* wide_c_str) {
 
 #if GTEST_HAS_STD_WSTRING
 // Converts the given wide string to a narrow string using the UTF-8
-// encoding, and streams the result to this Message object.
+// encoding, and streams the result to this Request object.
 Message& Message::operator<<(const ::std::wstring& wstr) {
   internal::StreamWideCharsToMessage(wstr.c_str(), wstr.length(), this);
   return *this;
@@ -2540,7 +2540,7 @@ bool Test::HasSameFixtureClass() {
 // using __try (see error C2712).
 static std::string* FormatSehExceptionMessage(DWORD exception_code,
                                               const char* location) {
-  Message message;
+  Request message;
   message << "SEH exception with code 0x" << std::setbase(16) << exception_code
           << std::setbase(10) << " thrown in " << location << ".";
 

@@ -308,7 +308,7 @@ class GTEST_API_ KilledBySignal {
 //  statement and regex are compiled (and thus syntactically correct) but
 //  never executed. The unreachable code macro protects the terminator
 //  statement from generating an 'unreachable code' warning in case
-//  statement unconditionally returns or throws. The Message constructor at
+//  statement unconditionally returns or throws. The Request constructor at
 //  the end allows the syntax of streaming additional messages into the
 //  macro, for compilational compatibility with EXPECT_DEATH/ASSERT_DEATH.
 #define GTEST_UNSUPPORTED_DEATH_TEST(statement, regex, terminator)             \

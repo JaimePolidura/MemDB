@@ -29,7 +29,7 @@
 
 // The Google C++ Testing and Mocking Framework (Google Test)
 //
-// This header file defines the Message class.
+// This header file defines the Request class.
 //
 // IMPORTANT NOTE: Due to limitation of the C++ language, we have to
 // leave some internal implementation details in this header file.
@@ -58,35 +58,35 @@ GTEST_DISABLE_MSC_WARNINGS_PUSH_(4251 \
 /* class A needs to have dll-interface to be used by clients of class B */)
 
 // Ensures that there is at least one operator<< in the global namespace.
-// See Message& operator<<(...) below for why.
+// See Request& operator<<(...) below for why.
 void operator<<(const testing::internal::Secret&, int);
 
 namespace testing {
 
-// The Message class works like an ostream repeater.
+// The Request class works like an ostream repeater.
 //
 // Typical usage:
 //
-//   1. You stream a bunch of values to a Message object.
+//   1. You stream a bunch of values to a Request object.
 //      It will remember the text in a stringstream.
-//   2. Then you stream the Message object to an ostream.
-//      This causes the text in the Message to be streamed
+//   2. Then you stream the Request object to an ostream.
+//      This causes the text in the Request to be streamed
 //      to the ostream.
 //
 // For example;
 //
-//   testing::Message foo;
+//   testing::Request foo;
 //   foo << 1 << " != " << 2;
 //   std::cout << foo;
 //
 // will print "1 != 2".
 //
-// Message is not intended to be inherited from.  In particular, its
+// Request is not intended to be inherited from.  In particular, its
 // destructor is not virtual.
 //
 // Note that stringstream behaves differently in gcc and in MSVC.  You
 // can stream a NULL char pointer to it in the former, but not in the
-// latter (it causes an access violation if you do).  The Message
+// latter (it causes an access violation if you do).  The Request
 // class hides this difference by treating a NULL char pointer as
 // "(null)".
 class GTEST_API_ Message {
@@ -96,7 +96,7 @@ class GTEST_API_ Message {
   typedef std::ostream& (*BasicNarrowIoManip)(std::ostream&);
 
  public:
-  // Constructs an empty Message.
+  // Constructs an empty Request.
   Message();
 
   // Copy constructor.
@@ -104,7 +104,7 @@ class GTEST_API_ Message {
     *ss_ << msg.GetString();
   }
 
-  // Constructs a Message from a C-string.
+  // Constructs a Request from a C-string.
   explicit Message(const char* str) : ss_(new ::std::stringstream) {
     *ss_ << str;
   }
@@ -118,11 +118,11 @@ class GTEST_API_ Message {
     // C++'s symbol lookup rule (i.e. Koenig lookup) says that these
     // overloads are visible in either the std namespace or the global
     // namespace, but not other namespaces, including the testing
-    // namespace which Google Test's Message class is in.
+    // namespace which Google Test's Request class is in.
     //
     // To allow STL containers (and other types that has a << operator
     // defined in the global namespace) to be used in Google Test
-    // assertions, testing::Message must access the custom << operator
+    // assertions, testing::Request must access the custom << operator
     // from the global namespace.  With this using declaration,
     // overloads of << defined in the global namespace and those
     // visible via Koenig lookup are both exposed in this function.
@@ -134,7 +134,7 @@ class GTEST_API_ Message {
   // Streams a pointer value to this object.
   //
   // This function is an overload of the previous one.  When you
-  // stream a pointer to a Message, this definition will be used as it
+  // stream a pointer to a Request, this definition will be used as it
   // is more specialized.  (The C++ Standard, section
   // [temp.func.order].)  If you stream a non-pointer, then the
   // previous definition will be used.
@@ -158,7 +158,7 @@ class GTEST_API_ Message {
   // and wide streams, we have to provide this specialized definition
   // of operator <<, even though its body is the same as the
   // templatized version above.  Without this definition, streaming
-  // endl or other basic IO manipulators to Message will confuse the
+  // endl or other basic IO manipulators to Request will confuse the
   // compiler.
   Message& operator<<(BasicNarrowIoManip val) {
     *ss_ << val;
@@ -168,14 +168,14 @@ class GTEST_API_ Message {
   // Instead of 1/0, we want to see true/false for bool values.
   Message& operator<<(bool b) { return *this << (b ? "true" : "false"); }
 
-  // These two overloads allow streaming a wide C string to a Message
+  // These two overloads allow streaming a wide C string to a Request
   // using the UTF-8 encoding.
   Message& operator<<(const wchar_t* wide_c_str);
   Message& operator<<(wchar_t* wide_c_str);
 
 #if GTEST_HAS_STD_WSTRING
   // Converts the given wide string to a narrow string using the UTF-8
-  // encoding, and streams the result to this Message object.
+  // encoding, and streams the result to this Request object.
   Message& operator<<(const ::std::wstring& wstr);
 #endif  // GTEST_HAS_STD_WSTRING
 
@@ -194,7 +194,7 @@ class GTEST_API_ Message {
   void operator=(const Message&);
 };
 
-// Streams a Message to an ostream.
+// Streams a Request to an ostream.
 inline std::ostream& operator<<(std::ostream& os, const Message& sb) {
   return os << sb.GetString();
 }

@@ -3,12 +3,12 @@
 #include <string>
 
 struct OperatorArgument {
-    char * arg;
+    uint8_t * arg;
     int lengthArg;
 
     OperatorArgument() = default;
 
-    OperatorArgument(char * arg, int lengthArg): arg(arg), lengthArg(lengthArg) {}
+    OperatorArgument(uint8_t * arg, int lengthArg): arg(arg), lengthArg(lengthArg) {}
 };
 
 struct OperationBody {
@@ -28,21 +28,20 @@ struct OperationBody {
 
 struct AuthenticationBody {
 public:
-    char * authKey;
-    int authKeyLength;
+    std::string authKey;
     bool flag1;
     bool flag2;
 
-    AuthenticationBody(char * authKey, int authKeyLength, bool flag1, bool flag2): authKey(authKey), authKeyLength(authKeyLength) , flag1(flag1), flag2(flag2) {}
+    AuthenticationBody(std::string authKey, bool flag1, bool flag2): authKey(authKey), flag1(flag1), flag2(flag2) {}
 
     AuthenticationBody() = default;
 };
 
 
-struct Message {
+struct Request {
     const AuthenticationBody * authentication;
     const OperationBody * operation;
 
-    Message() = default;
+    Request() = default;
 };
 

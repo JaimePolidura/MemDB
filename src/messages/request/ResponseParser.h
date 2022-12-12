@@ -1,32 +1,32 @@
 #pragma once
 
-#include "Message.h"
+#include "Request.h"
 #include <memory>
 #include <vector>
 #include <bitset>
 
-class MessageParser {
+class ResponseParser {
 private:
     static const uint8_t FLAG1_MASK = 0x20; //1000 0000
     static const uint8_t FLAG2_MASK = 0x10; //0100 0000
 
 public:
-    std::shared_ptr<Message> parse(const std::vector<uint8_t>& buffer) {
-        std::shared_ptr<Message> message = std::make_shared<Message>();
-        message->authentication = this->parseAuthenticacion(buffer);
-        message->operation = this->parseOperation(buffer);
+    std::shared_ptr<Request> parse(const std::vector<uint8_t>& buffer) {
+        std::shared_ptr<Request> request = std::make_shared<Request>();
+        request->authentication = this->parseAuthenticacion(buffer);
+        request->operation = this->parseOperation(buffer);
 
-        return message;
+        return request;
     }
 
 private:
     const AuthenticationBody * parseAuthenticacion(const std::vector<uint8_t>& buffer) {
-        unsigned short authLength = this->getValueWithoutFlags(buffer, 0);
-        char * authKey = this->fill(buffer, 1, authLength);
+        uint8_t authLength = this->getValueWithoutFlags(buffer, 0);
+        uint8_t * authKey = this->fill(buffer, 1, authLength);
         bool flagAuth1 = this->getFlag(buffer, 0, FLAG1_MASK);
         bool flagAuth2 = this->getFlag(buffer, 0, FLAG2_MASK);
 
-        return new AuthenticationBody{authKey, authLength, flagAuth1, flagAuth2};
+        return new AuthenticationBody{std::string((char *) authKey, authLength), flagAuth1, flagAuth2};
     }
 
     const OperationBody * parseOperation(const std::vector<uint8_t>& buffer) {
@@ -48,7 +48,7 @@ private:
         while (lastIndexChecked + 1 < buffer.size()) {
             unsigned short argLength = (unsigned short) buffer[lastIndexChecked];
             int argValuePosition = lastIndexChecked + 1;
-            char * argValue = this->fill(buffer, argValuePosition, argValuePosition + argLength);
+            uint8_t * argValue = this->fill(buffer, argValuePosition, argValuePosition + argLength);
 
             lastIndexChecked = argValuePosition + argLength;
             numerOfArguments++;
@@ -58,9 +58,9 @@ private:
         return new OperationBody{operatorNumber, flagOperation1, flagOperation2, arguments.data(), numerOfArguments};
     }
 
-    char * fill(const std::vector<uint8_t>& buffer, int initialPos, int endPos) {
+    uint8_t * fill(const std::vector<uint8_t>& buffer, int initialPos, int endPos) {
         int size = endPos - initialPos;
-        char * toFill = new char[size];
+        uint8_t * toFill = new uint8_t[size];
 
         for(int i = initialPos; i <= endPos; i++)
             toFill[i - initialPos] = buffer[i];

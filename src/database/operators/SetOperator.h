@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Operator.h"
-#include "OperatorRegistry.h"
+#include "OperatorDispatcher.h"
 
 #include <string>
 
@@ -14,13 +14,13 @@ public:
         STORE_OPERATOR(OPERATOR_NUMBER, std::shared_ptr<SetOperator>(this), operators);
     }
 
-    std::shared_ptr<Response> operate(const OperationBody& operation, Map& map) override {
+    std::shared_ptr<Response> operate(const OperationBody& operation, std::shared_ptr<Map> map) override {
         const std::string& key = std::string((char *) operation.args[0].arg, operation.args[0].lengthArg);
 
         int valueSize = operation.args[1].lengthArg;
         uint8_t * valueValue = operation.args[1].arg;
 
-        map.put(key, valueValue, valueSize);
+        map->put(key, valueValue, valueSize);
 
         return std::make_shared<Response>();
     }

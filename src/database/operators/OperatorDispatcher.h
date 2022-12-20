@@ -6,8 +6,9 @@
 #include <functional>
 
 #include "Operator.h"
-#include "connection/TCPConnection.h"
+#include "connection/Connection.h"
 #include "../../utils/threads/dynamicthreadpool/SingleThreadPool.h"
+#include "../../messages/response/ErrorCodes.h"
 
 static std::map<int, std::shared_ptr<Operator>> operators;
 
@@ -20,7 +21,7 @@ public:
     OperatorDispatcher(std::shared_ptr<Map> dbCons): db(dbCons) {}
 
     void dispatch(std::shared_ptr<Request> request,
-                  const std::shared_ptr<TCPConnection>& connection,
+                  const std::shared_ptr<Connection>& connection,
                   std::function<void(std::shared_ptr<Response>)> onResponse) {
 
         std::shared_ptr<Operator> operatorToExecute = operators[request->operation[0].operatorNumber];

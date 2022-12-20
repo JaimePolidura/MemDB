@@ -98,55 +98,38 @@ src/CMakeFiles/memdb_run.dir/users/UsersRepository.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_run.dir/users/UsersRepository.cpp.s"
 	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\src\users\UsersRepository.cpp -o CMakeFiles\memdb_run.dir\users\UsersRepository.cpp.s
 
-src/CMakeFiles/memdb_run.dir/utils/crypto/PolynomialHashCreator.cpp.obj: src/CMakeFiles/memdb_run.dir/flags.make
-src/CMakeFiles/memdb_run.dir/utils/crypto/PolynomialHashCreator.cpp.obj: src/CMakeFiles/memdb_run.dir/includes_CXX.rsp
-src/CMakeFiles/memdb_run.dir/utils/crypto/PolynomialHashCreator.cpp.obj: ../src/utils/crypto/PolynomialHashCreator.cpp
-src/CMakeFiles/memdb_run.dir/utils/crypto/PolynomialHashCreator.cpp.obj: src/CMakeFiles/memdb_run.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object src/CMakeFiles/memdb_run.dir/utils/crypto/PolynomialHashCreator.cpp.obj"
-	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/memdb_run.dir/utils/crypto/PolynomialHashCreator.cpp.obj -MF CMakeFiles\memdb_run.dir\utils\crypto\PolynomialHashCreator.cpp.obj.d -o CMakeFiles\memdb_run.dir\utils\crypto\PolynomialHashCreator.cpp.obj -c C:\programacion\MemDB\src\utils\crypto\PolynomialHashCreator.cpp
+src/CMakeFiles/memdb_run.dir/utils/datastructures/map/Map.cpp.obj: src/CMakeFiles/memdb_run.dir/flags.make
+src/CMakeFiles/memdb_run.dir/utils/datastructures/map/Map.cpp.obj: src/CMakeFiles/memdb_run.dir/includes_CXX.rsp
+src/CMakeFiles/memdb_run.dir/utils/datastructures/map/Map.cpp.obj: ../src/utils/datastructures/map/Map.cpp
+src/CMakeFiles/memdb_run.dir/utils/datastructures/map/Map.cpp.obj: src/CMakeFiles/memdb_run.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object src/CMakeFiles/memdb_run.dir/utils/datastructures/map/Map.cpp.obj"
+	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/memdb_run.dir/utils/datastructures/map/Map.cpp.obj -MF CMakeFiles\memdb_run.dir\utils\datastructures\map\Map.cpp.obj.d -o CMakeFiles\memdb_run.dir\utils\datastructures\map\Map.cpp.obj -c C:\programacion\MemDB\src\utils\datastructures\map\Map.cpp
 
-src/CMakeFiles/memdb_run.dir/utils/crypto/PolynomialHashCreator.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/memdb_run.dir/utils/crypto/PolynomialHashCreator.cpp.i"
-	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\programacion\MemDB\src\utils\crypto\PolynomialHashCreator.cpp > CMakeFiles\memdb_run.dir\utils\crypto\PolynomialHashCreator.cpp.i
+src/CMakeFiles/memdb_run.dir/utils/datastructures/map/Map.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/memdb_run.dir/utils/datastructures/map/Map.cpp.i"
+	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\programacion\MemDB\src\utils\datastructures\map\Map.cpp > CMakeFiles\memdb_run.dir\utils\datastructures\map\Map.cpp.i
 
-src/CMakeFiles/memdb_run.dir/utils/crypto/PolynomialHashCreator.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_run.dir/utils/crypto/PolynomialHashCreator.cpp.s"
-	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\src\utils\crypto\PolynomialHashCreator.cpp -o CMakeFiles\memdb_run.dir\utils\crypto\PolynomialHashCreator.cpp.s
-
-src/CMakeFiles/memdb_run.dir/utils/datastructures/map/DBMap.cpp.obj: src/CMakeFiles/memdb_run.dir/flags.make
-src/CMakeFiles/memdb_run.dir/utils/datastructures/map/DBMap.cpp.obj: src/CMakeFiles/memdb_run.dir/includes_CXX.rsp
-src/CMakeFiles/memdb_run.dir/utils/datastructures/map/DBMap.cpp.obj: ../src/utils/datastructures/map/DBMap.cpp
-src/CMakeFiles/memdb_run.dir/utils/datastructures/map/DBMap.cpp.obj: src/CMakeFiles/memdb_run.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object src/CMakeFiles/memdb_run.dir/utils/datastructures/map/DBMap.cpp.obj"
-	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/memdb_run.dir/utils/datastructures/map/DBMap.cpp.obj -MF CMakeFiles\memdb_run.dir\utils\datastructures\map\DBMap.cpp.obj.d -o CMakeFiles\memdb_run.dir\utils\datastructures\map\DBMap.cpp.obj -c C:\programacion\MemDB\src\utils\datastructures\map\DBMap.cpp
-
-src/CMakeFiles/memdb_run.dir/utils/datastructures/map/DBMap.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/memdb_run.dir/utils/datastructures/map/DBMap.cpp.i"
-	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\programacion\MemDB\src\utils\datastructures\map\DBMap.cpp > CMakeFiles\memdb_run.dir\utils\datastructures\map\DBMap.cpp.i
-
-src/CMakeFiles/memdb_run.dir/utils/datastructures/map/DBMap.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_run.dir/utils/datastructures/map/DBMap.cpp.s"
-	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\src\utils\datastructures\map\DBMap.cpp -o CMakeFiles\memdb_run.dir\utils\datastructures\map\DBMap.cpp.s
+src/CMakeFiles/memdb_run.dir/utils/datastructures/map/Map.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_run.dir/utils/datastructures/map/Map.cpp.s"
+	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\src\utils\datastructures\map\Map.cpp -o CMakeFiles\memdb_run.dir\utils\datastructures\map\Map.cpp.s
 
 # Object files for target memdb_run
 memdb_run_OBJECTS = \
 "CMakeFiles/memdb_run.dir/main.cpp.obj" \
 "CMakeFiles/memdb_run.dir/users/UsersRepository.cpp.obj" \
-"CMakeFiles/memdb_run.dir/utils/crypto/PolynomialHashCreator.cpp.obj" \
-"CMakeFiles/memdb_run.dir/utils/datastructures/map/DBMap.cpp.obj"
+"CMakeFiles/memdb_run.dir/utils/datastructures/map/Map.cpp.obj"
 
 # External object files for target memdb_run
 memdb_run_EXTERNAL_OBJECTS =
 
 src/memdb_run.exe: src/CMakeFiles/memdb_run.dir/main.cpp.obj
 src/memdb_run.exe: src/CMakeFiles/memdb_run.dir/users/UsersRepository.cpp.obj
-src/memdb_run.exe: src/CMakeFiles/memdb_run.dir/utils/crypto/PolynomialHashCreator.cpp.obj
-src/memdb_run.exe: src/CMakeFiles/memdb_run.dir/utils/datastructures/map/DBMap.cpp.obj
+src/memdb_run.exe: src/CMakeFiles/memdb_run.dir/utils/datastructures/map/Map.cpp.obj
 src/memdb_run.exe: src/CMakeFiles/memdb_run.dir/build.make
 src/memdb_run.exe: src/CMakeFiles/memdb_run.dir/linklibs.rsp
 src/memdb_run.exe: src/CMakeFiles/memdb_run.dir/objects1.rsp
 src/memdb_run.exe: src/CMakeFiles/memdb_run.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable memdb_run.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable memdb_run.exe"
 	cd /d C:\programacion\MemDB\cmake-build-debug\src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\memdb_run.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

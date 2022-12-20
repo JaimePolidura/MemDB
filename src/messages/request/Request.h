@@ -24,6 +24,9 @@ struct OperationBody {
 
     OperationBody(int operatorNumber, bool flag1, bool flag2, OperatorArgument * args, int numberArgs): flag1(flag1), flag2(flag2), operatorNumber(operatorNumber),
                                                                                                         args(args), numberArgs(numberArgs) {}
+    ~OperationBody(){
+        delete[] this->args;
+    }
 };
 
 struct AuthenticationBody {
@@ -35,13 +38,21 @@ public:
     AuthenticationBody(std::string authKey, bool flag1, bool flag2): authKey(authKey), flag1(flag1), flag2(flag2) {}
 
     AuthenticationBody() = default;
-};
 
+    ~AuthenticationBody() {
+        delete this->authKey.data();
+    }
+};
 
 struct Request {
     const AuthenticationBody * authentication;
     const OperationBody * operation;
 
     Request() = default;
+
+    ~Request() {
+        delete this->authentication;
+        delete this->operation;
+    }
 };
 

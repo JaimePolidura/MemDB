@@ -5,24 +5,32 @@
 
 #include "../Users/Authenticator.h"
 #include "messages/request/RequestDeserializer.h"
+#include "messages/response/ResponseSerializer.h"
+#include "messages/response/ErrorCodes.h"
 #include "../utils/threads/dynamicthreadpool/DynamicThreadPool.h"
-#include "TCPConnection.h"
+#include "Connection.h"
+#include "database/operators/OperatorDispatcher.h"
 
 using namespace boost::asio;
 
 class TCPServer {
 private:
-    std::shared_ptr<DynamicThreadPool> tcpConnectionThreadPool;
+    std::shared_ptr<DynamicThreadPool> connectionThreadPool;
+    std::shared_ptr<OperatorDispatcher> operatorDispatcher;
     RequestDeserializer requestDeserializer;
+    ResponseSerializer responseSerializer;
     ip::tcp::acceptor acceptator;
     Authenticator authenicator;
     io_context ioContext;
     uint16_t port;
 
 public:
-    TCPServer(uint16_t port, Authenticator authenicator, std::shared_ptr<DynamicThreadPool> tcpConnectionThreadPool):
-        port(port), authenicator(std::move(authenicator)), acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}),
-        tcpConnectionThreadPool(tcpConnectionThreadPool) {};
+    TCPServer(uint16_t port, Authenticator authenicator, std::shared_ptr<DynamicThreadPool> tcpConnectionThreadPool, std::shared_ptr<OperatorDispatcher> operatorDispatcher):
+            port(port),
+            authenicator(std::move(authenicator)),
+            operatorDispatcher(operatorDispatcher),
+            acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}),
+            connectionThreadPool(tcpConnectionThreadPool){};
 
     void run() {
         printf("[SERVER] Waiting for conenctions...\n");
@@ -41,29 +49,37 @@ private:
         this->acceptator.async_accept([this](std::error_code ec, ip::tcp::socket socket) {
             printf("[SERVER] Accepted connection\n");
 
-            std::shared_ptr<TCPConnection> connection = std::make_shared<TCPConnection>(std::move(socket));
-
-            connection->read(); //Start reading, IO async operation, not blocking
+            std::shared_ptr<Connection> connection = std::make_shared<Connection>(std::move(socket));
 
             connection->onRequest([&](const std::vector<uint8_t>& requestRawBuffer) {
-                this->tcpConnectionThreadPool->submit([&] { this->onNewPackage(requestRawBuffer, connection); });
+                this->connectionThreadPool->submit([&] { this->onNewPackage(requestRawBuffer, connection); });
             });
+
+            connection->read(); //Start reading, IO async operation, not blocking
 
             this->acceptNewConnections();
         });
     }
 
-    void onNewPackage(const std::vector<uint8_t>& requestRawBuffer, const std::shared_ptr<TCPConnection>& connection) {
+    void onNewPackage(const std::vector<uint8_t>& requestRawBuffer, const std::shared_ptr<Connection>& connection) {
         std::shared_ptr<Request> request = this->requestDeserializer.deserialize(requestRawBuffer);
         bool authenticationValid = this->authenicator.authenticate(request->authentication->authKey);
 
         if(!authenticationValid){
-            //TODO Send error
+            const Response &authErrorResponse = std::move(Response::error(AUTH_ERROR));
+            connection->write(* this->responseSerializer.serialize(authErrorResponse));
             return;
         }
 
+        this->operatorDispatcher->dispatch(request, connection, [this, &connection](std::shared_ptr<Response> response){
+            this->onResponseFromDb(connection, response);
+        });
+    }
 
-
-        //TODO Dispatch request
+    void onResponseFromDb(const std::shared_ptr<Connection>& connection, std::shared_ptr<Response> response) {
+        if(connection->isOpen()){
+            std::shared_ptr<std::vector<uint8_t>> serialized = this->responseSerializer.serialize(* response);
+            connection->write(* serialized);
+        }
     }
 };

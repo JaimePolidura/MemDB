@@ -448,7 +448,7 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/connection/TCPConnection.h">
+		<Unit filename="C:/programacion/MemDB/src/connection/Connection.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
@@ -472,7 +472,7 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/database/operators/OperatorRegistry.h">
+		<Unit filename="C:/programacion/MemDB/src/database/operators/OperatorDispatcher.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
@@ -496,11 +496,23 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/messages/request/ResponseParser.h">
+		<Unit filename="C:/programacion/MemDB/src/messages/request/RequestDeserializer.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/messages/response">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/messages/response/ErrorCodes.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/messages/response/Response.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/messages/response/ResponseSerializer.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
@@ -528,22 +540,6 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/crypto">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/crypto/HashCreator.h">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/crypto/PolynomialHashCreator.cpp">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/crypto/PolynomialHashCreator.h">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/utils/datastructures">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
@@ -552,11 +548,7 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/datastructures/map/DBMap.cpp">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/datastructures/map/DBMap.h">
+		<Unit filename="C:/programacion/MemDB/src/utils/datastructures/map/Map.cpp">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
@@ -592,19 +584,20 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/utils/threads/dynamicthreadpool/SingleThreadPool.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/main.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/tst/messages/request/RequestParserTest.cpp">
+		<Unit filename="C:/programacion/MemDB/tst/messages/request/RequestDeserializerTest.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/users/UsersServiceTest.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/tst/utils/crypto/PolynomialHashCreatorTest.cpp">
-			<Option target="memdb_tst"/>
-		</Unit>
-		<Unit filename="C:/programacion/MemDB/tst/utils/datastructures/map/DBMapTest.cpp">
+		<Unit filename="C:/programacion/MemDB/tst/utils/datastructures/map/MapTest.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/utils/datastructures/queue/BlockingQueueTest.cpp">

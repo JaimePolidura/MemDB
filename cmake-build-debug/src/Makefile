@@ -242,59 +242,32 @@ users/UsersRepository.cpp.s:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/users/UsersRepository.cpp.s
 .PHONY : users/UsersRepository.cpp.s
 
-utils/crypto/PolynomialHashCreator.obj: utils/crypto/PolynomialHashCreator.cpp.obj
-.PHONY : utils/crypto/PolynomialHashCreator.obj
+utils/datastructures/map/Map.obj: utils/datastructures/map/Map.cpp.obj
+.PHONY : utils/datastructures/map/Map.obj
 
 # target to build an object file
-utils/crypto/PolynomialHashCreator.cpp.obj:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/crypto/PolynomialHashCreator.cpp.obj
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/crypto/PolynomialHashCreator.cpp.obj
-.PHONY : utils/crypto/PolynomialHashCreator.cpp.obj
+utils/datastructures/map/Map.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/datastructures/map/Map.cpp.obj
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/datastructures/map/Map.cpp.obj
+.PHONY : utils/datastructures/map/Map.cpp.obj
 
-utils/crypto/PolynomialHashCreator.i: utils/crypto/PolynomialHashCreator.cpp.i
-.PHONY : utils/crypto/PolynomialHashCreator.i
-
-# target to preprocess a source file
-utils/crypto/PolynomialHashCreator.cpp.i:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/crypto/PolynomialHashCreator.cpp.i
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/crypto/PolynomialHashCreator.cpp.i
-.PHONY : utils/crypto/PolynomialHashCreator.cpp.i
-
-utils/crypto/PolynomialHashCreator.s: utils/crypto/PolynomialHashCreator.cpp.s
-.PHONY : utils/crypto/PolynomialHashCreator.s
-
-# target to generate assembly for a file
-utils/crypto/PolynomialHashCreator.cpp.s:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/crypto/PolynomialHashCreator.cpp.s
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/crypto/PolynomialHashCreator.cpp.s
-.PHONY : utils/crypto/PolynomialHashCreator.cpp.s
-
-utils/datastructures/map/DBMap.obj: utils/datastructures/map/DBMap.cpp.obj
-.PHONY : utils/datastructures/map/DBMap.obj
-
-# target to build an object file
-utils/datastructures/map/DBMap.cpp.obj:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/datastructures/map/DBMap.cpp.obj
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/datastructures/map/DBMap.cpp.obj
-.PHONY : utils/datastructures/map/DBMap.cpp.obj
-
-utils/datastructures/map/DBMap.i: utils/datastructures/map/DBMap.cpp.i
-.PHONY : utils/datastructures/map/DBMap.i
+utils/datastructures/map/Map.i: utils/datastructures/map/Map.cpp.i
+.PHONY : utils/datastructures/map/Map.i
 
 # target to preprocess a source file
-utils/datastructures/map/DBMap.cpp.i:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/datastructures/map/DBMap.cpp.i
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/datastructures/map/DBMap.cpp.i
-.PHONY : utils/datastructures/map/DBMap.cpp.i
+utils/datastructures/map/Map.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/datastructures/map/Map.cpp.i
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/datastructures/map/Map.cpp.i
+.PHONY : utils/datastructures/map/Map.cpp.i
 
-utils/datastructures/map/DBMap.s: utils/datastructures/map/DBMap.cpp.s
-.PHONY : utils/datastructures/map/DBMap.s
+utils/datastructures/map/Map.s: utils/datastructures/map/Map.cpp.s
+.PHONY : utils/datastructures/map/Map.s
 
 # target to generate assembly for a file
-utils/datastructures/map/DBMap.cpp.s:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/datastructures/map/DBMap.cpp.s
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/datastructures/map/DBMap.cpp.s
-.PHONY : utils/datastructures/map/DBMap.cpp.s
+utils/datastructures/map/Map.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/datastructures/map/Map.cpp.s
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/datastructures/map/Map.cpp.s
+.PHONY : utils/datastructures/map/Map.cpp.s
 
 # Help Target
 help:
@@ -316,12 +289,9 @@ help:
 	@echo ... users/UsersRepository.obj
 	@echo ... users/UsersRepository.i
 	@echo ... users/UsersRepository.s
-	@echo ... utils/crypto/PolynomialHashCreator.obj
-	@echo ... utils/crypto/PolynomialHashCreator.i
-	@echo ... utils/crypto/PolynomialHashCreator.s
-	@echo ... utils/datastructures/map/DBMap.obj
-	@echo ... utils/datastructures/map/DBMap.i
-	@echo ... utils/datastructures/map/DBMap.s
+	@echo ... utils/datastructures/map/Map.obj
+	@echo ... utils/datastructures/map/Map.i
+	@echo ... utils/datastructures/map/Map.s
 .PHONY : help
 
 

@@ -198,29 +198,29 @@ main.cpp.s:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/main.cpp.s
 .PHONY : main.cpp.s
 
-messages/request/RequestParserTest.obj: messages/request/RequestParserTest.cpp.obj
-.PHONY : messages/request/RequestParserTest.obj
+messages/request/RequestDeserializerTest.obj: messages/request/RequestDeserializerTest.cpp.obj
+.PHONY : messages/request/RequestDeserializerTest.obj
 
 # target to build an object file
-messages/request/RequestParserTest.cpp.obj:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/messages/request/RequestParserTest.cpp.obj
-.PHONY : messages/request/RequestParserTest.cpp.obj
+messages/request/RequestDeserializerTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/messages/request/RequestDeserializerTest.cpp.obj
+.PHONY : messages/request/RequestDeserializerTest.cpp.obj
 
-messages/request/RequestParserTest.i: messages/request/RequestParserTest.cpp.i
-.PHONY : messages/request/RequestParserTest.i
+messages/request/RequestDeserializerTest.i: messages/request/RequestDeserializerTest.cpp.i
+.PHONY : messages/request/RequestDeserializerTest.i
 
 # target to preprocess a source file
-messages/request/RequestParserTest.cpp.i:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/messages/request/RequestParserTest.cpp.i
-.PHONY : messages/request/RequestParserTest.cpp.i
+messages/request/RequestDeserializerTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/messages/request/RequestDeserializerTest.cpp.i
+.PHONY : messages/request/RequestDeserializerTest.cpp.i
 
-messages/request/RequestParserTest.s: messages/request/RequestParserTest.cpp.s
-.PHONY : messages/request/RequestParserTest.s
+messages/request/RequestDeserializerTest.s: messages/request/RequestDeserializerTest.cpp.s
+.PHONY : messages/request/RequestDeserializerTest.s
 
 # target to generate assembly for a file
-messages/request/RequestParserTest.cpp.s:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/messages/request/RequestParserTest.cpp.s
-.PHONY : messages/request/RequestParserTest.cpp.s
+messages/request/RequestDeserializerTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/messages/request/RequestDeserializerTest.cpp.s
+.PHONY : messages/request/RequestDeserializerTest.cpp.s
 
 users/UsersServiceTest.obj: users/UsersServiceTest.cpp.obj
 .PHONY : users/UsersServiceTest.obj
@@ -246,53 +246,29 @@ users/UsersServiceTest.cpp.s:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/users/UsersServiceTest.cpp.s
 .PHONY : users/UsersServiceTest.cpp.s
 
-utils/crypto/PolynomialHashCreatorTest.obj: utils/crypto/PolynomialHashCreatorTest.cpp.obj
-.PHONY : utils/crypto/PolynomialHashCreatorTest.obj
+utils/datastructures/map/MapTest.obj: utils/datastructures/map/MapTest.cpp.obj
+.PHONY : utils/datastructures/map/MapTest.obj
 
 # target to build an object file
-utils/crypto/PolynomialHashCreatorTest.cpp.obj:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/crypto/PolynomialHashCreatorTest.cpp.obj
-.PHONY : utils/crypto/PolynomialHashCreatorTest.cpp.obj
+utils/datastructures/map/MapTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/MapTest.cpp.obj
+.PHONY : utils/datastructures/map/MapTest.cpp.obj
 
-utils/crypto/PolynomialHashCreatorTest.i: utils/crypto/PolynomialHashCreatorTest.cpp.i
-.PHONY : utils/crypto/PolynomialHashCreatorTest.i
-
-# target to preprocess a source file
-utils/crypto/PolynomialHashCreatorTest.cpp.i:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/crypto/PolynomialHashCreatorTest.cpp.i
-.PHONY : utils/crypto/PolynomialHashCreatorTest.cpp.i
-
-utils/crypto/PolynomialHashCreatorTest.s: utils/crypto/PolynomialHashCreatorTest.cpp.s
-.PHONY : utils/crypto/PolynomialHashCreatorTest.s
-
-# target to generate assembly for a file
-utils/crypto/PolynomialHashCreatorTest.cpp.s:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/crypto/PolynomialHashCreatorTest.cpp.s
-.PHONY : utils/crypto/PolynomialHashCreatorTest.cpp.s
-
-utils/datastructures/map/DBMapTest.obj: utils/datastructures/map/DBMapTest.cpp.obj
-.PHONY : utils/datastructures/map/DBMapTest.obj
-
-# target to build an object file
-utils/datastructures/map/DBMapTest.cpp.obj:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.obj
-.PHONY : utils/datastructures/map/DBMapTest.cpp.obj
-
-utils/datastructures/map/DBMapTest.i: utils/datastructures/map/DBMapTest.cpp.i
-.PHONY : utils/datastructures/map/DBMapTest.i
+utils/datastructures/map/MapTest.i: utils/datastructures/map/MapTest.cpp.i
+.PHONY : utils/datastructures/map/MapTest.i
 
 # target to preprocess a source file
-utils/datastructures/map/DBMapTest.cpp.i:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.i
-.PHONY : utils/datastructures/map/DBMapTest.cpp.i
+utils/datastructures/map/MapTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/MapTest.cpp.i
+.PHONY : utils/datastructures/map/MapTest.cpp.i
 
-utils/datastructures/map/DBMapTest.s: utils/datastructures/map/DBMapTest.cpp.s
-.PHONY : utils/datastructures/map/DBMapTest.s
+utils/datastructures/map/MapTest.s: utils/datastructures/map/MapTest.cpp.s
+.PHONY : utils/datastructures/map/MapTest.s
 
 # target to generate assembly for a file
-utils/datastructures/map/DBMapTest.cpp.s:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/DBMapTest.cpp.s
-.PHONY : utils/datastructures/map/DBMapTest.cpp.s
+utils/datastructures/map/MapTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/MapTest.cpp.s
+.PHONY : utils/datastructures/map/MapTest.cpp.s
 
 utils/datastructures/queue/BlockingQueueTest.obj: utils/datastructures/queue/BlockingQueueTest.cpp.obj
 .PHONY : utils/datastructures/queue/BlockingQueueTest.obj
@@ -382,18 +358,15 @@ help:
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
-	@echo ... messages/request/RequestParserTest.obj
-	@echo ... messages/request/RequestParserTest.i
-	@echo ... messages/request/RequestParserTest.s
+	@echo ... messages/request/RequestDeserializerTest.obj
+	@echo ... messages/request/RequestDeserializerTest.i
+	@echo ... messages/request/RequestDeserializerTest.s
 	@echo ... users/UsersServiceTest.obj
 	@echo ... users/UsersServiceTest.i
 	@echo ... users/UsersServiceTest.s
-	@echo ... utils/crypto/PolynomialHashCreatorTest.obj
-	@echo ... utils/crypto/PolynomialHashCreatorTest.i
-	@echo ... utils/crypto/PolynomialHashCreatorTest.s
-	@echo ... utils/datastructures/map/DBMapTest.obj
-	@echo ... utils/datastructures/map/DBMapTest.i
-	@echo ... utils/datastructures/map/DBMapTest.s
+	@echo ... utils/datastructures/map/MapTest.obj
+	@echo ... utils/datastructures/map/MapTest.i
+	@echo ... utils/datastructures/map/MapTest.s
 	@echo ... utils/datastructures/queue/BlockingQueueTest.obj
 	@echo ... utils/datastructures/queue/BlockingQueueTest.i
 	@echo ... utils/datastructures/queue/BlockingQueueTest.s

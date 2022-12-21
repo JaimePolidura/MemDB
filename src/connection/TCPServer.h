@@ -17,20 +17,20 @@ class TCPServer {
 private:
     std::shared_ptr<DynamicThreadPool> connectionThreadPool;
     std::shared_ptr<OperatorDispatcher> operatorDispatcher;
+    uint16_t port;
     RequestDeserializer requestDeserializer;
     ResponseSerializer responseSerializer;
-    ip::tcp::acceptor acceptator;
     Authenticator authenicator;
     io_context ioContext;
-    uint16_t port;
+    ip::tcp::acceptor acceptator;
 
 public:
-    TCPServer(uint16_t port, Authenticator authenicator, std::shared_ptr<DynamicThreadPool> tcpConnectionThreadPool, std::shared_ptr<OperatorDispatcher> operatorDispatcher):
-            port(port),
-            authenicator(std::move(authenicator)),
-            operatorDispatcher(operatorDispatcher),
-            acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}),
-            connectionThreadPool(tcpConnectionThreadPool){};
+    TCPServer(uint16_t port, Authenticator authenicator, std::shared_ptr<OperatorDispatcher> operatorDispatcher, std::shared_ptr<DynamicThreadPool> tcpConnectionThreadPool):
+        port(port),
+        connectionThreadPool(tcpConnectionThreadPool),
+        authenicator(std::move(authenicator)),
+        operatorDispatcher(operatorDispatcher),
+        acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}) {};
 
     void run() {
         printf("[SERVER] Waiting for conenctions...\n");

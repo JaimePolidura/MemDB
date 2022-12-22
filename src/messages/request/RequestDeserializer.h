@@ -22,7 +22,7 @@ public:
 private:
     const AuthenticationBody * deserializeAuthenticacion(const std::vector<uint8_t>& buffer) {
         uint8_t authLength = this->getValueWithoutFlags(buffer, 0);
-        uint8_t * authKey = this->fill(buffer, 1, authLength);
+        uint8_t * authKey = this->fill(buffer, 1, authLength + 1);
         bool flagAuth1 = this->getFlag(buffer, 0, FLAG1_MASK);
         bool flagAuth2 = this->getFlag(buffer, 0, FLAG2_MASK);
 
@@ -55,6 +55,8 @@ private:
             arguments.emplace_back(argValue, argLength);
         }
 
+        auto xd = arguments.data();
+
         return new OperationBody{operatorNumber, flagOperation1, flagOperation2, arguments.data(), numerOfArguments};
     }
 
@@ -62,7 +64,7 @@ private:
         int size = endPos - initialPos;
         uint8_t * toFill = new uint8_t[size];
 
-        for(int i = initialPos; i <= endPos; i++)
+        for(int i = initialPos; i < endPos; i++)
             toFill[i - initialPos] = buffer[i];
 
         return toFill;

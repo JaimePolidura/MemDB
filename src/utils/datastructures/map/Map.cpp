@@ -1,6 +1,6 @@
 #include "Map.h"
 
-Map::Map() {}
+Map::Map(): size(0) {}
 
 void Map::put(const std::string &key, uint8_t * value, size_t valueSize) {
     int keyHash = this->calculateHash(key);

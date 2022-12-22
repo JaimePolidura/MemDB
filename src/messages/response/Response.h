@@ -9,19 +9,27 @@ public:
     uint8_t lengthResponse;
     uint8_t * response;
 
-    Response(uint8_t lengthResponse, uint8_t * response): isSuccessful(true), lengthResponse(lengthResponse), response(response), errorCode(0x00) {}
-
-    Response(uint8_t errorCode, uint8_t lengthResponse, uint8_t * response): isSuccessful(false), lengthResponse(lengthResponse), response(response), errorCode(errorCode) {}
-
-    Response(uint8_t errorCode): isSuccessful(false), lengthResponse(0), response(nullptr), errorCode(errorCode) {}
-
-    Response(): isSuccessful(true), lengthResponse(0), response(nullptr), errorCode(0) {}
+    Response(bool isSuccessful, uint8_t errorCode, uint8_t lengthResponse, uint8_t * responseCons) :
+            isSuccessful(isSuccessful),
+            errorCode(errorCode),
+            lengthResponse(lengthResponse),
+            response(new uint8_t[lengthResponse]) {
+        std::copy(responseCons, responseCons + lengthResponse, response);
+    }
 
     ~Response() {
         delete[] response;
     }
 
+    static Response success(uint8_t reponseLength, uint8_t * response) {
+        return Response{true, 0x00, reponseLength, response};
+    }
+
+    static Response success() {
+        return Response{true, 0x00, 0, nullptr};
+    }
+
     static Response error(uint8_t errorCode) {
-        return Response{errorCode};
+        return Response{false, errorCode, 0, nullptr};
     };
 };

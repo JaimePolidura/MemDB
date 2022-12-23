@@ -6,7 +6,7 @@
 #include "../Users/Authenticator.h"
 #include "messages/request/RequestDeserializer.h"
 #include "messages/response/ResponseSerializer.h"
-#include "messages/response/ErrorCodes.h"
+#include "messages/response/ErrorCode.h"
 #include "../utils/threads/dynamicthreadpool/DynamicThreadPool.h"
 #include "Connection.h"
 #include "database/operators/OperatorDispatcher.h"
@@ -66,12 +66,12 @@ private:
         bool authenticationValid = this->authenicator.authenticate(request->authentication->authKey);
 
         if(!authenticationValid){
-            const Response &authErrorResponse = std::move(Response::error(AUTH_ERROR));
-            connection->write(* this->responseSerializer.serialize(authErrorResponse));
+            std::shared_ptr<Response> authErrorResponse = Response::error(ErrorCode::AUTH_ERROR);
+            connection->write(* this->responseSerializer.serialize(* authErrorResponse.get()));
             return;
         }
 
-        this->operatorDispatcher->dispatch(request, connection, [this, &connection](std::shared_ptr<Response> response){
+        this->operatorDispatcher->dispatch(request, [this, &connection](std::shared_ptr<Response> response){
             this->onResponseFromDb(connection, response);
         });
     }

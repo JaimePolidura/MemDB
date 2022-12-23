@@ -26,13 +26,13 @@ TEST(RequesteRequestDeserializer, WithArgs) {
 
     ASSERT_EQ(deserializedRequest->operation->numberArgs, 2);
 
-    OperatorArgument * firstArg = deserializedRequest->operation->args;
-    ASSERT_EQ(firstArg->lengthArg, 1);
-    ASSERT_TRUE(arg1Expected.compare(std::string((char *) firstArg->arg, firstArg->lengthArg)) == 0);
+    OperatorArgument firstArg = deserializedRequest->operation->args.at(0);
+    ASSERT_EQ(firstArg.lengthArg, 1);
+    ASSERT_TRUE(arg1Expected.compare(std::string((char *) firstArg.arg, firstArg.lengthArg)) == 0);
 
-    OperatorArgument * secondArg = deserializedRequest->operation->args + 1;
-    ASSERT_EQ(secondArg->lengthArg, 2);
-    ASSERT_TRUE(arg2Expected.compare(std::string((char *) secondArg->arg, secondArg->lengthArg)) == 0);
+    OperatorArgument secondArg = deserializedRequest->operation->args.at(1);
+    ASSERT_EQ(secondArg.lengthArg, 2);
+    ASSERT_TRUE(arg2Expected.compare(std::string((char *) secondArg.arg, secondArg.lengthArg)) == 0);
 }
 
 TEST(RequesteRequestDeserializer, EmptyArgs) {

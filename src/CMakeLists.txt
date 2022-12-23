@@ -1,4 +1,4 @@
-find_package(Boost 1.80.0)
+find_package(Boost 1.81.0)
 include_directories(${Boost_INCLUDE_DIRS})
 
 set(BINARY ${CMAKE_PROJECT_NAME})
@@ -10,6 +10,8 @@ set(SOURCES ${SOURCES})
 add_executable(${BINARY}_run ${SOURCES})
 
 add_library(${BINARY}_lib STATIC ${SOURCES})
+
+target_link_libraries(${BINARY}_lib ${Boost_LIBRARIES})
 
 if(MINGW)
     target_link_libraries(${BINARY}_run ws2_32)

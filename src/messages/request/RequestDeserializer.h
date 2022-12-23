@@ -55,9 +55,7 @@ private:
             arguments.emplace_back(argValue, argLength);
         }
 
-        auto xd = arguments.data();
-
-        return new OperationBody{operatorNumber, flagOperation1, flagOperation2, arguments.data(), numerOfArguments};
+        return new OperationBody{operatorNumber, flagOperation1, flagOperation2, std::move(arguments), numerOfArguments};
     }
 
     uint8_t * fill(const std::vector<uint8_t>& buffer, int initialPos, int endPos) {

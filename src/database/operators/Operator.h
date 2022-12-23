@@ -10,8 +10,6 @@ enum OperatorType {
     READ, WRITE
 };
 
-#define STORE_OPERATOR(operatorNumber, operatorInstance, operatorsMap) operatorsMap[operatorNumber]=operatorInstance
-
 class Operator {
 public:
     virtual std::shared_ptr<Response> operate(const OperationBody& operation, std::shared_ptr<Map> map) = 0;

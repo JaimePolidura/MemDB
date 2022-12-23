@@ -464,6 +464,10 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/database/operators/AllOperators.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/database/operators/GetOperator.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
@@ -473,6 +477,10 @@
 			<Option target="memdb_lib"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/database/operators/OperatorDispatcher.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/database/operators/OperatorRegistry.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
@@ -504,7 +512,7 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/messages/response/ErrorCodes.h">
+		<Unit filename="C:/programacion/MemDB/src/messages/response/ErrorCode.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
@@ -588,10 +596,22 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
+		<Unit filename="C:/programacion/MemDB/tst/database/operators/GetOperatorTest.cpp">
+			<Option target="memdb_tst"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/tst/database/operators/OperatorRegistryTest.cpp">
+			<Option target="memdb_tst"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/tst/database/operators/SetOperatorTest.cpp">
+			<Option target="memdb_tst"/>
+		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/main.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/messages/request/RequestDeserializerTest.cpp">
+			<Option target="memdb_tst"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/tst/messages/response/ResponseSerializerTest.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/users/UsersServiceTest.cpp">

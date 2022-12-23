@@ -6,27 +6,27 @@
 #include <functional>
 
 #include "Operator.h"
-#include "connection/Connection.h"
 #include "../../utils/threads/dynamicthreadpool/SingleThreadPool.h"
-#include "../../messages/response/ErrorCodes.h"
-
-static std::map<int, std::shared_ptr<Operator>> operators;
+#include "../../messages/response/ErrorCode.h"
+#include "OperatorRegistry.h"
 
 class OperatorDispatcher {
 private:
     std::shared_ptr<Map> db;
+    std::shared_ptr<OperatorRegistry> operatorRegistry;
     SingleThreadPool singleThreadedWritePool;
 
 public:
-    OperatorDispatcher(std::shared_ptr<Map> dbCons): db(dbCons) {}
+    OperatorDispatcher(std::shared_ptr<Map> dbCons, std::shared_ptr<OperatorRegistry> operatorRegistryCons):
+        db(dbCons),
+        operatorRegistry(operatorRegistryCons) {}
 
     void dispatch(std::shared_ptr<Request> request,
-                  const std::shared_ptr<Connection>& connection,
                   std::function<void(std::shared_ptr<Response>)> onResponse) {
 
-        std::shared_ptr<Operator> operatorToExecute = operators[request->operation[0].operatorNumber];
+        std::shared_ptr<Operator> operatorToExecute = this->operatorRegistry->get(request->operation->operatorNumber);
         if(operatorToExecute.get() == nullptr){
-            //TODO error
+            onResponse(Response::error(ErrorCode::UNKNOWN_OPERATOR));
             return;
         }
 
@@ -38,7 +38,5 @@ public:
                 onResponse(operatorToExecute->operate(* request->operation, this->db));
             });
         }
-
-
     }
 };

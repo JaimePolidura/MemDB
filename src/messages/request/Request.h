@@ -16,14 +16,14 @@ struct OperationBody {
     int operatorNumber; //0 - 127
     bool flag1;
     bool flag2;
-    OperatorArgument * args;
+    std::vector<OperatorArgument> args;
     int numberArgs;
 
     OperationBody() = default;
 
     OperationBody(int operatorNumber, bool flag1, bool flag2): flag1(flag1), flag2(flag2), operatorNumber(operatorNumber) {}
 
-    OperationBody(int operatorNumber, bool flag1, bool flag2, OperatorArgument * args, int numberArgs):
+    OperationBody(int operatorNumber, bool flag1, bool flag2, std::vector<OperatorArgument> args, int numberArgs):
         flag1(flag1),
         flag2(flag2),
         operatorNumber(operatorNumber),

@@ -174,6 +174,78 @@ memdb_tst/fast:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/build
 .PHONY : memdb_tst/fast
 
+database/operators/GetOperatorTest.obj: database/operators/GetOperatorTest.cpp.obj
+.PHONY : database/operators/GetOperatorTest.obj
+
+# target to build an object file
+database/operators/GetOperatorTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.obj
+.PHONY : database/operators/GetOperatorTest.cpp.obj
+
+database/operators/GetOperatorTest.i: database/operators/GetOperatorTest.cpp.i
+.PHONY : database/operators/GetOperatorTest.i
+
+# target to preprocess a source file
+database/operators/GetOperatorTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.i
+.PHONY : database/operators/GetOperatorTest.cpp.i
+
+database/operators/GetOperatorTest.s: database/operators/GetOperatorTest.cpp.s
+.PHONY : database/operators/GetOperatorTest.s
+
+# target to generate assembly for a file
+database/operators/GetOperatorTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.s
+.PHONY : database/operators/GetOperatorTest.cpp.s
+
+database/operators/OperatorRegistryTest.obj: database/operators/OperatorRegistryTest.cpp.obj
+.PHONY : database/operators/OperatorRegistryTest.obj
+
+# target to build an object file
+database/operators/OperatorRegistryTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.obj
+.PHONY : database/operators/OperatorRegistryTest.cpp.obj
+
+database/operators/OperatorRegistryTest.i: database/operators/OperatorRegistryTest.cpp.i
+.PHONY : database/operators/OperatorRegistryTest.i
+
+# target to preprocess a source file
+database/operators/OperatorRegistryTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.i
+.PHONY : database/operators/OperatorRegistryTest.cpp.i
+
+database/operators/OperatorRegistryTest.s: database/operators/OperatorRegistryTest.cpp.s
+.PHONY : database/operators/OperatorRegistryTest.s
+
+# target to generate assembly for a file
+database/operators/OperatorRegistryTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.s
+.PHONY : database/operators/OperatorRegistryTest.cpp.s
+
+database/operators/SetOperatorTest.obj: database/operators/SetOperatorTest.cpp.obj
+.PHONY : database/operators/SetOperatorTest.obj
+
+# target to build an object file
+database/operators/SetOperatorTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.obj
+.PHONY : database/operators/SetOperatorTest.cpp.obj
+
+database/operators/SetOperatorTest.i: database/operators/SetOperatorTest.cpp.i
+.PHONY : database/operators/SetOperatorTest.i
+
+# target to preprocess a source file
+database/operators/SetOperatorTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.i
+.PHONY : database/operators/SetOperatorTest.cpp.i
+
+database/operators/SetOperatorTest.s: database/operators/SetOperatorTest.cpp.s
+.PHONY : database/operators/SetOperatorTest.s
+
+# target to generate assembly for a file
+database/operators/SetOperatorTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.s
+.PHONY : database/operators/SetOperatorTest.cpp.s
+
 main.obj: main.cpp.obj
 .PHONY : main.obj
 
@@ -221,6 +293,30 @@ messages/request/RequestDeserializerTest.s: messages/request/RequestDeserializer
 messages/request/RequestDeserializerTest.cpp.s:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/messages/request/RequestDeserializerTest.cpp.s
 .PHONY : messages/request/RequestDeserializerTest.cpp.s
+
+messages/response/ResponseSerializerTest.obj: messages/response/ResponseSerializerTest.cpp.obj
+.PHONY : messages/response/ResponseSerializerTest.obj
+
+# target to build an object file
+messages/response/ResponseSerializerTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/messages/response/ResponseSerializerTest.cpp.obj
+.PHONY : messages/response/ResponseSerializerTest.cpp.obj
+
+messages/response/ResponseSerializerTest.i: messages/response/ResponseSerializerTest.cpp.i
+.PHONY : messages/response/ResponseSerializerTest.i
+
+# target to preprocess a source file
+messages/response/ResponseSerializerTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/messages/response/ResponseSerializerTest.cpp.i
+.PHONY : messages/response/ResponseSerializerTest.cpp.i
+
+messages/response/ResponseSerializerTest.s: messages/response/ResponseSerializerTest.cpp.s
+.PHONY : messages/response/ResponseSerializerTest.s
+
+# target to generate assembly for a file
+messages/response/ResponseSerializerTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/messages/response/ResponseSerializerTest.cpp.s
+.PHONY : messages/response/ResponseSerializerTest.cpp.s
 
 users/UsersServiceTest.obj: users/UsersServiceTest.cpp.obj
 .PHONY : users/UsersServiceTest.obj
@@ -355,12 +451,24 @@ help:
 	@echo ... list_install_components
 	@echo ... rebuild_cache
 	@echo ... memdb_tst
+	@echo ... database/operators/GetOperatorTest.obj
+	@echo ... database/operators/GetOperatorTest.i
+	@echo ... database/operators/GetOperatorTest.s
+	@echo ... database/operators/OperatorRegistryTest.obj
+	@echo ... database/operators/OperatorRegistryTest.i
+	@echo ... database/operators/OperatorRegistryTest.s
+	@echo ... database/operators/SetOperatorTest.obj
+	@echo ... database/operators/SetOperatorTest.i
+	@echo ... database/operators/SetOperatorTest.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
 	@echo ... messages/request/RequestDeserializerTest.obj
 	@echo ... messages/request/RequestDeserializerTest.i
 	@echo ... messages/request/RequestDeserializerTest.s
+	@echo ... messages/response/ResponseSerializerTest.obj
+	@echo ... messages/response/ResponseSerializerTest.i
+	@echo ... messages/response/ResponseSerializerTest.s
 	@echo ... users/UsersServiceTest.obj
 	@echo ... users/UsersServiceTest.i
 	@echo ... users/UsersServiceTest.s

@@ -1,7 +1,8 @@
 #include "gtest/gtest.h"
 #include "messages/response/ResponseSerializer.h"
 #include "messages/response/Response.h"
-#include "messages/response/ErrorCodes.h"
+#include "messages/response/ErrorCode.h"
+
 #include <string>
 #include <memory>
 
@@ -10,8 +11,8 @@ TEST(ResponseSerializer, ShouldSerializeSuccessWithData) {
 
     std::string data = "hello";
 
-    Response response = Response::success(data.length(), reinterpret_cast<uint8_t *>(data.data()));
-    std::shared_ptr<std::vector<uint8_t>> serialized = responseSerializer.serialize(response);
+    std::shared_ptr<Response> response = Response::success(data.length(), reinterpret_cast<uint8_t *>(data.data()));
+    std::shared_ptr<std::vector<uint8_t>> serialized = responseSerializer.serialize(std::ref(* response));
 
     ASSERT_EQ(serialized->size(), 7);
     ASSERT_EQ(serialized->at(0), 0x01);
@@ -27,8 +28,8 @@ TEST(ResponseSerializer, ShouldSerializeSuccessWithData) {
 TEST(ResponseSerializer, ShouldSerializeSuccessNoData) {
     ResponseSerializer responseSerializer{};
 
-    Response response = Response::success();
-    std::shared_ptr<std::vector<uint8_t>> serialized = responseSerializer.serialize(response);
+    std::shared_ptr<Response> response = Response::success();
+    std::shared_ptr<std::vector<uint8_t>> serialized = responseSerializer.serialize(* response.get());
 
     ASSERT_EQ(serialized->size(), 2);
     ASSERT_EQ(serialized->at(0), 0x01);
@@ -38,8 +39,8 @@ TEST(ResponseSerializer, ShouldSerializeSuccessNoData) {
 TEST(ResponseSerializer, ShouldSerializeErrorNoData) {
     ResponseSerializer responseSerializer{};
 
-    Response response = Response::error(UNKNOWN_KEY);
-    std::shared_ptr<std::vector<uint8_t>> serialized = responseSerializer.serialize(response);
+    std::shared_ptr<Response> response = Response::error(ErrorCode::UNKNOWN_KEY);
+    std::shared_ptr<std::vector<uint8_t>> serialized = responseSerializer.serialize(* response.get());
 
     ASSERT_EQ(serialized->size(), 2);
     ASSERT_EQ(serialized->at(0), 0x02);

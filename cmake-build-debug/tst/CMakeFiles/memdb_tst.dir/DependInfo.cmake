@@ -8,8 +8,12 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "C:/programacion/MemDB/tst/database/operators/GetOperatorTest.cpp" "tst/CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.obj.d"
+  "C:/programacion/MemDB/tst/database/operators/OperatorRegistryTest.cpp" "tst/CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.obj.d"
+  "C:/programacion/MemDB/tst/database/operators/SetOperatorTest.cpp" "tst/CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.obj.d"
   "C:/programacion/MemDB/tst/main.cpp" "tst/CMakeFiles/memdb_tst.dir/main.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/main.cpp.obj.d"
   "C:/programacion/MemDB/tst/messages/request/RequestDeserializerTest.cpp" "tst/CMakeFiles/memdb_tst.dir/messages/request/RequestDeserializerTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/messages/request/RequestDeserializerTest.cpp.obj.d"
+  "C:/programacion/MemDB/tst/messages/response/ResponseSerializerTest.cpp" "tst/CMakeFiles/memdb_tst.dir/messages/response/ResponseSerializerTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/messages/response/ResponseSerializerTest.cpp.obj.d"
   "C:/programacion/MemDB/tst/users/UsersServiceTest.cpp" "tst/CMakeFiles/memdb_tst.dir/users/UsersServiceTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/users/UsersServiceTest.cpp.obj.d"
   "C:/programacion/MemDB/tst/utils/datastructures/map/MapTest.cpp" "tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/MapTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/MapTest.cpp.obj.d"
   "C:/programacion/MemDB/tst/utils/datastructures/queue/BlockingQueueTest.cpp" "tst/CMakeFiles/memdb_tst.dir/utils/datastructures/queue/BlockingQueueTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/utils/datastructures/queue/BlockingQueueTest.cpp.obj.d"

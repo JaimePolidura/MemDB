@@ -1,18 +1,15 @@
 #pragma once
 
 #include "Operator.h"
-#include "OperatorDispatcher.h"
 
 #include <string>
 
-
 class SetOperator : public Operator {
+private:
+    static const SetOperator instance;
+
 public:
     static const uint8_t OPERATOR_NUMBER = 0x01;
-
-    SetOperator() {
-        STORE_OPERATOR(OPERATOR_NUMBER, std::shared_ptr<SetOperator>(this), operators);
-    }
 
     std::shared_ptr<Response> operate(const OperationBody& operation, std::shared_ptr<Map> map) override {
         const std::string& key = std::string((char *) operation.args[0].arg, operation.args[0].lengthArg);
@@ -22,7 +19,7 @@ public:
 
         map->put(key, valueValue, valueSize);
 
-        return std::make_shared<Response>();
+        return Response::success();
     }
 
     OperatorType type() override {

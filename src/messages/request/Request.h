@@ -43,8 +43,8 @@ public:
 };
 
 struct Request {
-    const AuthenticationBody * authentication;
-    const OperationBody * operation;
+    std::shared_ptr<AuthenticationBody> authentication;
+    std::shared_ptr<OperationBody> operation;
 
     Request() = default;
 };

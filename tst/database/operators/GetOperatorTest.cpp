@@ -4,7 +4,7 @@
 #include "database/operators/GetOperator.h"
 #include "messages/response/ErrorCode.h"
 
-OperationBody createOperation(uint8_t keyValue);
+std::shared_ptr<OperationBody> createOperation(uint8_t keyValue);
 
 TEST(GetOperator, CorrectConfig) {
     GetOperator getOperator{};
@@ -17,7 +17,7 @@ TEST(GetOperator, KeyNotFound) {
     std::shared_ptr<Map> db = std::make_shared<Map>();
     GetOperator getOperator{};
 
-    OperationBody operation = createOperation(0x41); //A
+    auto operation = createOperation(0x41); //A
 
     std::shared_ptr<Response> response = getOperator.operate(operation, db);
 
@@ -32,7 +32,7 @@ TEST(GetOperator, KeyFound) {
     uint8_t * value = new uint8_t[3]{0x4C, 0x4F ,0x4C}; //LOL
     db->put("A", value, 3);
     GetOperator getOperator{};
-    OperationBody operation = createOperation(0x41); //A
+    auto operation = createOperation(0x41); //A
 
     std::shared_ptr<Response> response = getOperator.operate(operation, db);
 
@@ -44,11 +44,11 @@ TEST(GetOperator, KeyFound) {
     ASSERT_EQ(* (response->response + 2), 0x4C);
 }
 
-OperationBody createOperation(uint8_t keyValue) {
+std::shared_ptr<OperationBody> createOperation(uint8_t keyValue) {
     uint8_t * key = new uint8_t[1]();
     key[0] = 0x41;
     std::vector<OperatorArgument> args;
     args.emplace_back(key, 1);
 
-    return OperationBody{0, false, false, args, 1};
+    return std::make_shared<OperationBody>(0, false, false, args, 1);
 }

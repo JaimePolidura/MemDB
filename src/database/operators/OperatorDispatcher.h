@@ -23,19 +23,22 @@ public:
 
     void dispatch(std::shared_ptr<Request> request,
                   std::function<void(std::shared_ptr<Response>)> onResponse) {
-
         std::shared_ptr<Operator> operatorToExecute = this->operatorRegistry->get(request->operation->operatorNumber);
         if(operatorToExecute.get() == nullptr){
+            printf("[SERVER] Unknown operator\n");
             onResponse(Response::error(ErrorCode::UNKNOWN_OPERATOR));
             return;
         }
 
         if(operatorToExecute->type() == READ){
-            onResponse(operatorToExecute->operate(* request->operation, this->db));
+            printf("[SERVER] Executing read operator\n");
+            onResponse(operatorToExecute->operate(request->operation, this->db));
         }
         if(operatorToExecute->type() == WRITE){
-            this->singleThreadedWritePool.submit([&] {
-                onResponse(operatorToExecute->operate(* request->operation, this->db));
+            printf("[SERVER] Know operator write. Enqueued single thread write pool\n");
+            this->singleThreadedWritePool.submit([operatorToExecute, request, onResponse, this] { //TODO WOKRS!!!
+                const std::shared_ptr<Response> &result = operatorToExecute->operate(request->operation, this->db);
+                onResponse(result);
             });
         }
     }

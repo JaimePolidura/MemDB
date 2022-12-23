@@ -40,7 +40,9 @@ public:
     }
 
     void write(const std::vector<uint8_t>& toWrite) {
-        this->socket.async_write_some(boost::asio::buffer(toWrite),  [&](const boost::system::error_code& error, std::size_t bytes_transferred){});
+        this->socket.async_write_some(boost::asio::buffer(toWrite), [&](const boost::system::error_code& error, std::size_t bytes_transferred){
+            printf("[SERVER] Datos enviados\n");
+        });
     }
 
     bool isOpen() {

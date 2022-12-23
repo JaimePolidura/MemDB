@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Request.h"
+
 #include <memory>
 #include <vector>
 #include <bitset>
@@ -20,16 +21,16 @@ public:
     }
 
 private:
-    const AuthenticationBody * deserializeAuthenticacion(const std::vector<uint8_t>& buffer) {
+    std::shared_ptr<AuthenticationBody> deserializeAuthenticacion(const std::vector<uint8_t>& buffer) {
         uint8_t authLength = this->getValueWithoutFlags(buffer, 0);
         uint8_t * authKey = this->fill(buffer, 1, authLength + 1);
         bool flagAuth1 = this->getFlag(buffer, 0, FLAG1_MASK);
         bool flagAuth2 = this->getFlag(buffer, 0, FLAG2_MASK);
 
-        return new AuthenticationBody{std::string((char *) authKey, authLength), flagAuth1, flagAuth2};
+        return std::make_shared<AuthenticationBody>(std::string((char *) authKey, authLength), flagAuth1, flagAuth2);
     }
 
-    const OperationBody * deserializeOperation(const std::vector<uint8_t>& buffer) {
+    std::shared_ptr<OperationBody> deserializeOperation(const std::vector<uint8_t>& buffer) {
         int authLength = this->getValueWithoutFlags(buffer, 0);
         int operationBufferInitialPos = authLength + 1;
 
@@ -38,7 +39,7 @@ private:
         bool flagOperation2 = this->getFlag(buffer, operationBufferInitialPos, FLAG2_MASK);
 
         if(operationBufferInitialPos == buffer.size() - 1){ //No args
-            return new OperationBody{operatorNumber, flagOperation1, flagOperation2};
+            return std::make_shared<OperationBody>(operatorNumber, flagOperation1, flagOperation2);
         }
 
         int numerOfArguments = 0;
@@ -55,7 +56,7 @@ private:
             arguments.emplace_back(argValue, argLength);
         }
 
-        return new OperationBody{operatorNumber, flagOperation1, flagOperation2, std::move(arguments), numerOfArguments};
+        return std::make_shared<OperationBody>(operatorNumber, flagOperation1, flagOperation2, std::move(arguments), numerOfArguments);
     }
 
     uint8_t * fill(const std::vector<uint8_t>& buffer, int initialPos, int endPos) {

@@ -12,7 +12,7 @@ enum OperatorType {
 
 class Operator {
 public:
-    virtual std::shared_ptr<Response> operate(const OperationBody& operation, std::shared_ptr<Map> map) = 0;
+    virtual std::shared_ptr<Response> operate(std::shared_ptr<OperationBody> operation, std::shared_ptr<Map> map) = 0;
 
     virtual OperatorType type() = 0;
 

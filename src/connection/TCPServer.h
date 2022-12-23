@@ -51,8 +51,13 @@ private:
 
             std::shared_ptr<Connection> connection = std::make_shared<Connection>(std::move(socket));
 
-            connection->onRequest([&](const std::vector<uint8_t>& requestRawBuffer) {
-                this->connectionThreadPool->submit([&] { this->onNewPackage(requestRawBuffer, connection); });
+            connection->onRequest([connection, this](const std::vector<uint8_t>& requestRawBuffer) {
+                printf("[Server] Enqueued task to connection thread pool\n");
+
+                this->connectionThreadPool->submit([&] {
+                    printf("[SERVER] Found worker. Calling callback\n");
+                    this->onNewPackage(requestRawBuffer, connection);
+                });
             });
 
             connection->read(); //Start reading, IO async operation, not blocking
@@ -61,24 +66,30 @@ private:
         });
     }
 
-    void onNewPackage(const std::vector<uint8_t>& requestRawBuffer, const std::shared_ptr<Connection>& connection) {
+    void onNewPackage(const std::vector<uint8_t>& requestRawBuffer, std::shared_ptr<Connection> connection) {
+        printf("[SERVER] Deserializing request\n");
         std::shared_ptr<Request> request = this->requestDeserializer.deserialize(requestRawBuffer);
+        printf("[SERVER] Authenticating\n");
         bool authenticationValid = this->authenicator.authenticate(request->authentication->authKey);
 
         if(!authenticationValid){
+            printf("[SERVER] Authentication invalid\n");
             std::shared_ptr<Response> authErrorResponse = Response::error(ErrorCode::AUTH_ERROR);
-            connection->write(* this->responseSerializer.serialize(* authErrorResponse.get()));
+            connection->write(* this->responseSerializer.serialize(authErrorResponse));
             return;
         }
 
-        this->operatorDispatcher->dispatch(request, [this, &connection](std::shared_ptr<Response> response){
+        printf("[SERVER] Authentication valid\n");
+
+        this->operatorDispatcher->dispatch(request, [this, connection](std::shared_ptr<Response> response){
+            printf("[SERVER] Calling onresponse callback %i\n", response->isSuccessful);
             this->onResponseFromDb(connection, response);
         });
     }
 
-    void onResponseFromDb(const std::shared_ptr<Connection>& connection, std::shared_ptr<Response> response) {
+    void onResponseFromDb(std::shared_ptr<Connection> connection, std::shared_ptr<Response> response) {
         if(connection->isOpen()){
-            std::shared_ptr<std::vector<uint8_t>> serialized = this->responseSerializer.serialize(* response);
+            std::shared_ptr<std::vector<uint8_t>> serialized = this->responseSerializer.serialize(response);
             connection->write(* serialized);
         }
     }

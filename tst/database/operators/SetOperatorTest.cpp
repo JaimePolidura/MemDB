@@ -4,7 +4,7 @@
 #include <string>
 #include <memory>
 
-OperationBody createOperation(uint8_t keyValue, uint8_t valueValue);
+std::shared_ptr<OperationBody> createOperation(uint8_t keyValue, uint8_t valueValue);
 
 TEST(SetOperator, CorrectConfig) {
     SetOperator setOperator{};
@@ -18,7 +18,7 @@ TEST(SetOperator, ShouldSet) {
 
     SetOperator setOperator{};
 
-    OperationBody operation = createOperation(0x41, 0x01); //A -> 1
+    auto operation = createOperation(0x41, 0x01); //A -> 1
 
     setOperator.operate(operation, db);
 
@@ -27,7 +27,7 @@ TEST(SetOperator, ShouldSet) {
 }
 
 
-OperationBody createOperation(uint8_t keyValue, uint8_t valueValue) {
+std::shared_ptr<OperationBody> createOperation(uint8_t keyValue, uint8_t valueValue) {
     uint8_t * key = new uint8_t[1]();
     key[0] = keyValue;
     uint8_t * value = new uint8_t[1]();
@@ -37,5 +37,5 @@ OperationBody createOperation(uint8_t keyValue, uint8_t valueValue) {
     vector.emplace_back(key, 1);
     vector.emplace_back(value, 1);
 
-    return OperationBody(0, false, false, std::move(vector), 2);
+    return std::make_shared<OperationBody>(0, false, false, std::move(vector), 2);
 }

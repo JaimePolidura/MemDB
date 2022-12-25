@@ -1,10 +1,7 @@
 package es.memdb;
 
 import es.memdb.connection.MemDbConnection;
-import es.memdb.messages.request.AuthenticationRequest;
-import es.memdb.messages.request.OperationRequest;
-import es.memdb.messages.request.Request;
-import es.memdb.messages.request.RequestSerializer;
+import es.memdb.messages.request.*;
 import es.memdb.messages.response.Response;
 import es.memdb.messages.response.ResponseDeserializer;
 import es.memdb.messages.response.expcetions.MemDbException;
@@ -17,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public final class MemDb {
     private MemDbExceptionsRegistry memDbExceptionsRegistry = new MemDbExceptionsRegistry();
+    private RequestNumberGenerator requestNumberGenerator = new RequestNumberGenerator();
     private ResponseDeserializer responseDeserializer = new ResponseDeserializer();
     private RequestSerializer requestSerializer = new RequestSerializer();
 
@@ -36,7 +34,9 @@ public final class MemDb {
     }
 
     private String sendRequest(OperationRequest.OperationRequestBuilder operation) {
+        long requestNumber = this.requestNumberGenerator.next();
         Request request = Request.builder()
+                .requestNumber(requestNumber)
                 .authentication(AuthenticationRequest.builder().authKey(this.authKey).build())
                 .operationRequest(operation.build())
                 .build();
@@ -44,7 +44,7 @@ public final class MemDb {
 
         this.memDbConnection.write(rawRequest);
 
-        byte[] rawResponse = this.memDbConnection.read();
+        byte[] rawResponse = this.memDbConnection.read(requestNumber);
         Response response = this.responseDeserializer.deserialize(rawResponse);
 
         return response.isFailed() ?

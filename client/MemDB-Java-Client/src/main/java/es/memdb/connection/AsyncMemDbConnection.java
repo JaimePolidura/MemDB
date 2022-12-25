@@ -62,12 +62,12 @@ public final class AsyncMemDbConnection implements MemDbConnection, Runnable {
 
         if(data == null){
             WaitReadResponseCondition waitRead = this.readMutex.get(requestNumber);
-            waitRead.lockOfCondition.lock();
 
+            waitRead.lock();
             while((data = this.requestWithoutCallbacks.get(requestNumber)) == null)
-                waitRead.condition.await();
+                waitRead.await();
+            waitRead.unlock();
 
-            waitRead.lockOfCondition.unlock();
             this.readMutex.remove(requestNumber);
         }
 

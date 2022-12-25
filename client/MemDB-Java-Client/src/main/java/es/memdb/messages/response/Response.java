@@ -7,6 +7,7 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public final class Response {
+    @Getter private final long requestNumber;
     @Getter private final int errorCode;
     @Getter private final boolean isSuccessful;
     @Getter private final String response;

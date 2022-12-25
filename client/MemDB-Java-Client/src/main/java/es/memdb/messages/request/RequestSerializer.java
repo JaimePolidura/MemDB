@@ -1,5 +1,8 @@
 package es.memdb.messages.request;
 
+import es.memdb.Utils;
+
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,17 +10,26 @@ import java.util.List;
 
 public final class RequestSerializer {
     public byte[] serialize(Request request) {
-        List<Byte> auth = getAuth(request);
+        List<Byte> requestNumber = this.getRequestNumber(request);
+        List<Byte> auth = this.getAuth(request);
         List<Byte> operation = this.getOperations(request);
 
-        byte[] totalRaw = new byte[auth.size() + operation.size()];
+        byte[] totalRaw = new byte[requestNumber.size() + auth.size() + operation.size()];
 
+        for (int i = 0; i < requestNumber.size(); i++)
+            totalRaw[i] = requestNumber.get(i);
         for (int i = 0; i < auth.size(); i++)
-            totalRaw[i] = auth.get(i);
+            totalRaw[i + requestNumber.size()] = auth.get(i);
         for (int i = 0; i < operation.size(); i++)
-            totalRaw[i + auth.size()] = operation.get(i);
+            totalRaw[i + requestNumber.size() + auth.size()] = operation.get(i);
 
         return totalRaw;
+    }
+
+    private List<Byte> getRequestNumber(Request request) {
+        byte[] bytes = ByteBuffer.allocate(Long.BYTES).putLong(request.getRequestNumber()).array();
+
+        return Arrays.stream(Utils.primitiveToWrapper(bytes)).toList();
     }
 
     private List<Byte> getOperations(Request request) {

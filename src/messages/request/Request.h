@@ -43,6 +43,7 @@ public:
 };
 
 struct Request {
+    long requestNumber;
     std::shared_ptr<AuthenticationBody> authentication;
     std::shared_ptr<OperationBody> operation;
 

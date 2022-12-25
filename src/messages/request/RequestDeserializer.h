@@ -14,6 +14,7 @@ private:
 public:
     std::shared_ptr<Request> deserialize(const std::vector<uint8_t>& buffer) {
         std::shared_ptr<Request> request = std::make_shared<Request>();
+        request->requestNumber = this->deserializeRequestNumber(buffer);
         request->authentication = this->deserializeAuthenticacion(buffer);
         request->operation = this->deserializeOperation(buffer);
 
@@ -21,17 +22,26 @@ public:
     }
 
 private:
+    long deserializeRequestNumber(const std::vector<uint8_t> &buffer) {
+        long result;
+
+        for (std::size_t i = 0; i < sizeof(long); i++)
+            result |= static_cast<long>(buffer[i]) << (8 * i);
+
+        return result;
+    }
+
     std::shared_ptr<AuthenticationBody> deserializeAuthenticacion(const std::vector<uint8_t>& buffer) {
-        uint8_t authLength = this->getValueWithoutFlags(buffer, 0);
-        uint8_t * authKey = this->fill(buffer, 1, authLength + 1);
-        bool flagAuth1 = this->getFlag(buffer, 0, FLAG1_MASK);
-        bool flagAuth2 = this->getFlag(buffer, 0, FLAG2_MASK);
+        uint8_t authLength = this->getValueWithoutFlags(buffer, sizeof(long));
+        uint8_t * authKey = this->fill(buffer, sizeof(long) + 1, authLength + 1);
+        bool flagAuth1 = this->getFlag(buffer, sizeof(long), FLAG1_MASK);
+        bool flagAuth2 = this->getFlag(buffer, sizeof(long), FLAG2_MASK);
 
         return std::make_shared<AuthenticationBody>(std::string((char *) authKey, authLength), flagAuth1, flagAuth2);
     }
 
     std::shared_ptr<OperationBody> deserializeOperation(const std::vector<uint8_t>& buffer) {
-        int authLength = this->getValueWithoutFlags(buffer, 0);
+        int authLength = this->getValueWithoutFlags(buffer, sizeof(long));
         int operationBufferInitialPos = authLength + 1;
 
         int operatorNumber = this->getValueWithoutFlags(buffer, operationBufferInitialPos);

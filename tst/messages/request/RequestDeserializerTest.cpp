@@ -7,6 +7,14 @@ TEST(RequesteRequestDeserializer, WithArgs) {
     RequestDeserializer requestDeserializer{};
 
     std::vector<uint8_t> buffer = {
+            0xFF, //Request number
+            0x01,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
             0x0C, //000011 00 -> Lengh: 3 Flag1: 0 Flag2: 0
             0x4C, //L
             0x4F, //O
@@ -24,6 +32,8 @@ TEST(RequesteRequestDeserializer, WithArgs) {
 
     std::shared_ptr<Request> deserializedRequest = requestDeserializer.deserialize(buffer);
 
+    ASSERT_EQ(deserializedRequest->requestNumber, 511);
+
     ASSERT_EQ(deserializedRequest->operation->numberArgs, 2);
 
     OperatorArgument firstArg = deserializedRequest->operation->args.at(0);
@@ -39,6 +49,14 @@ TEST(RequesteRequestDeserializer, EmptyArgs) {
     RequestDeserializer requestDeserializer{};
 
     std::vector<uint8_t> buffer = {
+            0x01, //Request number
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
             0x0E, //00001110 -> Lengh: 3 Flag1: 1 Flag2: 0
             0x4C, // L
             0x4F, // O
@@ -46,16 +64,17 @@ TEST(RequesteRequestDeserializer, EmptyArgs) {
             0x09 //000010 01 -> Operator number: 2, Flag1: 0, Flag2: 1
     };
 
-    std::shared_ptr<Request> deserializerRequest = requestDeserializer.deserialize(buffer);
+    std::shared_ptr<Request> deserializedRequest = requestDeserializer.deserialize(buffer);
 
-    ASSERT_TRUE(deserializerRequest->authentication->flag1);
-    ASSERT_FALSE(deserializerRequest->authentication->flag2);
-    ASSERT_EQ(deserializerRequest->authentication->authKey.size(), 3);
+    ASSERT_EQ(deserializedRequest->requestNumber, 1);
+    ASSERT_TRUE(deserializedRequest->authentication->flag1);
+    ASSERT_FALSE(deserializedRequest->authentication->flag2);
+    ASSERT_EQ(deserializedRequest->authentication->authKey.size(), 3);
 
     std::string authKey = "LOL";
-    ASSERT_TRUE(authKey.compare(deserializerRequest->authentication->authKey) == 0);
+    ASSERT_TRUE(authKey.compare(deserializedRequest->authentication->authKey) == 0);
 
-    ASSERT_FALSE(deserializerRequest->operation->flag1);
-    ASSERT_TRUE(deserializerRequest->operation->flag2);
-    ASSERT_TRUE(deserializerRequest->operation->operatorNumber == 2);
+    ASSERT_FALSE(deserializedRequest->operation->flag1);
+    ASSERT_TRUE(deserializedRequest->operation->flag2);
+    ASSERT_TRUE(deserializedRequest->operation->operatorNumber == 2);
 }

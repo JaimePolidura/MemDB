@@ -11,8 +11,8 @@ public:
     std::shared_ptr<std::vector<uint8_t>> serialize(std::shared_ptr<Response> response) {
         std::shared_ptr<std::vector<uint8_t>> serialized = std::make_shared<std::vector<uint8_t>>();
 
-        for (std::size_t i = 0; i < sizeof(long); ++i)
-            serialized->push_back(static_cast<uint8_t>(response->requestNumber >> (8 * i)));
+        for (std::size_t i = 0; i < sizeof(uint64_t); ++i)
+            serialized->push_back(static_cast<uint8_t>(response->requestNumber >> (sizeof(uint64_t) * i)));
 
         serialized->push_back(response->errorCode << 1 | response->isSuccessful);
         serialized->push_back(response->lengthResponse);

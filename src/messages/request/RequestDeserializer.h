@@ -22,27 +22,27 @@ public:
     }
 
 private:
-    long deserializeRequestNumber(const std::vector<uint8_t> &buffer) {
-        long result;
+    uint64_t deserializeRequestNumber(const std::vector<uint8_t> &buffer) {
+        uint64_t result = 0;
 
-        for (std::size_t i = 0; i < sizeof(long); i++)
-            result |= static_cast<long>(buffer[i]) << (8 * i);
+        for (std::size_t i = 0; i < sizeof(uint64_t); i++)
+            result |= static_cast<uint64_t>(buffer[i]) << (sizeof(uint64_t) * i);
 
         return result;
     }
 
     std::shared_ptr<AuthenticationBody> deserializeAuthenticacion(const std::vector<uint8_t>& buffer) {
-        uint8_t authLength = this->getValueWithoutFlags(buffer, sizeof(long));
-        uint8_t * authKey = this->fill(buffer, sizeof(long) + 1, authLength + 1);
-        bool flagAuth1 = this->getFlag(buffer, sizeof(long), FLAG1_MASK);
-        bool flagAuth2 = this->getFlag(buffer, sizeof(long), FLAG2_MASK);
+        uint8_t authLength = this->getValueWithoutFlags(buffer, sizeof(uint64_t));
+        uint8_t * authKey = this->fill(buffer, sizeof(uint64_t) + 1, sizeof(uint64_t) + authLength + 1);
+        bool flagAuth1 = this->getFlag(buffer, sizeof(uint64_t), FLAG1_MASK);
+        bool flagAuth2 = this->getFlag(buffer, sizeof(uint64_t), FLAG2_MASK);
 
         return std::make_shared<AuthenticationBody>(std::string((char *) authKey, authLength), flagAuth1, flagAuth2);
     }
 
     std::shared_ptr<OperationBody> deserializeOperation(const std::vector<uint8_t>& buffer) {
-        int authLength = this->getValueWithoutFlags(buffer, sizeof(long));
-        int operationBufferInitialPos = authLength + 1;
+        int authLength = this->getValueWithoutFlags(buffer, sizeof(uint64_t));
+        int operationBufferInitialPos = sizeof(uint64_t) + authLength + 1;
 
         int operatorNumber = this->getValueWithoutFlags(buffer, operationBufferInitialPos);
         bool flagOperation1 = this->getFlag(buffer, operationBufferInitialPos, FLAG1_MASK); //Si es true, la longitud de los argumentos ocuparan 2 bytes

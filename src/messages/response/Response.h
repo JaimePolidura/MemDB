@@ -5,7 +5,7 @@
 
 struct Response {
 public:
-    long requestNumber;
+    uint64_t requestNumber;
     bool isSuccessful;
     uint8_t errorCode;
     uint8_t lengthResponse;

@@ -18,8 +18,12 @@ public final class ResponseDeserializer {
         return Response.builder()
                 .errorCode(errorCode)
                 .isSuccessful(isSuccessFul)
-                .response(response)
+                .response(formatResponse(response))
                 .build();
+    }
+
+    private String formatResponse(String response) {
+        return response.trim();
     }
 
     private byte[] split(byte[] source, int from, int to) {

@@ -37,7 +37,7 @@ public final class RequestSerializer {
     }
 
     private byte getOperatorDesc(OperationRequest operationRequest) {
-        byte operatorNumber = (byte) (operationRequest.getOperator().getOperatorNumber() << 2);
+        byte operatorNumber = (byte) (operationRequest.getOperator().operatorNumber << 2);
         byte flag1 = (byte) (booleanToInt(operationRequest.isFlag1()) << 1);
         byte flag2 = (byte) booleanToInt(operationRequest.isFlag2());
 

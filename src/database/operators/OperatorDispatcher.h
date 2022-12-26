@@ -26,24 +26,30 @@ public:
         std::shared_ptr<Operator> operatorToExecute = this->operatorRegistry->get(request->operation->operatorNumber);
         if(operatorToExecute.get() == nullptr){
             printf("[SERVER] Unknown operator\n");
-            onResponse(Response::error(ErrorCode::UNKNOWN_OPERATOR));
+            std::shared_ptr<Response> result = Response::error(ErrorCode::UNKNOWN_OPERATOR);
+            this->callOnResponseCallback(onResponse, result, request);
             return;
         }
-        
+
         if(operatorToExecute->type() == READ){
             printf("[SERVER] Executing read operator\n");
-            std::shared_ptr<Response> response = operatorToExecute->operate(request->operation, this->db);
-            response->requestNumber = request->requestNumber;
-            onResponse(response);
+            std::shared_ptr<Response> result = operatorToExecute->operate(request->operation, this->db);
+            this->callOnResponseCallback(onResponse, result, request);
         }
         if(operatorToExecute->type() == WRITE){
             printf("[SERVER] Know operator write. Enqueued single thread write pool\n");
             this->singleThreadedWritePool.submit([operatorToExecute, request, onResponse, this] {
                 std::shared_ptr<Response> result = operatorToExecute->operate(request->operation, this->db);
-                result->requestNumber = request->requestNumber;
-
-                onResponse(result);
+                this->callOnResponseCallback(onResponse, result, request);
             });
         }
+    }
+
+private:
+    void callOnResponseCallback(std::function<void(std::shared_ptr<Response>)> onResponse,
+                                std::shared_ptr<Response> result,
+                                std::shared_ptr<Request> request) {
+        result->requestNumber = request->requestNumber;
+        onResponse(result);
     }
 };

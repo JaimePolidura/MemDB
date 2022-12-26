@@ -56,7 +56,7 @@ private:
 
                 this->connectionThreadPool->submit([&connection, requestRawBuffer, this] {
                     printf("[SERVER] Found worker. Calling callback\n");
-                    this->onNewPackage(requestRawBuffer, connection);
+                    this->onNewRequest(requestRawBuffer, connection);
                 });
             });
 
@@ -66,7 +66,7 @@ private:
         });
     }
 
-    void onNewPackage(std::vector<uint8_t> requestRawBuffer, std::shared_ptr<Connection> connection) {
+    void onNewRequest(std::vector<uint8_t> requestRawBuffer, std::shared_ptr<Connection> connection) {
         printf("[SERVER] Deserializing request\n");
         std::shared_ptr<Request> request = this->requestDeserializer.deserialize(requestRawBuffer);
         printf("[SERVER] Authenticating\n");
@@ -74,8 +74,7 @@ private:
 
         if(!authenticationValid){
             printf("[SERVER] Authentication invalid\n");
-            std::shared_ptr<Response> authErrorResponse = Response::error(ErrorCode::AUTH_ERROR);
-            connection->write(* this->responseSerializer.serialize(authErrorResponse));
+            this->sendResponse(connection, Response::error(ErrorCode::AUTH_ERROR));
             return;
         }
 
@@ -83,11 +82,11 @@ private:
 
         this->operatorDispatcher->dispatch(request, [this, connection](std::shared_ptr<Response> response){
             printf("[SERVER] Calling onresponse callback %i\n", response->isSuccessful);
-            this->onResponseFromDb(connection, response);
+            this->sendResponse(connection, response);
         });
     }
 
-    void onResponseFromDb(std::shared_ptr<Connection> connection, std::shared_ptr<Response> response) {
+    void sendResponse(std::shared_ptr<Connection> connection, std::shared_ptr<Response> response) {
         if(connection->isOpen()){
             std::shared_ptr<std::vector<uint8_t>> serialized = this->responseSerializer.serialize(response);
             connection->write(* serialized);

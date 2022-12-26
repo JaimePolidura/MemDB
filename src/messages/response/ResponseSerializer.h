@@ -6,10 +6,15 @@
 
 #include "Response.h"
 
+#define MAX_SIZE 257
+
+//TODO Posbible mejora. Crear std::vector serialized en el stack y pasarlo por referenca hasta cuando se escribe en el
+//TODO socket, que se pasarao por valor
 class ResponseSerializer {
 public:
     std::shared_ptr<std::vector<uint8_t>> serialize(std::shared_ptr<Response> response) {
         std::shared_ptr<std::vector<uint8_t>> serialized = std::make_shared<std::vector<uint8_t>>();
+        serialized->reserve(MAX_SIZE);
 
         for (std::size_t i = 0; i < sizeof(uint64_t); ++i)
             serialized->push_back(static_cast<uint8_t>(response->requestNumber >> (sizeof(uint64_t) * i)));
@@ -19,6 +24,10 @@ public:
 
         for (int i = 0; i < response->lengthResponse; ++i)
             serialized->push_back(* (response->response + i));
+
+        size_t writtenSize = serialized->size();
+        for(int i = 0; i < MAX_SIZE - writtenSize; i++)
+            serialized->push_back(0x00);
 
         return serialized;
     }

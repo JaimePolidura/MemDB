@@ -8,13 +8,21 @@ public final class MemDbPlayground {
     public static void main(String[] args) {
         MemDb memDb = new MemDb(MemDbConnections.async("127.0.0.1", 10000), "123");
 
-        String response = memDb.set("nombre", "jaime");
+        memDb.set("nombre", "jaime");
         System.out.println("{Set nombre = jaime}");
 
-        String value = memDb.get("nombre");
-        System.out.println("{get nombre}: " + value);
+        System.out.println("{get nombre}: " + memDb.get("nombre"));
 
-        String result = memDb.get("xd");
-        System.out.println("{get xd}: " + result);
+        String resultGetxd = memDb.get("xd");
+        System.out.println("{get xd}: " + resultGetxd);
+
+        memDb.delete("xd");
+        System.out.println("{delete xd}");
+
+        memDb.delete("nombre");
+        System.out.println("{delete nombre}");
+
+        String resultGetNombre = memDb.get("nombre");
+        System.out.println("{get nombre}: " + resultGetNombre);
     }
 }

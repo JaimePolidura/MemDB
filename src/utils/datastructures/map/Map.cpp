@@ -26,13 +26,11 @@ std::optional<MapEntry> Map::get(const std::string &key) const {
     return nodeFoundForKey!= nullptr ? std::optional<MapEntry>{nodeFoundForKey->toEntry()} : std::nullopt;
 }
 
-std::optional<MapEntry> Map::remove(const std::string &key) {
+void Map::remove(const std::string &key) {
     MapNode * nodeFoundForKey = this->getNodeByKeyHash(this->calculateHash(key));
 
     if(nodeFoundForKey)
         nodeFoundForKey->setDeleted();
-
-    return nodeFoundForKey != nullptr ? std::optional<MapEntry>{nodeFoundForKey->toEntry()} : std::nullopt;
 }
 
 bool Map::contains(const std::string &key) const {

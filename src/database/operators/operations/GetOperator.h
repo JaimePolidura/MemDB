@@ -1,15 +1,12 @@
 #pragma once
 
-#include "Operator.h"
+#include "database/operators/Operator.h"
 #include "./messages/response/ErrorCode.h"
 
 #include <string>
 #include <memory>
 
 class GetOperator : public Operator {
-private:
-  static const GetOperator instance;
-
 public:
     static const uint8_t OPERATOR_NUMBER = 0x02;
 

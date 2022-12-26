@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "database/operators/SetOperator.h"
+#include "database/operators/operations/SetOperator.h"
 
 #include <string>
 #include <memory>

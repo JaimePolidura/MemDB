@@ -1,13 +1,10 @@
 #pragma once
 
-#include "Operator.h"
+#include "database/operators/Operator.h"
 
 #include <string>
 
 class SetOperator : public Operator {
-private:
-    static const SetOperator instance;
-
 public:
      static const uint8_t OPERATOR_NUMBER = 0x01;
 

@@ -27,8 +27,14 @@ public final class MemDb {
                 .args(List.of(key)));
     }
 
-    public String set(String key, String value) {
-        return this.sendRequest(OperationRequest.builder()
+    public void delete(String key) {
+        this.sendRequest(OperationRequest.builder()
+                .operator(Operator.DELETE)
+                .args(List.of(key)));
+    }
+
+    public void set(String key, String value) {
+        this.sendRequest(OperationRequest.builder()
                 .operator(Operator.SET)
                 .args(List.of(key, value)));
     }

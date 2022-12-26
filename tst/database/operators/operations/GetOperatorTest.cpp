@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include <string>
 
-#include "database/operators/GetOperator.h"
+#include "database/operators/operations/GetOperator.h"
 #include "messages/response/ErrorCode.h"
 
 std::shared_ptr<OperationBody> createOperation(uint8_t keyValue);

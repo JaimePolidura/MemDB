@@ -3,10 +3,8 @@ package es.memdb.connection;
 import java.io.IOException;
 import java.util.function.Consumer;
 
-public interface MemDbConnection {
+public interface MemDbConnection extends AutoCloseable{
     void connect() throws IOException;
-
-    void close() throws IOException;
 
     byte[] read(long requestNumber);
 

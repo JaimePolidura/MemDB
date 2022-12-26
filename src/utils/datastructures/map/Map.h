@@ -72,7 +72,7 @@ public:
 
     std::optional<MapEntry> get(const std::string &key) const;
 
-    std::optional<MapEntry> remove(const std::string &key);
+    void remove(const std::string &key);
 
     bool contains(const std::string &key) const;
 

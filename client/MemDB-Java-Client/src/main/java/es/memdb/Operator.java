@@ -8,7 +8,8 @@ import java.util.List;
 
 public enum Operator {
     SET(1, Collections.EMPTY_LIST),
-    GET(2, List.of(UnknownKey.class));
+    GET(2, List.of(UnknownKey.class)),
+    DELETE(3, List.of(UnknownKey.class));
 
     public final List<Class<? extends MemDbException>> expectedExceptions;
     public final int operatorNumber;

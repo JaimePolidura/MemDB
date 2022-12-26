@@ -10,10 +10,10 @@ public final class MemDbExceptionsRegistry {
                 .filter(it -> it.code == code)
                 .findFirst()
                 .map(it -> it.clazz)
-                .orElseThrow(() -> new UnknownException("unknown exception when executing ", request));
+                .orElseThrow(() -> new UnknownException("unknown exception ", request));
     }
 
-    private static enum Exceptions {
+    private enum Exceptions {
         AUTH_KEY_INVALID(0x00, AuthKeyInvalid.class),
         UNKNOWN_KEY(0x01, UnknownKey.class),
         UNKNOWN_OPERATOR(0x02, UnknownOperator.class);

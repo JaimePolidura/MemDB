@@ -29,15 +29,19 @@ public:
             onResponse(Response::error(ErrorCode::UNKNOWN_OPERATOR));
             return;
         }
-
+        
         if(operatorToExecute->type() == READ){
             printf("[SERVER] Executing read operator\n");
-            onResponse(operatorToExecute->operate(request->operation, this->db));
+            std::shared_ptr<Response> response = operatorToExecute->operate(request->operation, this->db);
+            response->requestNumber = request->requestNumber;
+            onResponse(response);
         }
         if(operatorToExecute->type() == WRITE){
             printf("[SERVER] Know operator write. Enqueued single thread write pool\n");
-            this->singleThreadedWritePool.submit([operatorToExecute, request, onResponse, this] { //TODO WOKRS!!!
-                const std::shared_ptr<Response> &result = operatorToExecute->operate(request->operation, this->db);
+            this->singleThreadedWritePool.submit([operatorToExecute, request, onResponse, this] {
+                std::shared_ptr<Response> result = operatorToExecute->operate(request->operation, this->db);
+                result->requestNumber = request->requestNumber;
+
                 onResponse(result);
             });
         }

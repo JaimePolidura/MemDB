@@ -40,9 +40,8 @@ public final class SyncMemDbConnection implements MemDbConnection {
 
             this.output.write(data);
         } catch (IOException e) {
-            e.printStackTrace();
-        }finally {
             this.operationLock.unlock();
+            e.printStackTrace();
         }
     }
 

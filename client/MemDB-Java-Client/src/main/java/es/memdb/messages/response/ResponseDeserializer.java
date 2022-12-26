@@ -9,10 +9,10 @@ public final class ResponseDeserializer {
 
     @SneakyThrows
     public Response deserialize(byte[] raw) {
-        boolean isSuccessFul = (raw[0] & SUCCESSFUL_MASK) == 1;
-        short errorCode = (short) (raw[0] >> 1);
-        String response = (raw.length > 1 &&  raw[1] > 0) ?
-                new String(this.split(raw, 1, raw.length), StandardCharsets.US_ASCII) :
+        boolean isSuccessFul = (raw[8] & SUCCESSFUL_MASK) == 1;
+        short errorCode = (short) (raw[8] >> 1);
+        String response = (raw.length > (1 + 8) &&  raw[8] > 0) ?
+                new String(this.split(raw, 8, raw.length), StandardCharsets.US_ASCII) :
                 "";
 
         return Response.builder()

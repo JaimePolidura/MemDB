@@ -51,10 +51,10 @@ private:
 
             std::shared_ptr<Connection> connection = std::make_shared<Connection>(std::move(socket));
 
-            connection->onRequest([connection, this](const std::vector<uint8_t>& requestRawBuffer) {
+            connection->onRequest([connection, this](std::vector<uint8_t> requestRawBuffer) {
                 printf("[Server] Enqueued task to connection thread pool\n");
 
-                this->connectionThreadPool->submit([&] {
+                this->connectionThreadPool->submit([&connection, requestRawBuffer, this] {
                     printf("[SERVER] Found worker. Calling callback\n");
                     this->onNewPackage(requestRawBuffer, connection);
                 });
@@ -66,7 +66,7 @@ private:
         });
     }
 
-    void onNewPackage(const std::vector<uint8_t>& requestRawBuffer, std::shared_ptr<Connection> connection) {
+    void onNewPackage(std::vector<uint8_t> requestRawBuffer, std::shared_ptr<Connection> connection) {
         printf("[SERVER] Deserializing request\n");
         std::shared_ptr<Request> request = this->requestDeserializer.deserialize(requestRawBuffer);
         printf("[SERVER] Authenticating\n");

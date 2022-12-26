@@ -79,11 +79,11 @@ public final class AsyncMemDbConnection implements MemDbConnection, Runnable {
         try {
             long requestNumber = Utils.toLong(data);
 
-            this.output.write(data);
-
             Lock lock = new ReentrantLock();
             Condition condition = lock.newCondition();
             this.readMutex.put(requestNumber, new WaitReadResponseCondition(lock, condition));
+
+            this.output.write(data);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -102,6 +102,7 @@ public final class AsyncMemDbConnection implements MemDbConnection, Runnable {
     }
 
     @Override
+    @SneakyThrows
     public void run() {
         while (!this.socket.isClosed()) {
             byte[] fromBufferRaw = this.read();

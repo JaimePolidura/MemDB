@@ -13,11 +13,11 @@ struct OperatorArgument {
 };
 
 struct OperationBody {
+    std::vector<OperatorArgument> args;
     int operatorNumber; //0 - 127
+    int numberArgs;
     bool flag1;
     bool flag2;
-    std::vector<OperatorArgument> args;
-    int numberArgs;
 
     OperationBody() = default;
 
@@ -43,9 +43,9 @@ public:
 };
 
 struct Request {
-    uint64_t requestNumber;
     std::shared_ptr<AuthenticationBody> authentication;
     std::shared_ptr<OperationBody> operation;
+    uint64_t requestNumber;
 
     Request() = default;
 };

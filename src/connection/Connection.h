@@ -12,8 +12,8 @@ using namespace boost::asio;
 
 class Connection : public std::enable_shared_from_this<Connection> {
 private:
-    std::function<void(const std::vector<uint8_t>&)> onRequestCallback;
     uint8_t requestBuffer[1500];
+    std::function<void(const std::vector<uint8_t>&)> onRequestCallback;
     ip::tcp::socket socket;
 
 public:

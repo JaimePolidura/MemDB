@@ -18,7 +18,6 @@ public:
         return Response::success();
     }
 
-
     OperatorType type() override {
         return WRITE;
     }

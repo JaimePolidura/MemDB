@@ -13,9 +13,9 @@ struct MapEntry {
 class MapNode {
 private:
     MapNode * next;
-    int keyHash;
     uint8_t * value;
     size_t valueSize;
+    int keyHash;
     bool deleted;
 
 public:

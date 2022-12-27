@@ -5,11 +5,11 @@
 
 struct Response {
 public:
+    uint8_t * response;
     uint64_t requestNumber;
-    bool isSuccessful;
     uint8_t errorCode;
     uint8_t lengthResponse;
-    uint8_t * response;
+    bool isSuccessful;
 
     Response(bool isSuccessful, uint8_t errorCode, uint8_t lengthResponse, uint8_t * responseCons) :
             isSuccessful(isSuccessful),

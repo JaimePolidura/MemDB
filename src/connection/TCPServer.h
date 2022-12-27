@@ -47,15 +47,10 @@ public:
 private:
     void acceptNewConnections() {
         this->acceptator.async_accept([this](std::error_code ec, ip::tcp::socket socket) {
-            printf("[SERVER] Accepted connection\n");
-
             std::shared_ptr<Connection> connection = std::make_shared<Connection>(std::move(socket));
 
             connection->onRequest([connection, this](std::vector<uint8_t> requestRawBuffer) {
-                printf("[Server] Enqueued task to connection thread pool\n");
-
                 this->connectionThreadPool->submit([&connection, requestRawBuffer, this] {
-                    printf("[SERVER] Found worker. Calling callback\n");
                     this->onNewRequest(requestRawBuffer, connection);
                 });
             });
@@ -67,21 +62,15 @@ private:
     }
 
     void onNewRequest(std::vector<uint8_t> requestRawBuffer, std::shared_ptr<Connection> connection) {
-        printf("[SERVER] Deserializing request\n");
         std::shared_ptr<Request> request = this->requestDeserializer.deserialize(requestRawBuffer);
-        printf("[SERVER] Authenticating\n");
         bool authenticationValid = this->authenicator.authenticate(request->authentication->authKey);
 
         if(!authenticationValid){
-            printf("[SERVER] Authentication invalid\n");
             this->sendResponse(connection, Response::error(ErrorCode::AUTH_ERROR));
             return;
         }
 
-        printf("[SERVER] Authentication valid\n");
-
         this->operatorDispatcher->dispatch(request, [this, connection](std::shared_ptr<Response> response){
-            printf("[SERVER] Calling onresponse callback %i\n", response->isSuccessful);
             this->sendResponse(connection, response);
         });
     }

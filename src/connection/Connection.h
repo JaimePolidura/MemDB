@@ -29,8 +29,6 @@ public:
         this->socket.async_read_some(boost::asio::buffer(requestBuffer, 1500), [this, self](boost::system::error_code ec, std::size_t length){
             if(ec) return;
 
-            printf("[SERVER] Read request with bytes: %llu\n", length);
-
             std::vector<uint8_t> vectorBuffer(this->requestBuffer, this->requestBuffer + length);
 
             this->onRequestCallback(vectorBuffer);
@@ -40,9 +38,7 @@ public:
     }
 
     void write(const std::vector<uint8_t>& toWrite) {
-        this->socket.async_write_some(boost::asio::buffer(toWrite), [&](const boost::system::error_code& error, std::size_t bytes_transferred){
-            printf("[SERVER] Datos enviados\n");
-        });
+        this->socket.async_write_some(boost::asio::buffer(toWrite), [&](const boost::system::error_code& error, std::size_t bytes_transferred){});
     }
 
     bool isOpen() {

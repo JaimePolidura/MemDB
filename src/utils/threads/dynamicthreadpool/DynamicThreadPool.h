@@ -23,12 +23,11 @@ private:
 
 public:
     DynamicThreadPool(float activityFactorCons, int maxThreadsCons, int minThreadsCons, int inspectionPerTaskEnqueuedCons): actityFactor(activityFactorCons), maxThreads(maxThreadsCons),
-        minThreads(minThreadsCons), inspectionPerTaskEnqueued(inspectionPerTaskEnqueuedCons), pendingTask(std::make_shared<BlockingQueue<std::function<void()>>>()) {
-
+                                                                                                                            minThreads(minThreadsCons), inspectionPerTaskEnqueued(inspectionPerTaskEnqueuedCons), pendingTask(std::make_shared<BlockingQueue<std::function<void()>>>()) {
         this->start();
     }
 
-    void submit(std::function<void()> task) {
+    void submit(const std::function<void()>& task) {
         this->numberTaskEnqueued++;
 
         this->pendingTask->enqueue(task);
@@ -59,8 +58,8 @@ private:
 
         int nTotalWorkers = this->workers.size();
         int nActiveWorkers = 1 + std::count_if(this->workers.begin(),
-                                             this->workers.end(),
-                                             [](std::shared_ptr<DynamicThreadPoolWorker>& worker){return worker->getState() == ACTIVE;});
+                                               this->workers.end(),
+                                               [](std::shared_ptr<DynamicThreadPoolWorker>& worker){return worker->getState() == ACTIVE;});
 
         int newNumberOfWorkersNotAdjusted = nActiveWorkers / this->actityFactor;
         int newNumberOfWorkersAdjusted = newNumberOfWorkersNotAdjusted < this->minThreads ? this->minThreads :

@@ -7,6 +7,8 @@
 #include "utils/datastructures/queue/BlockingQueue.h"
 #include "utils/threads/Exchanger.h"
 
+using Task = const std::function<void()>;
+
 enum WorkerState {
     ACTIVE, INACTIVE
 };

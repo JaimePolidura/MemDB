@@ -52,7 +52,6 @@ public:
 
         this->lock.unlock();
 
-
         this->notEmtpyCondition.notify_all();
     }
 

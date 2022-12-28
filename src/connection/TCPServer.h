@@ -49,7 +49,7 @@ private:
         this->acceptator.async_accept([this](std::error_code ec, ip::tcp::socket socket) {
             std::shared_ptr<Connection> connection = std::make_shared<Connection>(std::move(socket));
 
-            connection->onRequest([connection, this](std::vector<uint8_t> requestRawBuffer) {
+            connection->onRequest([connection, this](const std::vector<uint8_t>& requestRawBuffer) {
                 this->connectionThreadPool->submit([&connection, requestRawBuffer, this] {
                     this->onNewRequest(requestRawBuffer, connection);
                 });
@@ -61,9 +61,9 @@ private:
         });
     }
 
-    void onNewRequest(std::vector<uint8_t> requestRawBuffer, std::shared_ptr<Connection> connection) {
-        std::shared_ptr<Request> request = this->requestDeserializer.deserialize(requestRawBuffer);
-        bool authenticationValid = this->authenicator.authenticate(request->authentication->authKey);
+    void onNewRequest(const std::vector<uint8_t>& requestRawBuffer, std::shared_ptr<Connection> connection) {
+        Request request = this->requestDeserializer.deserialize(requestRawBuffer);
+        bool authenticationValid = this->authenicator.authenticate(request.authentication.authKey);
 
         if(!authenticationValid){
             this->sendResponse(connection, Response::error(ErrorCode::AUTH_ERROR));

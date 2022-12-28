@@ -12,11 +12,11 @@ private:
     static const uint8_t FLAG2_MASK = 0x10; //0100 0000
 
 public:
-    std::shared_ptr<Request> deserialize(const std::vector<uint8_t>& buffer) {
-        std::shared_ptr<Request> request = std::make_shared<Request>();
-        request->requestNumber = this->deserializeRequestNumber(buffer);
-        request->authentication = this->deserializeAuthenticacion(buffer);
-        request->operation = this->deserializeOperation(buffer);
+    Request deserialize(const std::vector<uint8_t>& buffer) {
+        Request request{};
+        request.requestNumber = this->deserializeRequestNumber(buffer);
+        request.authentication = this->deserializeAuthenticacion(buffer);
+        request.operation = this->deserializeOperation(buffer);
 
         return request;
     }
@@ -31,16 +31,16 @@ private:
         return result;
     }
 
-    std::shared_ptr<AuthenticationBody> deserializeAuthenticacion(const std::vector<uint8_t>& buffer) {
+    AuthenticationBody deserializeAuthenticacion(const std::vector<uint8_t>& buffer) {
         uint8_t authLength = this->getValueWithoutFlags(buffer, sizeof(uint64_t));
         uint8_t * authKey = this->fill(buffer, sizeof(uint64_t) + 1, sizeof(uint64_t) + authLength + 1);
         bool flagAuth1 = this->getFlag(buffer, sizeof(uint64_t), FLAG1_MASK);
         bool flagAuth2 = this->getFlag(buffer, sizeof(uint64_t), FLAG2_MASK);
 
-        return std::make_shared<AuthenticationBody>(std::string((char *) authKey, authLength), flagAuth1, flagAuth2);
+        return AuthenticationBody(std::string((char *) authKey, authLength), flagAuth1, flagAuth2);
     }
 
-    std::shared_ptr<OperationBody> deserializeOperation(const std::vector<uint8_t>& buffer) {
+    OperationBody deserializeOperation(const std::vector<uint8_t>& buffer) {
         int authLength = this->getValueWithoutFlags(buffer, sizeof(uint64_t));
         int operationBufferInitialPos = sizeof(uint64_t) + authLength + 1;
 
@@ -49,7 +49,7 @@ private:
         bool flagOperation2 = this->getFlag(buffer, operationBufferInitialPos, FLAG2_MASK);
 
         if(operationBufferInitialPos == buffer.size() - 1){ //No args
-            return std::make_shared<OperationBody>(operatorNumber, flagOperation1, flagOperation2);
+            return OperationBody(operatorNumber, flagOperation1, flagOperation2);
         }
 
         int numerOfArguments = 0;
@@ -66,7 +66,7 @@ private:
             arguments.emplace_back(argValue, argLength);
         }
 
-        return std::make_shared<OperationBody>(operatorNumber, flagOperation1, flagOperation2, std::move(arguments), numerOfArguments);
+        return OperationBody(operatorNumber, flagOperation1, flagOperation2, std::move(arguments), numerOfArguments);
     }
 
     uint8_t * fill(const std::vector<uint8_t>& buffer, int initialPos, int endPos) {

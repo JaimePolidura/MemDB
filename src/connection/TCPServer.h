@@ -70,12 +70,12 @@ private:
             return;
         }
 
-        this->operatorDispatcher->dispatch(request, [this, connection](std::shared_ptr<Response> response){
+        this->operatorDispatcher->dispatch(request, [this, connection](const Response& response){
             this->sendResponse(connection, response);
         });
     }
 
-    void sendResponse(std::shared_ptr<Connection> connection, std::shared_ptr<Response> response) {
+    void sendResponse(std::shared_ptr<Connection> connection, const Response& response) {
         if(connection->isOpen()){
             std::shared_ptr<std::vector<uint8_t>> serialized = this->responseSerializer.serialize(response);
             connection->write(* serialized);

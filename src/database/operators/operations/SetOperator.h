@@ -8,7 +8,7 @@ class SetOperator : public Operator {
 public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x01;
 
-    std::shared_ptr<Response> operate(const OperationBody& operation, std::shared_ptr<Map> map) override {
+    Response operate(const OperationBody& operation, std::shared_ptr<Map> map) override {
         const std::string& key = std::string((char *) operation.args[0].arg.get(), operation.args[0].lengthArg);
 
         int valueSize = operation.args[1].lengthArg;

@@ -23,19 +23,27 @@ public:
         }
     }
 
+    Response(Response&& other) noexcept :
+        response(other.response), requestNumber(other.requestNumber), errorCode(other.errorCode),
+        lengthResponse(other.lengthResponse), isSuccessful(other.isSuccessful)
+    {
+        other.response = nullptr;
+    }
+
     ~Response() {
-        delete[] response;
+        if(this->response)
+            delete[] response;
     }
 
-    static std::shared_ptr<Response> success(uint8_t reponseLength, uint8_t * response) {
-        return std::make_shared<Response>(true, 0x00, reponseLength, response);
+    static Response success(uint8_t reponseLength, uint8_t * response) {
+        return Response(true, 0x00, reponseLength, response);
     }
 
-    static std::shared_ptr<Response> success() {
-        return std::make_shared<Response>(true, 0x00, 0, nullptr);
+    static Response success() {
+        return Response(true, 0x00, 0, nullptr);
     }
 
-    static std::shared_ptr<Response> error(uint8_t errorCode) {
-        return std::make_shared<Response>(false, errorCode, 0, nullptr);
+    static Response error(uint8_t errorCode) {
+        return Response(false, errorCode, 0, nullptr);
     };
 };

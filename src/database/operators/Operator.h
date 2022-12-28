@@ -14,7 +14,7 @@ class Operator {
 public:
     virtual std::shared_ptr<Response> operate(std::shared_ptr<OperationBody> operation, std::shared_ptr<Map> map) = 0;
 
-    virtual OperatorType type() = 0;
+    virtual constexpr OperatorType type() = 0;
 
-    virtual uint8_t operatorNumber() = 0;
+    virtual constexpr uint8_t operatorNumber() = 0;
 };

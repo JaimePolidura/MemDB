@@ -8,6 +8,8 @@
 struct MapEntry {
     uint8_t * value;
     size_t valueSize;
+
+    MapEntry(uint8_t * value, size_t valueSize): value(value), valueSize(valueSize) {}
 };
 
 class MapNode {

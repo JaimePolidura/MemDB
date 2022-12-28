@@ -3,12 +3,12 @@
 #include <stdint.h>
 
 struct OperatorArgument {
-    uint8_t * arg;
+    std::shared_ptr<uint8_t> arg;
     int lengthArg;
 
     OperatorArgument() = default;
 
-    OperatorArgument(uint8_t * arg, int lengthArg): arg(arg), lengthArg(lengthArg) {}
+    OperatorArgument(std::shared_ptr<uint8_t> arg, int lengthArg): arg(arg), lengthArg(lengthArg) {}
 
     OperatorArgument(const OperatorArgument& other) {
         this->arg = other.arg;
@@ -34,11 +34,6 @@ struct OperatorArgument {
         other.arg = nullptr;
 
         return * this;
-    }
-
-    ~ OperatorArgument() {
-        if(this->arg)
-            delete[] arg;
     }
 };
 

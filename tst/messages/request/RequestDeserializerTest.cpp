@@ -30,19 +30,19 @@ TEST(RequesteRequestDeserializer, WithArgs) {
     std::string arg1Expected = "A";
     std::string arg2Expected = "BC";
 
-    std::shared_ptr<Request> deserializedRequest = requestDeserializer.deserialize(buffer);
+    Request deserializedRequest = requestDeserializer.deserialize(buffer);
 
-    ASSERT_EQ(deserializedRequest->requestNumber, 511);
+    ASSERT_EQ(deserializedRequest.requestNumber, 511);
 
-    ASSERT_EQ(deserializedRequest->operation->numberArgs, 2);
+    ASSERT_EQ(deserializedRequest.operation.numberArgs, 2);
 
-    OperatorArgument firstArg = deserializedRequest->operation->args.at(0);
+    OperatorArgument firstArg = deserializedRequest.operation.args.at(0);
     ASSERT_EQ(firstArg.lengthArg, 1);
-    ASSERT_TRUE(arg1Expected.compare(std::string((char *) firstArg.arg, firstArg.lengthArg)) == 0);
+    ASSERT_TRUE(arg1Expected.compare(std::string((char *) firstArg.arg.get(), firstArg.lengthArg)) == 0);
 
-    OperatorArgument secondArg = deserializedRequest->operation->args.at(1);
+    OperatorArgument secondArg = deserializedRequest.operation.args.at(1);
     ASSERT_EQ(secondArg.lengthArg, 2);
-    ASSERT_TRUE(arg2Expected.compare(std::string((char *) secondArg.arg, secondArg.lengthArg)) == 0);
+    ASSERT_TRUE(arg2Expected.compare(std::string((char *) secondArg.arg.get(), secondArg.lengthArg)) == 0);
 }
 
 TEST(RequesteRequestDeserializer, EmptyArgs) {
@@ -64,17 +64,17 @@ TEST(RequesteRequestDeserializer, EmptyArgs) {
             0x09 //000010 01 -> Operator number: 2, Flag1: 0, Flag2: 1
     };
 
-    std::shared_ptr<Request> deserializedRequest = requestDeserializer.deserialize(buffer);
+    Request deserializedRequest = requestDeserializer.deserialize(buffer);
 
-    ASSERT_EQ(deserializedRequest->requestNumber, 1);
-    ASSERT_TRUE(deserializedRequest->authentication->flag1);
-    ASSERT_FALSE(deserializedRequest->authentication->flag2);
-    ASSERT_EQ(deserializedRequest->authentication->authKey.size(), 3);
+    ASSERT_EQ(deserializedRequest.requestNumber, 1);
+    ASSERT_TRUE(deserializedRequest.authentication.flag1);
+    ASSERT_FALSE(deserializedRequest.authentication.flag2);
+    ASSERT_EQ(deserializedRequest.authentication.authKey.size(), 3);
 
     std::string authKey = "LOL";
-    ASSERT_TRUE(authKey.compare(deserializedRequest->authentication->authKey) == 0);
+    ASSERT_TRUE(authKey.compare(deserializedRequest.authentication.authKey) == 0);
 
-    ASSERT_FALSE(deserializedRequest->operation->flag1);
-    ASSERT_TRUE(deserializedRequest->operation->flag2);
-    ASSERT_TRUE(deserializedRequest->operation->operatorNumber == 2);
+    ASSERT_FALSE(deserializedRequest.operation.flag1);
+    ASSERT_TRUE(deserializedRequest.operation.flag2);
+    ASSERT_TRUE(deserializedRequest.operation.operatorNumber == 2);
 }

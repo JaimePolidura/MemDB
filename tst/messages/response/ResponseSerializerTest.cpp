@@ -11,7 +11,7 @@ TEST(ResponseSerializer, ShouldSerializeSuccessWithData) {
 
     std::string data = "hello";
 
-    std::shared_ptr<Response> response = Response::success(data.length(), reinterpret_cast<uint8_t *>(data.data()));
+    Response response = Response::success(data.length(), reinterpret_cast<uint8_t *>(data.data()));
     std::shared_ptr<std::vector<uint8_t>> serialized = responseSerializer.serialize(response);
 
     ASSERT_EQ(serialized->size(), 7 + 8);
@@ -28,7 +28,7 @@ TEST(ResponseSerializer, ShouldSerializeSuccessWithData) {
 TEST(ResponseSerializer, ShouldSerializeSuccessNoData) {
     ResponseSerializer responseSerializer{};
 
-    std::shared_ptr<Response> response = Response::success();
+    Response response = Response::success();
     std::shared_ptr<std::vector<uint8_t>> serialized = responseSerializer.serialize(response);
 
     ASSERT_EQ(serialized->size(), 2 + 8);
@@ -39,7 +39,7 @@ TEST(ResponseSerializer, ShouldSerializeSuccessNoData) {
 TEST(ResponseSerializer, ShouldSerializeErrorNoData) {
     ResponseSerializer responseSerializer{};
 
-    std::shared_ptr<Response> response = Response::error(ErrorCode::UNKNOWN_KEY);
+    Response response = Response::error(ErrorCode::UNKNOWN_KEY);
     std::shared_ptr<std::vector<uint8_t>> serialized = responseSerializer.serialize(response);
 
     ASSERT_EQ(serialized->size(), 2 + 8);

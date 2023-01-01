@@ -14,10 +14,7 @@ TEST(Map, ShouldRemove) {
     Map map{};
     Value * inserted = insertValueInMap(&map, "key1", 1);
 
-    std::optional<MapEntry> removedValueOptional = map.remove("key1");
-    const Value * removedValue = (Value *) removedValueOptional.value().value;
-    ASSERT_TRUE(removedValueOptional.has_value());
-    ASSERT_EQ(removedValue->value, 1);
+    map.remove("key1");
 
     ASSERT_FALSE(map.contains("key1"));
     ASSERT_FALSE(map.get("key1").has_value());

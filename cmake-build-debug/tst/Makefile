@@ -174,30 +174,6 @@ memdb_tst/fast:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/build
 .PHONY : memdb_tst/fast
 
-database/operators/GetOperatorTest.obj: database/operators/GetOperatorTest.cpp.obj
-.PHONY : database/operators/GetOperatorTest.obj
-
-# target to build an object file
-database/operators/GetOperatorTest.cpp.obj:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.obj
-.PHONY : database/operators/GetOperatorTest.cpp.obj
-
-database/operators/GetOperatorTest.i: database/operators/GetOperatorTest.cpp.i
-.PHONY : database/operators/GetOperatorTest.i
-
-# target to preprocess a source file
-database/operators/GetOperatorTest.cpp.i:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.i
-.PHONY : database/operators/GetOperatorTest.cpp.i
-
-database/operators/GetOperatorTest.s: database/operators/GetOperatorTest.cpp.s
-.PHONY : database/operators/GetOperatorTest.s
-
-# target to generate assembly for a file
-database/operators/GetOperatorTest.cpp.s:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.s
-.PHONY : database/operators/GetOperatorTest.cpp.s
-
 database/operators/OperatorRegistryTest.obj: database/operators/OperatorRegistryTest.cpp.obj
 .PHONY : database/operators/OperatorRegistryTest.obj
 
@@ -222,29 +198,53 @@ database/operators/OperatorRegistryTest.cpp.s:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.s
 .PHONY : database/operators/OperatorRegistryTest.cpp.s
 
-database/operators/SetOperatorTest.obj: database/operators/SetOperatorTest.cpp.obj
-.PHONY : database/operators/SetOperatorTest.obj
+database/operators/operations/GetOperatorTest.obj: database/operators/operations/GetOperatorTest.cpp.obj
+.PHONY : database/operators/operations/GetOperatorTest.obj
 
 # target to build an object file
-database/operators/SetOperatorTest.cpp.obj:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.obj
-.PHONY : database/operators/SetOperatorTest.cpp.obj
+database/operators/operations/GetOperatorTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/operations/GetOperatorTest.cpp.obj
+.PHONY : database/operators/operations/GetOperatorTest.cpp.obj
 
-database/operators/SetOperatorTest.i: database/operators/SetOperatorTest.cpp.i
-.PHONY : database/operators/SetOperatorTest.i
+database/operators/operations/GetOperatorTest.i: database/operators/operations/GetOperatorTest.cpp.i
+.PHONY : database/operators/operations/GetOperatorTest.i
 
 # target to preprocess a source file
-database/operators/SetOperatorTest.cpp.i:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.i
-.PHONY : database/operators/SetOperatorTest.cpp.i
+database/operators/operations/GetOperatorTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/operations/GetOperatorTest.cpp.i
+.PHONY : database/operators/operations/GetOperatorTest.cpp.i
 
-database/operators/SetOperatorTest.s: database/operators/SetOperatorTest.cpp.s
-.PHONY : database/operators/SetOperatorTest.s
+database/operators/operations/GetOperatorTest.s: database/operators/operations/GetOperatorTest.cpp.s
+.PHONY : database/operators/operations/GetOperatorTest.s
 
 # target to generate assembly for a file
-database/operators/SetOperatorTest.cpp.s:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.s
-.PHONY : database/operators/SetOperatorTest.cpp.s
+database/operators/operations/GetOperatorTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/operations/GetOperatorTest.cpp.s
+.PHONY : database/operators/operations/GetOperatorTest.cpp.s
+
+database/operators/operations/SetOperatorTest.obj: database/operators/operations/SetOperatorTest.cpp.obj
+.PHONY : database/operators/operations/SetOperatorTest.obj
+
+# target to build an object file
+database/operators/operations/SetOperatorTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/operations/SetOperatorTest.cpp.obj
+.PHONY : database/operators/operations/SetOperatorTest.cpp.obj
+
+database/operators/operations/SetOperatorTest.i: database/operators/operations/SetOperatorTest.cpp.i
+.PHONY : database/operators/operations/SetOperatorTest.i
+
+# target to preprocess a source file
+database/operators/operations/SetOperatorTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/operations/SetOperatorTest.cpp.i
+.PHONY : database/operators/operations/SetOperatorTest.cpp.i
+
+database/operators/operations/SetOperatorTest.s: database/operators/operations/SetOperatorTest.cpp.s
+.PHONY : database/operators/operations/SetOperatorTest.s
+
+# target to generate assembly for a file
+database/operators/operations/SetOperatorTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/operations/SetOperatorTest.cpp.s
+.PHONY : database/operators/operations/SetOperatorTest.cpp.s
 
 main.obj: main.cpp.obj
 .PHONY : main.obj
@@ -390,6 +390,30 @@ utils/datastructures/queue/BlockingQueueTest.cpp.s:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/queue/BlockingQueueTest.cpp.s
 .PHONY : utils/datastructures/queue/BlockingQueueTest.cpp.s
 
+utils/datastructures/tree/AVLTreeTest.obj: utils/datastructures/tree/AVLTreeTest.cpp.obj
+.PHONY : utils/datastructures/tree/AVLTreeTest.obj
+
+# target to build an object file
+utils/datastructures/tree/AVLTreeTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.obj
+.PHONY : utils/datastructures/tree/AVLTreeTest.cpp.obj
+
+utils/datastructures/tree/AVLTreeTest.i: utils/datastructures/tree/AVLTreeTest.cpp.i
+.PHONY : utils/datastructures/tree/AVLTreeTest.i
+
+# target to preprocess a source file
+utils/datastructures/tree/AVLTreeTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.i
+.PHONY : utils/datastructures/tree/AVLTreeTest.cpp.i
+
+utils/datastructures/tree/AVLTreeTest.s: utils/datastructures/tree/AVLTreeTest.cpp.s
+.PHONY : utils/datastructures/tree/AVLTreeTest.s
+
+# target to generate assembly for a file
+utils/datastructures/tree/AVLTreeTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.s
+.PHONY : utils/datastructures/tree/AVLTreeTest.cpp.s
+
 utils/threads/ExchangerTest.obj: utils/threads/ExchangerTest.cpp.obj
 .PHONY : utils/threads/ExchangerTest.obj
 
@@ -451,15 +475,15 @@ help:
 	@echo ... list_install_components
 	@echo ... rebuild_cache
 	@echo ... memdb_tst
-	@echo ... database/operators/GetOperatorTest.obj
-	@echo ... database/operators/GetOperatorTest.i
-	@echo ... database/operators/GetOperatorTest.s
 	@echo ... database/operators/OperatorRegistryTest.obj
 	@echo ... database/operators/OperatorRegistryTest.i
 	@echo ... database/operators/OperatorRegistryTest.s
-	@echo ... database/operators/SetOperatorTest.obj
-	@echo ... database/operators/SetOperatorTest.i
-	@echo ... database/operators/SetOperatorTest.s
+	@echo ... database/operators/operations/GetOperatorTest.obj
+	@echo ... database/operators/operations/GetOperatorTest.i
+	@echo ... database/operators/operations/GetOperatorTest.s
+	@echo ... database/operators/operations/SetOperatorTest.obj
+	@echo ... database/operators/operations/SetOperatorTest.i
+	@echo ... database/operators/operations/SetOperatorTest.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
@@ -478,6 +502,9 @@ help:
 	@echo ... utils/datastructures/queue/BlockingQueueTest.obj
 	@echo ... utils/datastructures/queue/BlockingQueueTest.i
 	@echo ... utils/datastructures/queue/BlockingQueueTest.s
+	@echo ... utils/datastructures/tree/AVLTreeTest.obj
+	@echo ... utils/datastructures/tree/AVLTreeTest.i
+	@echo ... utils/datastructures/tree/AVLTreeTest.s
 	@echo ... utils/threads/ExchangerTest.obj
 	@echo ... utils/threads/ExchangerTest.i
 	@echo ... utils/threads/ExchangerTest.s

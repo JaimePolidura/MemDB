@@ -9,11 +9,15 @@ struct Node {
     uint8_t * value;
     uint32_t keyHash;
     uint8_t valueLength;
-    uint8_t height;
+    int16_t height;
+
+    bool hasNoChild() {
+        return this->left == nullptr && this->right == nullptr;
+    }
 
     Node() = default;
 
-    Node(uint8_t * value, uint32_t keyHash, uint8_t valueLength, uint8_t height):
+    Node(uint8_t * value, uint32_t keyHash, uint8_t valueLength, int16_t height):
             left(nullptr), right(nullptr), value(value), keyHash(keyHash), valueLength(valueLength), height(height) {
     }
 };
@@ -67,15 +71,21 @@ private:
             Node * left = last->left;
             Node * right = last->right;
             uint32_t keyHash = last->keyHash;
+            bool rootRemoved = this->root == last;
+
+            if(rootRemoved && last->hasNoChild())
+                this->root = nullptr;
 
             delete[] last->value;
             delete last;
 
             if(left == nullptr || right == nullptr) {
                 last = (left == nullptr) ? right : left;
+                if(rootRemoved) this->root = last;
             }else{
                 last = this->mostLeftChild(right);
                 last->right = this->removeRecursive(right, keyHash);
+                if(rootRemoved) this->root = last;
             }
         }
 
@@ -108,7 +118,7 @@ private:
     Node * rebalance(Node * node) {
         this->updateHeight(node);
 
-        int8_t heightFactor = this->getHeightFactor(node);
+        int16_t heightFactor = this->getHeightFactor(node);
 
         if(heightFactor < -1){ //Left heavy
             if(this->getHeightFactor(node->left) > 0)
@@ -159,18 +169,18 @@ private:
             this->root = newReference;
     }
 
-    int8_t getHeightFactor(Node * node) {
+    int16_t getHeightFactor(Node * node) {
         return node == nullptr ? 0 : this->getHeight(node->right) - this->getHeight(node->left);
     }
 
     void updateHeight(Node * node) {
-        uint8_t rightHeight = this->getHeight(node->right);
-        uint8_t leftHeight = this->getHeight(node->left);
+        int16_t rightHeight = this->getHeight(node->right);
+        int16_t leftHeight = this->getHeight(node->left);
 
         node->height = std::max(leftHeight, rightHeight) + 1;
     }
 
-    uint8_t getHeight(Node * node) {
+    int16_t getHeight(Node * node) {
         return node == nullptr ? -1 : node->height;
     }
 };

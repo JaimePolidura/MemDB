@@ -468,10 +468,6 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/database/operators/GetOperator.h">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/database/operators/Operator.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
@@ -484,7 +480,19 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/database/operators/SetOperator.h">
+		<Unit filename="C:/programacion/MemDB/src/database/operators/operations">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/database/operators/operations/DeleteOperator.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/database/operators/operations/GetOperator.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/database/operators/operations/SetOperator.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
@@ -572,6 +580,14 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/utils/datastructures/tree">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/utils/datastructures/tree/AVLTree.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/utils/threads">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
@@ -596,13 +612,13 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/tst/database/operators/GetOperatorTest.cpp">
-			<Option target="memdb_tst"/>
-		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/database/operators/OperatorRegistryTest.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/tst/database/operators/SetOperatorTest.cpp">
+		<Unit filename="C:/programacion/MemDB/tst/database/operators/operations/GetOperatorTest.cpp">
+			<Option target="memdb_tst"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/tst/database/operators/operations/SetOperatorTest.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/main.cpp">
@@ -621,6 +637,9 @@
 			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/utils/datastructures/queue/BlockingQueueTest.cpp">
+			<Option target="memdb_tst"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/tst/utils/datastructures/tree/AVLTreeTest.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/utils/threads/ExchangerTest.cpp">

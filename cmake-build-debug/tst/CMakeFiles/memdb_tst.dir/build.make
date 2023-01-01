@@ -68,26 +68,11 @@ include tst/CMakeFiles/memdb_tst.dir/progress.make
 # Include the compile flags for this target's objects.
 include tst/CMakeFiles/memdb_tst.dir/flags.make
 
-tst/CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/flags.make
-tst/CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/includes_CXX.rsp
-tst/CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.obj: ../tst/database/operators/GetOperatorTest.cpp
-tst/CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object tst/CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.obj"
-	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT tst/CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.obj -MF CMakeFiles\memdb_tst.dir\database\operators\GetOperatorTest.cpp.obj.d -o CMakeFiles\memdb_tst.dir\database\operators\GetOperatorTest.cpp.obj -c C:\programacion\MemDB\tst\database\operators\GetOperatorTest.cpp
-
-tst/CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.i"
-	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\programacion\MemDB\tst\database\operators\GetOperatorTest.cpp > CMakeFiles\memdb_tst.dir\database\operators\GetOperatorTest.cpp.i
-
-tst/CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.s"
-	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\tst\database\operators\GetOperatorTest.cpp -o CMakeFiles\memdb_tst.dir\database\operators\GetOperatorTest.cpp.s
-
 tst/CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/flags.make
 tst/CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/includes_CXX.rsp
 tst/CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.obj: ../tst/database/operators/OperatorRegistryTest.cpp
 tst/CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object tst/CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object tst/CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.obj"
 	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT tst/CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.obj -MF CMakeFiles\memdb_tst.dir\database\operators\OperatorRegistryTest.cpp.obj.d -o CMakeFiles\memdb_tst.dir\database\operators\OperatorRegistryTest.cpp.obj -c C:\programacion\MemDB\tst\database\operators\OperatorRegistryTest.cpp
 
 tst/CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.i: cmake_force
@@ -98,20 +83,35 @@ tst/CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.s: cmak
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.s"
 	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\tst\database\operators\OperatorRegistryTest.cpp -o CMakeFiles\memdb_tst.dir\database\operators\OperatorRegistryTest.cpp.s
 
-tst/CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/flags.make
-tst/CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/includes_CXX.rsp
-tst/CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.obj: ../tst/database/operators/SetOperatorTest.cpp
-tst/CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object tst/CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.obj"
-	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT tst/CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.obj -MF CMakeFiles\memdb_tst.dir\database\operators\SetOperatorTest.cpp.obj.d -o CMakeFiles\memdb_tst.dir\database\operators\SetOperatorTest.cpp.obj -c C:\programacion\MemDB\tst\database\operators\SetOperatorTest.cpp
+tst/CMakeFiles/memdb_tst.dir/database/operators/operations/GetOperatorTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/flags.make
+tst/CMakeFiles/memdb_tst.dir/database/operators/operations/GetOperatorTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/includes_CXX.rsp
+tst/CMakeFiles/memdb_tst.dir/database/operators/operations/GetOperatorTest.cpp.obj: ../tst/database/operators/operations/GetOperatorTest.cpp
+tst/CMakeFiles/memdb_tst.dir/database/operators/operations/GetOperatorTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object tst/CMakeFiles/memdb_tst.dir/database/operators/operations/GetOperatorTest.cpp.obj"
+	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT tst/CMakeFiles/memdb_tst.dir/database/operators/operations/GetOperatorTest.cpp.obj -MF CMakeFiles\memdb_tst.dir\database\operators\operations\GetOperatorTest.cpp.obj.d -o CMakeFiles\memdb_tst.dir\database\operators\operations\GetOperatorTest.cpp.obj -c C:\programacion\MemDB\tst\database\operators\operations\GetOperatorTest.cpp
 
-tst/CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.i"
-	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\programacion\MemDB\tst\database\operators\SetOperatorTest.cpp > CMakeFiles\memdb_tst.dir\database\operators\SetOperatorTest.cpp.i
+tst/CMakeFiles/memdb_tst.dir/database/operators/operations/GetOperatorTest.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/memdb_tst.dir/database/operators/operations/GetOperatorTest.cpp.i"
+	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\programacion\MemDB\tst\database\operators\operations\GetOperatorTest.cpp > CMakeFiles\memdb_tst.dir\database\operators\operations\GetOperatorTest.cpp.i
 
-tst/CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.s"
-	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\tst\database\operators\SetOperatorTest.cpp -o CMakeFiles\memdb_tst.dir\database\operators\SetOperatorTest.cpp.s
+tst/CMakeFiles/memdb_tst.dir/database/operators/operations/GetOperatorTest.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_tst.dir/database/operators/operations/GetOperatorTest.cpp.s"
+	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\tst\database\operators\operations\GetOperatorTest.cpp -o CMakeFiles\memdb_tst.dir\database\operators\operations\GetOperatorTest.cpp.s
+
+tst/CMakeFiles/memdb_tst.dir/database/operators/operations/SetOperatorTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/flags.make
+tst/CMakeFiles/memdb_tst.dir/database/operators/operations/SetOperatorTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/includes_CXX.rsp
+tst/CMakeFiles/memdb_tst.dir/database/operators/operations/SetOperatorTest.cpp.obj: ../tst/database/operators/operations/SetOperatorTest.cpp
+tst/CMakeFiles/memdb_tst.dir/database/operators/operations/SetOperatorTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object tst/CMakeFiles/memdb_tst.dir/database/operators/operations/SetOperatorTest.cpp.obj"
+	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT tst/CMakeFiles/memdb_tst.dir/database/operators/operations/SetOperatorTest.cpp.obj -MF CMakeFiles\memdb_tst.dir\database\operators\operations\SetOperatorTest.cpp.obj.d -o CMakeFiles\memdb_tst.dir\database\operators\operations\SetOperatorTest.cpp.obj -c C:\programacion\MemDB\tst\database\operators\operations\SetOperatorTest.cpp
+
+tst/CMakeFiles/memdb_tst.dir/database/operators/operations/SetOperatorTest.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/memdb_tst.dir/database/operators/operations/SetOperatorTest.cpp.i"
+	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\programacion\MemDB\tst\database\operators\operations\SetOperatorTest.cpp > CMakeFiles\memdb_tst.dir\database\operators\operations\SetOperatorTest.cpp.i
+
+tst/CMakeFiles/memdb_tst.dir/database/operators/operations/SetOperatorTest.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_tst.dir/database/operators/operations/SetOperatorTest.cpp.s"
+	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\tst\database\operators\operations\SetOperatorTest.cpp -o CMakeFiles\memdb_tst.dir\database\operators\operations\SetOperatorTest.cpp.s
 
 tst/CMakeFiles/memdb_tst.dir/main.cpp.obj: tst/CMakeFiles/memdb_tst.dir/flags.make
 tst/CMakeFiles/memdb_tst.dir/main.cpp.obj: tst/CMakeFiles/memdb_tst.dir/includes_CXX.rsp
@@ -203,11 +203,26 @@ tst/CMakeFiles/memdb_tst.dir/utils/datastructures/queue/BlockingQueueTest.cpp.s:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_tst.dir/utils/datastructures/queue/BlockingQueueTest.cpp.s"
 	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\tst\utils\datastructures\queue\BlockingQueueTest.cpp -o CMakeFiles\memdb_tst.dir\utils\datastructures\queue\BlockingQueueTest.cpp.s
 
+tst/CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/flags.make
+tst/CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/includes_CXX.rsp
+tst/CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.obj: ../tst/utils/datastructures/tree/AVLTreeTest.cpp
+tst/CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object tst/CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.obj"
+	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT tst/CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.obj -MF CMakeFiles\memdb_tst.dir\utils\datastructures\tree\AVLTreeTest.cpp.obj.d -o CMakeFiles\memdb_tst.dir\utils\datastructures\tree\AVLTreeTest.cpp.obj -c C:\programacion\MemDB\tst\utils\datastructures\tree\AVLTreeTest.cpp
+
+tst/CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.i"
+	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\programacion\MemDB\tst\utils\datastructures\tree\AVLTreeTest.cpp > CMakeFiles\memdb_tst.dir\utils\datastructures\tree\AVLTreeTest.cpp.i
+
+tst/CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.s"
+	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\tst\utils\datastructures\tree\AVLTreeTest.cpp -o CMakeFiles\memdb_tst.dir\utils\datastructures\tree\AVLTreeTest.cpp.s
+
 tst/CMakeFiles/memdb_tst.dir/utils/threads/ExchangerTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/flags.make
 tst/CMakeFiles/memdb_tst.dir/utils/threads/ExchangerTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/includes_CXX.rsp
 tst/CMakeFiles/memdb_tst.dir/utils/threads/ExchangerTest.cpp.obj: ../tst/utils/threads/ExchangerTest.cpp
 tst/CMakeFiles/memdb_tst.dir/utils/threads/ExchangerTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object tst/CMakeFiles/memdb_tst.dir/utils/threads/ExchangerTest.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object tst/CMakeFiles/memdb_tst.dir/utils/threads/ExchangerTest.cpp.obj"
 	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT tst/CMakeFiles/memdb_tst.dir/utils/threads/ExchangerTest.cpp.obj -MF CMakeFiles\memdb_tst.dir\utils\threads\ExchangerTest.cpp.obj.d -o CMakeFiles\memdb_tst.dir\utils\threads\ExchangerTest.cpp.obj -c C:\programacion\MemDB\tst\utils\threads\ExchangerTest.cpp
 
 tst/CMakeFiles/memdb_tst.dir/utils/threads/ExchangerTest.cpp.i: cmake_force
@@ -222,7 +237,7 @@ tst/CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTe
 tst/CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/includes_CXX.rsp
 tst/CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj: ../tst/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp
 tst/CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj: tst/CMakeFiles/memdb_tst.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object tst/CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object tst/CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj"
 	cd /d C:\programacion\MemDB\cmake-build-debug\tst && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT tst/CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj -MF CMakeFiles\memdb_tst.dir\utils\threads\dynamicthreadpool\DynamicThreadPoolTest.cpp.obj.d -o CMakeFiles\memdb_tst.dir\utils\threads\dynamicthreadpool\DynamicThreadPoolTest.cpp.obj -c C:\programacion\MemDB\tst\utils\threads\dynamicthreadpool\DynamicThreadPoolTest.cpp
 
 tst/CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.i: cmake_force
@@ -235,30 +250,32 @@ tst/CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTe
 
 # Object files for target memdb_tst
 memdb_tst_OBJECTS = \
-"CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.obj" \
 "CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.obj" \
-"CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.obj" \
+"CMakeFiles/memdb_tst.dir/database/operators/operations/GetOperatorTest.cpp.obj" \
+"CMakeFiles/memdb_tst.dir/database/operators/operations/SetOperatorTest.cpp.obj" \
 "CMakeFiles/memdb_tst.dir/main.cpp.obj" \
 "CMakeFiles/memdb_tst.dir/messages/request/RequestDeserializerTest.cpp.obj" \
 "CMakeFiles/memdb_tst.dir/messages/response/ResponseSerializerTest.cpp.obj" \
 "CMakeFiles/memdb_tst.dir/users/UsersServiceTest.cpp.obj" \
 "CMakeFiles/memdb_tst.dir/utils/datastructures/map/MapTest.cpp.obj" \
 "CMakeFiles/memdb_tst.dir/utils/datastructures/queue/BlockingQueueTest.cpp.obj" \
+"CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.obj" \
 "CMakeFiles/memdb_tst.dir/utils/threads/ExchangerTest.cpp.obj" \
 "CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj"
 
 # External object files for target memdb_tst
 memdb_tst_EXTERNAL_OBJECTS =
 
-tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/database/operators/GetOperatorTest.cpp.obj
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.obj
-tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/database/operators/SetOperatorTest.cpp.obj
+tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/database/operators/operations/GetOperatorTest.cpp.obj
+tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/database/operators/operations/SetOperatorTest.cpp.obj
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/main.cpp.obj
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/messages/request/RequestDeserializerTest.cpp.obj
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/messages/response/ResponseSerializerTest.cpp.obj
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/users/UsersServiceTest.cpp.obj
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/MapTest.cpp.obj
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/utils/datastructures/queue/BlockingQueueTest.cpp.obj
+tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.obj
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/utils/threads/ExchangerTest.cpp.obj
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/build.make
@@ -267,7 +284,7 @@ tst/memdb_tst.exe: lib/libgtest.a
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/linklibs.rsp
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/objects1.rsp
 tst/memdb_tst.exe: tst/CMakeFiles/memdb_tst.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Linking CXX executable memdb_tst.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking CXX executable memdb_tst.exe"
 	cd /d C:\programacion\MemDB\cmake-build-debug\tst && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\memdb_tst.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

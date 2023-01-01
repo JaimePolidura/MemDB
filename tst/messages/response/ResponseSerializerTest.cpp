@@ -14,7 +14,7 @@ TEST(ResponseSerializer, ShouldSerializeSuccessWithData) {
     Response response = Response::success(data.length(), reinterpret_cast<uint8_t *>(data.data()));
     std::shared_ptr<std::vector<uint8_t>> serialized = responseSerializer.serialize(response);
 
-    ASSERT_EQ(serialized->size(), 7 + 8);
+    ASSERT_EQ(serialized->size(), MAX_RESPONSE_SIZE);
     ASSERT_EQ(serialized->at(0 + 8), 0x01);
     ASSERT_EQ(serialized->at(1 + 8), 0x05);
 
@@ -31,7 +31,7 @@ TEST(ResponseSerializer, ShouldSerializeSuccessNoData) {
     Response response = Response::success();
     std::shared_ptr<std::vector<uint8_t>> serialized = responseSerializer.serialize(response);
 
-    ASSERT_EQ(serialized->size(), 2 + 8);
+    ASSERT_EQ(serialized->size(), MAX_RESPONSE_SIZE);
     ASSERT_EQ(serialized->at(0 + 8), 0x01);
     ASSERT_EQ(serialized->at(1 + 8), 0x00);
 }
@@ -42,7 +42,7 @@ TEST(ResponseSerializer, ShouldSerializeErrorNoData) {
     Response response = Response::error(ErrorCode::UNKNOWN_KEY);
     std::shared_ptr<std::vector<uint8_t>> serialized = responseSerializer.serialize(response);
 
-    ASSERT_EQ(serialized->size(), 2 + 8);
+    ASSERT_EQ(serialized->size(), MAX_RESPONSE_SIZE);
     ASSERT_EQ(serialized->at(0 + 8), 0x02);
     ASSERT_EQ(serialized->at(1 + 8), 0x00);
 }

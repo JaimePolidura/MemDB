@@ -10,12 +10,12 @@ class Node {
 public:
     std::shared_ptr<Node<T>> next;
     std::shared_ptr<Node<T>> prev;
-    T data;
+    T value;
 
 public:
-    Node(const T& dataCons, std::shared_ptr<Node<T>> nextCons, std::shared_ptr<Node<T>> prevCons): data(dataCons), next(nextCons), prev(prevCons) {}
+    Node(const T& dataCons, std::shared_ptr<Node<T>> nextCons, std::shared_ptr<Node<T>> prevCons): value(dataCons), next(nextCons), prev(prevCons) {}
 
-    Node(T&& dataCons, std::shared_ptr<Node<T>> nextCons, std::shared_ptr<Node<T>> prevCons): data(dataCons), next(nextCons), prev(prevCons) {}
+    Node(T&& dataCons, std::shared_ptr<Node<T>> nextCons, std::shared_ptr<Node<T>> prevCons): value(dataCons), next(nextCons), prev(prevCons) {}
 };
 
 template<typename T>
@@ -69,7 +69,7 @@ public:
         this->notEmtpyCondition.wait(uniqueLock, [this]{ return this->size > 0 || stop; });
 
         if(this->stop)
-            return this->head->data;
+            return this->head->value;
 
         std::shared_ptr<Node<T>> nodeToDequeue = this->head;
         this->head = this->head->prev;
@@ -78,7 +78,7 @@ public:
 
         uniqueLock.unlock();
 
-        return nodeToDequeue->data;
+        return nodeToDequeue->value;
     }
 
     int getSize() {

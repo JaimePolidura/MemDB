@@ -58,43 +58,43 @@ public final class AsyncMemDbConnection implements MemDbConnection, Runnable {
     @Override
     @SneakyThrows
     public byte[] read(long requestNumber) {
-        Byte[] data = this.requestWithoutCallbacks.get(requestNumber);
+        Byte[] value = this.requestWithoutCallbacks.get(requestNumber);
 
-        if(data == null){
+        if(value == null){
             WaitReadResponseCondition waitRead = this.readMutex.get(requestNumber);
 
             waitRead.lock();
-            while((data = this.requestWithoutCallbacks.get(requestNumber)) == null)
+            while((value = this.requestWithoutCallbacks.get(requestNumber)) == null)
                 waitRead.await();
             waitRead.unlock();
 
             this.readMutex.remove(requestNumber);
         }
 
-        return Utils.wrapperToPrimitive(data);
+        return Utils.wrapperToPrimitive(value);
     }
 
     @Override
-    public void write(byte[] data) {
+    public void write(byte[] value) {
         try {
-            long requestNumber = Utils.toLong(data);
+            long requestNumber = Utils.toLong(value);
 
             Lock lock = new ReentrantLock();
             Condition condition = lock.newCondition();
             this.readMutex.put(requestNumber, new WaitReadResponseCondition(lock, condition));
 
-            this.output.write(data);
+            this.output.write(value);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void write(byte[] data, Consumer<Byte[]> onResponseCallback) {
+    public void write(byte[] value, Consumer<Byte[]> onResponseCallback) {
         try {
-            this.output.write(data);
+            this.output.write(value);
 
-            long requestNumber = Utils.toLong(data);
+            long requestNumber = Utils.toLong(value);
             this.callbacks.put(requestNumber, onResponseCallback);
         } catch (IOException e) {
             e.printStackTrace();

@@ -6,23 +6,25 @@
 #include <atomic>
 
 template<typename T>
-class Node {
+class BlockingQueueNode {
 public:
-    std::shared_ptr<Node<T>> next;
-    std::shared_ptr<Node<T>> prev;
+    std::shared_ptr<BlockingQueueNode<T>> next;
+    std::shared_ptr<BlockingQueueNode<T>> prev;
     T value;
 
 public:
-    Node(const T& dataCons, std::shared_ptr<Node<T>> nextCons, std::shared_ptr<Node<T>> prevCons): value(dataCons), next(nextCons), prev(prevCons) {}
+    BlockingQueueNode(const T& dataCons, std::shared_ptr<BlockingQueueNode<T>> nextCons, std::shared_ptr<BlockingQueueNode<T>> prevCons):
+        value(dataCons), next(nextCons), prev(prevCons) {}
 
-    Node(T&& dataCons, std::shared_ptr<Node<T>> nextCons, std::shared_ptr<Node<T>> prevCons): value(dataCons), next(nextCons), prev(prevCons) {}
+    BlockingQueueNode(T&& dataCons, std::shared_ptr<BlockingQueueNode<T>> nextCons, std::shared_ptr<BlockingQueueNode<T>> prevCons):
+        value(dataCons), next(nextCons), prev(prevCons) {}
 };
 
 template<typename T>
 class BlockingQueue {
 private:
-    std::shared_ptr<Node<T>> head; //Pointing to element to dequeue
-    std::shared_ptr<Node<T>> tail; //Pointing to last element added
+    std::shared_ptr<BlockingQueueNode<T>> head; //Pointing to element to dequeue
+    std::shared_ptr<BlockingQueueNode<T>> tail; //Pointing to last element added
     std::condition_variable notEmtpyCondition;
     std::mutex lock;
     bool stop;
@@ -34,7 +36,7 @@ public:
 
         this->lock.lock();
 
-        std::shared_ptr<Node<T>> newNodeToEnqueue = std::make_shared<Node<T>>(copyOfData, nullptr, nullptr);
+        std::shared_ptr<BlockingQueueNode<T>> newNodeToEnqueue = std::make_shared<BlockingQueueNode<T>>(copyOfData, nullptr, nullptr);
 
         if(this->size == 0){
             this->head = this->tail = newNodeToEnqueue;
@@ -71,7 +73,7 @@ public:
         if(this->stop)
             return this->head->value;
 
-        std::shared_ptr<Node<T>> nodeToDequeue = this->head;
+        std::shared_ptr<BlockingQueueNode<T>> nodeToDequeue = this->head;
         this->head = this->head->prev;
 
         this->size--;

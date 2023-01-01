@@ -3,32 +3,33 @@
 #include <cstdint>
 #include <functional>
 
-struct Node {
-    Node * left;
-    Node * right;
+class AVLNode {
+public:
+    AVLNode * left;
+    AVLNode * right;
     uint8_t * value;
     uint32_t keyHash;
-    uint8_t valueLength;
     int16_t height;
+    uint8_t valueLength;
 
     bool hasNoChild() {
         return this->left == nullptr && this->right == nullptr;
     }
 
-    Node() = default;
+    AVLNode() = default;
 
-    Node(uint8_t * value, uint32_t keyHash, uint8_t valueLength, int16_t height):
+    AVLNode(uint8_t * value, uint32_t keyHash, uint8_t valueLength, int16_t height):
             left(nullptr), right(nullptr), value(value), keyHash(keyHash), valueLength(valueLength), height(height) {
     }
 };
 
 class AVLTree {
 public:
-    Node * root;
+    AVLNode * root;
 
 public:
-    void add(int keyHash, uint8_t * value, uint8_t valueLength) {
-        Node * newNode = new Node(value, keyHash, valueLength, -1);
+    void add(uint32_t keyHash, uint8_t * value, uint8_t valueLength) {
+        AVLNode * newNode = new AVLNode(value, keyHash, valueLength, -1);
 
         if(this->root == nullptr)
             this->root = newNode;
@@ -40,12 +41,12 @@ public:
         this->removeRecursive(this->root, keyHash);
     }
 
-    bool contains(uint32_t keyHashToSearch) {
+    bool contains(uint32_t keyHashToSearch) const {
         return this->get(keyHashToSearch) != nullptr;
     }
 
-    Node * get(int keyHashToSearch) {
-        Node * node = this->root;
+    AVLNode * get(uint32_t keyHashToSearch) const {
+        AVLNode * node = this->root;
 
         while (node != nullptr) {
             if (node->keyHash == keyHashToSearch)
@@ -60,7 +61,7 @@ public:
     }
 
 private:
-    Node * removeRecursive(Node * last, uint32_t keyHashToRemove) {
+    AVLNode * removeRecursive(AVLNode * last, uint32_t keyHashToRemove) {
         if(last == nullptr){
             return last;
         }else if(last->keyHash > keyHashToRemove) {
@@ -68,8 +69,8 @@ private:
         }else if (last->keyHash < keyHashToRemove) {
             last->right = this->removeRecursive(last->right, keyHashToRemove);
         }else{ //Found it
-            Node * left = last->left;
-            Node * right = last->right;
+            AVLNode * left = last->left;
+            AVLNode * right = last->right;
             uint32_t keyHash = last->keyHash;
             bool rootRemoved = this->root == last;
 
@@ -95,7 +96,7 @@ private:
         return last;
     }
 
-    Node * mostLeftChild(Node * node) {
+    AVLNode * mostLeftChild(AVLNode * node) const {
         while (node->left != nullptr) {
             node = node->left;
         }
@@ -103,7 +104,7 @@ private:
         return node;
     }
 
-    Node * insertRecursive(Node * last, Node * toInsert) {
+    AVLNode * insertRecursive(AVLNode * last, AVLNode * toInsert) {
         if(last == nullptr){
             return toInsert;
         }else if(last->keyHash > toInsert->keyHash) {
@@ -115,7 +116,7 @@ private:
         return this->rebalance(last);
     }
 
-    Node * rebalance(Node * node) {
+    AVLNode * rebalance(AVLNode * node) {
         this->updateHeight(node);
 
         int16_t heightFactor = this->getHeightFactor(node);
@@ -135,8 +136,8 @@ private:
         return node;
     }
 
-    Node * rotateRight(Node * node) {
-        Node * leftChild = node->left;
+    AVLNode * rotateRight(AVLNode * node) {
+        AVLNode * leftChild = node->left;
 
         this->updateRootReferenceIfNeccesary(node, leftChild);
 
@@ -150,8 +151,8 @@ private:
     }
 
 
-    Node * rotateLeft(Node * node) {
-        Node * rightChild = node->right;
+    AVLNode * rotateLeft(AVLNode * node) {
+        AVLNode * rightChild = node->right;
 
         node->right = rightChild->left;
         rightChild->left = node;
@@ -164,23 +165,23 @@ private:
         return rightChild;
     }
 
-    void updateRootReferenceIfNeccesary(Node * oldReference, Node * newReference) {
+    void updateRootReferenceIfNeccesary(AVLNode * oldReference, AVLNode * newReference) {
         if(this->root == oldReference)
             this->root = newReference;
     }
 
-    int16_t getHeightFactor(Node * node) {
+    int16_t getHeightFactor(AVLNode * node) const {
         return node == nullptr ? 0 : this->getHeight(node->right) - this->getHeight(node->left);
     }
 
-    void updateHeight(Node * node) {
+    void updateHeight(AVLNode * node) {
         int16_t rightHeight = this->getHeight(node->right);
         int16_t leftHeight = this->getHeight(node->left);
 
         node->height = std::max(leftHeight, rightHeight) + 1;
     }
 
-    int16_t getHeight(Node * node) {
+    int16_t getHeight(AVLNode * node) const {
         return node == nullptr ? -1 : node->height;
     }
 };

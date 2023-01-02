@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Configuration.h"
-#include "DefaultConfiguration.h"
 #include "../utils/files/FileReader.h"
+#include "../utils/files/FileWriter.h"
 #include "../utils/strings/StringUtils.h"
 
 #include <memory>
@@ -39,7 +39,30 @@ private:
     }
 
     std::map<std::string, std::string> createConfigurationFile() {
-        return DefaultConfiguration::get();
+        std::vector<std::string> lines = FileReader::readFileLines("DefaultConfig.txt");
+        std::map<std::string, std::string> configValues = this->parseLinesToConfig(lines);
+
+        FileWriter::writeLines(this->getMemDbPath() + "/config.txt", lines);
+
+        return configValues;
+    }
+
+    std::map<std::string, std::string> parseLinesToConfig(const std::vector<std::string>& lines) {
+        std::map<std::string, std::string> configValues{};
+
+        for (const std::string &line : lines) {
+            std::vector<std::string> splited = StringUtils::split(line, '=');
+
+            if(splited.size() < 2)
+                throw std::runtime_error("Error while parsing configuration line at " + line);
+
+            std::string key = splited.at(0);
+            std::string value = splited.at(1);
+
+            configValues[key] = value;
+        }
+
+        return configValues;
     }
 
     std::string getMemDbPath() {

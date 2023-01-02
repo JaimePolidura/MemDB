@@ -17,6 +17,8 @@ public:
         while(std::getline(file, line))
             lines.push_back(line);
 
+        file.close();
+
         return lines;
     }
 };

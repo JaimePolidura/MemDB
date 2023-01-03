@@ -3,6 +3,8 @@
 #include <string>
 #include <boost/asio.hpp>
 
+#include "config/keys/ConfiguartionKeys.h"
+#include "config/Configuration.h"
 #include "../Users/Authenticator.h"
 #include "messages/request/RequestDeserializer.h"
 #include "messages/response/ResponseSerializer.h"
@@ -15,7 +17,8 @@ using namespace boost::asio;
 
 class TCPServer {
 private:
-    std::shared_ptr<DynamicThreadPool> connectionThreadPool;
+    std::shared_ptr<Configuration> configuration;
+    DynamicThreadPool connectionThreadPool;
     std::shared_ptr<OperatorDispatcher> operatorDispatcher;
     uint16_t port;
     RequestDeserializer requestDeserializer;
@@ -25,10 +28,11 @@ private:
     ip::tcp::acceptor acceptator;
 
 public:
-    TCPServer(uint16_t port, Authenticator authenicator, std::shared_ptr<OperatorDispatcher> operatorDispatcher, std::shared_ptr<DynamicThreadPool> tcpConnectionThreadPool):
-        port(port),
-        connectionThreadPool(tcpConnectionThreadPool),
+    TCPServer(std::shared_ptr<Configuration> configuration,  Authenticator authenicator, std::shared_ptr<OperatorDispatcher> operatorDispatcher):
+        configuration(configuration),
+        port(configuration->get<uint16_t>(ConfiguartionKeys::PORT)),
         authenicator(std::move(authenicator)),
+        connectionThreadPool(0.9f, configuration->get<int>(ConfiguartionKeys::SERVER_MAX_THREADS), configuration->get<int>(ConfiguartionKeys::SERVER_MIN_THREADS), 10),
         operatorDispatcher(operatorDispatcher),
         acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}) {};
 
@@ -50,7 +54,7 @@ private:
             std::shared_ptr<Connection> connection = std::make_shared<Connection>(std::move(socket));
 
             connection->onRequest([connection, this](const std::vector<uint8_t>& requestRawBuffer) {
-                this->connectionThreadPool->submit([&connection, requestRawBuffer, this] {
+                this->connectionThreadPool.submit([&connection, requestRawBuffer, this] {
                     this->onNewRequest(requestRawBuffer, connection);
                 });
             });

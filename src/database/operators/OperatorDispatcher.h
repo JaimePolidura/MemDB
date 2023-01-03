@@ -13,17 +13,17 @@
 class OperatorDispatcher {
 private:
     std::shared_ptr<Map> db;
-    std::shared_ptr<OperatorRegistry> operatorRegistry;
+    OperatorRegistry operatorRegistry;
     SingleThreadPool singleThreadedWritePool;
 
 public:
-    OperatorDispatcher(std::shared_ptr<Map> dbCons, std::shared_ptr<OperatorRegistry> operatorRegistryCons):
-        db(dbCons),
-        operatorRegistry(operatorRegistryCons) {}
+    OperatorDispatcher(std::shared_ptr<Map> dbCons):
+        db(dbCons)
+    {}
 
     void dispatch(Request& request,
                   std::function<void(Response&)> onResponse) {
-        std::shared_ptr<Operator> operatorToExecute = this->operatorRegistry->get(request.operation.operatorNumber);
+        std::shared_ptr<Operator> operatorToExecute = this->operatorRegistry.get(request.operation.operatorNumber);
         uint64_t requestNumber = request.requestNumber;
 
         if(operatorToExecute.get() == nullptr){

@@ -10,8 +10,8 @@
 
 class ConfiguartionLoader {
 public:
-    std::shared_ptr<Configuration> load() {
-        const std::string configPath = this->getMemDbPath() + "/config.txt";
+    static std::shared_ptr<Configuration> load() {
+        const std::string configPath = getMemDbPath() + "/config.txt";
         std::vector<std::string> lines = FileReader::readFileLines(configPath);
 
         std::map<std::string, std::string> configValues = lines.empty() ? createConfigurationFile() : readConfigFile(lines);
@@ -20,7 +20,7 @@ public:
     }
 
 private:
-    std::map<std::string, std::string> readConfigFile(const std::vector<std::string>& lines) {
+    static std::map<std::string, std::string> readConfigFile(const std::vector<std::string>& lines) {
         std::map<std::string, std::string> configValues{};
 
         for (const std::string &line: lines) {
@@ -38,16 +38,16 @@ private:
         return configValues;
     }
 
-    std::map<std::string, std::string> createConfigurationFile() {
+    static std::map<std::string, std::string> createConfigurationFile() {
         std::vector<std::string> lines = FileReader::readFileLines("DefaultConfig.txt");
-        std::map<std::string, std::string> configValues = this->parseLinesToConfig(lines);
+        std::map<std::string, std::string> configValues = parseLinesToConfig(lines);
 
-        FileWriter::writeLines(this->getMemDbPath() + "/config.txt", lines);
+        FileWriter::writeLines(getMemDbPath() + "/config.txt", lines);
 
         return configValues;
     }
 
-    std::map<std::string, std::string> parseLinesToConfig(const std::vector<std::string>& lines) {
+    static std::map<std::string, std::string> parseLinesToConfig(const std::vector<std::string>& lines) {
         std::map<std::string, std::string> configValues{};
 
         for (const std::string &line : lines) {
@@ -65,7 +65,7 @@ private:
         return configValues;
     }
 
-    std::string getMemDbPath() {
+    static std::string getMemDbPath() {
         #ifdef _WIN32
             return "C:/memdb";
         #else

@@ -46,4 +46,11 @@ public:
     static Response error(uint8_t errorCode) {
         return Response(false, errorCode, 0, nullptr);
     };
+
+    static Response error(uint8_t errorCode, uint64_t requestNumber) {
+        Response response = Response(false, errorCode, 0, nullptr);
+        response.requestNumber = requestNumber;
+
+        return response;
+    };
 };

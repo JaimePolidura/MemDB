@@ -47,12 +47,12 @@ private:
     }
 
     AVLNode * getNodeByKeyHash(uint32_t keyHash) const {
-        AVLTree actualMapNode = this->getBucket(keyHash);
+        AVLTree * actualMapNode = this->getBucket(keyHash);
 
-        return actualMapNode.get(keyHash);
+        return actualMapNode->get(keyHash);
     }
 
-    AVLTree getBucket(uint32_t keyHash) const {
-        return this->buckets[keyHash % numberBuckets];
+    AVLTree * getBucket(uint32_t keyHash) const {
+        return const_cast<AVLTree *>(this->buckets.data()) + (keyHash % numberBuckets);
     }
 };

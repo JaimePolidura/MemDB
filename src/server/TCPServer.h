@@ -70,7 +70,8 @@ private:
         bool authenticationValid = this->authenicator.authenticate(request.authentication.authKey);
 
         if(!authenticationValid){
-            this->sendResponse(connection, Response::error(ErrorCode::AUTH_ERROR));
+            const Response errorAuthResponse = Response::error(ErrorCode::AUTH_ERROR, request.requestNumber);
+            this->sendResponse(connection, errorAuthResponse);
             return;
         }
 
@@ -78,7 +79,7 @@ private:
             this->sendResponse(connection, response);
         });
     }
-
+    
     void sendResponse(std::shared_ptr<Connection> connection, const Response& response) {
         if(connection->isOpen()){
             std::shared_ptr<std::vector<uint8_t>> serialized = this->responseSerializer.serialize(response);

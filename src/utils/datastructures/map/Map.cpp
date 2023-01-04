@@ -1,8 +1,6 @@
 #include "Map.h"
 
 Map::Map(uint16_t numberBuckets): numberBuckets(numberBuckets) {
-    printf("Hi\n");
-
     buckets.reserve(numberBuckets);
 
     for (int i = 0; i < numberBuckets; i++)
@@ -11,9 +9,9 @@ Map::Map(uint16_t numberBuckets): numberBuckets(numberBuckets) {
 
 void Map::put(const std::string &key, uint8_t * value, size_t valueSize) {
     uint32_t keyHash = this->calculateHash(key);
-    AVLTree bucket = this->getBucket(keyHash);
+    AVLTree * bucket = this->getBucket(keyHash);
 
-    bucket.add(keyHash, value, valueSize);
+    bucket->add(keyHash, value, valueSize);
 
     this->size++;
 }
@@ -29,8 +27,8 @@ void Map::remove(const std::string &key) {
     AVLNode * nodeFoundForKey = this->getNodeByKeyHash(hash);
 
     if(nodeFoundForKey != nullptr) {
-        AVLTree bucket = this->getBucket(hash);
-        bucket.remove(hash);
+        AVLTree * bucket = this->getBucket(hash);
+        bucket->remove(hash);
         this->size--;
     }
 }

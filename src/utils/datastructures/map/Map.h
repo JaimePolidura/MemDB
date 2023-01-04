@@ -4,6 +4,8 @@
 #include <string>
 #include <optional>
 #include <tgmath.h>
+#include <atomic>
+#include <boost/thread/shared_mutex.hpp>
 
 #include "../tree/AVLTree.h"
 
@@ -14,11 +16,11 @@ struct MapEntry {
     MapEntry(uint8_t * value, size_t valueSize): value(value), valueSize(valueSize) {}
 };
 
-
 class Map {
 private:
-    uint32_t size;
+    std::atomic_uint32_t size;
     std::vector<AVLTree> buckets;
+    std::vector<boost::shared_mutex *> locks;
     uint16_t numberBuckets;
 
 public:
@@ -54,5 +56,21 @@ private:
 
     AVLTree * getBucket(uint32_t keyHash) const {
         return const_cast<AVLTree *>(this->buckets.data()) + (keyHash % numberBuckets);
+    }
+
+    void lockRead(uint32_t hashCode) const {
+        const_cast<boost::shared_mutex *>(this->locks.at(hashCode % numberBuckets))->lock_shared();
+    }
+
+    void unlockRead(uint32_t hashCode) const {
+        const_cast<boost::shared_mutex *>(this->locks.at(hashCode % numberBuckets))->unlock_shared();
+    }
+
+    void lockWrite(uint32_t hashCode) const {
+        const_cast<boost::shared_mutex *>(this->locks.at(hashCode % numberBuckets))->lock();
+    }
+
+    void unlockWrite(uint32_t hashCode) const {
+        const_cast<boost::shared_mutex *>(this->locks.at(hashCode % numberBuckets))->unlock();
     }
 };

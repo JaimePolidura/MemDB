@@ -15,15 +15,11 @@ public:
         defaultConfigurationValues(std::move(defaultConfigurationValues)) {}
 
     std::string get(const std::string& key) const {
-//        printf("B\n");
-
         return this->getOrDefault(key);
     }
 
     template<typename T>
     T get(const std::string& key) const {
-//        printf("A\n");
-
         return static_cast<T>(std::stoul(this->getOrDefault(key)));
     }
 

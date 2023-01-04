@@ -5,9 +5,6 @@
 #include <utility>
 #include <vector>
 #include "utils/datastructures/queue/BlockingQueue.h"
-#include "utils/threads/Exchanger.h"
-
-using Task = const std::function<void()>;
 
 enum WorkerState {
     ACTIVE, INACTIVE
@@ -16,7 +13,6 @@ enum WorkerState {
 class DynamicThreadPoolWorker {
 private:
     std::shared_ptr<BlockingQueue<std::function<void()>>> pendingTasks;
-    Exchanger<std::function<void()>> fastPath;
     std::thread thread;
     volatile WorkerState state;
     volatile bool isStoped;
@@ -24,11 +20,6 @@ private:
 public:
     DynamicThreadPoolWorker(std::shared_ptr<BlockingQueue<std::function<void()>>> pendingTasks):
         pendingTasks(std::move(pendingTasks)), isStoped(false), state(INACTIVE) {}
-
-    void startThreadWithInitialTask(std::shared_ptr<std::function<void()>> initialTask) {
-        this->fastPath.asyncEnqueue(std::move(initialTask));
-        this->thread = std::thread([this]{this->run();});
-    }
 
     void startThread() {
         this->thread = std::thread([this]{this->run();});

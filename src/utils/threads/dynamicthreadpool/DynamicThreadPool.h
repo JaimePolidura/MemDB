@@ -7,7 +7,6 @@
 #include <algorithm>
 
 #include "utils/datastructures/queue/BlockingQueue.h"
-#include "utils/threads/Exchanger.h"
 #include "./DynamicThreadPoolWorker.h"
 
 class DynamicThreadPool {

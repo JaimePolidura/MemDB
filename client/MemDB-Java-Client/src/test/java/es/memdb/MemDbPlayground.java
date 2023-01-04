@@ -6,7 +6,7 @@ import lombok.SneakyThrows;
 public final class MemDbPlayground {
     @SneakyThrows
     public static void main(String[] args) {
-        MemDb memDb = new MemDb(MemDbConnections.async("127.0.0.1", 10000), "1234");
+        MemDb memDb = new MemDb(MemDbConnections.async("127.0.0.1", 10000), "123");
 
         memDb.set("nombre", "jaime");
         System.out.println("{Set nombre = jaime}");

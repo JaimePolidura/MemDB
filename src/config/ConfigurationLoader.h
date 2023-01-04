@@ -13,10 +13,11 @@ public:
     static std::shared_ptr<Configuration> load() {
         const std::string configPath = getMemDbPath() + "/config.txt";
         std::vector<std::string> lines = FileUtils::readLines(configPath);
+        std::map<std::string, std::string> defaultConfiguartionValues = DefaultConfig::get();
 
-        std::map<std::string, std::string> configValues = lines.empty() ? createConfigurationFile() : readConfigFile(lines);
+        std::map<std::string, std::string> configValues = lines.empty() ? createConfigurationFile(defaultConfiguartionValues) : readConfigFile(lines);
 
-        return std::make_shared<Configuration>(configValues);
+        return std::make_shared<Configuration>(configValues, defaultConfiguartionValues);
     }
 
 private:
@@ -38,8 +39,7 @@ private:
         return configValues;
     }
 
-    static std::map<std::string, std::string> createConfigurationFile() {
-        std::map<std::string, std::string> defaultConfigValues = DefaultConfig::get();
+    static std::map<std::string, std::string> createConfigurationFile(const std::map<std::string, std::string>& defaultConfigValues) {
         std::vector<std::string> lines = parseConfigToLines(defaultConfigValues);
 
         FileUtils::createDirectory(getBasePath(), "memdb");

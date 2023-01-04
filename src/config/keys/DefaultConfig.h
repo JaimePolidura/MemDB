@@ -13,7 +13,8 @@ public:
                 { ConfiguartionKeys::AUTH_KEY, "123", },
                 { ConfiguartionKeys::SERVER_MIN_THREADS, "20"},
                 { ConfiguartionKeys::SERVER_MAX_THREADS, "100"},
-                { ConfiguartionKeys::PORT, "10000"}
+                { ConfiguartionKeys::PORT, "10000"},
+                { ConfiguartionKeys::BUCKETS, "64" }
         };
     }
 };

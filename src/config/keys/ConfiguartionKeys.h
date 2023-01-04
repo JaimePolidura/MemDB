@@ -8,4 +8,5 @@ public:
     static const std::string PORT;
     static const std::string SERVER_MIN_THREADS;
     static const std::string SERVER_MAX_THREADS;
+    static const std::string BUCKETS;
 };

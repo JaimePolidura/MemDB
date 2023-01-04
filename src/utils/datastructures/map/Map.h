@@ -17,16 +17,12 @@ struct MapEntry {
 
 class Map {
 private:
-    static const int NUMBER_OF_BUCKETS = 64;
-
-    AVLTree * buckets[NUMBER_OF_BUCKETS];
     uint32_t size;
+    std::vector<AVLTree> buckets;
+    uint16_t numberBuckets;
 
 public:
-    Map(): size(0) {
-        for (int i = 0; i < NUMBER_OF_BUCKETS; i++)
-            buckets[i] = new AVLTree();
-    };
+    Map(uint16_t numberBuckets);
 
     void put(const std::string &key, uint8_t * value, size_t valueSize);
 
@@ -51,12 +47,12 @@ private:
     }
 
     AVLNode * getNodeByKeyHash(uint32_t keyHash) const {
-        AVLTree * actualMapNode = this->getBucket(keyHash);
+        AVLTree actualMapNode = this->getBucket(keyHash);
 
-        return actualMapNode->get(keyHash);
+        return actualMapNode.get(keyHash);
     }
 
-    AVLTree * getBucket(uint32_t keyHash) const {
-        return this->buckets[keyHash % NUMBER_OF_BUCKETS];
+    AVLTree getBucket(uint32_t keyHash) const {
+        return this->buckets[keyHash % numberBuckets];
     }
 };

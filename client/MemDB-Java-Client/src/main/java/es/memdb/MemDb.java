@@ -41,6 +41,7 @@ public final class MemDb {
 
     private String sendRequest(OperationRequest.OperationRequestBuilder operation) {
         long requestNumber = this.requestNumberGenerator.next();
+
         Request request = Request.builder()
                 .requestNumber(requestNumber)
                 .authentication(AuthenticationRequest.builder().authKey(this.authKey).build())

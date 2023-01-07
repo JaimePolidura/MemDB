@@ -8,15 +8,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.Queue;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
-public final class AsyncMemDbConnection implements MemDbConnection, Runnable {
+public final class AsyncMemDbConnection implements MemDbConnection {
     private final String host;
     private final int port;
     private Socket socket;
@@ -29,15 +28,20 @@ public final class AsyncMemDbConnection implements MemDbConnection, Runnable {
     private final Map<Long, Consumer<Byte[]>> callbacks;
     private final Executor callbackExecutorThreadPool;
     private final Map<Long, WaitReadResponseCondition> readMutex;
-    private final Thread bufferReaderThread;
+    private Lock writeSocketLock;
+
+    private final ServerAsyncReader serverAsyncReader;
+    private final ServerAsyncWriter serverAsyncWriter;
 
     public AsyncMemDbConnection(String host, int port) throws IOException {
         this.callbackExecutorThreadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        this.writeSocketLock = new ReentrantLock(true);
         this.requestWithoutCallbacks = new ConcurrentHashMap<>();
         this.callbacks = new ConcurrentHashMap<>();
         this.readMutex = new ConcurrentHashMap<>();
-        this.bufferReaderThread = new Thread(this);
         this.host = host;
+        this.serverAsyncReader = new ServerAsyncReader();
+        this.serverAsyncWriter = new ServerAsyncWriter();
         this.port = port;
         this.connect();
     }
@@ -47,7 +51,9 @@ public final class AsyncMemDbConnection implements MemDbConnection, Runnable {
         this.socket = new Socket(this.host, this.port);
         this.output = this.socket.getOutputStream();
         this.input = this.socket.getInputStream();
-        this.bufferReaderThread.start();
+
+        this.serverAsyncReader.start();
+        this.serverAsyncWriter.start();
     }
 
     @Override
@@ -64,9 +70,12 @@ public final class AsyncMemDbConnection implements MemDbConnection, Runnable {
             WaitReadResponseCondition waitRead = this.readMutex.get(requestNumber);
 
             waitRead.lock();
-            while((value = this.requestWithoutCallbacks.get(requestNumber)) == null)
+            while((value = this.requestWithoutCallbacks.get(requestNumber)) == null) {
+                System.out.println("AWAIT " + requestNumber);
                 waitRead.await();
+            }
             waitRead.unlock();
+            System.out.println("WOKE " + requestNumber);
 
             this.readMutex.remove(requestNumber);
         }
@@ -83,7 +92,7 @@ public final class AsyncMemDbConnection implements MemDbConnection, Runnable {
             Condition condition = lock.newCondition();
             this.readMutex.put(requestNumber, new WaitReadResponseCondition(lock, condition));
 
-            this.output.write(value);
+            this.writeToStream(value);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -92,37 +101,13 @@ public final class AsyncMemDbConnection implements MemDbConnection, Runnable {
     @Override
     public void write(byte[] value, Consumer<Byte[]> onResponseCallback) {
         try {
-            this.output.write(value);
-
             long requestNumber = Utils.toLong(value);
+
+            this.writeToStream(value);
+
             this.callbacks.put(requestNumber, onResponseCallback);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    @Override
-    @SneakyThrows
-    public void run() {
-        while (!this.socket.isClosed()) {
-            byte[] fromBufferRaw = this.read();
-            Byte[] fromBufferNotRaw = Utils.primitiveToWrapper(fromBufferRaw);
-
-            long requestNumber = Utils.toLong(fromBufferRaw);
-
-            Consumer<Byte[]> callback = this.callbacks.get(requestNumber);
-
-            if(callback != null) {
-                this.callbackExecutorThreadPool.execute(() -> callback.accept(fromBufferNotRaw));
-            }else{
-                this.requestWithoutCallbacks.put(requestNumber, fromBufferNotRaw);
-
-                WaitReadResponseCondition readResponseCondition = this.readMutex.get(requestNumber);
-
-                readResponseCondition.lock();
-                readResponseCondition.signalAll();
-                readResponseCondition.unlock();
-            }
         }
     }
 
@@ -135,6 +120,15 @@ public final class AsyncMemDbConnection implements MemDbConnection, Runnable {
         }catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    private void writeToStream(byte[] toWrite) throws IOException {
+        try {
+            this.writeSocketLock.lock();
+            this.serverAsyncWriter.enqueue(toWrite);
+        } finally {
+            this.writeSocketLock.unlock();
         }
     }
 
@@ -154,6 +148,57 @@ public final class AsyncMemDbConnection implements MemDbConnection, Runnable {
         @SneakyThrows
         public void await() {
             this.condition.await();
+        }
+    }
+
+    private class ServerAsyncReader extends Thread {
+        @Override
+        public void run() {
+            while (!socket.isClosed()) {
+                byte[] fromBufferRaw = read();
+                Byte[] fromBufferNotRaw = Utils.primitiveToWrapper(fromBufferRaw);
+
+                long requestNumber = Utils.toLong(fromBufferRaw);
+
+                Consumer<Byte[]> callback = callbacks.get(requestNumber);
+
+                if(callback != null) {
+                    callbackExecutorThreadPool.execute(() -> callback.accept(fromBufferNotRaw));
+                }else{
+                    requestWithoutCallbacks.put(requestNumber, fromBufferNotRaw);
+
+                    WaitReadResponseCondition readResponseCondition = readMutex.get(requestNumber);
+
+                    readResponseCondition.lock();
+                    readResponseCondition.signalAll();
+                    readResponseCondition.unlock();
+                }
+            }
+        }
+    }
+
+    private class ServerAsyncWriter extends Thread {
+        private final BlockingQueue<Byte[]> requestToWrite;
+
+        public ServerAsyncWriter() {
+            this.requestToWrite = new LinkedBlockingQueue<>();
+        }
+
+        public void enqueue(byte[] data) {
+            this.requestToWrite.add(Utils.primitiveToWrapper(data));
+        }
+
+        @Override
+        @SneakyThrows
+        public void run() {
+            while (!socket.isClosed()) {
+                Byte[] requestToWrite = this.requestToWrite.take();
+
+                output.write(Utils.wrapperToPrimitive(requestToWrite));
+                output.flush();
+
+                Thread.yield();
+            }
         }
     }
 

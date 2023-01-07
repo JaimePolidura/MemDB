@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 @RequiredArgsConstructor
 public final class MemDb {
@@ -27,8 +28,20 @@ public final class MemDb {
                 .args(List.of(key)));
     }
 
+    public void get(String key, Consumer<String> callBack) {
+        this.sendRequestAsync(callBack, OperationRequest.builder()
+                .operator(Operator.GET)
+                .args(List.of(key)));
+    }
+
     public void delete(String key) {
         this.sendRequest(OperationRequest.builder()
+                .operator(Operator.DELETE)
+                .args(List.of(key)));
+    }
+
+    public void delete(String key, Runnable runnable) {
+        this.sendRequestAsync(response -> runnable.run(), OperationRequest.builder()
                 .operator(Operator.DELETE)
                 .args(List.of(key)));
     }
@@ -39,24 +52,49 @@ public final class MemDb {
                 .args(List.of(key, value)));
     }
 
-    private String sendRequest(OperationRequest.OperationRequestBuilder operation) {
-        long requestNumber = this.requestNumberGenerator.next();
+    public void set(String key, String value, Runnable callback) {
+        this.sendRequestAsync(response -> callback.run(), OperationRequest.builder()
+                .operator(Operator.SET)
+                .args(List.of(key, value)));
+    }
 
-        Request request = Request.builder()
-                .requestNumber(requestNumber)
-                .authentication(AuthenticationRequest.builder().authKey(this.authKey).build())
-                .operationRequest(operation.build())
-                .build();
+    private String sendRequest(OperationRequest.OperationRequestBuilder operation) {
+        Request request = this.createRequestObject(operation);
+
         byte[] rawRequest = this.requestSerializer.serialize(request);
 
         this.memDbConnection.write(rawRequest);
 
-        byte[] rawResponse = this.memDbConnection.read(requestNumber);
+        byte[] rawResponse = this.memDbConnection.read(request.getRequestNumber());
         Response response = this.responseDeserializer.deserialize(rawResponse);
 
         return response.isFailed() ?
                 handleException(request, response) :
                 response.getResponse();
+    }
+
+    private void sendRequestAsync(Consumer<String> result, OperationRequest.OperationRequestBuilder operation) {
+        Request request = this.createRequestObject(operation);
+        byte[] rawRequest = this.requestSerializer.serialize(request);
+
+        this.memDbConnection.write(rawRequest, rawResponse -> {
+            Response response = this.responseDeserializer.deserialize(Utils.wrapperToPrimitive(rawResponse));
+
+            result.accept(response.isFailed() ?
+                            handleException(request, response) :
+                            response.getResponse()
+            );
+        });
+    }
+
+    private Request createRequestObject(OperationRequest.OperationRequestBuilder operation) {
+        long requestNumber = this.requestNumberGenerator.next();
+
+        return Request.builder()
+                .requestNumber(requestNumber)
+                .authentication(AuthenticationRequest.builder().authKey(authKey).build())
+                .operationRequest(operation.build())
+                .build();
     }
 
     @SneakyThrows

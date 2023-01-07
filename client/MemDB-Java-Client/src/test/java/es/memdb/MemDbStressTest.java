@@ -4,11 +4,9 @@ import es.memdb.connection.MemDbConnections;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static es.memdb.Operator.*;
 
@@ -18,17 +16,19 @@ public final class MemDbStressTest {
 
     @SneakyThrows
     public static void main(String[] args) {
-        System.out.println("---------------------- START 1 THREADS: ----------------------");
-        List<StressTestActionResult> result = runTest(1, 1000000);
+        System.out.println("---------------------- START ----------------------");
+        List<StressTestActionResult> results = runTest(Runtime.getRuntime().availableProcessors() * 4, 1000);
+
+        printAverageByOperatorType(results);
     }
 
     @SneakyThrows
     private static List<StressTestActionResult> runTest(int numberThreads, int numberOperations) {
-        MemDb memDb = new MemDb(MemDbConnections.async("127.0.0.1", 10000), "123");
+//        MemDb memDb = new MemDb(MemDbConnections.async("127.0.0.1", 10000), "123");
 
         StressTestThread[] threads = new StressTestThread[numberThreads];
         for (int i = 0; i < numberThreads; i++)
-            threads[i] = new StressTestThread(memDb, numberOperations, randomLetter());
+            threads[i] = new StressTestThread(new MemDb(MemDbConnections.sync("127.0.0.1", 10000), "123"), numberOperations, randomLetter());
         for (int i = 0; i < numberThreads; i++)
             threads[i].start();
         for (int i = 0; i < numberThreads; i++)
@@ -43,6 +43,21 @@ public final class MemDbStressTest {
 
     private static Supplier<String> randomLetter() {
         return () -> Character.toString((char) ((Math.random() * 90 - 65) + 65));
+    }
+
+    private static void printAverageByOperatorType(List<StressTestActionResult> results) {
+        Map<Operator, List<StressTestActionResult>> groupedByOperator = results.stream()
+                .collect(Collectors.groupingBy(StressTestActionResult::operator));
+
+        System.out.println("---------------------- FINISHED ----------------------");
+        for (Operator operator : groupedByOperator.keySet()) {
+            double average = groupedByOperator.get(operator).stream()
+                    .mapToLong(StressTestActionResult::time)
+                    .average()
+                    .getAsDouble();
+
+            System.out.println(operator.toString() + ": " + average);
+        }
     }
 
     private static class StressTestThread extends Thread {

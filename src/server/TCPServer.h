@@ -32,7 +32,7 @@ public:
         configuration(configuration),
         port(configuration->get<uint16_t>(ConfiguartionKeys::PORT)),
         authenicator(std::move(authenicator)),
-        connectionThreadPool(0.9f, configuration->get<int>(ConfiguartionKeys::SERVER_MAX_THREADS), configuration->get<int>(ConfiguartionKeys::SERVER_MIN_THREADS), 10),
+        connectionThreadPool(0.9f, configuration->get<int>(ConfiguartionKeys::SERVER_MAX_THREADS), configuration->get<int>(ConfiguartionKeys::SERVER_MIN_THREADS), 100),
         operatorDispatcher(operatorDispatcher),
         acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}) {};
 

@@ -3,6 +3,7 @@ package es.memdb.messages.request;
 import es.memdb.Utils;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +28,10 @@ public final class RequestSerializer {
     }
 
     private List<Byte> getRequestNumber(Request request) {
-        byte[] bytes = ByteBuffer.allocate(Long.BYTES).putLong(request.getRequestNumber()).array();
+        byte[] bytes = ByteBuffer.allocate(Long.BYTES)
+                .order(ByteOrder.BIG_ENDIAN)
+                .putLong(request.getRequestNumber())
+                .array();
 
         return Arrays.stream(Utils.primitiveToWrapper(bytes)).toList();
     }

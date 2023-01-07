@@ -19,8 +19,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/memdb_tst.dir/utils/datastructures/queue/BlockingQueueTest.cpp.obj.d"
   "CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.obj"
   "CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.obj.d"
-  "CMakeFiles/memdb_tst.dir/utils/threads/ExchangerTest.cpp.obj"
-  "CMakeFiles/memdb_tst.dir/utils/threads/ExchangerTest.cpp.obj.d"
   "CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj"
   "CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj.d"
   "libmemdb_tst.dll.a"

@@ -296,6 +296,33 @@ utils/datastructures/map/Map.cpp.s:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/datastructures/map/Map.cpp.s
 .PHONY : utils/datastructures/map/Map.cpp.s
 
+utils/files/FileUtils.obj: utils/files/FileUtils.cpp.obj
+.PHONY : utils/files/FileUtils.obj
+
+# target to build an object file
+utils/files/FileUtils.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/files/FileUtils.cpp.obj
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/files/FileUtils.cpp.obj
+.PHONY : utils/files/FileUtils.cpp.obj
+
+utils/files/FileUtils.i: utils/files/FileUtils.cpp.i
+.PHONY : utils/files/FileUtils.i
+
+# target to preprocess a source file
+utils/files/FileUtils.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/files/FileUtils.cpp.i
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/files/FileUtils.cpp.i
+.PHONY : utils/files/FileUtils.cpp.i
+
+utils/files/FileUtils.s: utils/files/FileUtils.cpp.s
+.PHONY : utils/files/FileUtils.s
+
+# target to generate assembly for a file
+utils/files/FileUtils.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/utils/files/FileUtils.cpp.s
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/utils/files/FileUtils.cpp.s
+.PHONY : utils/files/FileUtils.cpp.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -322,6 +349,9 @@ help:
 	@echo ... utils/datastructures/map/Map.obj
 	@echo ... utils/datastructures/map/Map.i
 	@echo ... utils/datastructures/map/Map.s
+	@echo ... utils/files/FileUtils.obj
+	@echo ... utils/files/FileUtils.i
+	@echo ... utils/files/FileUtils.s
 .PHONY : help
 
 

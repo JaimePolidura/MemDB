@@ -1,29 +1,23 @@
-#include <Windows.h>
+#include "FileUtils.h"
 #include <stdexcept>
 #include <fstream>
 
-#include "FileUtils.h"
+#ifdef _WIN32
+    #include <Windows.h>
+#endif
 
 void FileUtils::createDirectory(const std::string &path, const std::string &name) {
+#ifdef _WIN32
     CreateDirectoryA((path + "\\" + name).c_str(), NULL);
+#endif
 }
 
 void FileUtils::createFile(const std::string &path, const std::string &name) {
+#ifdef _WIN32
     HANDLE handle = CreateFile((path + "\\" + name).c_str(), GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
 
     CloseHandle(handle);
-}
-
-void FileUtils::writeLines(const std::string &path, const std::vector<std::string> &lines) {
-    std::ofstream output_file(path);
-
-    if(!output_file.is_open())
-        throw std::runtime_error("Cannot create configuration file");
-
-    for (const std::string &line : lines)
-        output_file << line << '\n';
-
-    output_file.close();
+#endif
 }
 
 std::vector<std::string> FileUtils::readLines(const std::string &path) {
@@ -40,4 +34,16 @@ std::vector<std::string> FileUtils::readLines(const std::string &path) {
     file.close();
 
     return lines;
+}
+
+void FileUtils::writeLines(const std::string &path, const std::vector<std::string> &lines) {
+    std::ofstream output_file(path);
+
+    if(!output_file.is_open())
+        throw std::runtime_error("Cannot create configuration file");
+
+    for (const std::string &line : lines)
+        output_file << line << '\n';
+
+    output_file.close();
 }

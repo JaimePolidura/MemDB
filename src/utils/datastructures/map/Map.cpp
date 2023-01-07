@@ -34,7 +34,7 @@ std::optional<MapEntry> Map::get(const std::string &key) const {
 void Map::remove(const std::string &key) {
     uint32_t hash = this->calculateHash(key);
 
-    lockRead(hash);
+    lockWrite(hash);
     AVLNode * nodeFoundForKey = this->getNodeByKeyHash(hash);
 
     if(nodeFoundForKey != nullptr) {
@@ -43,7 +43,7 @@ void Map::remove(const std::string &key) {
         this->size--;
     }
 
-    unlockRead(hash);
+    unlockWrite(hash);
 }
 
 bool Map::contains(const std::string &key) const {

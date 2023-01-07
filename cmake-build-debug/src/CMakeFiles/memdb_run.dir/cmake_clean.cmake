@@ -7,6 +7,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/memdb_run.dir/users/UsersRepository.cpp.obj.d"
   "CMakeFiles/memdb_run.dir/utils/datastructures/map/Map.cpp.obj"
   "CMakeFiles/memdb_run.dir/utils/datastructures/map/Map.cpp.obj.d"
+  "CMakeFiles/memdb_run.dir/utils/files/FileUtils.cpp.obj"
+  "CMakeFiles/memdb_run.dir/utils/files/FileUtils.cpp.obj.d"
   "libmemdb_run.dll.a"
   "memdb_run.exe"
   "memdb_run.exe.manifest"

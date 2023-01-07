@@ -18,7 +18,6 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "C:/programacion/MemDB/tst/utils/datastructures/map/MapTest.cpp" "tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/MapTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/MapTest.cpp.obj.d"
   "C:/programacion/MemDB/tst/utils/datastructures/queue/BlockingQueueTest.cpp" "tst/CMakeFiles/memdb_tst.dir/utils/datastructures/queue/BlockingQueueTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/utils/datastructures/queue/BlockingQueueTest.cpp.obj.d"
   "C:/programacion/MemDB/tst/utils/datastructures/tree/AVLTreeTest.cpp" "tst/CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.obj.d"
-  "C:/programacion/MemDB/tst/utils/threads/ExchangerTest.cpp" "tst/CMakeFiles/memdb_tst.dir/utils/threads/ExchangerTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/utils/threads/ExchangerTest.cpp.obj.d"
   "C:/programacion/MemDB/tst/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp" "tst/CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj.d"
   )
 

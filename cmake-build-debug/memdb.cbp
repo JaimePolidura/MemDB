@@ -476,15 +476,7 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/connection">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/connection/Connection.h">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/connection/TCPServer.h">
+		<Unit filename="C:/programacion/MemDB/src/config/keys/DefaultConfig.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
@@ -564,6 +556,18 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/server">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/server/Connection.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/server/TCPServer.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/users">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
@@ -624,11 +628,11 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/files/FileReader.h">
+		<Unit filename="C:/programacion/MemDB/src/utils/files/FileUtils.cpp">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/files/FileWriter.h">
+		<Unit filename="C:/programacion/MemDB/src/utils/files/FileUtils.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
@@ -644,7 +648,7 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/threads/Exchanger.h">
+		<Unit filename="C:/programacion/MemDB/src/utils/threads/ReadWriteLock.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
@@ -692,9 +696,6 @@
 			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/utils/datastructures/tree/AVLTreeTest.cpp">
-			<Option target="memdb_tst"/>
-		</Unit>
-		<Unit filename="C:/programacion/MemDB/tst/utils/threads/ExchangerTest.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp">

@@ -414,30 +414,6 @@ utils/datastructures/tree/AVLTreeTest.cpp.s:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.s
 .PHONY : utils/datastructures/tree/AVLTreeTest.cpp.s
 
-utils/threads/ExchangerTest.obj: utils/threads/ExchangerTest.cpp.obj
-.PHONY : utils/threads/ExchangerTest.obj
-
-# target to build an object file
-utils/threads/ExchangerTest.cpp.obj:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/threads/ExchangerTest.cpp.obj
-.PHONY : utils/threads/ExchangerTest.cpp.obj
-
-utils/threads/ExchangerTest.i: utils/threads/ExchangerTest.cpp.i
-.PHONY : utils/threads/ExchangerTest.i
-
-# target to preprocess a source file
-utils/threads/ExchangerTest.cpp.i:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/threads/ExchangerTest.cpp.i
-.PHONY : utils/threads/ExchangerTest.cpp.i
-
-utils/threads/ExchangerTest.s: utils/threads/ExchangerTest.cpp.s
-.PHONY : utils/threads/ExchangerTest.s
-
-# target to generate assembly for a file
-utils/threads/ExchangerTest.cpp.s:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/threads/ExchangerTest.cpp.s
-.PHONY : utils/threads/ExchangerTest.cpp.s
-
 utils/threads/dynamicthreadpool/DynamicThreadPoolTest.obj: utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj
 .PHONY : utils/threads/dynamicthreadpool/DynamicThreadPoolTest.obj
 
@@ -505,9 +481,6 @@ help:
 	@echo ... utils/datastructures/tree/AVLTreeTest.obj
 	@echo ... utils/datastructures/tree/AVLTreeTest.i
 	@echo ... utils/datastructures/tree/AVLTreeTest.s
-	@echo ... utils/threads/ExchangerTest.obj
-	@echo ... utils/threads/ExchangerTest.i
-	@echo ... utils/threads/ExchangerTest.s
 	@echo ... utils/threads/dynamicthreadpool/DynamicThreadPoolTest.obj
 	@echo ... utils/threads/dynamicthreadpool/DynamicThreadPoolTest.i
 	@echo ... utils/threads/dynamicthreadpool/DynamicThreadPoolTest.s

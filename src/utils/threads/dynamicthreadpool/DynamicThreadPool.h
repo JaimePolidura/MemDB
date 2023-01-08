@@ -6,44 +6,42 @@
 #include <string>
 #include <functional>
 #include <algorithm>
+#include <numeric>
 
 #include "utils/datastructures/queue/BlockingQueue.h"
 #include "./DynamicThreadPoolWorker.h"
 
 class DynamicThreadPool {
 private:
-    std::shared_ptr<BlockingQueue<std::function<void()>>> pendingTask;
     std::vector<std::shared_ptr<DynamicThreadPoolWorker>> workers;
     std::atomic_uint64_t numberTaskEnqueued;
     std::mutex autoScaleLock;
-    int inspectionPerTaskEnqueued;
     std::string name;
-    float actityFactor;
+    int inspectionPerTaskEnqueued;
     int maxThreads;
     int minThreads;
+    uint8_t loadFactor;
 
 public:
-    DynamicThreadPool(float activityFactorCons, int maxThreadsCons, int minThreadsCons, int inspectionPerTaskEnqueuedCons, const std::string& name = ""):
-        actityFactor(activityFactorCons), maxThreads(maxThreadsCons), minThreads(minThreadsCons), inspectionPerTaskEnqueued(inspectionPerTaskEnqueuedCons),
-        pendingTask(std::make_shared<BlockingQueue<std::function<void()>>>()), name(std::move(name)) {
+    DynamicThreadPool(uint8_t loadFactor, int maxThreadsCons, int minThreadsCons, int inspectionPerTaskEnqueuedCons, const std::string& name = ""):
+            loadFactor(loadFactor), maxThreads(maxThreadsCons), minThreads(minThreadsCons), inspectionPerTaskEnqueued(inspectionPerTaskEnqueuedCons),
+            name(std::move(name)) {
 
         this->start();
     }
 
-    void submit(const std::function<void()>& task) {
+    void submit(Task task) {
         this->numberTaskEnqueued++;
 
-        this->pendingTask->enqueue(task);
+        this->sendTaskToWorker(task);
 
         if(this->numberTaskEnqueued % this->inspectionPerTaskEnqueued == 0)
-            this->makeAutoScaleInspection();
+            this->makeAutoscale();
     }
 
     void stop() {
         for(const std::shared_ptr<DynamicThreadPoolWorker>& worker : this->workers)
             worker->stop();
-
-        this->pendingTask->stopNow();
     }
 
     int getNumberWorkers() {
@@ -51,46 +49,65 @@ public:
     }
 
 private:
+    void sendTaskToWorker(Task task) {
+        std::shared_ptr<DynamicThreadPoolWorker> worker = * std::min_element(
+                this->workers.begin(),
+                this->workers.end(),
+                [](const std::shared_ptr<DynamicThreadPoolWorker>& a, const std::shared_ptr<DynamicThreadPoolWorker>& b) -> bool {
+                    return a->enqueuedTasks() > b->enqueuedTasks();
+                });
+
+        bool taskEnqueued = worker->enqueue(task);
+        if(!taskEnqueued){ //The worker have been removed
+            sendTaskToWorker(task);
+        }
+    }
+
     void start() {
         this->createWorkers(this->minThreads);
     }
 
-    void makeAutoScaleInspection() {
+    void makeAutoscale() {
         if(!this->autoScaleLock.try_lock())
             return;
 
-        int nTotalWorkers = this->workers.size();
-        int nActiveWorkers = 1 + std::count_if(this->workers.begin(),
-                                               this->workers.end(),
-                                               [](std::shared_ptr<DynamicThreadPoolWorker>& worker){return worker->getState() == ACTIVE;});
+        int totalTask = std::accumulate(
+                this->workers.begin(),
+                this->workers.end(),
+                0,
+                [](int total, const std::shared_ptr<DynamicThreadPoolWorker>& act){ return total + act->enqueuedTasks();});
 
-        int newNumberOfWorkersNotAdjusted = nActiveWorkers / this->actityFactor;
+        float actualLoadFactor = totalTask / this->workers.size();
+        int newNumberOfWorkersNotAdjusted = totalTask / this->loadFactor;
         int newNumberOfWorkersAdjusted = newNumberOfWorkersNotAdjusted < this->minThreads ? this->minThreads :
                                          (newNumberOfWorkersNotAdjusted > this->maxThreads ? this->maxThreads : newNumberOfWorkersNotAdjusted);
-        int numberWorkersToChange = newNumberOfWorkersAdjusted - nTotalWorkers;
+        int numberWorkersToChange = newNumberOfWorkersAdjusted - this->workers.size();
 
         if(numberWorkersToChange > 0)
             this->createWorkers(numberWorkersToChange);
         else if(numberWorkersToChange < 0)
             this->deleteWorkers(numberWorkersToChange * -1);
 
+        this->numberTaskEnqueued = 0;
+
         this->autoScaleLock.unlock();
     }
 
     void createWorkers(int numberWorkers) {
         for (int i = 0; i < numberWorkers; ++i){
-            std::shared_ptr<DynamicThreadPoolWorker> newWorker = std::make_shared<DynamicThreadPoolWorker>(this->pendingTask, this->name);
+            std::shared_ptr<DynamicThreadPoolWorker> newWorker = std::make_shared<DynamicThreadPoolWorker>(this->name);
             this->workers.push_back(newWorker);
             newWorker->startThread();
         }
     }
 
     void deleteWorkers(int numberWorkers) {
-        auto wortkersIterator = this->workers.begin();
+        for(int i = 0; i < numberWorkers; i++) {
+            auto worker = this->workers.at(i);
 
-        for (int i = 0; i < numberWorkers; ++i)
-            this->workers[i]->stop();
-
-        this->workers.erase(wortkersIterator + numberWorkers);
+            this->workers.erase(this->workers.begin() + i);
+            worker->stop();
+            i--;
+        }
     }
 };

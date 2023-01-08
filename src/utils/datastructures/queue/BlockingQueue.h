@@ -1,5 +1,7 @@
 #pragma once
 
+#include "InterruptedQueueException.h"
+
 #include <condition_variable>
 #include <mutex>
 #include <memory>
@@ -52,16 +54,18 @@ public:
 
         this->size++;
 
-        this->lock.unlock();
-
         this->notEmtpyCondition.notify_all();
+
+        this->lock.unlock();
     }
 
     void stopNow() {
         this->lock.lock();
 
-        this->stop = true;
-        this->notEmtpyCondition.notify_all();
+        if(this->size == 0){
+            this->stop = true;
+            this->notEmtpyCondition.notify_all();
+        }
 
         this->lock.unlock();
     }
@@ -70,8 +74,8 @@ public:
         std::unique_lock uniqueLock(this->lock);
         this->notEmtpyCondition.wait(uniqueLock, [this]{ return this->size > 0 || stop; });
 
-        if(this->stop)
-            return this->head->value;
+        if(this->stop && this->size == 0)
+            throw InterruptedQueueException(); //If it is stoped and empty, we don't want to starve de dequeuer
 
         std::shared_ptr<BlockingQueueNode<T>> nodeToDequeue = this->head;
         this->head = this->head->prev;

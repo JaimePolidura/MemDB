@@ -32,7 +32,7 @@ private:
 
 public:
     void enqueue(const T& data) {
-        T copyOfData = data;
+        T copyOfData = std::move(data);
 
         this->lock.lock();
 
@@ -66,7 +66,7 @@ public:
         this->lock.unlock();
     }
 
-    T& dequeue() {
+    T dequeue() {
         std::unique_lock uniqueLock(this->lock);
         this->notEmtpyCondition.wait(uniqueLock, [this]{ return this->size > 0 || stop; });
 

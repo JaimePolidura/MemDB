@@ -11,6 +11,7 @@ Map::Map(uint16_t numberBuckets): numberBuckets(numberBuckets) {
 
 void Map::put(const std::string &key, uint8_t * value, size_t valueSize) {
     uint32_t keyHash = this->calculateHash(key);
+
     lockWrite(keyHash);
 
     AVLTree * bucket = this->getBucket(keyHash);
@@ -25,12 +26,15 @@ std::optional<MapEntry> Map::get(const std::string &key) const {
     uint32_t hash = this->calculateHash(key);
 
     lockRead(hash);
+
     AVLNode * nodeFoundForKey = this->getNodeByKeyHash(hash);
+    const std::optional<MapEntry> response = nodeFoundForKey != nullptr ?
+            std::optional<MapEntry>{MapEntry{nodeFoundForKey->value, nodeFoundForKey->valueLength}} :
+            std::nullopt;
+
     unlockRead(hash);
 
-    return nodeFoundForKey != nullptr ?
-        std::optional<MapEntry>{MapEntry{nodeFoundForKey->value, nodeFoundForKey->valueLength}} :
-        std::nullopt;
+    return response;
 }
 
 void Map::remove(const std::string &key) {
@@ -42,10 +46,11 @@ void Map::remove(const std::string &key) {
     if(nodeFoundForKey != nullptr) {
         AVLTree * bucket = this->getBucket(hash);
         bucket->remove(hash);
-        this->size--;
     }
 
     unlockWrite(hash);
+
+    this->size--;
 }
 
 bool Map::contains(const std::string &key) const {

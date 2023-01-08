@@ -30,13 +30,18 @@ public:
 
     void run() {
         while (!this->isStoped) {
-            std::function<void()> task = std::move(this->pendingTasks->dequeue());
             if(this->isStoped)
                 return;
 
-            this->state = ACTIVE;
-            task();
-            this->state = INACTIVE;
+            try{
+                std::function<void()> task = std::move(this->pendingTasks->dequeue());
+
+                this->state = ACTIVE;
+                task();
+                this->state = INACTIVE;
+            }catch (const std::exception& e) {
+                printf("Error\n");
+            }
         }
     }
 

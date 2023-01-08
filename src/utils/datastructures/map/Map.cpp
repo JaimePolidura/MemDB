@@ -17,7 +17,7 @@ void Map::put(const std::string &key, uint8_t * value, size_t valueSize) {
     bucket->add(keyHash, value, valueSize);
 
     unlockWrite(keyHash);
-    
+
     this->size++;
 }
 
@@ -28,7 +28,9 @@ std::optional<MapEntry> Map::get(const std::string &key) const {
     AVLNode * nodeFoundForKey = this->getNodeByKeyHash(hash);
     unlockRead(hash);
 
-    return nodeFoundForKey != nullptr ? std::optional<MapEntry>{MapEntry{nodeFoundForKey->value, nodeFoundForKey->valueLength}} : std::nullopt;
+    return nodeFoundForKey != nullptr ?
+        std::optional<MapEntry>{MapEntry{nodeFoundForKey->value, nodeFoundForKey->valueLength}} :
+        std::nullopt;
 }
 
 void Map::remove(const std::string &key) {

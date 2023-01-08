@@ -19,7 +19,7 @@ public final class MemDbStressTest {
         System.out.println("---------------------- START ----------------------");
         List<StressTestActionResult> results = runTest(
                 Runtime.getRuntime().availableProcessors() * 8,
-                100
+                1000
         );
 
         printAverageByOperatorType(results);
@@ -89,7 +89,7 @@ public final class MemDbStressTest {
                 long result = this.execute(operatorPerform);
                 this.results.add(new StressTestActionResult(result, operatorPerform));
             }
-        
+
             System.out.println("Finished");
         }
 

@@ -28,11 +28,11 @@ private:
     ip::tcp::acceptor acceptator;
 
 public:
-    TCPServer(std::shared_ptr<Configuration> configuration,  Authenticator authenicator, std::shared_ptr<OperatorDispatcher> operatorDispatcher):
+    TCPServer(std::shared_ptr<Configuration> configuration, Authenticator authenicator, std::shared_ptr<OperatorDispatcher> operatorDispatcher):
         configuration(configuration),
         port(configuration->get<uint16_t>(ConfiguartionKeys::PORT)),
         authenicator(std::move(authenicator)),
-        connectionThreadPool(0.9f, configuration->get<int>(ConfiguartionKeys::SERVER_MAX_THREADS), configuration->get<int>(ConfiguartionKeys::SERVER_MIN_THREADS), 100),
+        connectionThreadPool(0.9f, configuration->get<int>(ConfiguartionKeys::SERVER_MAX_THREADS), configuration->get<int>(ConfiguartionKeys::SERVER_MIN_THREADS), 100, "TCPServer"),
         operatorDispatcher(operatorDispatcher),
         acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}) {};
 
@@ -54,7 +54,7 @@ private:
             std::shared_ptr<Connection> connection = std::make_shared<Connection>(std::move(socket));
 
             connection->onRequest([connection, this](const std::vector<uint8_t>& requestRawBuffer) {
-                this->connectionThreadPool.submit([&connection, requestRawBuffer, this] {
+                this->connectionThreadPool.submit([connection, requestRawBuffer, this] {
                     this->onNewRequest(requestRawBuffer, connection);
                 });
             });

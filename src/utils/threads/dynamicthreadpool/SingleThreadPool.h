@@ -6,5 +6,7 @@
 
 class SingleThreadPool : public DynamicThreadPool {
 public:
-    SingleThreadPool(): DynamicThreadPool(1.0f, 1, 1 ,std::numeric_limits<int>::max()) {}
+    SingleThreadPool(const std::string& name = ""):
+        DynamicThreadPool(1.0f, 1, 1 ,std::numeric_limits<int>::max(), name)
+    {}
 };

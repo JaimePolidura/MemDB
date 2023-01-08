@@ -63,7 +63,7 @@ private:
 
             lastIndexChecked = argValuePosition + argLength;
             numerOfArguments++;
-            arguments.emplace_back(std::shared_ptr<uint8_t>(argValue), argLength);
+            arguments.emplace_back(argValue, argLength);
         }
 
         return OperationBody(operatorNumber, flagOperation1, flagOperation2, std::move(arguments), numerOfArguments);

@@ -3,12 +3,12 @@
 #include <stdint.h>
 
 struct OperatorArgument {
-    std::shared_ptr<uint8_t> arg;
+    uint8_t * arg;
     int lengthArg;
 
     OperatorArgument() = default;
 
-    OperatorArgument(std::shared_ptr<uint8_t> arg, int lengthArg): arg(arg), lengthArg(lengthArg) {}
+    OperatorArgument(uint8_t * arg, int lengthArg): arg(arg), lengthArg(lengthArg) {}
 
     OperatorArgument(const OperatorArgument& other) {
         this->arg = other.arg;
@@ -34,6 +34,11 @@ struct OperatorArgument {
         other.arg = nullptr;
 
         return * this;
+    }
+
+    ~OperatorArgument() {
+        //Do nothing, in this way arg won't get deleted, arg is stored in the hashmap as the raw pointer, so the
+        // refcount won't get updated
     }
 };
 
@@ -80,6 +85,10 @@ struct OperationBody {
         this->flag2 = other.flag2;
 
         return * this;
+    }
+
+    ~OperationBody() {
+        //Do nothing, in this way args won't get deleted
     }
 };
 

@@ -18,7 +18,7 @@ private:
 
 public:
     OperatorDispatcher(std::shared_ptr<Map> dbCons):
-        db(dbCons)
+        db(dbCons), singleThreadedWritePool("OperatorDispatcher")
     {}
 
     void dispatch(Request& request,

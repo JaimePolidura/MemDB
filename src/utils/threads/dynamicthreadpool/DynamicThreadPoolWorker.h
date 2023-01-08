@@ -4,6 +4,8 @@
 #include <memory>
 #include <utility>
 #include <vector>
+#include <string>
+
 #include "utils/datastructures/queue/BlockingQueue.h"
 
 enum WorkerState {
@@ -16,10 +18,11 @@ private:
     std::thread thread;
     volatile WorkerState state;
     volatile bool isStoped;
+    std::string name;
 
 public:
-    DynamicThreadPoolWorker(std::shared_ptr<BlockingQueue<std::function<void()>>> pendingTasks):
-        pendingTasks(std::move(pendingTasks)), isStoped(false), state(INACTIVE) {}
+    DynamicThreadPoolWorker(std::shared_ptr<BlockingQueue<std::function<void()>>> pendingTasks, std::string name):
+        pendingTasks(pendingTasks), isStoped(false), state(INACTIVE), name(name) {}
 
     void startThread() {
         this->thread = std::thread([this]{this->run();});
@@ -27,7 +30,7 @@ public:
 
     void run() {
         while (!this->isStoped) {
-            std::function<void()> task = this->pendingTasks->dequeue();
+            std::function<void()> task = std::move(this->pendingTasks->dequeue());
             if(this->isStoped)
                 return;
 

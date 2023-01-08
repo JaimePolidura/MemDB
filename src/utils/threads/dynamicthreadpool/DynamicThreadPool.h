@@ -3,6 +3,7 @@
 #include <atomic>
 #include <memory>
 #include <vector>
+#include <string>
 #include <functional>
 #include <algorithm>
 
@@ -14,15 +15,18 @@ private:
     std::shared_ptr<BlockingQueue<std::function<void()>>> pendingTask;
     std::vector<std::shared_ptr<DynamicThreadPoolWorker>> workers;
     std::atomic_uint64_t numberTaskEnqueued;
-    int inspectionPerTaskEnqueued;
     std::mutex autoScaleLock;
+    int inspectionPerTaskEnqueued;
+    std::string name;
     float actityFactor;
     int maxThreads;
     int minThreads;
 
 public:
-    DynamicThreadPool(float activityFactorCons, int maxThreadsCons, int minThreadsCons, int inspectionPerTaskEnqueuedCons): actityFactor(activityFactorCons), maxThreads(maxThreadsCons),
-                                                                                                                            minThreads(minThreadsCons), inspectionPerTaskEnqueued(inspectionPerTaskEnqueuedCons), pendingTask(std::make_shared<BlockingQueue<std::function<void()>>>()) {
+    DynamicThreadPool(float activityFactorCons, int maxThreadsCons, int minThreadsCons, int inspectionPerTaskEnqueuedCons, const std::string& name = ""):
+        actityFactor(activityFactorCons), maxThreads(maxThreadsCons), minThreads(minThreadsCons), inspectionPerTaskEnqueued(inspectionPerTaskEnqueuedCons),
+        pendingTask(std::make_shared<BlockingQueue<std::function<void()>>>()), name(std::move(name)) {
+
         this->start();
     }
 
@@ -75,7 +79,7 @@ private:
 
     void createWorkers(int numberWorkers) {
         for (int i = 0; i < numberWorkers; ++i){
-            std::shared_ptr<DynamicThreadPoolWorker> newWorker = std::make_shared<DynamicThreadPoolWorker>(this->pendingTask);
+            std::shared_ptr<DynamicThreadPoolWorker> newWorker = std::make_shared<DynamicThreadPoolWorker>(this->pendingTask, this->name);
             this->workers.push_back(newWorker);
             newWorker->startThread();
         }

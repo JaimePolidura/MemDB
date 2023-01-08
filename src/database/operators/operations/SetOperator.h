@@ -9,10 +9,10 @@ public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x01;
 
     Response operate(const OperationBody& operation, std::shared_ptr<Map> map) override {
-        const std::string& key = std::string((char *) operation.args[0].arg.get(), operation.args[0].lengthArg);
+        const std::string& key = std::string((char *) operation.args[0].arg, operation.args[0].lengthArg);
 
         int valueSize = operation.args[1].lengthArg;
-        uint8_t * valueValue = operation.args[1].arg.get();
+        uint8_t * valueValue = operation.args[1].arg;
 
         map->put(key, valueValue, valueSize);
 

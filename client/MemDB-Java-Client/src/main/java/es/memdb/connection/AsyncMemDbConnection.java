@@ -71,11 +71,9 @@ public final class AsyncMemDbConnection implements MemDbConnection {
 
             waitRead.lock();
             while((value = this.requestWithoutCallbacks.get(requestNumber)) == null) {
-                System.out.println("AWAIT " + requestNumber);
                 waitRead.await();
             }
             waitRead.unlock();
-            System.out.println("WOKE " + requestNumber);
 
             this.readMutex.remove(requestNumber);
         }

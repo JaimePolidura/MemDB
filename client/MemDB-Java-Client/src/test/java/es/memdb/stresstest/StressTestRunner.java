@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 @AllArgsConstructor
 @Builder
 public final class StressTestRunner {
+    @Getter private Supplier<String> argGenerator;
     @Setter @Getter private int numberOperations;
     @Setter @Getter private int numberThreads;
 
@@ -17,7 +18,7 @@ public final class StressTestRunner {
     public List<StressTestResult> run(Supplier<StressTestOperationExecuter> operationExecuter) {
         StressTestThread[] threads = new StressTestThread[this.numberThreads];
         for (int i = 0; i < threads.length; i++)
-            threads[i] = new StressTestThread(this.numberOperations, operationExecuter.get());
+            threads[i] = new StressTestThread(this.numberOperations, this.argGenerator, operationExecuter.get());
         for (int i = 0; i < threads.length; i++)
             threads[i].start();
         for (int i = 0; i < threads.length; i++)

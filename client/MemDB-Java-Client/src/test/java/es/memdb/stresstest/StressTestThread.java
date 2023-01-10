@@ -6,16 +6,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Supplier;
 
 public final class StressTestThread extends Thread {
     private final StressTestOperationExecuter stressTestOperationExecuter;
+    private final Supplier<String> argGenerator;
     private final List<StressTestResult> results;
     private final int numberOperations;
 
-    public StressTestThread(int numberOperations, StressTestOperationExecuter stressTestExecuter) {
-        this.numberOperations = numberOperations;
+    public StressTestThread(int numberOperations, Supplier<String> argGenerator, StressTestOperationExecuter stressTestExecuter) {
+        this.results = new ArrayList<>(numberOperations);
         this.stressTestOperationExecuter = stressTestExecuter;
-        this.results = new ArrayList<>(this.numberOperations);
+        this.numberOperations = numberOperations;
+        this.argGenerator = argGenerator;
     }
 
     @Override
@@ -37,7 +40,7 @@ public final class StressTestThread extends Thread {
 
     private long execute(StressTestOperation operatorPerform) {
         long a = System.currentTimeMillis();
-        this.stressTestOperationExecuter.execute(operatorPerform);
+        this.stressTestOperationExecuter.execute(operatorPerform, this.argGenerator);
         long b = System.currentTimeMillis();
 
         return b - a;

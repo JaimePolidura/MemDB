@@ -9,13 +9,12 @@ import java.util.function.Supplier;
 @AllArgsConstructor
 public final class MemDbStressTestOperationExecuter implements StressTestOperationExecuter {
     private final MemDb memDb;
-    private final Supplier<String> argGenerator;
 
     @Override
-    public void execute(StressTestOperation stressTestOperation) {
+    public void execute(StressTestOperation stressTestOperation, Supplier<String> argGenerator) {
         switch (stressTestOperation) {
-            case DELETE -> this.memDb.delete(this.argGenerator.get());
-            case GET -> this.memDb.get(this.argGenerator.get());
+            case DELETE -> this.memDb.delete(argGenerator.get());
+            case GET -> this.memDb.get(argGenerator.get());
             case SET -> this.memDb.set(argGenerator.get(), argGenerator.get());
         }
     }

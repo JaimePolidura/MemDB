@@ -13,6 +13,7 @@ void Map::put(const std::string &key, uint8_t * value, size_t valueSize) {
     uint32_t keyHash = this->calculateHash(key);
 
     lockWrite(keyHash);
+    printf("RUN SET ON %s,", key.data());
 
     AVLTree * bucket = this->getBucket(keyHash);
     bucket->add(keyHash, value, valueSize);
@@ -41,6 +42,7 @@ void Map::remove(const std::string &key) {
     uint32_t hash = this->calculateHash(key);
 
     lockWrite(hash);
+    printf("RUN REMOVE ON %s,", key.data());
     AVLNode * nodeFoundForKey = this->getNodeByKeyHash(hash);
 
     if(nodeFoundForKey != nullptr) {

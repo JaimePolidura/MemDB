@@ -200,6 +200,19 @@ memdb_tst/fast:
 .PHONY : memdb_tst/fast
 
 #=============================================================================
+# Target rules for targets named memdb_pg
+
+# Build rule for target.
+memdb_pg: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 memdb_pg
+.PHONY : memdb_pg
+
+# fast build rule for target.
+memdb_pg/fast:
+	$(MAKE) $(MAKESILENT) -f playground\CMakeFiles\memdb_pg.dir\build.make playground/CMakeFiles/memdb_pg.dir/build
+.PHONY : memdb_pg/fast
+
+#=============================================================================
 # Target rules for targets named gmock
 
 # Build rule for target.
@@ -268,6 +281,7 @@ help:
 	@echo ... gtest
 	@echo ... gtest_main
 	@echo ... memdb_lib
+	@echo ... memdb_pg
 	@echo ... memdb_run
 	@echo ... memdb_tst
 .PHONY : help

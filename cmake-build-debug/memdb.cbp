@@ -5,7 +5,7 @@
 		<Option title="memdb"/>
 		<Option makefile_is_custom="1"/>
 		<Option compiler="gcc"/>
-		<Option virtualFolders="CMake Files\;CMake Files\libs\;CMake Files\libs\googletest\;CMake Files\libs\googletest\googlemock\;CMake Files\libs\googletest\googlemock\cmake\;CMake Files\libs\googletest\googletest\;CMake Files\libs\googletest\googletest\cmake\;CMake Files\src\;CMake Files\tst\;"/>
+		<Option virtualFolders="CMake Files\;CMake Files\libs\;CMake Files\libs\googletest\;CMake Files\libs\googletest\googlemock\;CMake Files\libs\googletest\googlemock\cmake\;CMake Files\libs\googletest\googletest\;CMake Files\libs\googletest\googletest\cmake\;CMake Files\src\;CMake Files\tst\;CMake Files\playground\;"/>
 		<Build>
 			<Target title="all">
 				<Option working_dir="C:/programacion/MemDB/cmake-build-debug"/>
@@ -221,6 +221,52 @@
 					<CompileFile command="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/mingw32-make.exe -f &quot;C:/programacion/MemDB/cmake-build-debug/tst/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
 					<Clean command="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/mingw32-make.exe -f &quot;C:/programacion/MemDB/cmake-build-debug/tst/Makefile&quot;  VERBOSE=1 clean"/>
 					<DistClean command="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/mingw32-make.exe -f &quot;C:/programacion/MemDB/cmake-build-debug/tst/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="memdb_pg">
+				<Option output="C:/programacion/MemDB/cmake-build-debug/playground/memdb_pg.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/programacion/MemDB/cmake-build-debug/playground"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="C:/programacion/MemDB/src"/>
+					<Add directory="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++"/>
+					<Add directory="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/backward"/>
+					<Add directory="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include"/>
+					<Add directory="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../include"/>
+					<Add directory="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed"/>
+					<Add directory="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/mingw32-make.exe -f &quot;C:/programacion/MemDB/cmake-build-debug/playground/Makefile&quot;  VERBOSE=1 memdb_pg"/>
+					<CompileFile command="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/mingw32-make.exe -f &quot;C:/programacion/MemDB/cmake-build-debug/playground/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/mingw32-make.exe -f &quot;C:/programacion/MemDB/cmake-build-debug/playground/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/mingw32-make.exe -f &quot;C:/programacion/MemDB/cmake-build-debug/playground/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="memdb_pg/fast">
+				<Option output="C:/programacion/MemDB/cmake-build-debug/playground/memdb_pg.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/programacion/MemDB/cmake-build-debug/playground"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="C:/programacion/MemDB/src"/>
+					<Add directory="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++"/>
+					<Add directory="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/backward"/>
+					<Add directory="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include"/>
+					<Add directory="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../include"/>
+					<Add directory="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed"/>
+					<Add directory="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/mingw32-make.exe -f &quot;C:/programacion/MemDB/cmake-build-debug/playground/Makefile&quot;  VERBOSE=1 memdb_pg/fast"/>
+					<CompileFile command="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/mingw32-make.exe -f &quot;C:/programacion/MemDB/cmake-build-debug/playground/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/mingw32-make.exe -f &quot;C:/programacion/MemDB/cmake-build-debug/playground/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/mingw32-make.exe -f &quot;C:/programacion/MemDB/cmake-build-debug/playground/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="gmock">
@@ -444,6 +490,9 @@
 		<Unit filename="C:/programacion/MemDB/libs/googletest/googletest/src/gtest_main.cc">
 			<Option target="gtest_main"/>
 		</Unit>
+		<Unit filename="C:/programacion/MemDB/playground/main.cpp">
+			<Option target="memdb_pg"/>
+		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/MemDb.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
@@ -616,6 +665,10 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/utils/datastructures/queue/InterruptedQueueException.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/utils/datastructures/tree">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
@@ -736,6 +789,9 @@
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\tst\"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/playground/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\playground\"/>
 		</Unit>
 	</Project>
 </CodeBlocks_project_file>

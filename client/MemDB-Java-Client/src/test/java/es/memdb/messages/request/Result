@@ -1,0 +1,38 @@
+
+
+        ---------------------- operations: 1000 threads: 16 MemDb ----------------------
+        Finished in total time: 0s
+        SET: 1.10438335809806840,5
+        GET: 0.43860629774548165
+        DELETE: 1.1017336635549628
+        ---------------------- operations: 1000 threads: 16 Redis ----------------------
+        Finished in total time: 1s
+        SET: 1.5728937728937729
+        GET: 1.5850353120824585
+        DELETE: 1.5595170722505187
+
+
+        ---------------------- operations: 10000 threads: 16 MemDb ----------------------
+        Finished in total time: 9s
+        SET: 1.1410618735398297
+        GET: 0.4298817011081162
+        DELETE: 1.1382990654205607
+        ---------------------- operations: 10000 threads: 16 Redis ----------------------
+        Finished in total time: 16s
+        SET: 1.6507648576878482
+        GET: 1.6492017552049296
+        DELETE: 1.6482037341186686
+
+
+        ---------------------- operations: 100000 threads: 16 MemDb ----------------------
+        Finished in total time: 96s
+        SET: 1.2104566499853031
+        GET: 0.45614021921447523
+        DELETE: 1.2102342566858768
+        ---------------------- operations: 100000 threads: 16 Redis ----------------------
+        Finished in total time: 169s
+        SET: 1.689502497082672
+        GET: 1.689605190373058
+        DELETE: 1.6881219750301208
+
+

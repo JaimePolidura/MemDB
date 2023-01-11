@@ -5,7 +5,7 @@
 		<Option title="googletest-distribution"/>
 		<Option makefile_is_custom="1"/>
 		<Option compiler="gcc"/>
-		<Option virtualFolders="CMake Files\;CMake Files\libs\;CMake Files\libs\googletest\;CMake Files\libs\googletest\googlemock\;CMake Files\libs\googletest\googlemock\cmake\;CMake Files\libs\googletest\googletest\;CMake Files\libs\googletest\googletest\cmake\;CMake Files\src\;CMake Files\tst\;"/>
+		<Option virtualFolders="CMake Files\;CMake Files\libs\;CMake Files\libs\googletest\;CMake Files\libs\googletest\googlemock\;CMake Files\libs\googletest\googlemock\cmake\;CMake Files\libs\googletest\googletest\;CMake Files\libs\googletest\googletest\cmake\;CMake Files\src\;CMake Files\tst\;CMake Files\playground\;"/>
 		<Build>
 			<Target title="all">
 				<Option working_dir="C:/programacion/MemDB/cmake-build-debug/libs/googletest"/>
@@ -273,6 +273,9 @@
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\tst\"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/playground/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\playground\"/>
 		</Unit>
 	</Project>
 </CodeBlocks_project_file>

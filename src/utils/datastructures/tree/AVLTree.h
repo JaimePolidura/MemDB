@@ -29,17 +29,22 @@ public:
     AVLNode * root;
 
 public:
-    void add(uint32_t keyHash, uint8_t * value, uint8_t valueLength) {
+    bool add(uint32_t keyHash, uint8_t * value, uint8_t valueLength) {
         AVLNode * newNode = new AVLNode(value, keyHash, valueLength, -1);
 
-        if(this->root == nullptr)
+        if(this->root == nullptr){
             this->root = newNode;
-        else
-            this->insertRecursive(this->root, newNode);
+            return true;
+        }
+
+        AVLNode * insertedNode = this->insertRecursive(this->root, newNode);
+        return insertedNode != nullptr;
     }
 
     void remove(uint32_t keyHash) {
         this->removeRecursive(this->root, keyHash);
+
+        checkError();
     }
 
     bool contains(uint32_t keyHashToSearch) const {
@@ -62,7 +67,7 @@ public:
     }
 
 private:
-    AVLNode * removeRecursive(AVLNode * last, uint32_t keyHashToRemove) {
+    AVLNode * removeRecursive(AVLNode * last, uint32_t keyHashToRemove, bool deleteMemoryIfFound = true) {
         if(last == nullptr){
             return last;
         }else if(last->keyHash > keyHashToRemove) {
@@ -78,21 +83,23 @@ private:
             if(rootRemoved && last->hasNoChild())
                 this->root = nullptr;
 
-            delete[] last->value;
-            delete last;
+            if(deleteMemoryIfFound){
+                delete[] last->value;
+                delete last;
+            }
 
             if(left == nullptr || right == nullptr) {
                 last = (left == nullptr) ? right : left;
                 if(rootRemoved) this->root = last;
             }else{
                 last = this->mostLeftChild(right);
-                last->right = this->removeRecursive(right, keyHash);
+                last->right = this->removeRecursive(right, last->keyHash, false);
                 if(rootRemoved) this->root = last;
             }
         }
 
         if(last != nullptr)
-            this->rebalance(last);
+            last = this->rebalance(last);
 
         return last;
     }
@@ -106,10 +113,30 @@ private:
     }
 
     AVLNode * insertRecursive(AVLNode * last, AVLNode * toInsert) {
+        if(last == nullptr)
+            return toInsert;
+
+        if(last->keyHash > toInsert->keyHash) {
+            AVLNode * inserted = insertRecursive(last->left, toInsert);
+            if(inserted != nullptr) last->left = inserted;
+            checkError();
+
+        }else if(last->keyHash < toInsert->keyHash) {
+            AVLNode * inserted = insertRecursive(last->right, toInsert);
+            if(inserted != nullptr) last->right = inserted;
+        }
+
+        return last->keyHash != toInsert->keyHash ?
+                this->rebalance(last) :
+                nullptr;
+    }
+
+    AVLNode * insertRecursive3(AVLNode * last, AVLNode * toInsert) {
         if(last == nullptr){
             return toInsert;
         }else if(last->keyHash > toInsert->keyHash) {
             last->left = insertRecursive(last->left, toInsert);
+            checkError();
         }else if(last->keyHash < toInsert->keyHash) {
             last->right = insertRecursive(last->right, toInsert);
         }
@@ -123,15 +150,19 @@ private:
         int16_t heightFactor = this->getHeightFactor(node);
 
         if(heightFactor < -1){ //Left heavy
-            if(this->getHeightFactor(node->left) > 0)
+            if(this->getHeightFactor(node->left) > 0){
                 node->left = this->rotateLeft(node->left);
+            }
             node = this->rotateRight(node);
+            checkError();
         }
 
         if(heightFactor > 1){ //Right heavy
             if(this->getHeightFactor(node->right) < 0)
                 node->right = this->rotateRight(node->right);
             node = this->rotateLeft(node);
+
+            checkError();
         }
 
         return node;
@@ -184,5 +215,14 @@ private:
 
     int16_t getHeight(AVLNode * node) const {
         return node == nullptr ? -1 : node->height;
+    }
+
+    void checkError() {
+        if(this->root->left != nullptr && this->root->keyHash == this->root->left->keyHash){
+            printf("error\n");
+        }
+        if(this->root->right != nullptr && this->root->keyHash == this->root->right->keyHash){
+            printf("error\n");
+        }
     }
 };

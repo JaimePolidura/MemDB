@@ -26,7 +26,7 @@ public final class StressTestThread extends Thread {
         Random randomGenerator = new Random();
 
         for(int i = 0; i < this.numberOperations; i++){
-            int operatorNumber = randomGenerator.nextInt(0, 2) + 1;
+            int operatorNumber = randomGenerator.nextInt(3) + 1;
 
             StressTestOperation operatorPerform = Arrays.stream(StressTestOperation.values())
                     .filter(operation -> operation.number == operatorNumber)

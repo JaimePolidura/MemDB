@@ -7,7 +7,6 @@ import es.memdb.stresstest.StressTestRunner;
 import es.memdb.stresstest.executer.MemDbStressTestOperationExecuter;
 import es.memdb.stresstest.executer.RedisStressTestOperationExecuter;
 import es.memdb.stresstest.executer.StressTestOperationExecuter;
-import lombok.Setter;
 import lombok.SneakyThrows;
 import redis.clients.jedis.Jedis;
 
@@ -28,33 +27,25 @@ import java.util.stream.Collectors;
 public final class MemDbStressTest {
     @SneakyThrows
     public static void main(String[] args) {
-        int[] numberThreads = new int[]{1, 2, 4, 8, 16, 32};
+        int[] numberThreads = new int[]{1, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64};
 
-        System.out.println("-------------------------------------------- THREADS TEST --------------------------------------------");
-        System.out.println();
-        System.out.println();
-
-        for (int i = 0; i < numberThreads.length; i++) {
-            runAndPrintAverage(10_000, numberThreads[i], memDbExecutorProvider(), "MemDb");
-            runAndPrintAverage(10_000, numberThreads[i], redisExecutorProvider(), "Redis");
-
+        for (int i = 0; i < 3; i++) {
+            System.out.println("-------------------------------------------- ROUND "+i+" --------------------------------------------");
             System.out.println();
             System.out.println();
+
+            System.out.println("    -------------------------------------------- THREADS TEST --------------------------------------------");
+            System.out.println();
+            System.out.println();
+
+            for (int j = 0; j < numberThreads.length; j++) {
+                runAndPrintAverage(10_000, numberThreads[j], memDbExecutorProvider(), "MemDb");
+                runAndPrintAverage(10_000, numberThreads[j], redisExecutorProvider(), "Redis");
+
+                System.out.println();
+                System.out.println();
+            }
         }
-
-        System.out.println();
-        System.out.println();
-        System.out.println("--------------------------------------- NUMBER OPERATIONS TEST----------------------------------------");
-
-        int[] numberOperations = new int[]{1, 10, 100, 1000, 10_000, 100_000};
-        for (int numberOperation : numberOperations) {
-            runAndPrintAverage(numberOperation, Runtime.getRuntime().availableProcessors(), memDbExecutorProvider(), "MemDb");
-            runAndPrintAverage(numberOperation, Runtime.getRuntime().availableProcessors(), redisExecutorProvider(), "Redis");
-
-            System.out.println();
-            System.out.println();
-        }
-
     }
 
     private static void runAndPrintAverage(int numberOperations, int numberThreads, Supplier<StressTestOperationExecuter> memDbExecutorProvider,
@@ -65,7 +56,7 @@ public final class MemDbStressTest {
                 numberThreads
         );
 
-        System.out.println("---------------------- operations: "+numberOperations+" threads: "+numberThreads+" "+name+" ----------------------");
+        System.out.println("        ---------------------- operations: "+numberOperations+" threads: "+numberThreads+" "+name+" ----------------------");
 
         long a = System.currentTimeMillis();
         List<StressTestResult> results =  memDbStressTestRunner.run(memDbExecutorProvider);
@@ -74,14 +65,14 @@ public final class MemDbStressTest {
         Map<StressTestOperation, List<StressTestResult>> groupedByOperator = results.stream()
                 .collect(Collectors.groupingBy(StressTestResult::operator));
 
-        System.out.println("Finished in total time: " + TimeUnit.MILLISECONDS.toSeconds(b - a) + "s");
+        System.out.println("        Finished in total time: " + TimeUnit.MILLISECONDS.toSeconds(b - a) + "s");
         for (StressTestOperation operator : groupedByOperator.keySet()) {
             double average = groupedByOperator.get(operator).stream()
                     .mapToLong(StressTestResult::time)
                     .average()
                     .getAsDouble();
 
-            System.out.println(operator.toString() + ": " + average);
+            System.out.println("        " + operator.toString() + ": " + average);
         }
     }
 
@@ -110,6 +101,10 @@ public final class MemDbStressTest {
     }
 
     private static Supplier<String> argGenerator() {
-        return () -> Character.toString((char) ((Math.random() * 90 - 65) + 65));
+        return () -> getRandomAsciiCharacter() + getRandomAsciiCharacter();
+    }
+
+    private static String getRandomAsciiCharacter() {
+        return Character.toString((char) (int) ((Math.random() * (90 - 65)) + 65));
     }
 }

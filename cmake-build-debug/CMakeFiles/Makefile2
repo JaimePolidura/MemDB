@@ -64,18 +64,21 @@ CMAKE_BINARY_DIR = C:\programacion\MemDB\cmake-build-debug
 # The main recursive "all" target.
 all: src/all
 all: tst/all
+all: playground/all
 all: libs/googletest/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
 preinstall: src/preinstall
 preinstall: tst/preinstall
+preinstall: playground/preinstall
 preinstall: libs/googletest/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
 clean: src/clean
 clean: tst/clean
+clean: playground/clean
 clean: libs/googletest/clean
 .PHONY : clean
 
@@ -131,6 +134,21 @@ libs/googletest/googletest/clean: libs/googletest/googletest/CMakeFiles/gtest_ma
 .PHONY : libs/googletest/googletest/clean
 
 #=============================================================================
+# Directory level rules for directory playground
+
+# Recursive "all" directory target.
+playground/all: playground/CMakeFiles/memdb_pg.dir/all
+.PHONY : playground/all
+
+# Recursive "preinstall" directory target.
+playground/preinstall:
+.PHONY : playground/preinstall
+
+# Recursive "clean" directory target.
+playground/clean: playground/CMakeFiles/memdb_pg.dir/clean
+.PHONY : playground/clean
+
+#=============================================================================
 # Directory level rules for directory src
 
 # Recursive "all" directory target.
@@ -169,7 +187,7 @@ tst/clean: tst/CMakeFiles/memdb_tst.dir/clean
 src/CMakeFiles/memdb_run.dir/all:
 	$(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/depend
 	$(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=15,16,17,18,19,20 "Built target memdb_run"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=17,18,19,20,21,22 "Built target memdb_run"
 .PHONY : src/CMakeFiles/memdb_run.dir/all
 
 # Build rule for subdir invocation for target.
@@ -218,11 +236,11 @@ src/CMakeFiles/memdb_lib.dir/clean:
 # Target rules for target tst/CMakeFiles/memdb_tst.dir
 
 # All Build rule for target.
-tst/CMakeFiles/memdb_tst.dir/all: src/CMakeFiles/memdb_lib.dir/all
 tst/CMakeFiles/memdb_tst.dir/all: libs/googletest/googletest/CMakeFiles/gtest.dir/all
+tst/CMakeFiles/memdb_tst.dir/all: src/CMakeFiles/memdb_lib.dir/all
 	$(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/depend
 	$(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=21,22,23,24,25,26,27,28,29,30,31,32 "Built target memdb_tst"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=23,24,25,26,27,28,29,30,31,32,33,34 "Built target memdb_tst"
 .PHONY : tst/CMakeFiles/memdb_tst.dir/all
 
 # Build rule for subdir invocation for target.
@@ -240,6 +258,32 @@ memdb_tst: tst/CMakeFiles/memdb_tst.dir/rule
 tst/CMakeFiles/memdb_tst.dir/clean:
 	$(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/clean
 .PHONY : tst/CMakeFiles/memdb_tst.dir/clean
+
+#=============================================================================
+# Target rules for target playground/CMakeFiles/memdb_pg.dir
+
+# All Build rule for target.
+playground/CMakeFiles/memdb_pg.dir/all:
+	$(MAKE) $(MAKESILENT) -f playground\CMakeFiles\memdb_pg.dir\build.make playground/CMakeFiles/memdb_pg.dir/depend
+	$(MAKE) $(MAKESILENT) -f playground\CMakeFiles\memdb_pg.dir\build.make playground/CMakeFiles/memdb_pg.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=15,16 "Built target memdb_pg"
+.PHONY : playground/CMakeFiles/memdb_pg.dir/all
+
+# Build rule for subdir invocation for target.
+playground/CMakeFiles/memdb_pg.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\programacion\MemDB\cmake-build-debug\CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 playground/CMakeFiles/memdb_pg.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\programacion\MemDB\cmake-build-debug\CMakeFiles 0
+.PHONY : playground/CMakeFiles/memdb_pg.dir/rule
+
+# Convenience name for target.
+memdb_pg: playground/CMakeFiles/memdb_pg.dir/rule
+.PHONY : memdb_pg
+
+# clean rule for target.
+playground/CMakeFiles/memdb_pg.dir/clean:
+	$(MAKE) $(MAKESILENT) -f playground\CMakeFiles\memdb_pg.dir\build.make playground/CMakeFiles/memdb_pg.dir/clean
+.PHONY : playground/CMakeFiles/memdb_pg.dir/clean
 
 #=============================================================================
 # Target rules for target libs/googletest/googlemock/CMakeFiles/gmock.dir
@@ -271,8 +315,8 @@ libs/googletest/googlemock/CMakeFiles/gmock.dir/clean:
 # Target rules for target libs/googletest/googlemock/CMakeFiles/gmock_main.dir
 
 # All Build rule for target.
-libs/googletest/googlemock/CMakeFiles/gmock_main.dir/all: libs/googletest/googlemock/CMakeFiles/gmock.dir/all
 libs/googletest/googlemock/CMakeFiles/gmock_main.dir/all: libs/googletest/googletest/CMakeFiles/gtest.dir/all
+libs/googletest/googlemock/CMakeFiles/gmock_main.dir/all: libs/googletest/googlemock/CMakeFiles/gmock.dir/all
 	$(MAKE) $(MAKESILENT) -f libs\googletest\googlemock\CMakeFiles\gmock_main.dir\build.make libs/googletest/googlemock/CMakeFiles/gmock_main.dir/depend
 	$(MAKE) $(MAKESILENT) -f libs\googletest\googlemock\CMakeFiles\gmock_main.dir\build.make libs/googletest/googlemock/CMakeFiles/gmock_main.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=3,4 "Built target gmock_main"

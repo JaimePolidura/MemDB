@@ -43,8 +43,6 @@ public:
 
     void remove(uint32_t keyHash) {
         this->removeRecursive(this->root, keyHash);
-
-        checkError();
     }
 
     bool contains(uint32_t keyHashToSearch) const {
@@ -94,6 +92,7 @@ private:
             }else{
                 last = this->mostLeftChild(right);
                 last->right = this->removeRecursive(right, last->keyHash, false);
+                last->left = left;
                 if(rootRemoved) this->root = last;
             }
         }
@@ -119,7 +118,6 @@ private:
         if(last->keyHash > toInsert->keyHash) {
             AVLNode * inserted = insertRecursive(last->left, toInsert);
             if(inserted != nullptr) last->left = inserted;
-            checkError();
 
         }else if(last->keyHash < toInsert->keyHash) {
             AVLNode * inserted = insertRecursive(last->right, toInsert);
@@ -136,7 +134,6 @@ private:
             return toInsert;
         }else if(last->keyHash > toInsert->keyHash) {
             last->left = insertRecursive(last->left, toInsert);
-            checkError();
         }else if(last->keyHash < toInsert->keyHash) {
             last->right = insertRecursive(last->right, toInsert);
         }
@@ -150,19 +147,15 @@ private:
         int16_t heightFactor = this->getHeightFactor(node);
 
         if(heightFactor < -1){ //Left heavy
-            if(this->getHeightFactor(node->left) > 0){
+            if(this->getHeightFactor(node->left) > 0)
                 node->left = this->rotateLeft(node->left);
-            }
             node = this->rotateRight(node);
-            checkError();
         }
 
         if(heightFactor > 1){ //Right heavy
             if(this->getHeightFactor(node->right) < 0)
                 node->right = this->rotateRight(node->right);
             node = this->rotateLeft(node);
-
-            checkError();
         }
 
         return node;
@@ -215,14 +208,5 @@ private:
 
     int16_t getHeight(AVLNode * node) const {
         return node == nullptr ? -1 : node->height;
-    }
-
-    void checkError() {
-        if(this->root->left != nullptr && this->root->keyHash == this->root->left->keyHash){
-            printf("error\n");
-        }
-        if(this->root->right != nullptr && this->root->keyHash == this->root->right->keyHash){
-            printf("error\n");
-        }
     }
 };

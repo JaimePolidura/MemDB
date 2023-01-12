@@ -1,19 +1,35 @@
 #include "utils/datastructures/tree/AVLTree.h"
 
 int main() {
-    AVLTree treee{};
+    AVLTree tree{};
 
-    treee.add(2458, nullptr, 0);
-    treee.remove(2330);
-    treee.add(2714, nullptr, 0);
-    treee.add(2586, nullptr, 0);
-    treee.add(2394, nullptr, 0);
-    treee.add(2778, nullptr, 0);
-    treee.add(2842, nullptr, 0);
-    treee.add(2714, nullptr, 0);
-    treee.add(2714, nullptr, 0);
-    treee.remove(2586);
-    treee.remove(2458);
-
-    treee.contains(12);
+    tree.remove(2252);
+    tree.remove(2124);
+    tree.add(2188, nullptr, 0);
+    tree.add(2828, nullptr, 0);
+    tree.remove(2380);
+    tree.add(2828, nullptr, 0);
+    tree.add(2316, nullptr, 0);
+    tree.add(2252, nullptr, 0);
+    tree.remove(2188);
+    tree.add(2828, nullptr, 0);
+    tree.remove(2188);
+    tree.remove(2124);
+    tree.add(2700, nullptr, 0);
+    tree.add(2444, nullptr, 0);
+    tree.remove(2124);
+    tree.remove(2252);
+    tree.add(2188, nullptr, 0);
+    tree.add(2444, nullptr, 0);
+    tree.add(2188, nullptr, 0);
+    tree.add(2316, nullptr, 0);
+    tree.remove(2252);
+    tree.remove(2124);
+    tree.add(2380, nullptr, 0);
+    tree.add(2252, nullptr, 0);
+    tree.add(2124, nullptr, 0);
+    tree.add(2828, nullptr, 0);
+    tree.remove(2316);
+    tree.add(2828, nullptr, 0);
+    tree.contains(1);
 }

@@ -82,8 +82,8 @@ private:
     
     void sendResponse(std::shared_ptr<Connection> connection, const Response& response) {
         if(connection->isOpen()){
-            std::shared_ptr<std::vector<uint8_t>> serialized = this->responseSerializer.serialize(response);
-            connection->write(* serialized);
+            std::vector<uint8_t> serialized = this->responseSerializer.serialize(response);
+            connection->write(serialized);
         }
     }
 };

@@ -99,7 +99,7 @@ public final class MemDbStressTest {
     private static MemDb getMemDbObject() {
         return new MemDb(MemDbConnections.async("127.0.0.1", 10000), "123");
     }
-    
+
     private static Supplier<String> argGenerator() {
         return () -> getRandomAsciiCharacter() + getRandomAsciiCharacter();
     }

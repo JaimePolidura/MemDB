@@ -22,6 +22,12 @@ public:
     AVLNode(uint8_t * value, uint32_t keyHash, uint8_t valueLength, int16_t height):
             left(nullptr), right(nullptr), value(value), keyHash(keyHash), valueLength(valueLength), height(height) {
     }
+
+    ~AVLNode() {
+        if(this->value){
+            delete[] this->value;
+        }
+    }
 };
 
 class AVLTree {
@@ -73,27 +79,28 @@ private:
         }else if (last->keyHash < keyHashToRemove) {
             last->right = this->removeRecursive(last->right, keyHashToRemove);
         }else{ //Found it
-            AVLNode * left = last->left;
-            AVLNode * right = last->right;
-            uint32_t keyHash = last->keyHash;
             bool rootRemoved = this->root == last;
 
-            if(rootRemoved && last->hasNoChild())
-                this->root = nullptr;
+            if(last->left && last->right) {
+                AVLNode * temp = this->mostLeftChild(last->right);
 
-            if(deleteMemoryIfFound){
-                delete[] last->value;
-                delete last;
-            }
+                last->keyHash = temp->keyHash;
+                last->value = temp->value;
+                last->valueLength = temp->valueLength;
 
-            if(left == nullptr || right == nullptr) {
-                last = (left == nullptr) ? right : left;
-                if(rootRemoved) this->root = last;
+               if(rootRemoved) this->root = last;
+
+                last->right = removeRecursive(last->right, last->keyHash);
             }else{
-                last = this->mostLeftChild(right);
-                last->right = this->removeRecursive(right, last->keyHash, false);
-                last->left = left;
+                AVLNode * temp = last;
+                if(last->left == nullptr)
+                    last = last->right;
+                else if(last->right == nullptr)
+                    last = last->left;
+
                 if(rootRemoved) this->root = last;
+
+                delete temp;
             }
         }
 
@@ -104,9 +111,8 @@ private:
     }
 
     AVLNode * mostLeftChild(AVLNode * node) const {
-        while (node->left != nullptr) {
+        while (node->left != nullptr)
             node = node->left;
-        }
 
         return node;
     }
@@ -127,18 +133,6 @@ private:
         return last->keyHash != toInsert->keyHash ?
                 this->rebalance(last) :
                 nullptr;
-    }
-
-    AVLNode * insertRecursive3(AVLNode * last, AVLNode * toInsert) {
-        if(last == nullptr){
-            return toInsert;
-        }else if(last->keyHash > toInsert->keyHash) {
-            last->left = insertRecursive(last->left, toInsert);
-        }else if(last->keyHash < toInsert->keyHash) {
-            last->right = insertRecursive(last->right, toInsert);
-        }
-
-        return this->rebalance(last);
     }
 
     AVLNode * rebalance(AVLNode * node) {

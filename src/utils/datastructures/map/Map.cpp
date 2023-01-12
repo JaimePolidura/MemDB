@@ -13,14 +13,12 @@ void Map::put(const std::string &key, uint8_t * value, size_t valueSize) {
     uint32_t keyHash = this->calculateHash(key);
 
     lockWrite(keyHash);
-    printf("RUN SET ON %s,", key.data());
 
     AVLTree * bucket = this->getBucket(keyHash);
-    bucket->add(keyHash, value, valueSize);
+    if(bucket->add(keyHash, value, valueSize))
+        this->size++;
 
     unlockWrite(keyHash);
-
-    this->size++;
 }
 
 std::optional<MapEntry> Map::get(const std::string &key) const {
@@ -42,17 +40,14 @@ void Map::remove(const std::string &key) {
     uint32_t hash = this->calculateHash(key);
 
     lockWrite(hash);
-    printf("RUN REMOVE ON %s,", key.data());
-    AVLNode * nodeFoundForKey = this->getNodeByKeyHash(hash);
 
-    if(nodeFoundForKey != nullptr) {
-        AVLTree * bucket = this->getBucket(hash);
+    AVLTree * bucket = this->getBucket(hash);
+    if(bucket->contains(hash)) {
         bucket->remove(hash);
+        this->size--;
     }
 
     unlockWrite(hash);
-
-    this->size--;
 }
 
 bool Map::contains(const std::string &key) const {

@@ -70,13 +70,9 @@ private:
 
     void lockWrite(uint32_t hashCode) const {
         const_cast<boost::shared_mutex *>(this->locks.at(hashCode % numberBuckets))->lock();
-
-        printf("LOCKED %i -> %i, ", hashCode, hashCode % numberBuckets);
     }
 
     void unlockWrite(uint32_t hashCode) const {
         const_cast<boost::shared_mutex *>(this->locks.at(hashCode % numberBuckets))->unlock();
-
-        printf(" UNLOCKED %i -> %i\n", hashCode, hashCode % numberBuckets);
     }
 };

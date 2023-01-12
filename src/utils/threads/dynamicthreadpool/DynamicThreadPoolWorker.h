@@ -10,21 +10,16 @@
 
 using Task = std::function<void()>;
 
-enum WorkerState {
-    ACTIVE, INACTIVE
-};
-
 class DynamicThreadPoolWorker {
 private:
     std::shared_ptr<BlockingQueue<Task>> pendingTasks;
     std::thread thread;
-    volatile WorkerState state;
     volatile bool isStoped;
     std::string name;
 
 public:
     DynamicThreadPoolWorker(std::string name):
-        pendingTasks(std::make_shared<BlockingQueue<Task>>()), isStoped(false), state(INACTIVE), name(name) {}
+        pendingTasks(std::make_shared<BlockingQueue<Task>>()), isStoped(false), name(name) {}
 
     void startThread() {
         this->thread = std::thread([this]{this->run();});
@@ -38,9 +33,7 @@ public:
             try{
                 Task task = std::move(this->pendingTasks->dequeue());
 
-                this->state = ACTIVE;
                 task();
-                this->state = INACTIVE;
             }catch (const InterruptedQueueException e) {
                 //Ignore, worker has been stoped
             }
@@ -63,9 +56,5 @@ public:
 
     int enqueuedTasks() const {
         return this->pendingTasks->getSize();
-    }
-
-    WorkerState getState() const {
-        return this->state;
     }
 };

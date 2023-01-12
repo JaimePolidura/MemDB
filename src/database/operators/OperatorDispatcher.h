@@ -45,7 +45,7 @@ public:
     }
 
 private:
-    void callOnResponseCallback(std::function<void(Response&)> onResponse,
+    void callOnResponseCallback(const std::function<void(Response&)>& onResponse,
                                 Response& result,
                                 uint64_t requestNumber) {
         result.requestNumber = requestNumber;

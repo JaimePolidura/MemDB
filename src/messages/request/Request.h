@@ -1,14 +1,15 @@
 #pragma once
 
 #include <stdint.h>
+#include <memory>
 
 struct OperatorArgument {
     uint8_t * arg;
-    int lengthArg;
+    uint8_t lengthArg;
 
     OperatorArgument() = default;
 
-    OperatorArgument(uint8_t * arg, int lengthArg): arg(arg), lengthArg(lengthArg) {}
+    OperatorArgument(uint8_t * arg, uint8_t lengthArg): arg(arg), lengthArg(lengthArg) {}
 
     OperatorArgument(const OperatorArgument& other) {
         this->arg = other.arg;
@@ -43,53 +44,20 @@ struct OperatorArgument {
 };
 
 struct OperationBody {
-    std::vector<OperatorArgument> args;
-    int operatorNumber; //0 - 127
-    int numberArgs;
+    std::shared_ptr<std::vector<OperatorArgument>> args;
+    uint8_t operatorNumber; //0 - 127
     bool flag1;
     bool flag2;
 
     OperationBody() = default;
 
-    OperationBody(int operatorNumber, bool flag1, bool flag2): flag1(flag1), flag2(flag2), operatorNumber(operatorNumber) {}
+    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2): flag1(flag1), flag2(flag2), operatorNumber(operatorNumber) {}
 
-    OperationBody(int operatorNumber, bool flag1, bool flag2, std::vector<OperatorArgument> argsCons, int numberArgs):
+    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2, std::shared_ptr<std::vector<OperatorArgument>> argsCons, uint8_t numberArgs):
         flag1(flag1),
         flag2(flag2),
         operatorNumber(operatorNumber),
-        args(std::move(argsCons)),
-        numberArgs(numberArgs) {}
-
-    OperationBody(OperationBody&& other) noexcept :
-        args(std::move(other.args)),
-        operatorNumber(other.operatorNumber),
-        numberArgs(other.operatorNumber),
-        flag1(other.flag1),
-        flag2(other.flag2) {}
-
-    OperationBody& operator=(const OperationBody& other) noexcept {
-        this->args = other.args;
-        this->operatorNumber = other.operatorNumber;
-        this->numberArgs = other.numberArgs;
-        this->flag1 = other.flag1;
-        this->flag2 = other.flag2;
-
-        return * this;
-    }
-
-    OperationBody& operator=(OperationBody&& other) noexcept {
-        this->args = std::move(other.args);
-        this->operatorNumber = other.operatorNumber;
-        this->numberArgs = other.numberArgs;
-        this->flag1 = other.flag1;
-        this->flag2 = other.flag2;
-
-        return * this;
-    }
-
-    ~OperationBody() {
-        //Do nothing, in this way args won't get deleted
-    }
+        args(argsCons) {}
 };
 
 struct AuthenticationBody {

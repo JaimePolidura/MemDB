@@ -14,7 +14,9 @@ public:
                 { ConfiguartionKeys::SERVER_MIN_THREADS, "20"},
                 { ConfiguartionKeys::SERVER_MAX_THREADS, "100"},
                 { ConfiguartionKeys::PORT, "10000"},
-                { ConfiguartionKeys::BUCKETS, "64" }
+                { ConfiguartionKeys::NUMBER_BUCKETS, "64" },
+                { ConfiguartionKeys::USE_PERSISTENCE, "false" },
+                { ConfiguartionKeys::PERSISTANCE_WRITE_EVERY, "50" }
         };
     }
 };

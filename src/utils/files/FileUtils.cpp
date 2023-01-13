@@ -1,6 +1,8 @@
 #include "FileUtils.h"
+
 #include <stdexcept>
 #include <fstream>
+#include <filesystem>
 
 #ifdef _WIN32
     #include <Windows.h>
@@ -9,6 +11,8 @@
 void FileUtils::createDirectory(const std::string &path, const std::string &name) {
 #ifdef _WIN32
     CreateDirectoryA((path + "\\" + name).c_str(), NULL);
+#else
+    throw std::logic_error("Not implemented");
 #endif
 }
 
@@ -17,7 +21,51 @@ void FileUtils::createFile(const std::string &path, const std::string &name) {
     HANDLE handle = CreateFile((path + "\\" + name).c_str(), GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
 
     CloseHandle(handle);
+#else
+    throw std::logic_error("Not implemented");
 #endif
+}
+
+void FileUtils::appendBytes(const std::string &path, const std::vector<uint8_t> &bytes) {
+    std::fstream file;
+    file.open(path, std::ios::out | std::ios::app);
+
+    for(auto byte = bytes.begin(); byte < bytes.end(); byte++)
+        file << * byte;
+
+    file.close();
+}
+
+std::string FileUtils::getProgramsPath() {
+#ifdef _WIN32
+    return "C:";
+#else
+    return "/etc";
+#endif
+}
+
+std::string FileUtils::getFileInProgramBasePath(const std::string &programName, const std::string &fileName) {
+#ifdef _WIN32
+    return "C:\\" + programName + "\\" + fileName;
+#else
+    return "/etc/" + programName + "/" + fileName;
+#endif
+}
+
+std::string FileUtils::getProgramBasePath(const std::string &programName) {
+#ifdef _WIN32
+    return "C:\\" + programName;
+#else
+    return "/etc/" + programName;
+#endif
+}
+
+bool FileUtils::exists(const std::string &path, const std::string &name) {
+    return std::filesystem::exists(path + getSeparator() + name);
+}
+
+std::string FileUtils::getSeparator() {
+    return std::string(std::filesystem::path::preferred_separator, 1);
 }
 
 std::vector<std::string> FileUtils::readLines(const std::string &path) {

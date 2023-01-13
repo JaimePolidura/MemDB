@@ -41,10 +41,10 @@ private:
     }
 
     OperationBody deserializeOperation(const std::vector<uint8_t>& buffer) {
-        int authLength = this->getValueWithoutFlags(buffer, sizeof(uint64_t));
+        uint8_t authLength = this->getValueWithoutFlags(buffer, sizeof(uint64_t));
         int operationBufferInitialPos = sizeof(uint64_t) + authLength + 1;
 
-        int operatorNumber = this->getValueWithoutFlags(buffer, operationBufferInitialPos);
+        uint8_t operatorNumber = this->getValueWithoutFlags(buffer, operationBufferInitialPos);
         bool flagOperation1 = this->getFlag(buffer, operationBufferInitialPos, FLAG1_MASK); //Si es true, la longitud de los argumentos ocuparan 2 bytes
         bool flagOperation2 = this->getFlag(buffer, operationBufferInitialPos, FLAG2_MASK);
 
@@ -54,7 +54,7 @@ private:
 
         int numerOfArguments = 0;
         int lastIndexChecked = operationBufferInitialPos + 1; //Index first arg
-        std::vector<OperatorArgument> arguments;
+        std::shared_ptr<std::vector<OperatorArgument>> arguments = std::make_shared<std::vector<OperatorArgument>>();
 
         while (lastIndexChecked + 1 < buffer.size()) {
             unsigned short argLength = (unsigned short) buffer[lastIndexChecked];
@@ -63,7 +63,7 @@ private:
 
             lastIndexChecked = argValuePosition + argLength;
             numerOfArguments++;
-            arguments.emplace_back(argValue, argLength);
+            arguments->emplace_back(argValue, argLength);
         }
 
         return OperationBody(operatorNumber, flagOperation1, flagOperation2, std::move(arguments), numerOfArguments);
@@ -79,8 +79,8 @@ private:
         return toFill;
     }
 
-    unsigned short getValueWithoutFlags(const std::vector<uint8_t>& buffer, int pos) {
-        return (unsigned short) buffer[pos] >> 2;
+    uint8_t getValueWithoutFlags(const std::vector<uint8_t>& buffer, int pos) {
+        return (uint8_t) buffer[pos] >> 2;
     }
 
     bool getFlag(const std::vector<uint8_t>& buffer, int pos, char flagMask) {

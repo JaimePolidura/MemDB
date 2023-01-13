@@ -18,8 +18,14 @@ public:
         return this->getOrDefault(key);
     }
 
+    bool getBoolean(const std::string& key) const {
+        return this->getOrDefault(key) == "true";
+    }
+
     template<typename T>
     T get(const std::string& key) const {
+        static_assert(!std::is_same<T, bool>::value, "Use getBoolean() for boolean values!");
+
         return static_cast<T>(std::stoul(this->getOrDefault(key)));
     }
 

@@ -11,5 +11,17 @@ public:
 
     static void writeLines(const std::string& path, const std::vector<std::string>& lines);
 
+    static void appendBytes(const std::string& path, const std::vector<uint8_t>& bytes);
+
     static std::vector<std::string> readLines(const std::string& path);
+
+    static bool exists(const std::string &path, const std::string& name);
+
+    static std::string getProgramBasePath(const std::string& programName);
+
+    static std::string getFileInProgramBasePath(const std::string& programName, const std::string& fileName);
+
+    static std::string getProgramsPath();
+
+    static std::string getSeparator();
 };

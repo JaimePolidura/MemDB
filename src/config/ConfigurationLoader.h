@@ -11,7 +11,7 @@
 class ConfiguartionLoader {
 public:
     static std::shared_ptr<Configuration> load() {
-        const std::string configPath = getMemDbPath() + "/config.txt";
+        const std::string configPath = FileUtils::getFileInProgramBasePath("memdb", "config.txt");
         std::vector<std::string> lines = FileUtils::readLines(configPath);
         std::map<std::string, std::string> defaultConfiguartionValues = DefaultConfig::get();
 
@@ -42,9 +42,9 @@ private:
     static std::map<std::string, std::string> createConfigurationFile(const std::map<std::string, std::string>& defaultConfigValues) {
         std::vector<std::string> lines = parseConfigToLines(defaultConfigValues);
 
-        FileUtils::createDirectory(getBasePath(), "memdb");
-        FileUtils::createFile(getMemDbPath(), "config.txt");
-        FileUtils::writeLines(getMemDbConfigFolder(), lines);
+        FileUtils::createDirectory(FileUtils::getProgramsPath(), "memdb");
+        FileUtils::createFile(FileUtils::getProgramBasePath("memdb"), "config.txt");
+        FileUtils::writeLines(FileUtils::getFileInProgramBasePath("memdb", "config.txt"), lines);
 
         return defaultConfigValues;
     }
@@ -78,29 +78,5 @@ private:
         }
 
         return configValues;
-    }
-
-    static std::string getMemDbConfigFolder() {
-        #ifdef _WIN32
-                return "C:\\memdb\\config.txt";
-        #else
-                return "/etc/memdb/config.txt";
-        #endif
-    }
-
-    static std::string getBasePath() {
-        #ifdef _WIN32
-                return "C:";
-        #else
-                return "/etc";
-        #endif
-    }
-
-    static std::string getMemDbPath() {
-        #ifdef _WIN32
-            return "C:\\memdb";
-        #else
-            return "/etc/memdb";
-        #endif
     }
 };

@@ -6,19 +6,21 @@
 #include <functional>
 
 #include "Operator.h"
-#include "../../utils/threads/dynamicthreadpool/SingleThreadPool.h"
-#include "../../messages/response/ErrorCode.h"
 #include "OperatorRegistry.h"
+#include "utils/threads/dynamicthreadpool/SingleThreadPool.h"
+#include "messages/response/ErrorCode.h"
+#include "persistence/OperationLogSaver.h"
 
 class OperatorDispatcher {
 private:
     std::shared_ptr<Map> db;
     OperatorRegistry operatorRegistry;
     SingleThreadPool singleThreadedWritePool;
+    OperationLogSaver operationLogSaver;
 
 public:
-    OperatorDispatcher(std::shared_ptr<Map> dbCons):
-        db(dbCons), singleThreadedWritePool("OperatorDispatcher")
+    OperatorDispatcher(std::shared_ptr<Map> dbCons, const OperationLogSaver& operationLogSaver):
+        db(dbCons), singleThreadedWritePool("OperatorDispatcher"),operationLogSaver(std::move(operationLogSaver))
     {}
 
     void dispatch(Request& request,
@@ -38,7 +40,10 @@ public:
         }
         if(operatorToExecute->type() == WRITE){
             this->singleThreadedWritePool.submit([operatorToExecute, onResponse, requestNumber, request, this] {
+                this->operationLogSaver.save(request);
+                
                 Response result = operatorToExecute->operate(request.operation, this->db);
+
                 this->callOnResponseCallback(onResponse, result, requestNumber);
             });
         }

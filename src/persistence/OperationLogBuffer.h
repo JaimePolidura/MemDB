@@ -18,6 +18,8 @@ private:
     std::mutex writeDiskLock;
 
 public:
+    OperationLogBuffer(std::shared_ptr<Configuration> configuration): configuration(configuration) {}
+
     void add(const OperationLog& operation) {
         this->operations.push_back(std::move(operation));
 

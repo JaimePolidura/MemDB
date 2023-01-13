@@ -14,6 +14,10 @@ private:
     std::shared_ptr<OperationLogBuffer> buffer;
 
 public:
+    OperationLogSaver(std::shared_ptr<Configuration> configuration, std::shared_ptr<OperationLogBuffer> buffer) :
+        configuration(configuration), buffer(buffer)
+    {}
+
     void save(const Request& request) {
         if(!configuration->getBoolean(ConfiguartionKeys::USE_PERSISTENCE))
             return;
@@ -22,8 +26,12 @@ public:
                 <std::chrono::milliseconds>
                 (std::chrono::system_clock::now().time_since_epoch()).count();
 
-        OperationLog operationLog{timestamp, request.operation.args, request.operation.operatorNumber};
-
-        this->buffer->add(operationLog);
+        this->buffer->add(OperationLog{
+            timestamp,
+            request.operation.args,
+            request.operation.operatorNumber,
+            request.operation.flag1,
+            request.operation.flag2
+        });
     }
 };

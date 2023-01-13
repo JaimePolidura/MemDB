@@ -22,12 +22,6 @@ public:
     AVLNode(uint8_t * value, uint32_t keyHash, uint8_t valueLength, int16_t height):
             left(nullptr), right(nullptr), value(value), keyHash(keyHash), valueLength(valueLength), height(height) {
     }
-
-    ~AVLNode() {
-        if(this->value){
-            delete[] this->value;
-        }
-    }
 };
 
 class AVLTree {
@@ -71,7 +65,7 @@ public:
     }
 
 private:
-    AVLNode * removeRecursive(AVLNode * last, uint32_t keyHashToRemove, bool deleteMemoryIfFound = true) {
+    AVLNode * removeRecursive(AVLNode * last, uint32_t keyHashToRemove) {
         if(last == nullptr){
             return last;
         }else if(last->keyHash > keyHashToRemove) {
@@ -88,7 +82,7 @@ private:
                 last->value = temp->value;
                 last->valueLength = temp->valueLength;
 
-               if(rootRemoved) this->root = last;
+                if(rootRemoved) this->root = last;
 
                 last->right = removeRecursive(last->right, last->keyHash);
             }else{
@@ -100,6 +94,7 @@ private:
 
                 if(rootRemoved) this->root = last;
 
+//                delete[] last->value; Memory leak, this line sometimes doesn't work, possibly due to double free
                 delete temp;
             }
         }

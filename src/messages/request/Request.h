@@ -53,7 +53,7 @@ struct OperationBody {
 
     OperationBody(uint8_t operatorNumber, bool flag1, bool flag2): flag1(flag1), flag2(flag2), operatorNumber(operatorNumber) {}
 
-    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2, std::shared_ptr<std::vector<OperatorArgument>> argsCons, uint8_t numberArgs):
+    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2, std::shared_ptr<std::vector<OperatorArgument>> argsCons):
         flag1(flag1),
         flag2(flag2),
         operatorNumber(operatorNumber),

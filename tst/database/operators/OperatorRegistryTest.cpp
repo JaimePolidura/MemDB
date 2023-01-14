@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "database/operators/OperatorRegistry.h"
+#include "operators/OperatorRegistry.h"
 
 TEST(OperatorRegistry, GetOperatorFound) {
     OperatorRegistry registry{};

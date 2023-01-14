@@ -15,6 +15,8 @@ public:
 
     static std::vector<std::string> readLines(const std::string& path);
 
+    static std::vector<uint8_t> readBytes(const std::string& path);
+
     static bool exists(const std::string &path, const std::string& name);
 
     static std::string getProgramBasePath(const std::string& programName);

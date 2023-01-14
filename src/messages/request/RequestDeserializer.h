@@ -21,7 +21,6 @@ public:
         return request;
     }
 
-private:
     uint64_t deserializeRequestNumber(const std::vector<uint8_t> &buffer) {
         uint64_t result = 0;
 
@@ -58,6 +57,9 @@ private:
 
         while (lastIndexChecked + 1 < buffer.size()) {
             unsigned short argLength = (unsigned short) buffer[lastIndexChecked];
+            if(argLength == 0)
+                break;
+
             int argValuePosition = lastIndexChecked + 1;
             uint8_t * argValue = this->fill(buffer, argValuePosition, argValuePosition + argLength);
 
@@ -69,6 +71,7 @@ private:
         return OperationBody(operatorNumber, flagOperation1, flagOperation2, std::move(arguments), numerOfArguments);
     }
 
+private:
     uint8_t * fill(const std::vector<uint8_t>& buffer, int initialPos, int endPos) {
         int size = endPos - initialPos;
         uint8_t * toFill = new uint8_t[size];

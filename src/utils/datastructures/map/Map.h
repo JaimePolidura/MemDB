@@ -13,9 +13,11 @@ struct MapEntry {
     uint8_t * value;
     size_t valueSize;
 
-    MapEntry(uint8_t * value, size_t valueSize): value(new uint8_t[valueSize]), valueSize(valueSize) {
-        std::copy(value, value + valueSize, this->value);
-    }
+//    MapEntry(uint8_t * value, size_t valueSize): value(new uint8_t[valueSize]), valueSize(valueSize) {
+//        std::copy(value, value + valueSize, this->value);
+//    }
+
+    MapEntry(uint8_t * value, size_t valueSize): value(value), valueSize(valueSize) {}
 };
 
 class Map {
@@ -35,6 +37,8 @@ public:
     void remove(const std::string &key);
 
     bool contains(const std::string &key) const;
+
+    std::vector<MapEntry> all();
 
     int getSize() const;
 

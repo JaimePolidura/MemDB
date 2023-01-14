@@ -4,9 +4,9 @@
 #include <memory>
 
 #include "Operator.h"
-#include "database/operators/operations/GetOperator.h"
-#include "database/operators/operations/SetOperator.h"
-#include "database/operators/operations/DeleteOperator.h"
+#include "operators/operations/GetOperator.h"
+#include "operators/operations/SetOperator.h"
+#include "operators/operations/DeleteOperator.h"
 
 class AllOperators {
 public:

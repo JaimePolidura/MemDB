@@ -2,7 +2,7 @@
 
 #include "messages/request/Request.h"
 #include "messages/response/Response.h"
-#include "../../utils/datastructures/map/Map.h"
+#include "utils/datastructures/map/Map.h"
 
 #include <memory>
 

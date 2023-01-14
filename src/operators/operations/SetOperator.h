@@ -1,6 +1,6 @@
 #pragma once
 
-#include "database/operators/Operator.h"
+#include "operators/Operator.h"
 
 #include <string>
 

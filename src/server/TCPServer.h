@@ -11,7 +11,7 @@
 #include "messages/response/ErrorCode.h"
 #include "../utils/threads/dynamicthreadpool/DynamicThreadPool.h"
 #include "Connection.h"
-#include "database/operators/OperatorDispatcher.h"
+#include "operators/OperatorDispatcher.h"
 
 using namespace boost::asio;
 

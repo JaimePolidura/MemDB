@@ -22,7 +22,6 @@ public:
 
         std::shared_ptr<TCPServer> tcpServer = std::make_shared<TCPServer>(configuration, Authenticator{usersRepository}, operatorDispatcher);
 
-
         return std::make_shared<MemDb>(map, configuration, usersRepository, tcpServer);
     }
 

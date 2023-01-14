@@ -7,14 +7,14 @@ public final class Other {
     public static void main(String[] args) {
         MemDb memDb = new MemDb(MemDbConnections.sync("127.0.0.1", 10000), "123");
 
-        memDb.set("A", "1");
-        memDb.set("B", "1");
-        memDb.set("C", "1");
-
-        memDb.set("B", "2");
-
-        memDb.delete("J");
-        memDb.delete("A");
+//        memDb.set("A", "1");
+//        memDb.set("B", "1");
+//        memDb.set("C", "1");
+//
+//        memDb.set("B", "2");
+//
+//        memDb.delete("J");
+//        memDb.delete("A");
 
         /**
          * B -> 2

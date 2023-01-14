@@ -147,8 +147,13 @@ private:
         }else if(last->keyHash < toInsert->keyHash) {
             AVLNode * inserted = insertRecursive(last->right, toInsert);
             if(inserted != nullptr) last->right = inserted;
-        }
 
+        }else{
+            last->keyHash = toInsert->keyHash;
+            last->value = toInsert->value;
+            last->valueLength = toInsert->valueLength;
+        }
+        
         return last->keyHash != toInsert->keyHash ?
                 this->rebalance(last) :
                 nullptr;

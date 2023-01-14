@@ -517,11 +517,11 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/config/keys/ConfiguartionKeys.cpp">
+		<Unit filename="C:/programacion/MemDB/src/config/keys/ConfigurationKeys.cpp">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/config/keys/ConfiguartionKeys.h">
+		<Unit filename="C:/programacion/MemDB/src/config/keys/ConfigurationKeys.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>

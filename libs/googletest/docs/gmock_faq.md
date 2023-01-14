@@ -96,7 +96,7 @@ comparison between the actual arguments and the expected arguments.
 gMock and `ScopedMockLog` are likely doing the right thing here.
 
 When a test crashes, the failure signal handler will try to log a lot of
-information (the stack trace, and the address map, for example). The messages
+information (the stack trace, and the address dbMap, for example). The messages
 are compounded if you have many threads with depth stacks. When `ScopedMockLog`
 intercepts these messages and finds that they don't match any expectations, it
 prints an error for each of them.

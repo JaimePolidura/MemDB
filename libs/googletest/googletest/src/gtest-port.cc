@@ -573,7 +573,7 @@ class ThreadLocalRegistryImpl {
   }
 
  private:
-  // In a particular thread, map a ThreadLocal object to its value.
+  // In a particular thread, dbMap a ThreadLocal object to its value.
   typedef std::map<const ThreadLocalBase*,
                    std::shared_ptr<ThreadLocalValueHolderBase> >
       ThreadLocalValues;
@@ -622,7 +622,7 @@ class ThreadLocalRegistryImpl {
     return 0;
   }
 
-  // Returns map of thread local instances.
+  // Returns dbMap of thread local instances.
   static ThreadIdToThreadLocals* GetThreadLocalsMapLocked() {
     mutex_.AssertHeld();
 #ifdef _MSC_VER

@@ -2,7 +2,7 @@
 
 #include "messages/request/Request.h"
 #include "config/Configuration.h"
-#include "config/keys/ConfiguartionKeys.h"
+#include "config/keys/ConfigurationKeys.h"
 #include "OperationLogBuffer.h"
 
 #include <memory>
@@ -19,7 +19,7 @@ public:
     {}
 
     void save(const Request& request) {
-        if(!configuration->getBoolean(ConfiguartionKeys::USE_PERSISTENCE))
+        if(!configuration->getBoolean(ConfigurationKeys::USE_PERSISTENCE))
             return;
 
         this->buffer->add(OperationLog{

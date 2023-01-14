@@ -49,6 +49,8 @@ public:
 
     std::vector<AVLNode *> all() const {
         std::vector<AVLNode *> toReturn{};
+        if(this->root == nullptr) return toReturn;
+
         std::queue<AVLNode *> pending{};
         pending.push(this->root);
 

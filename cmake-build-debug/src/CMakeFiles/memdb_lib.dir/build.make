@@ -68,20 +68,20 @@ include src/CMakeFiles/memdb_lib.dir/progress.make
 # Include the compile flags for this target's objects.
 include src/CMakeFiles/memdb_lib.dir/flags.make
 
-src/CMakeFiles/memdb_lib.dir/config/keys/ConfiguartionKeys.cpp.obj: src/CMakeFiles/memdb_lib.dir/flags.make
-src/CMakeFiles/memdb_lib.dir/config/keys/ConfiguartionKeys.cpp.obj: src/CMakeFiles/memdb_lib.dir/includes_CXX.rsp
-src/CMakeFiles/memdb_lib.dir/config/keys/ConfiguartionKeys.cpp.obj: ../src/config/keys/ConfiguartionKeys.cpp
-src/CMakeFiles/memdb_lib.dir/config/keys/ConfiguartionKeys.cpp.obj: src/CMakeFiles/memdb_lib.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object src/CMakeFiles/memdb_lib.dir/config/keys/ConfiguartionKeys.cpp.obj"
-	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/memdb_lib.dir/config/keys/ConfiguartionKeys.cpp.obj -MF CMakeFiles\memdb_lib.dir\config\keys\ConfiguartionKeys.cpp.obj.d -o CMakeFiles\memdb_lib.dir\config\keys\ConfiguartionKeys.cpp.obj -c C:\programacion\MemDB\src\config\keys\ConfiguartionKeys.cpp
+src/CMakeFiles/memdb_lib.dir/config/keys/ConfigurationKeys.cpp.obj: src/CMakeFiles/memdb_lib.dir/flags.make
+src/CMakeFiles/memdb_lib.dir/config/keys/ConfigurationKeys.cpp.obj: src/CMakeFiles/memdb_lib.dir/includes_CXX.rsp
+src/CMakeFiles/memdb_lib.dir/config/keys/ConfigurationKeys.cpp.obj: ../src/config/keys/ConfigurationKeys.cpp
+src/CMakeFiles/memdb_lib.dir/config/keys/ConfigurationKeys.cpp.obj: src/CMakeFiles/memdb_lib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object src/CMakeFiles/memdb_lib.dir/config/keys/ConfigurationKeys.cpp.obj"
+	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/memdb_lib.dir/config/keys/ConfigurationKeys.cpp.obj -MF CMakeFiles\memdb_lib.dir\config\keys\ConfigurationKeys.cpp.obj.d -o CMakeFiles\memdb_lib.dir\config\keys\ConfigurationKeys.cpp.obj -c C:\programacion\MemDB\src\config\keys\ConfigurationKeys.cpp
 
-src/CMakeFiles/memdb_lib.dir/config/keys/ConfiguartionKeys.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/memdb_lib.dir/config/keys/ConfiguartionKeys.cpp.i"
-	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\programacion\MemDB\src\config\keys\ConfiguartionKeys.cpp > CMakeFiles\memdb_lib.dir\config\keys\ConfiguartionKeys.cpp.i
+src/CMakeFiles/memdb_lib.dir/config/keys/ConfigurationKeys.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/memdb_lib.dir/config/keys/ConfigurationKeys.cpp.i"
+	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\programacion\MemDB\src\config\keys\ConfigurationKeys.cpp > CMakeFiles\memdb_lib.dir\config\keys\ConfigurationKeys.cpp.i
 
-src/CMakeFiles/memdb_lib.dir/config/keys/ConfiguartionKeys.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_lib.dir/config/keys/ConfiguartionKeys.cpp.s"
-	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\src\config\keys\ConfiguartionKeys.cpp -o CMakeFiles\memdb_lib.dir\config\keys\ConfiguartionKeys.cpp.s
+src/CMakeFiles/memdb_lib.dir/config/keys/ConfigurationKeys.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/memdb_lib.dir/config/keys/ConfigurationKeys.cpp.s"
+	cd /d C:\programacion\MemDB\cmake-build-debug\src && C:\Users\polid\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4345.21\bin\mingw\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\programacion\MemDB\src\config\keys\ConfigurationKeys.cpp -o CMakeFiles\memdb_lib.dir\config\keys\ConfigurationKeys.cpp.s
 
 src/CMakeFiles/memdb_lib.dir/main.cpp.obj: src/CMakeFiles/memdb_lib.dir/flags.make
 src/CMakeFiles/memdb_lib.dir/main.cpp.obj: src/CMakeFiles/memdb_lib.dir/includes_CXX.rsp
@@ -145,7 +145,7 @@ src/CMakeFiles/memdb_lib.dir/utils/files/FileUtils.cpp.s: cmake_force
 
 # Object files for target memdb_lib
 memdb_lib_OBJECTS = \
-"CMakeFiles/memdb_lib.dir/config/keys/ConfiguartionKeys.cpp.obj" \
+"CMakeFiles/memdb_lib.dir/config/keys/ConfigurationKeys.cpp.obj" \
 "CMakeFiles/memdb_lib.dir/main.cpp.obj" \
 "CMakeFiles/memdb_lib.dir/users/UsersRepository.cpp.obj" \
 "CMakeFiles/memdb_lib.dir/utils/datastructures/map/Map.cpp.obj" \
@@ -154,7 +154,7 @@ memdb_lib_OBJECTS = \
 # External object files for target memdb_lib
 memdb_lib_EXTERNAL_OBJECTS =
 
-src/libmemdb_lib.a: src/CMakeFiles/memdb_lib.dir/config/keys/ConfiguartionKeys.cpp.obj
+src/libmemdb_lib.a: src/CMakeFiles/memdb_lib.dir/config/keys/ConfigurationKeys.cpp.obj
 src/libmemdb_lib.a: src/CMakeFiles/memdb_lib.dir/main.cpp.obj
 src/libmemdb_lib.a: src/CMakeFiles/memdb_lib.dir/users/UsersRepository.cpp.obj
 src/libmemdb_lib.a: src/CMakeFiles/memdb_lib.dir/utils/datastructures/map/Map.cpp.obj

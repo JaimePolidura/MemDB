@@ -60,8 +60,8 @@ std::string FileUtils::getProgramBasePath(const std::string &programName) {
 #endif
 }
 
-bool FileUtils::exists(const std::string &path, const std::string &name) {
-    return std::filesystem::exists(path + getSeparator() + name);
+bool FileUtils::exists(const std::string &path) {
+    return std::filesystem::exists(path);
 }
 
 std::string FileUtils::getSeparator() {
@@ -75,16 +75,15 @@ void FileUtils::clear(const std::string &path) {
 }
 
 std::vector<uint8_t> FileUtils::readBytes(const std::string &path) {
-    std::vector<uint8_t> bytes{};
     std::ifstream file(path, std::ios::binary);
 
     if(!file.is_open())
-        return bytes;
+        return {};
 
     std::vector<uint8_t> contents((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     file.close();
 
-    return bytes;
+    return contents;
 }
 
 std::vector<std::string> FileUtils::readLines(const std::string &path) {

@@ -15,11 +15,9 @@ public:
         std::vector<OperationLog> logs{};
 
         for(auto bytesPtr = bytes.begin(); bytesPtr < bytes.end();) {
-            uint64_t timestamp = * bytesPtr;
+            OperationBody operationBody = this->requestDeserializer.deserializeOperation(std::vector<uint8_t>(bytesPtr, bytes.end() - 1));
 
-            OperationBody operationBody = this->requestDeserializer.deserializeOperation(std::vector<uint8_t>(bytesPtr + 1, bytes.end() - 1));
-
-            const OperationLog operationLog = OperationLog{timestamp, operationBody.args, operationBody.operatorNumber,
+            const OperationLog operationLog = OperationLog{operationBody.args, operationBody.operatorNumber,
                                                            operationBody.flag1, operationBody.flag2};
             logs.push_back(operationLog);
 
@@ -40,7 +38,6 @@ private:
                 });
 
         return
-            sizeof(log.timestamp) + //Timestamp
             1 + //Operation number
             totalArgLength + //Args length (value + size)
             1; //Padding;

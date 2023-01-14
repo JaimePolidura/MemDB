@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/memdb_lib.dir/config/keys/ConfiguartionKeys.cpp.obj"
-  "CMakeFiles/memdb_lib.dir/config/keys/ConfiguartionKeys.cpp.obj.d"
+  "CMakeFiles/memdb_lib.dir/config/keys/ConfigurationKeys.cpp.obj"
+  "CMakeFiles/memdb_lib.dir/config/keys/ConfigurationKeys.cpp.obj.d"
   "CMakeFiles/memdb_lib.dir/main.cpp.obj"
   "CMakeFiles/memdb_lib.dir/main.cpp.obj.d"
   "CMakeFiles/memdb_lib.dir/users/UsersRepository.cpp.obj"

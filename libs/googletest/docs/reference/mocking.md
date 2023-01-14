@@ -38,16 +38,16 @@ class MyMock {
  public:
   // The following 2 lines will not compile due to commas in the arguments:
   MOCK_METHOD(std::pair<bool, int>, GetPair, ());              // Error!
-  MOCK_METHOD(bool, CheckMap, (std::map<int, double>, bool));  // Error!
+  MOCK_METHOD(bool, CheckMap, (std::dbMap<int, double>, bool));  // Error!
 
   // One solution - wrap arguments that contain commas in parentheses:
   MOCK_METHOD((std::pair<bool, int>), GetPair, ());
-  MOCK_METHOD(bool, CheckMap, ((std::map<int, double>), bool));
+  MOCK_METHOD(bool, CheckMap, ((std::dbMap<int, double>), bool));
 
   // Another solution - use type aliases:
   using BoolAndInt = std::pair<bool, int>;
   MOCK_METHOD(BoolAndInt, GetPair, ());
-  using MapIntDouble = std::map<int, double>;
+  using MapIntDouble = std::dbMap<int, double>;
   MOCK_METHOD(bool, CheckMap, (MapIntDouble, bool));
 };
 ```

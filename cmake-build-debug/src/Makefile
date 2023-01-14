@@ -188,32 +188,32 @@ memdb_lib/fast:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/build
 .PHONY : memdb_lib/fast
 
-config/keys/ConfiguartionKeys.obj: config/keys/ConfiguartionKeys.cpp.obj
-.PHONY : config/keys/ConfiguartionKeys.obj
+config/keys/ConfigurationKeys.obj: config/keys/ConfigurationKeys.cpp.obj
+.PHONY : config/keys/ConfigurationKeys.obj
 
 # target to build an object file
-config/keys/ConfiguartionKeys.cpp.obj:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/config/keys/ConfiguartionKeys.cpp.obj
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/config/keys/ConfiguartionKeys.cpp.obj
-.PHONY : config/keys/ConfiguartionKeys.cpp.obj
+config/keys/ConfigurationKeys.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/config/keys/ConfigurationKeys.cpp.obj
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/config/keys/ConfigurationKeys.cpp.obj
+.PHONY : config/keys/ConfigurationKeys.cpp.obj
 
-config/keys/ConfiguartionKeys.i: config/keys/ConfiguartionKeys.cpp.i
-.PHONY : config/keys/ConfiguartionKeys.i
+config/keys/ConfigurationKeys.i: config/keys/ConfigurationKeys.cpp.i
+.PHONY : config/keys/ConfigurationKeys.i
 
 # target to preprocess a source file
-config/keys/ConfiguartionKeys.cpp.i:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/config/keys/ConfiguartionKeys.cpp.i
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/config/keys/ConfiguartionKeys.cpp.i
-.PHONY : config/keys/ConfiguartionKeys.cpp.i
+config/keys/ConfigurationKeys.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/config/keys/ConfigurationKeys.cpp.i
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/config/keys/ConfigurationKeys.cpp.i
+.PHONY : config/keys/ConfigurationKeys.cpp.i
 
-config/keys/ConfiguartionKeys.s: config/keys/ConfiguartionKeys.cpp.s
-.PHONY : config/keys/ConfiguartionKeys.s
+config/keys/ConfigurationKeys.s: config/keys/ConfigurationKeys.cpp.s
+.PHONY : config/keys/ConfigurationKeys.s
 
 # target to generate assembly for a file
-config/keys/ConfiguartionKeys.cpp.s:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/config/keys/ConfiguartionKeys.cpp.s
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/config/keys/ConfiguartionKeys.cpp.s
-.PHONY : config/keys/ConfiguartionKeys.cpp.s
+config/keys/ConfigurationKeys.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_run.dir\build.make src/CMakeFiles/memdb_run.dir/config/keys/ConfigurationKeys.cpp.s
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f src\CMakeFiles\memdb_lib.dir\build.make src/CMakeFiles/memdb_lib.dir/config/keys/ConfigurationKeys.cpp.s
+.PHONY : config/keys/ConfigurationKeys.cpp.s
 
 main.obj: main.cpp.obj
 .PHONY : main.obj
@@ -337,9 +337,9 @@ help:
 	@echo ... rebuild_cache
 	@echo ... memdb_lib
 	@echo ... memdb_run
-	@echo ... config/keys/ConfiguartionKeys.obj
-	@echo ... config/keys/ConfiguartionKeys.i
-	@echo ... config/keys/ConfiguartionKeys.s
+	@echo ... config/keys/ConfigurationKeys.obj
+	@echo ... config/keys/ConfigurationKeys.i
+	@echo ... config/keys/ConfigurationKeys.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s

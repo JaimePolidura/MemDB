@@ -6,7 +6,7 @@
 
 #include "OperationLogDiskWriter.h"
 #include "config/Configuration.h"
-#include "config/keys/ConfiguartionKeys.h"
+#include "config/keys/ConfigurationKeys.h"
 #include "utils/files/FileUtils.h"
 #include "OperationLog.h"
 
@@ -23,7 +23,7 @@ public:
     void add(const OperationLog& operation) {
         this->operations.push_back(std::move(operation));
 
-        if(this->operations.size() >= this->configuration->get<int>(ConfiguartionKeys::PERSISTANCE_WRITE_EVERY)){
+        if(this->operations.size() >= this->configuration->get<int>(ConfigurationKeys::PERSISTANCE_WRITE_EVERY)){
             this->writeOperationsToDisk();
         }
     }

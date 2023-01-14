@@ -682,7 +682,7 @@ using ParameterizedTestCaseInfo = ParameterizedTestSuiteInfo<TestCase>;
 
 // INTERNAL IMPLEMENTATION - DO NOT USE IN USER CODE.
 //
-// ParameterizedTestSuiteRegistry contains a map of
+// ParameterizedTestSuiteRegistry contains a dbMap of
 // ParameterizedTestSuiteInfoBase classes accessed by tst suite names. TEST_P
 // and INSTANTIATE_TEST_SUITE_P macros use it to locate their corresponding
 // ParameterizedTestSuiteInfo descriptors.

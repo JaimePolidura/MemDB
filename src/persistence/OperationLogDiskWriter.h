@@ -31,7 +31,7 @@ private:
     }
 
     void createFileIfNotExistd() {
-        bool exists = FileUtils::exists(FileUtils::getProgramBasePath("memdb"), "oplog");
+        bool exists = FileUtils::exists(FileUtils::getFileInProgramBasePath("memdb", "oplog"));
         if(!exists)
             FileUtils::createFile(FileUtils::getProgramBasePath("memdb"), "oplog");
     }

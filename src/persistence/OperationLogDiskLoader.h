@@ -17,7 +17,7 @@ public:
     OperationLogDiskLoader(std::shared_ptr<OperatorDispatcher> operationDispatcher) : operationDispatcher(operationDispatcher) {}
 
     std::shared_ptr<Map> loadIntoMapDb(std::shared_ptr<Map> db) {
-        if(!FileUtils::exists(FileUtils::getProgramBasePath("memdb"), "oplog"))
+        if(!FileUtils::exists(FileUtils::getFileInProgramBasePath("memdb", "oplog")))
             return db;
 
         std::vector<uint8_t> bytesFromOpLog = FileUtils::readBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog"));

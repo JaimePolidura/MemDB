@@ -19,7 +19,7 @@ public:
 
     static std::vector<uint8_t> readBytes(const std::string& path);
 
-    static bool exists(const std::string &path, const std::string& name);
+    static bool exists(const std::string &path);
 
     static std::string getProgramBasePath(const std::string& programName);
 

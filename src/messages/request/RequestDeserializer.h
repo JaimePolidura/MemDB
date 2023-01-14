@@ -13,10 +13,12 @@ private:
 
 public:
     Request deserialize(const std::vector<uint8_t>& buffer) {
+        uint8_t authLength = this->getValueWithoutFlags(buffer, sizeof(uint64_t));
+
         Request request{};
         request.requestNumber = this->deserializeRequestNumber(buffer);
         request.authentication = this->deserializeAuthenticacion(buffer);
-        request.operation = this->deserializeOperation(buffer);
+        request.operation = this->deserializeOperation(buffer, authLength + sizeof(uint64_t) + 1);
 
         return request;
     }
@@ -39,20 +41,17 @@ public:
         return AuthenticationBody(std::string((char *) authKey, authLength), flagAuth1, flagAuth2);
     }
 
-    OperationBody deserializeOperation(const std::vector<uint8_t>& buffer) {
-        uint8_t authLength = this->getValueWithoutFlags(buffer, sizeof(uint64_t));
-        int operationBufferInitialPos = sizeof(uint64_t) + authLength + 1;
+    OperationBody deserializeOperation(const std::vector<uint8_t>& buffer, const uint8_t initialOffset = 0) {
+        uint8_t operatorNumber = this->getValueWithoutFlags(buffer, initialOffset);
+        bool flagOperation1 = this->getFlag(buffer, initialOffset, FLAG1_MASK); //Si es true, la longitud de los argumentos ocuparan 2 bytes
+        bool flagOperation2 = this->getFlag(buffer, initialOffset, FLAG2_MASK);
 
-        uint8_t operatorNumber = this->getValueWithoutFlags(buffer, operationBufferInitialPos);
-        bool flagOperation1 = this->getFlag(buffer, operationBufferInitialPos, FLAG1_MASK); //Si es true, la longitud de los argumentos ocuparan 2 bytes
-        bool flagOperation2 = this->getFlag(buffer, operationBufferInitialPos, FLAG2_MASK);
-
-        if(operationBufferInitialPos == buffer.size() - 1){ //No args
+        if(initialOffset == buffer.size() - 1){ //No args
             return OperationBody(operatorNumber, flagOperation1, flagOperation2);
         }
 
         int numerOfArguments = 0;
-        int lastIndexChecked = operationBufferInitialPos + 1; //Index first arg
+        int lastIndexChecked = initialOffset + 1; //Index first arg
         std::shared_ptr<std::vector<OperatorArgument>> arguments = std::make_shared<std::vector<OperatorArgument>>();
 
         while (lastIndexChecked + 1 < buffer.size()) {

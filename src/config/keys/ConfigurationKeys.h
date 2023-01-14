@@ -2,7 +2,7 @@
 
 #include <string>
 
-class ConfiguartionKeys {
+class ConfigurationKeys {
 public:
     static const std::string AUTH_KEY;
     static const std::string PORT;

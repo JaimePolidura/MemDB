@@ -49,7 +49,7 @@ Unprotected commas, i.e. commas which are not surrounded by parentheses, prevent
 class MockFoo {
  public:
   MOCK_METHOD(std::pair<bool, int>, GetPair, ());  // Won't compile!
-  MOCK_METHOD(bool, CheckMap, (std::map<int, double>, bool));  // Won't compile!
+  MOCK_METHOD(bool, CheckMap, (std::dbMap<int, double>, bool));  // Won't compile!
 };
 ```
 
@@ -60,7 +60,7 @@ Solution 1 - wrap with parentheses:
 class MockFoo {
  public:
   MOCK_METHOD((std::pair<bool, int>), GetPair, ());
-  MOCK_METHOD(bool, CheckMap, ((std::map<int, double>), bool));
+  MOCK_METHOD(bool, CheckMap, ((std::dbMap<int, double>), bool));
 };
 ```
 
@@ -75,7 +75,7 @@ class MockFoo {
  public:
   using BoolAndInt = std::pair<bool, int>;
   MOCK_METHOD(BoolAndInt, GetPair, ());
-  using MapIntDouble = std::map<int, double>;
+  using MapIntDouble = std::dbMap<int, double>;
   MOCK_METHOD(bool, CheckMap, (MapIntDouble, bool));
 };
 ```
@@ -1350,7 +1350,7 @@ class BarPlusBazEqMatcher {
 
 ### Matching Containers
 
-Sometimes an STL container (e.g. list, vector, map, ...) is passed to a mock
+Sometimes an STL container (e.g. list, vector, dbMap, ...) is passed to a mock
 function and you may want to validate it. Since most STL containers support the
 `==` operator, you can write `Eq(expected_container)` or simply
 `expected_container` to match a container exactly.
@@ -2470,7 +2470,7 @@ using ::testing::Invoke;
 ...
   MOCK_METHOD(bool, Foo,
               (bool visible, const string& name, int x, int y,
-               (const map<pair<int, int>>), double& weight, double min_weight,
+               (const dbMap<pair<int, int>>), double& weight, double min_weight,
                double max_wight));
 ...
 bool IsVisibleInQuadrant1(bool visible, int x, int y) {
@@ -2489,7 +2489,7 @@ using ::testing::_;
 using ::testing::Invoke;
 ...
 bool MyIsVisibleInQuadrant1(bool visible, const string& name, int x, int y,
-                            const map<pair<int, int>, double>& weight,
+                            const dbMap<pair<int, int>, double>& weight,
                             double min_weight, double max_wight) {
   return IsVisibleInQuadrant1(visible, x, y);
 }

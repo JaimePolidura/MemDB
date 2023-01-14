@@ -237,7 +237,7 @@
 //                         string.
 //
 // Integer types:
-//   TypeWithSize   - map an integer to a int type.
+//   TypeWithSize   - dbMap an integer to a int type.
 //   TimeInMillis   - integers of known sizes.
 //   BiggestInt     - the biggest signed integer type.
 //
@@ -2116,7 +2116,7 @@ GTEST_DISABLE_MSC_DEPRECATED_POP_()
 
 // MSVC "deprecates" snprintf and issues warnings wherever it is used.  In
 // order to avoid these warnings, we need to use _snprintf or _snprintf_s on
-// MSVC-based platforms.  We map the GTEST_SNPRINTF_ macro to the appropriate
+// MSVC-based platforms.  We dbMap the GTEST_SNPRINTF_ macro to the appropriate
 // function in order to achieve that.  We use macro definition here because
 // snprintf is a variadic function.
 #if _MSC_VER && !GTEST_OS_WINDOWS_MOBILE
@@ -2139,7 +2139,7 @@ using BiggestInt = long long;  // NOLINT
 constexpr BiggestInt kMaxBiggestInt = (std::numeric_limits<BiggestInt>::max)();
 
 // This template class serves as a compile-time function from valueSize to
-// type.  It map a valueSize in bytes to a primitive type with that
+// type.  It dbMap a valueSize in bytes to a primitive type with that
 // valueSize. e.g.
 //
 //   TypeWithSize<4>::UInt

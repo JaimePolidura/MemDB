@@ -3,7 +3,7 @@
 #include <string>
 #include <boost/asio.hpp>
 
-#include "config/keys/ConfiguartionKeys.h"
+#include "config/keys/ConfigurationKeys.h"
 #include "config/Configuration.h"
 #include "../Users/Authenticator.h"
 #include "messages/request/RequestDeserializer.h"
@@ -30,9 +30,9 @@ private:
 public:
     TCPServer(std::shared_ptr<Configuration> configuration, Authenticator authenicator, std::shared_ptr<OperatorDispatcher> operatorDispatcher):
         configuration(configuration),
-        port(configuration->get<uint16_t>(ConfiguartionKeys::PORT)),
+        port(configuration->get<uint16_t>(ConfigurationKeys::PORT)),
         authenicator(std::move(authenicator)),
-        connectionThreadPool(5, configuration->get<int>(ConfiguartionKeys::SERVER_MAX_THREADS), configuration->get<int>(ConfiguartionKeys::SERVER_MIN_THREADS), 100, "TCPServer"),
+        connectionThreadPool(5, configuration->get<int>(ConfigurationKeys::SERVER_MAX_THREADS), configuration->get<int>(ConfigurationKeys::SERVER_MIN_THREADS), 100, "TCPServer"),
         operatorDispatcher(operatorDispatcher),
         acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}) {};
 

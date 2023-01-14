@@ -17,25 +17,25 @@ public:
     OperationLogDiskLoader(std::shared_ptr<OperatorDispatcher> operationDispatcher) : operationDispatcher(operationDispatcher) {}
 
     std::shared_ptr<Map> loadIntoMapDb(std::shared_ptr<Map> db) {
-        if(!FileUtils::exists(FileUtils::getProgramBasePath("memdb"), "oplog.data"))
+        if(!FileUtils::exists(FileUtils::getProgramBasePath("memdb"), "oplog"))
             return db;
 
-        std::vector<uint8_t> bytesFromOpLog = FileUtils::readBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog.data"));
+        std::vector<uint8_t> bytesFromOpLog = FileUtils::readBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog"));
         std::vector<OperationLog> logs = this->operationLogDeserializer.deserializeAll(bytesFromOpLog);
 
         this->executeOperationLogs(db, logs);
+        this->clearFileAndAddNewCompressedOperations(db);
 
+        return db;
+    }
+
+private:
+    void clearFileAndAddNewCompressedOperations(std::shared_ptr<Map> db) {
         std::vector<MapEntry> allDataMap = db->all();
-        FileUtils::clear(FileUtils::getFileInProgramBasePath("memdb", "oplog.data"));
+        FileUtils::clear(FileUtils::getFileInProgramBasePath("memdb", "oplog"));
         std::vector<uint8_t> toWriteCompressed{};
-        uint64_t timestamp = std::chrono::duration_cast
-                <std::chrono::milliseconds>
-                (std::chrono::system_clock::now().time_since_epoch()).count();
 
         for (const MapEntry& entry: allDataMap) {
-            for(std::size_t i = 0; i < sizeof(uint64_t); i++) //Timestamp
-                toWriteCompressed.push_back(static_cast<uint8_t>(timestamp >> (sizeof(uint64_t) * i)));
-
             toWriteCompressed.push_back(SetOperator::OPERATOR_NUMBER << 2 | 0x02); //Flag 1 true -> pre hashed value TOOD fix store key
 
             toWriteCompressed.push_back(sizeof(uint32_t));
@@ -48,17 +48,13 @@ public:
             toWriteCompressed.push_back(0x00); //Padding
         }
 
-        FileUtils::clear(FileUtils::getFileInProgramBasePath("memdb", "oplog.data"));
-        FileUtils::appendBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog.data"), toWriteCompressed);
-
-        return db;
+        FileUtils::clear(FileUtils::getFileInProgramBasePath("memdb", "oplog"));
+        FileUtils::appendBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog"), toWriteCompressed);
     }
 
-private:
     void executeOperationLogs(std::shared_ptr<Map> db, const std::vector<OperationLog>& logs) {
         for (const auto &operationLog : logs)
             this->operationDispatcher->executeOperator(db, OperationBody{operationLog.operatorNumber, operationLog.flag1, operationLog.flag2, operationLog.args});
-
     }
 
 };

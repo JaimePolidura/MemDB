@@ -25,15 +25,15 @@ private:
     void appendSerialized(const std::vector<uint8_t>& serialized) {
         writeFileLock.lock();
 
-        FileUtils::appendBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog.data"), serialized);
+        FileUtils::appendBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog"), serialized);
 
         writeFileLock.unlock();
     }
 
     void createFileIfNotExistd() {
-        bool exists = FileUtils::exists(FileUtils::getProgramBasePath("memdb"), "oplog.data");
+        bool exists = FileUtils::exists(FileUtils::getProgramBasePath("memdb"), "oplog");
         if(!exists)
-            FileUtils::createFile(FileUtils::getProgramBasePath("memdb"), "oplog.data");
+            FileUtils::createFile(FileUtils::getProgramBasePath("memdb"), "oplog");
     }
 
     std::vector<uint8_t> serializeAll(const std::vector<OperationLog>& toSerialize) {

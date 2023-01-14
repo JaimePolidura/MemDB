@@ -22,12 +22,7 @@ public:
         if(!configuration->getBoolean(ConfiguartionKeys::USE_PERSISTENCE))
             return;
 
-        uint64_t timestamp = std::chrono::duration_cast
-                <std::chrono::milliseconds>
-                (std::chrono::system_clock::now().time_since_epoch()).count();
-
         this->buffer->add(OperationLog{
-            timestamp,
             request.operation.args,
             request.operation.operatorNumber,
             request.operation.flag1,

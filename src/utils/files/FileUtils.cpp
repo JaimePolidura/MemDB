@@ -68,6 +68,12 @@ std::string FileUtils::getSeparator() {
     return std::string(std::filesystem::path::preferred_separator, 1);
 }
 
+void FileUtils::clear(const std::string &path) {
+    std::ofstream myfile;
+    myfile.open(path, std::ios::trunc);
+    myfile.close();
+}
+
 std::vector<uint8_t> FileUtils::readBytes(const std::string &path) {
     std::vector<uint8_t> bytes{};
     std::ifstream file(path, std::ios::binary);

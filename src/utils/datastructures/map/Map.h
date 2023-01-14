@@ -35,6 +35,8 @@ public:
 
     void put(const std::string &key, uint8_t * value, size_t valueSize);
 
+    void putHash(uint32_t hashKey, uint8_t * value, size_t valueSize);
+
     std::optional<MapEntry> get(const std::string &key) const;
 
     void remove(const std::string &key);

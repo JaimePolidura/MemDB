@@ -9,6 +9,16 @@ Map::Map(uint16_t numberBuckets): numberBuckets(numberBuckets) {
     }
 }
 
+void Map::putHash(uint32_t keyHash, uint8_t *value, size_t valueSize) {
+    lockWrite(keyHash);
+
+    AVLTree * bucket = this->getBucket(keyHash);
+    if(bucket->add(keyHash, value, valueSize))
+        this->size++;
+
+    unlockWrite(keyHash);
+}
+
 void Map::put(const std::string &key, uint8_t * value, size_t valueSize) {
     uint32_t keyHash = this->calculateHash(key);
 

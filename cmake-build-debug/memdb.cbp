@@ -529,46 +529,6 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/database">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/database/operators">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/database/operators/AllOperators.h">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/database/operators/Operator.h">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/database/operators/OperatorDispatcher.h">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/database/operators/OperatorRegistry.h">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/database/operators/operations">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/database/operators/operations/DeleteOperator.h">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/database/operators/operations/GetOperator.h">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/database/operators/operations/SetOperator.h">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/main.cpp">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
@@ -602,6 +562,74 @@
 			<Option target="memdb_lib"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/messages/response/ResponseSerializer.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/operators">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/operators/AllOperators.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/operators/Operator.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/operators/OperatorDispatcher.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/operators/OperatorRegistry.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/operators/operations">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/operators/operations/DeleteOperator.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/operators/operations/GetOperator.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/operators/operations/SetOperator.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/persistence">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/persistence/OperationLog.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/persistence/OperationLogBuffer.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/persistence/OperationLogDeserializer.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/persistence/OperationLogDiskLoader.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/persistence/OperationLogDiskWriter.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/persistence/OperationLogSaver.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/persistence/OperationLogSerializer.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>

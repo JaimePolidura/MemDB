@@ -10,6 +10,7 @@
 #include "../tree/AVLTree.h"
 
 struct MapEntry {
+    uint32_t keyHash;
     uint8_t * value;
     size_t valueSize;
 
@@ -17,8 +18,10 @@ struct MapEntry {
 //        std::copy(value, value + valueSize, this->value);
 //    }
 
-    MapEntry(uint8_t * value, size_t valueSize): value(value), valueSize(valueSize) {}
+    MapEntry(uint32_t keyHash, uint8_t * value, size_t valueSize): keyHash(keyHash), value(value), valueSize(valueSize) {}
 };
+
+class shared_mutex;
 
 class Map {
 private:

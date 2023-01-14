@@ -3,6 +3,8 @@
 #include <cstdint>
 #include <functional>
 #include <mutex>
+#include <vector>
+#include <queue>
 
 class AVLNode {
 public:
@@ -43,6 +45,26 @@ public:
 
     void remove(uint32_t keyHash) {
         this->removeRecursive(this->root, keyHash);
+    }
+
+    std::vector<AVLNode *> all() const {
+        std::vector<AVLNode *> toReturn{};
+        std::queue<AVLNode *> pending{};
+        pending.push(this->root);
+
+        while(!pending.empty()) {
+            AVLNode * node = pending.front();
+            pending.pop();
+
+            if(node->left != nullptr)
+                pending.push(node->left);
+            if(node->right != nullptr)
+                pending.push(node->right);
+
+            toReturn.push_back(node);
+        }
+
+        return toReturn;
     }
 
     bool contains(uint32_t keyHashToSearch) const {

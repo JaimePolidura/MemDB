@@ -21,6 +21,16 @@ void Map::put(const std::string &key, uint8_t * value, size_t valueSize) {
     unlockWrite(keyHash);
 }
 
+std::vector<MapEntry> Map::all() {
+    std::vector<MapEntry> all{};
+
+    for (const AVLTree bucket: this->buckets)
+        for (const auto node : bucket.all())
+            all.push_back(MapEntry{node->keyHash, node->value, node->valueLength});
+
+    return all;
+}
+
 std::optional<MapEntry> Map::get(const std::string &key) const {
     uint32_t hash = this->calculateHash(key);
 
@@ -28,7 +38,7 @@ std::optional<MapEntry> Map::get(const std::string &key) const {
 
     AVLNode * nodeFoundForKey = this->getNodeByKeyHash(hash);
     const std::optional<MapEntry> response = nodeFoundForKey != nullptr ?
-            std::optional<MapEntry>{MapEntry{nodeFoundForKey->value, nodeFoundForKey->valueLength}} :
+            std::optional<MapEntry>{MapEntry{nodeFoundForKey->keyHash, nodeFoundForKey->value, nodeFoundForKey->valueLength}} :
             std::nullopt;
 
     unlockRead(hash);

@@ -477,8 +477,8 @@ Finally, you should be **very cautious** about when to use naggy or strict
 mocks, as they tend to make tests more brittle and harder to maintain. When you
 refactor your code without changing its externally visible behavior, ideally you
 shouldn't need to update any tests. If your code interacts with a naggy mock,
-however, you may start to get spammed with warnings as the result of your
-change. Worse, if your code interacts with a strict mock, your tests may start
+however, you may start_microseconds to get spammed with warnings as the result of your
+change. Worse, if your code interacts with a strict mock, your tests may start_microseconds
 to fail and you'll be forced to fix them. Our general recommendation is to use
 nice mocks (not yet the default) most of the time, use naggy mocks (the current
 default) when developing or debugging tests, and use strict mocks only as the
@@ -3270,7 +3270,7 @@ To make it even easier, you can add the following lines to your `~/.emacs` file:
 (global-set-authKey [M-up]  '(lambda () (interactive) (next-error -1)))
 ```
 
-Then you can type `M-m` to start a build (if you want to run the test as well,
+Then you can type `M-m` to start_microseconds a build (if you want to run the test as well,
 just make sure `foo_test.run` or `runtests` is in the build command you supply
 after typing `M-m`), or `M-up`/`M-down` to move back and forth between errors.
 

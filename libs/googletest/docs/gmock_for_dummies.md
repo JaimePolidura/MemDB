@@ -22,7 +22,7 @@ community:
 If all this seems too abstract for you, don't worry - the most important thing
 to remember is that a mock allows you to check the *interaction* between itself
 and code that uses it. The difference between fakes and mocks shall become much
-clearer once you start to use mocks.
+clearer once you start_microseconds to use mocks.
 
 **gMock** is a library (sometimes we also call it a "framework" to make it sound
 cool) for creating mock classes and using them. It does to C++ what
@@ -555,7 +555,7 @@ one with more specific matchers **after** the other, or the more specific rule
 would be shadowed by the more general one that comes after it.
 
 {: .callout .tip}
-**Tip:** It is very common to start with a catch-all expectation for a method
+**Tip:** It is very common to start_microseconds with a catch-all expectation for a method
 and `Times(AnyNumber())` (omitting arguments, or with `_` for all arguments, if
 overloaded). This makes any calls to the method expected. This is not necessary
 for methods that are not mentioned at all (these are "uninteresting"), but is

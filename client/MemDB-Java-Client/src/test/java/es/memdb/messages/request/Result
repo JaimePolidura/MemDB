@@ -1,38 +1,345 @@
+-------------------------------------------- ROUND 0 --------------------------------------------
 
 
-        ---------------------- operations: 1000 threads: 16 MemDb ----------------------
-        Finished in total time: 0s
-        SET: 1.10438335809806840,5
-        GET: 0.43860629774548165
-        DELETE: 1.1017336635549628
-        ---------------------- operations: 1000 threads: 16 Redis ----------------------
+    -------------------------------------------- THREADS TEST --------------------------------------------
+
+
+        ---------------------- operations: 10000 threads: 1 MemDb ----------------------
+        Finished in total time: 2s
+        SET: 0.2720699005724616
+        GET: 0.2219548872180451
+        DELETE: 0.2431466030989273
+        ---------------------- operations: 10000 threads: 1 Redis ----------------------
+        Finished in total time: 8s
+        SET: 0.8864042933810375
+        GET: 0.8519628408750375
+        DELETE: 0.8428528256270776
+
+
+        ---------------------- operations: 10000 threads: 4 MemDb ----------------------
+        Finished in total time: 3s
+        SET: 0.3447811447811448
+        GET: 0.22704770477047706
+        DELETE: 0.33518755168007214
+        ---------------------- operations: 10000 threads: 4 Redis ----------------------
+        Finished in total time: 9s
+        SET: 0.9009670889871805
+        GET: 0.8925173175001903
+        DELETE: 0.9074238391008578
+
+
+        ---------------------- operations: 10000 threads: 8 MemDb ----------------------
+        Finished in total time: 4s
+        SET: 0.5990901229461969
+        GET: 0.2769788203653207
+        DELETE: 0.5944728146590568
+        ---------------------- operations: 10000 threads: 8 Redis ----------------------
+        Finished in total time: 10s
+        SET: 1.042726041823379
+        GET: 1.037005034187392
+        DELETE: 1.0343360453832948
+
+
+        ---------------------- operations: 10000 threads: 12 MemDb ----------------------
+        Finished in total time: 7s
+        SET: 0.9908900836320191
+        GET: 0.3228265244515999
+        DELETE: 0.9804352166101018
+        ---------------------- operations: 10000 threads: 12 Redis ----------------------
+        Finished in total time: 13s
+        SET: 1.3179123970263211
+        GET: 1.3117103197348419
+        DELETE: 1.316923384177547
+
+
+        ---------------------- operations: 10000 threads: 16 MemDb ----------------------
+        Finished in total time: 10s
+        SET: 1.3941265652198327
+        GET: 0.33797641589021576
+        DELETE: 1.400943041779381
+        ---------------------- operations: 10000 threads: 16 Redis ----------------------
+        Finished in total time: 15s
+        SET: 1.518473573175513
+        GET: 1.5186416483537124
+        DELETE: 1.5217685540266186
+
+
+        ---------------------- operations: 10000 threads: 20 MemDb ----------------------
+        Finished in total time: 13s
+        SET: 1.7869719888792561
+        GET: 0.3629873943884697
+        DELETE: 1.78554401115459
+        ---------------------- operations: 10000 threads: 20 Redis ----------------------
+        Finished in total time: 17s
+        SET: 1.7264698423117661
+        GET: 1.727117903271993
+        DELETE: 1.7247140412501125
+
+
+        ---------------------- operations: 10000 threads: 24 MemDb ----------------------
+        Finished in total time: 16s
+        SET: 2.2214181259139827
+        GET: 0.36805363734525276
+        DELETE: 2.234731850598031
+        ---------------------- operations: 10000 threads: 24 Redis ----------------------
+        Finished in total time: 19s
+        SET: 1.9462799590133206
+        GET: 1.946027005320751
+        DELETE: 1.9454824004185038
+
+
+        ---------------------- operations: 10000 threads: 28 MemDb ----------------------
+        Finished in total time: 21s
+        SET: 2.9180234739267914
+        GET: 0.4417597495872907
+        DELETE: 2.9124161037904495
+        ---------------------- operations: 10000 threads: 28 Redis ----------------------
+        Finished in total time: 25s
+        SET: 2.5335370413897733
+        GET: 2.5441297625798445
+        DELETE: 2.5361043264937218
+
+
+        ---------------------- operations: 10000 threads: 32 MemDb ----------------------
+        Finished in total time: 26s
+        SET: 3.7144528799977534
+        GET: 0.4595632910209194
+        DELETE: 3.732802862658317
+        ---------------------- operations: 10000 threads: 32 Redis ----------------------
+        Finished in total time: 30s
+        SET: 2.992355887373614
+        GET: 2.9911104839847606
+        DELETE: 2.98372199445259
+
+
+        ---------------------- operations: 10000 threads: 36 MemDb ----------------------
+        Finished in total time: 23s
+        SET: 3.403264984755587
+        GET: 0.3443414221499776
+        DELETE: 3.3964210140460205
+        ---------------------- operations: 10000 threads: 36 Redis ----------------------
+        Finished in total time: 22s
+        SET: 2.2449832636680043
+        GET: 2.249126027282967
+        DELETE: 2.2447041575382976
+
+
+        ---------------------- operations: 10000 threads: 40 MemDb ----------------------
+        Finished in total time: 23s
+        SET: 3.4101862942288714
+        GET: 0.29666829067196343
+        DELETE: 3.4147177931529162
+        ---------------------- operations: 10000 threads: 40 Redis ----------------------
+        Finished in total time: 24s
+        SET: 2.4269467757754537
+        GET: 2.4286945960534996
+        DELETE: 2.4263391682763493
+
+
+        ---------------------- operations: 10000 threads: 44 MemDb ----------------------
+        Finished in total time: 27s
+        SET: 3.9339957708021105
+        GET: 0.3166452542637872
+        DELETE: 3.9359166541747865
+        ---------------------- operations: 10000 threads: 44 Redis ----------------------
+        Finished in total time: 25s
+        SET: 2.5695615456910526
+        GET: 2.5689357609162786
+        DELETE: 2.562368239716728
+
+
+        ---------------------- operations: 10000 threads: 48 MemDb ----------------------
+        Finished in total time: 28s
+        SET: 4.134925093632959
+        GET: 0.29652795586607206
+        DELETE: 4.126410835214447
+        ---------------------- operations: 10000 threads: 48 Redis ----------------------
+        Finished in total time: 27s
+        SET: 2.702289217616289
+        GET: 2.701352237594079
+        DELETE: 2.7017149933701936
+
+
+        ---------------------- operations: 10000 threads: 52 MemDb ----------------------
+        Finished in total time: 31s
+        SET: 4.506829009447565
+        GET: 0.2971767773496089
+        DELETE: 4.510821011807888
+        ---------------------- operations: 10000 threads: 52 Redis ----------------------
+        Finished in total time: 29s
+        SET: 2.916704694458725
+        GET: 2.9134710157875623
+        DELETE: 2.913535959397889
+
+
+        ---------------------- operations: 10000 threads: 56 MemDb ----------------------
+        Finished in total time: 35s
+        SET: 5.1176565008025685
+        GET: 0.32040187541862025
+        DELETE: 5.107140367341467
+        ---------------------- operations: 10000 threads: 56 Redis ----------------------
+        Finished in total time: 30s
+        SET: 3.049212798646688
+        GET: 3.0479878650143646
+        DELETE: 3.0467767948518736
+
+
+        ---------------------- operations: 10000 threads: 60 MemDb ----------------------
+        Finished in total time: 35s
+        SET: 5.176143222813863
+        GET: 0.2942017823742986
+        DELETE: 5.1869576715616565
+        ---------------------- operations: 10000 threads: 60 Redis ----------------------
+        Finished in total time: 32s
+        SET: 3.2312193271059764
+        GET: 3.233329839848682
+        DELETE: 3.2295061406325254
+
+
+        ---------------------- operations: 10000 threads: 64 MemDb ----------------------
+        Finished in total time: 40s
+        SET: 5.93064850818814
+        GET: 0.31143781654473834
+        DELETE: 5.908384713711042
+        ---------------------- operations: 10000 threads: 64 Redis ----------------------
+        Finished in total time: 37s
+        SET: 3.6789721739211507
+        GET: 3.6757183989160502
+        DELETE: 3.6772599831872
+
+
+-------------------------------------------- ROUND 1 --------------------------------------------
+
+
+    -------------------------------------------- THREADS TEST --------------------------------------------
+
+
+        ---------------------- operations: 10000 threads: 1 MemDb ----------------------
         Finished in total time: 1s
-        SET: 1.5728937728937729
-        GET: 1.5850353120824585
-        DELETE: 1.5595170722505187
+        SET: 0.18209044624138965
+        GET: 0.13629449345908123
+        DELETE: 0.1885002963841138
+        ---------------------- operations: 10000 threads: 1 Redis ----------------------
+        Finished in total time: 6s
+        SET: 0.6936398925052254
+        GET: 0.6818593419861153
+        DELETE: 0.6824445775913721
+
+
+        ---------------------- operations: 10000 threads: 4 MemDb ----------------------
+        Finished in total time: 2s
+        SET: 0.2852220807430155
+        GET: 0.20725116348896563
+        DELETE: 0.2974412846101898
+        ---------------------- operations: 10000 threads: 4 Redis ----------------------
+        Finished in total time: 8s
+        SET: 0.802090382735544
+        GET: 0.8065407302322108
+        DELETE: 0.8019987977156597
+
+
+        ---------------------- operations: 10000 threads: 8 MemDb ----------------------
+        Finished in total time: 4s
+        SET: 0.557161629434954
+        GET: 0.2541847257510088
+        DELETE: 0.5744144956956505
+        ---------------------- operations: 10000 threads: 8 Redis ----------------------
+        Finished in total time: 9s
+        SET: 0.972235825955924
+        GET: 0.9769034005416792
+        DELETE: 0.9712329276915634
+
+
+        ---------------------- operations: 10000 threads: 12 MemDb ----------------------
+        Finished in total time: 6s
+        SET: 0.8958908926508263
+        GET: 0.2873928704508757
+        DELETE: 0.8954947284065012
+        ---------------------- operations: 10000 threads: 12 Redis ----------------------
+        Finished in total time: 11s
+        SET: 1.1822174262196345
+        GET: 1.1744981524018776
+        DELETE: 1.1784039900249377
 
 
         ---------------------- operations: 10000 threads: 16 MemDb ----------------------
         Finished in total time: 9s
-        SET: 1.1410618735398297
-        GET: 0.4298817011081162
-        DELETE: 1.1382990654205607
+        SET: 1.2576749055827694
+        GET: 0.29639983378036344
+        DELETE: 1.2643358470842978
         ---------------------- operations: 10000 threads: 16 Redis ----------------------
-        Finished in total time: 16s
-        SET: 1.6507648576878482
-        GET: 1.6492017552049296
-        DELETE: 1.6482037341186686
+        Finished in total time: 13s
+        SET: 1.3826542183247656
+        GET: 1.3852411497391206
+        DELETE: 1.3821691690758184
 
 
-        ---------------------- operations: 100000 threads: 16 MemDb ----------------------
-        Finished in total time: 96s
-        SET: 1.2104566499853031
-        GET: 0.45614021921447523
-        DELETE: 1.2102342566858768
-        ---------------------- operations: 100000 threads: 16 Redis ----------------------
-        Finished in total time: 169s
-        SET: 1.689502497082672
-        GET: 1.689605190373058
-        DELETE: 1.6881219750301208
+        ---------------------- operations: 10000 threads: 20 MemDb ----------------------
+        Finished in total time: 13s
+        SET: 1.8674388867995486
+        GET: 0.3641143265664795
+        DELETE: 1.8719570980959268
+        ---------------------- operations: 10000 threads: 20 Redis ----------------------
+        Finished in total time: 17s
+        SET: 1.7123071607757132
+        GET: 1.703942545073689
+        DELETE: 1.7088926930354087
 
 
+        ---------------------- operations: 10000 threads: 24 MemDb ----------------------
+        Finished in total time: 14s
+        SET: 2.0619228407823678
+        GET: 0.3174289338207864
+        DELETE: 2.068030536647738
+        ---------------------- operations: 10000 threads: 24 Redis ----------------------
+        Finished in total time: 20s
+        SET: 2.053196821975488
+        GET: 2.0397263186861294
+        DELETE: 2.043449006292443
+
+
+        ---------------------- operations: 10000 threads: 28 MemDb ----------------------
+        Finished in total time: 17s
+        SET: 2.4493207941483806
+        GET: 0.3211328929306795
+        DELETE: 2.4675150054858768
+        ---------------------- operations: 10000 threads: 28 Redis ----------------------
+        Finished in total time: 21s
+        SET: 2.164010360132833
+        GET: 2.160899340724883
+        DELETE: 2.1560928433268858
+
+
+        ---------------------- operations: 10000 threads: 32 MemDb ----------------------
+        Finished in total time: 20s
+        SET: 2.8883493780523244
+        GET: 0.32557156940988685
+        DELETE: 2.892336210609096
+        ---------------------- operations: 10000 threads: 32 Redis ----------------------
+        Finished in total time: 23s
+        SET: 2.357375789493412
+        GET: 2.3567575161562235
+        DELETE: 2.3543223553268993
+
+
+        ---------------------- operations: 10000 threads: 36 MemDb ----------------------
+        Finished in total time: 26s
+        SET: 3.701827277033147
+        GET: 0.3604778322244576
+        DELETE: 3.887933192064472
+        ---------------------- operations: 10000 threads: 36 Redis ----------------------
+        Finished in total time: 26s
+        SET: 2.628414478139815
+        GET: 2.623526185906224
+        DELETE: 2.6191356790617086
+
+        ---------------------- operations: 10000 threads: 40 MemDb ----------------------
+        Finished in total time: 957s
+        SET: 104.04453876201923
+        GET: 77.83436129283372
+        DELETE: 103.86632853648655
+        ---------------------- operations: 10000 threads: 40 Redis ----------------------
+        Finished in total time: 72s
+        SET: 7.688113903971692
+        GET: 6.605078290951023
+        DELETE: 7.200313467640201

@@ -870,7 +870,7 @@ bool MatchRepetitionAndRegexAtHead(bool escaped, char c, char repeat,
 }
 
 // Returns true if and only if regex matches a prefix of str. regex must
-// be a valid simple regular expression and not start with "^", or the
+// be a valid simple regular expression and not start_microseconds with "^", or the
 // result is undefined.
 bool MatchRegexAtHead(const char* regex, const char* str) {
   if (*regex == '\0')  // An empty regex matches a prefix of anything.
@@ -890,7 +890,7 @@ bool MatchRegexAtHead(const char* regex, const char* str) {
     return MatchRepetitionAndRegexAtHead(escaped, regex[0], regex[1], regex + 2,
                                          str);
   } else {
-    // regex isn't empty, isn't "$", and doesn't start with a
+    // regex isn't empty, isn't "$", and doesn't start_microseconds with a
     // repetition.  We match the first atom of regex with the first
     // character of str and recurse.
     return (*str != '\0') && AtomMatchesChar(escaped, *regex, *str) &&

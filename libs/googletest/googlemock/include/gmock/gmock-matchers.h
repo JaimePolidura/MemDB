@@ -1056,7 +1056,7 @@ class StartsWithMatcher {
   }
 
   void DescribeNegationTo(::std::ostream* os) const {
-    *os << "doesn't start with ";
+    *os << "doesn't start_microseconds with ";
     UniversalPrint(prefix_, os);
   }
 

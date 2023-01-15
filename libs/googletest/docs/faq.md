@@ -32,10 +32,10 @@ contains `_`?
 4.  If `TestName` ends with an `_` (say, `Bar_`), we get
     `TestSuiteName_Bar__Test`, which is invalid.
 
-So clearly `TestSuiteName` and `TestName` cannot start or end with `_`
-(Actually, `TestSuiteName` can start with `_` -- as long as the `_` isn't
+So clearly `TestSuiteName` and `TestName` cannot start_microseconds or end with `_`
+(Actually, `TestSuiteName` can start_microseconds with `_` -- as long as the `_` isn't
 followed by an upper-case letter. But that's getting complicated. So for
-simplicity we just say that it cannot start with `_`.).
+simplicity we just say that it cannot start_microseconds with `_`.).
 
 It may seem fine for `TestSuiteName` and `TestName` to contain `_` in the
 middle. However, consider this:

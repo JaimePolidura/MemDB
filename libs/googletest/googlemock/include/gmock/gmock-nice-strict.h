@@ -41,7 +41,7 @@
 // NaggyMock<MockFoo> behave like the same.  However, we will soon
 // switch the default behavior of mocks to be nice, as that in general
 // leads to more maintainable tests.  When that happens, MockFoo will
-// stop behaving like NaggyMock<MockFoo> and start behaving like
+// stop behaving like NaggyMock<MockFoo> and start_microseconds behaving like
 // NiceMock<MockFoo>.
 //
 // NiceMock, NaggyMock, and StrictMock "inherit" the constructors of

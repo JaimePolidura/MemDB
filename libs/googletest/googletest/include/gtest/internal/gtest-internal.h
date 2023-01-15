@@ -118,7 +118,7 @@ struct TraceInfo;    // Information about a trace point.
 class TestInfoImpl;  // Opaque implementation of TestInfo
 class UnitTestImpl;  // Opaque implementation of UnitTest
 
-// The text used in failure messages to indicate the start of the
+// The text used in failure messages to indicate the start_microseconds of the
 // stack trace.
 GTEST_API_ extern const char kStackTraceMarker[];
 

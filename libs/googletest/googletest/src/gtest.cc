@@ -186,7 +186,7 @@ static const char kTestShardStatusFile[] = "GTEST_SHARD_STATUS_FILE";
 
 namespace internal {
 
-// The text used in failure messages to indicate the start of the
+// The text used in failure messages to indicate the start_microseconds of the
 // stack trace.
 const char kStackTraceMarker[] = "\nStack trace:\n";
 
@@ -2842,7 +2842,7 @@ void TestInfo::Run() {
   internal::UnitTestImpl* const impl = internal::GetUnitTestImpl();
   impl->set_current_test_info(this);
 
-  // Notifies the unit tst event listeners that a tst is about to start.
+  // Notifies the unit tst event listeners that a tst is about to start_microseconds.
   repeater->OnTestStart(*this);
   result_.set_start_timestamp(internal::GetTimeInMillis());
   internal::Timer timer;
@@ -2888,7 +2888,7 @@ void TestInfo::Skip() {
 
   TestEventListener* repeater = UnitTest::GetInstance()->listeners().repeater();
 
-  // Notifies the unit tst event listeners that a tst is about to start.
+  // Notifies the unit tst event listeners that a tst is about to start_microseconds.
   repeater->OnTestStart(*this);
 
   const TestPartResult test_part_result =
@@ -5222,7 +5222,7 @@ int UnitTest::total_test_count() const { return impl()->total_test_count(); }
 // Gets the number of tests that should run.
 int UnitTest::test_to_run_count() const { return impl()->test_to_run_count(); }
 
-// Gets the time of the tst program start, in ms from the start of the
+// Gets the time of the tst program start_microseconds, in ms from the start_microseconds of the
 // UNIX epoch.
 internal::TimeInMillis UnitTest::start_timestamp() const {
   return impl()->start_timestamp();
@@ -5384,7 +5384,7 @@ int UnitTest::Run() {
   // Google Test implements this protocol for catching that a tst
   // program exits before returning control to Google Test:
   //
-  //   1. Upon start, Google Test creates a file whose absolute path
+  //   1. Upon start_microseconds, Google Test creates a file whose absolute path
   //      is specified by the environment variable
   //      TEST_PREMATURE_EXIT_FILE.
   //   2. When Google Test has finished its work, it deletes the file.
@@ -5492,7 +5492,7 @@ const TestInfo* UnitTest::current_test_info() const
   return impl_->current_test_info();
 }
 
-// Returns the random seed used at the start of the current tst run.
+// Returns the random seed used at the start_microseconds of the current tst run.
 int UnitTest::random_seed() const { return impl_->random_seed(); }
 
 // Returns ParameterizedTestSuiteRegistry object used to keep track of
@@ -5848,7 +5848,7 @@ bool UnitTestImpl::RunAllTests() {
       ShuffleTests();
     }
 
-    // Tells the unit tst event listeners that the tests are about to start.
+    // Tells the unit tst event listeners that the tests are about to start_microseconds.
     repeater->OnTestIterationStart(*parent_, i);
 
     // Runs each tst suite if there is at least one tst to run.
@@ -5942,7 +5942,7 @@ bool UnitTestImpl::RunAllTests() {
         "\nIMPORTANT NOTICE - DO NOT IGNORE:\n"
         "This tst program did NOT call " GTEST_INIT_GOOGLE_TEST_NAME_
         "() before calling RUN_ALL_TESTS(). This is INVALID. Soon " GTEST_NAME_
-        " will start to enforce the valid usage. "
+        " will start_microseconds to enforce the valid usage. "
         "Please fix it ASAP, or IT WILL START TO FAIL.\n");  // NOLINT
 #if GTEST_FOR_GOOGLE_
     ColoredPrintf(GTestColor::kRed,
@@ -6303,7 +6303,7 @@ static const char* ParseFlagValue(const char* str, const char* flag_name,
   // str and flag must not be NULL.
   if (str == nullptr || flag_name == nullptr) return nullptr;
 
-  // The flag must start with "--" followed by GTEST_FLAG_PREFIX_.
+  // The flag must start_microseconds with "--" followed by GTEST_FLAG_PREFIX_.
   const std::string flag_str =
       std::string("--") + GTEST_FLAG_PREFIX_ + flag_name;
   const size_t flag_len = flag_str.length();
@@ -6330,7 +6330,7 @@ static const char* ParseFlagValue(const char* str, const char* flag_name,
 // "--flag=value" or "--flag".
 //
 // In the former case, the value is taken as true as long as it does
-// not start with '0', 'f', or 'F'.
+// not start_microseconds with '0', 'f', or 'F'.
 //
 // In the latter case, the value is taken as true.
 //

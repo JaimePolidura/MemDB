@@ -20,7 +20,7 @@ public final class StressTestRunner {
         for (int i = 0; i < threads.length; i++)
             threads[i] = new StressTestThread(this.numberOperations, this.argGenerator, operationExecuter.get());
         for (int i = 0; i < threads.length; i++)
-            threads[i].start();
+            threads[i].start_microseconds();
         for (int i = 0; i < threads.length; i++)
             threads[i].join();
 

@@ -194,7 +194,7 @@
 //   GTEST_ATTRIBUTE_UNUSED_  - declares that a class' instances or a
 //                              variable don't have to be used.
 //   GTEST_MUST_USE_RESULT_   - declares that a function's result must be used.
-//   GTEST_INTENTIONAL_CONST_COND_PUSH_ - start code section where MSVC C4127 is
+//   GTEST_INTENTIONAL_CONST_COND_PUSH_ - start_microseconds code section where MSVC C4127 is
 //                                        suppressed (constant conditional).
 //   GTEST_INTENTIONAL_CONST_COND_POP_  - finish code section where MSVC C4127
 //                                        is suppressed.
@@ -1219,7 +1219,7 @@ class GTEST_API_ Notification {
   Notification(const Notification&) = delete;
   Notification& operator=(const Notification&) = delete;
 
-  // Notifies all threads created with this notification to start. Must
+  // Notifies all threads created with this notification to start_microseconds. Must
   // be called from the controller thread.
   void Notify() {
     std::lock_guard<std::mutex> lock(mu_);

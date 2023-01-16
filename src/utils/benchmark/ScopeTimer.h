@@ -1,18 +1,20 @@
 #include <chrono>
 #include <iostream>
 
-class Timer {
+#define TIME_THIS_SCOPE(name) ScopeTimer(name)
+
+class ScopeTimer {
 private:
     uint64_t start_microseconds;
     char * name;
 
 public:
-    Timer(char * name):
+    ScopeTimer(char * name):
         name(name),
         start_microseconds(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now()
             .time_since_epoch()).count()) {}
 
-    ~Timer() {
+    ~ScopeTimer() {
         uint64_t end_microseconds = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now()
                 .time_since_epoch()).count();
 

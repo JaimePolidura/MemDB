@@ -1138,7 +1138,7 @@ class Timer {
 
 // Returns a timestamp as milliseconds since the epoch. Note this time may jump
 // around subject to adjustments by the system, to measure elapsed time use
-// Timer instead.
+// ScopeTimer instead.
 TimeInMillis GetTimeInMillis() {
   return std::chrono::duration_cast<std::chrono::milliseconds>(
              std::chrono::system_clock::now() -

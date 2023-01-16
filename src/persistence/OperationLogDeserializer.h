@@ -7,6 +7,7 @@
 
 #include "OperationLog.h"
 #include "messages/request/RequestDeserializer.h"
+#include "utils/benchmark/ScopeTimer.h"
 
 class OperationLogDeserializer {
 private:
@@ -21,9 +22,13 @@ public:
         uint64_t a = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
         for(auto bytesPtr = bytes.begin(); bytesPtr < bytes.end();) {
-            const std::vector<uint8_t> buffer1 = std::vector<uint8_t>(bytesPtr, bytes.end() - 1);
-            OperationBody operationBody = this->requestDeserializer.deserializeOperation(std::move(buffer1));
+            OperationBody operationBody{};
 
+            {
+                TIME_THIS_SCOPE("xd");
+                const std::vector<uint8_t> buffer1 = std::vector<uint8_t>(bytesPtr, bytes.end() - 1);
+                operationBody = this->requestDeserializer.deserializeOperation(std::move(buffer1));
+            }
             const OperationLog operationLog = OperationLog{operationBody.args, operationBody.operatorNumber,
                                                            operationBody.flag1, operationBody.flag2};
             logs.push_back(operationLog);

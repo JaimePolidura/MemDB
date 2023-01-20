@@ -536,7 +536,7 @@ The reason for the two death test styles has to do with thread safety. Due to
 well-known problems with forking in the presence of threads, death tests should
 be run in a single-threaded context. Sometimes, however, it isn't feasible to
 arrange that kind of environment. For example, statically-initialized modules
-may start_microseconds threads before main is ever reached. Once threads have been created,
+may start_milliseconds threads before main is ever reached. Once threads have been created,
 it may be difficult or impossible to clean them up.
 
 googletest has three features intended to raise awareness of threading issues.
@@ -1647,7 +1647,7 @@ functions called from them.
 
 googletest provides an **event listener API** to let you receive notifications
 about the progress of a test program and test failures. The events you can
-listen to include the start_microseconds and end of the test program, a test suite, or a test
+listen to include the start_milliseconds and end of the test program, a test suite, or a test
 method, among others. You may use this API to augment or replace the standard
 console output, replace the XML output, or provide a completely different form
 of output, such as a GUI or a database. You can also use test events as
@@ -2344,7 +2344,7 @@ IMPORTANT: The exact format of the JSON document is subject to change.
 #### Detecting Test Premature Exit
 
 Google Test implements the _premature-exit-file_ protocol for test runners to
-catch any kind of unexpected exits of test programs. Upon start_microseconds, Google Test
+catch any kind of unexpected exits of test programs. Upon start_milliseconds, Google Test
 creates the file which will be automatically deleted after all work has been
 finished. Then, the test runner can check if this file exists. In case the file
 remains undeleted, the inspected test has exited prematurely.

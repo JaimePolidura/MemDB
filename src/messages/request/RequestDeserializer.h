@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Request.h"
+#include "utils/benchmark/ScopeTimer.h"
 
 #include <memory>
 #include <vector>

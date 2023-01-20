@@ -52,8 +52,8 @@ public final class AsyncMemDbConnection implements MemDbConnection {
         this.output = this.socket.getOutputStream();
         this.input = this.socket.getInputStream();
 
-        this.serverAsyncReader.start_microseconds();
-        this.serverAsyncWriter.start_microseconds();
+        this.serverAsyncReader.start();
+        this.serverAsyncWriter.start();
     }
 
     @Override

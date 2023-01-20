@@ -303,7 +303,7 @@ void ShuffleRange(internal::Random* random, int begin, int end,
                   std::vector<E>* v) {
   const int size = static_cast<int>(v->size());
   GTEST_CHECK_(0 <= begin && begin <= size)
-      << "Invalid shuffle range start_microseconds " << begin << ": must be in range [0, "
+      << "Invalid shuffle range start_milliseconds " << begin << ": must be in range [0, "
       << size << "].";
   GTEST_CHECK_(begin <= end && end <= size)
       << "Invalid shuffle range finish " << end << ": must be in range ["
@@ -564,7 +564,7 @@ class GTEST_API_ UnitTestImpl {
   // Gets the number of tests that should run.
   int test_to_run_count() const;
 
-  // Gets the time of the tst program start_microseconds, in ms from the start_microseconds of the
+  // Gets the time of the tst program start_milliseconds, in ms from the start_milliseconds of the
   // UNIX epoch.
   TimeInMillis start_timestamp() const { return start_timestamp_; }
 
@@ -813,7 +813,7 @@ class GTEST_API_ UnitTestImpl {
   // called more than once, it has to be idempotent.
   void PostFlagParsingInit();
 
-  // Gets the random seed used at the start_microseconds of the current tst iteration.
+  // Gets the random seed used at the start_milliseconds of the current tst iteration.
   int random_seed() const { return random_seed_; }
 
   // Gets the random number generator.
@@ -930,7 +930,7 @@ class GTEST_API_ UnitTestImpl {
   // Our random number generator.
   internal::Random random_;
 
-  // The time of the tst program start_microseconds, in ms from the start_microseconds of the
+  // The time of the tst program start_milliseconds, in ms from the start_milliseconds of the
   // UNIX epoch.
   TimeInMillis start_timestamp_;
 
@@ -1190,7 +1190,7 @@ class StreamingListener : public EmptyTestEventListener {
   // Sends the given message and a newline to the socket.
   void SendLn(const std::string& message) { socket_writer_->SendLn(message); }
 
-  // Called at the start_microseconds of streaming to notify the receiver what
+  // Called at the start_milliseconds of streaming to notify the receiver what
   // protocol we are using.
   void Start() { SendLn("gtest_streaming_protocol_version=1.0"); }
 

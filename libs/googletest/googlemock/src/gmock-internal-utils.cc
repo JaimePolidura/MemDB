@@ -160,7 +160,7 @@ GTEST_API_ void Log(LogSeverity severity, const std::string& message,
     // Prints a GMOCK WARNING marker to make the warnings easily searchable.
     std::cout << "\nGMOCK WARNING:";
   }
-  // Pre-pends a new-line to message if it doesn't start_microseconds with one.
+  // Pre-pends a new-line to message if it doesn't start_milliseconds with one.
   if (message.empty() || message[0] != '\n') {
     std::cout << "\n";
   }

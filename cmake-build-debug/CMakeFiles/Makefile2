@@ -236,8 +236,8 @@ src/CMakeFiles/memdb_lib.dir/clean:
 # Target rules for target tst/CMakeFiles/memdb_tst.dir
 
 # All Build rule for target.
-tst/CMakeFiles/memdb_tst.dir/all: libs/googletest/googletest/CMakeFiles/gtest.dir/all
 tst/CMakeFiles/memdb_tst.dir/all: src/CMakeFiles/memdb_lib.dir/all
+tst/CMakeFiles/memdb_tst.dir/all: libs/googletest/googletest/CMakeFiles/gtest.dir/all
 	$(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/depend
 	$(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=23,24,25,26,27,28,29,30,31,32,33,34 "Built target memdb_tst"
@@ -315,8 +315,8 @@ libs/googletest/googlemock/CMakeFiles/gmock.dir/clean:
 # Target rules for target libs/googletest/googlemock/CMakeFiles/gmock_main.dir
 
 # All Build rule for target.
-libs/googletest/googlemock/CMakeFiles/gmock_main.dir/all: libs/googletest/googlemock/CMakeFiles/gmock.dir/all
 libs/googletest/googlemock/CMakeFiles/gmock_main.dir/all: libs/googletest/googletest/CMakeFiles/gtest.dir/all
+libs/googletest/googlemock/CMakeFiles/gmock_main.dir/all: libs/googletest/googlemock/CMakeFiles/gmock.dir/all
 	$(MAKE) $(MAKESILENT) -f libs\googletest\googlemock\CMakeFiles\gmock_main.dir\build.make libs/googletest/googlemock/CMakeFiles/gmock_main.dir/depend
 	$(MAKE) $(MAKESILENT) -f libs\googletest\googlemock\CMakeFiles\gmock_main.dir\build.make libs/googletest/googlemock/CMakeFiles/gmock_main.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\programacion\MemDB\cmake-build-debug\CMakeFiles --progress-num=3,4 "Built target gmock_main"

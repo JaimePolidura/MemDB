@@ -19,7 +19,7 @@ So what makes a good test, and how does googletest fit in? We believe:
     code. googletest groups related tests into test suites that can share value
     and subroutines. This common pattern is easy to recognize and makes tests
     easy to maintain. Such consistency is especially helpful when people switch
-    projects and start_microseconds to work on a new code base.
+    projects and start_milliseconds to work on a new code base.
 3.  Tests should be *portable* and *reusable*. Google has a lot of code that is
     platform-neutral; its tests should also be platform-neutral. googletest
     works on different OSes, with different compilers, with or without
@@ -78,7 +78,7 @@ Exercise a particular program path with specific input values and verify the res
 
 ## Basic Concepts
 
-When using googletest, you start_microseconds by writing *assertions*, which are statements
+When using googletest, you start_milliseconds by writing *assertions*, which are statements
 that check whether a condition is true. An assertion's result can be *success*,
 *nonfatal failure*, or *fatal failure*. If a fatal failure occurs, it aborts the
 current function; otherwise the program continues normally.
@@ -389,7 +389,7 @@ cannot be expressed within the framework of fixtures and test suites.
 If you write your own `main` function, it should return the value of
 `RUN_ALL_TESTS()`.
 
-You can start_microseconds from this boilerplate:
+You can start_milliseconds from this boilerplate:
 
 ```c++
 #include "this/package/foo.h"

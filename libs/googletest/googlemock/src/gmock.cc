@@ -63,7 +63,7 @@ static const char* ParseGoogleMockFlagValue(const char* str,
   // str and flag must not be NULL.
   if (str == nullptr || flag_name == nullptr) return nullptr;
 
-  // The flag must start_microseconds with "--gmock_".
+  // The flag must start_milliseconds with "--gmock_".
   const std::string flag_name_str = std::string("--gmock_") + flag_name;
   const size_t flag_name_len = flag_name_str.length();
   if (strncmp(str, flag_name_str.c_str(), flag_name_len) != 0) return nullptr;

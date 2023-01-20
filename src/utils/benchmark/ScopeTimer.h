@@ -1,3 +1,5 @@
+#pragma once
+
 #include <chrono>
 #include <iostream>
 
@@ -5,20 +7,33 @@
 
 class ScopeTimer {
 private:
-    uint64_t start_microseconds;
-    char * name;
+    uint64_t start_milliseconds;
+    std::string name;
+    bool stoped;
 
 public:
-    ScopeTimer(char * name):
-        name(name),
-        start_microseconds(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now()
-            .time_since_epoch()).count()) {}
+    ScopeTimer(std::string name):
+            name(std::move(name)),
+            stoped(false),
+            start_milliseconds(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now()
+                .time_since_epoch()).count()) {}
 
     ~ScopeTimer() {
-        uint64_t end_microseconds = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now()
-                .time_since_epoch()).count();
+        if(!this->stoped)
+            this->printResult();
+    }
 
-        uint64_t difference = start_microseconds - end_microseconds;
+    void stop() {
+        this->stoped = true;
+        this->printResult();
+    }
+
+private:
+    void printResult() {
+        uint64_t end_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now()
+                                                                                                  .time_since_epoch()).count();
+
+        uint64_t difference = end_milliseconds - start_milliseconds;
 
         std::cout << this->name << " duration: " << difference << " ms" << std::endl;
     }

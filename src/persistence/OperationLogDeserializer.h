@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <cstdint>
 #include <memory>
@@ -12,7 +14,7 @@
 class OperationLogDeserializer {
 private:
     RequestDeserializer requestDeserializer;
-    
+
 public:
     std::vector<OperationLog> deserializeAll(const std::vector<uint8_t>& bytes) {
         std::vector<OperationLog> logs{};
@@ -21,14 +23,13 @@ public:
 
         uint64_t a = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
-        for(auto bytesPtr = bytes.begin(); bytesPtr < bytes.end();) {
-            OperationBody operationBody{};
+        const uint8_t * firstElementPtr = bytes.data();
+        const uint8_t * lastElementPtr = &bytes.back();
 
-            {
-                TIME_THIS_SCOPE("xd");
-                const std::vector<uint8_t> buffer1 = std::vector<uint8_t>(bytesPtr, bytes.end() - 1);
-                operationBody = this->requestDeserializer.deserializeOperation(std::move(buffer1));
-            }
+        for(const uint8_t * bytesPtr = firstElementPtr; bytesPtr < (lastElementPtr + 1);) {
+            uint8_t initialOffset = bytesPtr - firstElementPtr;
+            OperationBody operationBody = this->requestDeserializer.deserializeOperation(bytes, initialOffset);
+            
             const OperationLog operationLog = OperationLog{operationBody.args, operationBody.operatorNumber,
                                                            operationBody.flag1, operationBody.flag2};
             logs.push_back(operationLog);
@@ -48,7 +49,6 @@ public:
                         <std::chrono::milliseconds>
                         (std::chrono::system_clock::now().time_since_epoch()).count();
             }
-
         }
 
         return logs;

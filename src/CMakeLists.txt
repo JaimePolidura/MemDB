@@ -1,4 +1,4 @@
-find_package(Boost 1.81.0)
+find_package(Boost 1.80.0 REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
 set(BINARY ${CMAKE_PROJECT_NAME})

@@ -19,36 +19,19 @@ public:
     std::vector<OperationLog> deserializeAll(const std::vector<uint8_t>& bytes) {
         std::vector<OperationLog> logs{};
 
-        int counter = 0;
-
-        uint64_t a = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-
         const uint8_t * firstElementPtr = bytes.data();
         const uint8_t * lastElementPtr = &bytes.back();
 
         for(const uint8_t * bytesPtr = firstElementPtr; bytesPtr < (lastElementPtr + 1);) {
-            uint8_t initialOffset = bytesPtr - firstElementPtr;
+            uint64_t initialOffset = bytesPtr - firstElementPtr;
             OperationBody operationBody = this->requestDeserializer.deserializeOperation(bytes, initialOffset);
             
             const OperationLog operationLog = OperationLog{operationBody.args, operationBody.operatorNumber,
                                                            operationBody.flag1, operationBody.flag2};
             logs.push_back(operationLog);
 
-            bytesPtr += this->calculateOperationLogSizeInDisk(operationLog);
-
-            counter++;
-
-            if(counter == 1000){
-                uint64_t b = std::chrono::duration_cast
-                        <std::chrono::milliseconds>
-                        (std::chrono::system_clock::now().time_since_epoch()).count();
-
-                printf("Deserialized 1000 elements in %i ms\n", b - a);
-                counter = 0;
-                a = std::chrono::duration_cast
-                        <std::chrono::milliseconds>
-                        (std::chrono::system_clock::now().time_since_epoch()).count();
-            }
+            uint8_t toIncrease = this->calculateOperationLogSizeInDisk(operationLog);
+            bytesPtr = bytesPtr + toIncrease;
         }
 
         return logs;

@@ -42,7 +42,7 @@ public:
         return AuthenticationBody(std::string((char *) authKey, authLength), flagAuth1, flagAuth2);
     }
 
-    OperationBody deserializeOperation(const std::vector<uint8_t>& buffer, const uint8_t initialOffset = 0) {
+    OperationBody deserializeOperation(const std::vector<uint8_t>& buffer, const uint64_t initialOffset = 0) {
         uint8_t operatorNumber = this->getValueWithoutFlags(buffer, initialOffset);
         bool flagOperation1 = this->getFlag(buffer, initialOffset, FLAG1_MASK); //Si es true, la longitud de los argumentos ocuparan 2 bytes
         bool flagOperation2 = this->getFlag(buffer, initialOffset, FLAG2_MASK);
@@ -52,7 +52,7 @@ public:
         }
 
         int numerOfArguments = 0;
-        int lastIndexChecked = initialOffset + 1; //Index first arg
+        uint64_t lastIndexChecked = initialOffset + 1; //Index first arg
         std::shared_ptr<std::vector<OperatorArgument>> arguments = std::make_shared<std::vector<OperatorArgument>>();
 
         while (lastIndexChecked + 1 < buffer.size()) {
@@ -82,11 +82,11 @@ private:
         return toFill;
     }
 
-    uint8_t getValueWithoutFlags(const std::vector<uint8_t>& buffer, int pos) {
+    uint8_t getValueWithoutFlags(const std::vector<uint8_t>& buffer, uint64_t pos) {
         return (uint8_t) buffer[pos] >> 2;
     }
 
-    bool getFlag(const std::vector<uint8_t>& buffer, int pos, char flagMask) {
+    bool getFlag(const std::vector<uint8_t>& buffer, uint64_t pos, char flagMask) {
         return (buffer[pos] << 4) & flagMask;
     }
 };

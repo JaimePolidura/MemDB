@@ -53,8 +53,12 @@ private:
     }
 
     void executeOperationLogs(std::shared_ptr<Map> db, const std::vector<OperationLog>& logs) {
-        for (const auto &operationLog : logs)
+        int counter = 0;
+
+        for (const auto &operationLog : logs) {
+            counter++;
             this->operationDispatcher->executeOperator(db, OperationBody{operationLog.operatorNumber, operationLog.flag1, operationLog.flag2, operationLog.args});
+        }
     }
 
 };

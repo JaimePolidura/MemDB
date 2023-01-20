@@ -15,12 +15,11 @@ class OperatorDispatcher {
 private:
     std::shared_ptr<Map> db;
     OperatorRegistry operatorRegistry;
-    SingleThreadPool singleThreadedWritePool;
     OperationLogSaver operationLogSaver;
 
 public:
     OperatorDispatcher(std::shared_ptr<Map> dbCons, const OperationLogSaver& operationLogSaver):
-        db(dbCons), singleThreadedWritePool("OperatorDispatcher"),operationLogSaver(std::move(operationLogSaver))
+        db(dbCons), operationLogSaver(std::move(operationLogSaver))
     {}
 
     void dispatch(Request& request,
@@ -34,19 +33,11 @@ public:
             return;
         }
 
-        if(operatorToExecute->type() == READ){
-            Response result = operatorToExecute->operate(request.operation, this->db);
-            this->callOnResponseCallback(onResponse, result, requestNumber);
-        }
-        if(operatorToExecute->type() == WRITE){
-            this->singleThreadedWritePool.submit([operatorToExecute, onResponse, requestNumber, request, this] {
-                this->operationLogSaver.save(request);
-                
-                Response result = operatorToExecute->operate(request.operation, this->db);
+        if(operatorToExecute->type() == WRITE)
+            this->operationLogSaver.save(request);
 
-                this->callOnResponseCallback(onResponse, result, requestNumber);
-            });
-        }
+        Response result = operatorToExecute->operate(request.operation, this->db);
+        this->callOnResponseCallback(onResponse, result, requestNumber);
     }
 
     Response executeOperator(std::shared_ptr<Map> map, const OperationBody& operationBody) {

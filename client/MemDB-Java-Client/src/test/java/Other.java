@@ -15,12 +15,12 @@ public final class Other {
 //
 //        memDb.delete("J");
 //        memDb.delete("A");
-        
+
         /**
          * B -> 2
          * C -> 1
          */
 
-        System.out.println(memDb.get("nombre"));
+        System.out.println(memDb.get("A"));
     }
 }

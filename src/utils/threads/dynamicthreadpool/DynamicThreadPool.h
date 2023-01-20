@@ -14,7 +14,7 @@
 class DynamicThreadPool {
 private:
     std::vector<std::shared_ptr<DynamicThreadPoolWorker>> workers;
-    std::atomic_uint64_t numberTaskEnqueued;
+    std::uint64_t numberTaskEnqueued;
     std::mutex autoScaleLock;
     std::string name;
     int inspectionPerTaskEnqueued;

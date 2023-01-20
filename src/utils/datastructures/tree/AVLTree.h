@@ -6,11 +6,14 @@
 #include <vector>
 #include <queue>
 
+#include "utils/strings/SmallString.h"
+
 class AVLNode {
 public:
     AVLNode * left;
     AVLNode * right;
     uint8_t * value;
+    SmallString key;
     uint32_t keyHash;
     int16_t height;
     uint8_t valueLength;
@@ -21,8 +24,8 @@ public:
 
     AVLNode() = default;
 
-    AVLNode(uint8_t * value, uint32_t keyHash, uint8_t valueLength, int16_t height):
-            left(nullptr), right(nullptr), value(value), keyHash(keyHash), valueLength(valueLength), height(height) {
+    AVLNode(uint8_t * value, uint32_t keyHash, uint8_t valueLength, int16_t height, const SmallString& key):
+            left(nullptr), right(nullptr), value(value), keyHash(keyHash), valueLength(valueLength), height(height), key(key) {
     }
 };
 
@@ -31,8 +34,8 @@ public:
     AVLNode * root;
 
 public:
-    bool add(uint32_t keyHash, uint8_t * value, uint8_t valueLength) {
-        AVLNode * newNode = new AVLNode(value, keyHash, valueLength, -1);
+    bool add(uint32_t keyHash, uint8_t * value, uint8_t valueLength, const SmallString& key) {
+        AVLNode * newNode = new AVLNode(value, keyHash, valueLength, -1, key);
 
         if(this->root == nullptr){
             this->root = newNode;
@@ -117,6 +120,8 @@ private:
                     last = last->left;
 
                 if(rootRemoved) this->root = last;
+
+                temp->key.setDeleted();
 
 //                delete[] last->value; Memory leak, this line sometimes doesn't work, possibly due to double free
                 delete temp;

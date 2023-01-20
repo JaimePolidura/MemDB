@@ -11,10 +11,10 @@ public:
 
         //Args
         for(auto arg = toDeserialize.args->begin(); arg < toDeserialize.args->end(); arg++){
-            serializedOut.push_back(arg->lengthArg);
+            serializedOut.push_back(arg->size);
 
-            for(uint8_t j = 0; j < arg->lengthArg; j++)
-                serializedOut.push_back(* (arg->arg + j));
+            for(uint8_t j = 0; j < arg->size; j++)
+                serializedOut.push_back(* (arg->value + j));
         }
 
         //Padding

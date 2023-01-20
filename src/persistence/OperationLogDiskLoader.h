@@ -36,11 +36,11 @@ private:
         std::vector<uint8_t> toWriteCompressed{};
 
         for (const MapEntry& entry: allDataMap) {
-            toWriteCompressed.push_back(SetOperator::OPERATOR_NUMBER << 2 | 0x02); //Flag 1 true -> pre hashed value TOOD fix store key
+            toWriteCompressed.push_back(SetOperator::OPERATOR_NUMBER << 2);
 
-            toWriteCompressed.push_back(sizeof(uint32_t));
-            for(std::size_t i = 0; i < sizeof(uint32_t); i++) //Key Hash
-                toWriteCompressed.push_back(static_cast<uint32_t>(entry.keyHash >> (sizeof(uint32_t) * i)));
+            toWriteCompressed.push_back(entry.key.size);
+            for(std::size_t i = 0; i < entry.key.size; i++) //Key Hash
+                toWriteCompressed.push_back(* entry.key[i]);
             toWriteCompressed.push_back(entry.valueSize); //Value size
             for(int i = 0; i < entry.valueSize; i++) //Value content
                 toWriteCompressed.push_back(* (entry.value + i));

@@ -11,9 +11,7 @@ public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x03;
 
     Response operate(const OperationBody& operation, std::shared_ptr<Map> map) override {
-        const std::string& key = std::string((char *) operation.args->at(0).arg, operation.args->at(0).lengthArg);
-
-        map->remove(key);
+        map->remove(operation.args->at(0));
 
         return Response::success();
     }

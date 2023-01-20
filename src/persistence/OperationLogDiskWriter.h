@@ -39,7 +39,7 @@ private:
     std::vector<uint8_t> serializeAll(const std::vector<OperationLog>& toSerialize) {
         std::vector<uint8_t> serialized{};
         for (auto actualOperation = toSerialize.begin(); actualOperation < toSerialize.end(); actualOperation++)
-            operationLogSerializer.serialize(serialized, *actualOperation);
+            this->operationLogSerializer.serialize(serialized, *actualOperation);
 
         return serialized;
     }

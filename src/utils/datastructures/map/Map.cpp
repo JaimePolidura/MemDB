@@ -9,23 +9,13 @@ Map::Map(uint16_t numberBuckets): numberBuckets(numberBuckets) {
     }
 }
 
-void Map::putHash(uint32_t keyHash, uint8_t *value, size_t valueSize) {
-    lockWrite(keyHash);
-
-    AVLTree * bucket = this->getBucket(keyHash);
-    if(bucket->add(keyHash, value, valueSize))
-        this->size++;
-
-    unlockWrite(keyHash);
-}
-
-void Map::put(const std::string &key, uint8_t * value, size_t valueSize) {
+void Map::put(const SmallString& key, uint8_t * value, size_t valueSize) {
     uint32_t keyHash = this->calculateHash(key);
 
     lockWrite(keyHash);
 
     AVLTree * bucket = this->getBucket(keyHash);
-    if(bucket->add(keyHash, value, valueSize))
+    if(bucket->add(keyHash, value, valueSize, key))
         this->size++;
 
     unlockWrite(keyHash);
@@ -36,19 +26,19 @@ std::vector<MapEntry> Map::all() {
 
     for (const AVLTree bucket: this->buckets)
         for (const auto node : bucket.all())
-            all.push_back(MapEntry{node->keyHash, node->value, node->valueLength});
+            all.push_back(MapEntry{node->key, node->keyHash, node->value, node->valueLength});
 
     return all;
 }
 
-std::optional<MapEntry> Map::get(const std::string &key) const {
+std::optional<MapEntry> Map::get(const SmallString& key) const {
     uint32_t hash = this->calculateHash(key);
 
     lockRead(hash);
 
-    AVLNode * nodeFoundForKey = this->getNodeByKeyHash(hash);
-    const std::optional<MapEntry> response = nodeFoundForKey != nullptr ?
-            std::optional<MapEntry>{MapEntry{nodeFoundForKey->keyHash, nodeFoundForKey->value, nodeFoundForKey->valueLength}} :
+    AVLNode * node = this->getNodeByKeyHash(hash);
+    const std::optional<MapEntry> response = node != nullptr ?
+            std::optional<MapEntry>{MapEntry{node->key, node->keyHash, node->value, node->valueLength}} :
             std::nullopt;
 
     unlockRead(hash);
@@ -56,7 +46,7 @@ std::optional<MapEntry> Map::get(const std::string &key) const {
     return response;
 }
 
-void Map::remove(const std::string &key) {
+void Map::remove(const SmallString& key) {
     uint32_t hash = this->calculateHash(key);
 
     lockWrite(hash);
@@ -70,7 +60,7 @@ void Map::remove(const std::string &key) {
     unlockWrite(hash);
 }
 
-bool Map::contains(const std::string &key) const {
+bool Map::contains(const SmallString& key) const {
     return this->getNodeByKeyHash(this->calculateHash(key)) != nullptr;
 }
 

@@ -59,7 +59,7 @@ public final class MemDbStressTest {
         System.out.println("        ---------------------- operations: "+numberOperations+" threads: "+numberThreads+" "+name+" ----------------------");
 
         long a = System.currentTimeMillis();
-        List<StressTestResult> results =  memDbStressTestRunner.run(memDbExecutorProvider);
+        List<StressTestResult> results = memDbStressTestRunner.run(memDbExecutorProvider);
         long b = System.currentTimeMillis();
 
         Map<StressTestOperation, List<StressTestResult>> groupedByOperator = results.stream()

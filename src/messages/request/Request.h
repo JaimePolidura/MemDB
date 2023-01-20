@@ -3,48 +3,10 @@
 #include <stdint.h>
 #include <memory>
 
-struct OperatorArgument {
-    uint8_t * arg;
-    uint8_t lengthArg;
-
-    OperatorArgument() = default;
-
-    OperatorArgument(uint8_t * arg, uint8_t lengthArg): arg(arg), lengthArg(lengthArg) {}
-
-    OperatorArgument(const OperatorArgument& other) {
-        this->arg = other.arg;
-        this->lengthArg = other.lengthArg;
-    }
-
-    OperatorArgument& operator=(const OperatorArgument& other) noexcept {
-        this->arg = other.arg;
-        this->lengthArg = other.lengthArg;
-
-        return * this;
-    }
-
-    OperatorArgument(OperatorArgument&& other) noexcept :
-        arg(other.arg),
-        lengthArg(other.lengthArg) {
-        other.arg = nullptr;
-    }
-
-    OperatorArgument& operator=(OperatorArgument&& other) noexcept {
-        this->arg = other.arg;
-        this->lengthArg = other.lengthArg;
-        other.arg = nullptr;
-
-        return * this;
-    }
-
-    ~OperatorArgument() {
-        //Do nothing, in this way arg won't get deleted, arg is stored in the hashmap as the raw pointer, so the
-        // refcount won't get updated
-    }
-};
+#include "utils/strings/SmallString.h"
 
 struct OperationBody {
-    std::shared_ptr<std::vector<OperatorArgument>> args;
+    std::shared_ptr<std::vector<SmallString>> args;
     uint8_t operatorNumber; //0 - 127
     bool flag1;
     bool flag2;
@@ -53,7 +15,7 @@ struct OperationBody {
 
     OperationBody(uint8_t operatorNumber, bool flag1, bool flag2): flag1(flag1), flag2(flag2), operatorNumber(operatorNumber) {}
 
-    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2, std::shared_ptr<std::vector<OperatorArgument>> argsCons):
+    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2, std::shared_ptr<std::vector<SmallString>> argsCons):
         flag1(flag1),
         flag2(flag2),
         operatorNumber(operatorNumber),

@@ -43,8 +43,8 @@ private:
                 log.args->begin(),
                 log.args->end(),
                 log.args->size(),
-                [](int acc, const OperatorArgument& it) {
-                    return acc + it.lengthArg;
+                [](int acc, const SmallString& it) {
+                    return acc + it.size;
                 });
 
         return
@@ -89,8 +89,8 @@ private:
                     log.args->begin(),
                     log.args->end(),
                     log.args->size(),
-                    [](int acc, const OperatorArgument& it) {
-                        return acc + it.lengthArg;
+                    [](int acc, const SmallString& it) {
+                        return acc + it.size;
                     });
 
             return
@@ -100,42 +100,3 @@ private:
         }
     };
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

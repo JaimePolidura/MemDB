@@ -37,7 +37,7 @@ public:
         acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}) {};
 
     void run() {
-        printf("[SERVER] Waiting for conenctions...\n");
+        printf("[SERVER] Initialized. Waiting for conenctions...\n");
 
         try{
             this->acceptNewConnections();

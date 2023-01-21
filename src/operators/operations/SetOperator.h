@@ -16,7 +16,7 @@ public:
         uint8_t * valueValue = (uint8_t *) operation.args->at(1).value;
 
         SmallString key = operation.args->at(0);
-        key.timesToBeDeleted = 2;
+        key.increaseRefCount(); //We are going to store it in the db
 
         map->put(key, valueValue, valueSize);
 

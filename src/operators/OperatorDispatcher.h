@@ -38,6 +38,8 @@ public:
 
         Response result = operatorToExecute->operate(request.operation, this->db);
         this->callOnResponseCallback(onResponse, result, requestNumber);
+
+        this->decreaseRequestArgumentsRefCount(request);
     }
 
     Response executeOperator(std::shared_ptr<Map> map, const OperationBody& operationBody) {
@@ -47,6 +49,13 @@ public:
     }
 
 private:
+    void decreaseRequestArgumentsRefCount(Request &request) {
+        std::shared_ptr<std::vector<SmallString>> args = request.operation.args;
+
+        for(int i = 0; i < args->size(); i++)
+            args->at(i).decreaseRefCount();
+    }
+
     void callOnResponseCallback(const std::function<void(Response&)>& onResponse,
                                 Response& result,
                                 uint64_t requestNumber) {

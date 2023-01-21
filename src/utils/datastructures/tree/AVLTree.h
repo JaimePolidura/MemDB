@@ -24,7 +24,7 @@ public:
 
     AVLNode() = default;
 
-    AVLNode(uint8_t * value, uint32_t keyHash, uint8_t valueLength, int16_t height, const SmallString& key):
+    AVLNode(uint8_t * value, uint32_t keyHash, uint8_t valueLength, int16_t height, SmallString key):
             left(nullptr), right(nullptr), value(value), keyHash(keyHash), valueLength(valueLength), height(height), key(key) {
     }
 };
@@ -121,7 +121,7 @@ private:
 
                 if(rootRemoved) this->root = last;
 
-                temp->key.setDeleted();
+                temp->key.decreaseRefCount();
 
 //                delete[] last->value; Memory leak, this line sometimes doesn't work, possibly due to double free
                 delete temp;

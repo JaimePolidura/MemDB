@@ -30,7 +30,20 @@ public:
     }
 
 private:
+    void executeOperationLogs(std::shared_ptr<Map> db, const std::vector<OperationLog>& logs) {
+        printf("[SERVER] Applaying logs...\n");
+
+        int counter = 0;
+
+        for (const auto &operationLog : logs) {
+            counter++;
+            this->operationDispatcher->executeOperator(db, OperationBody{operationLog.operatorNumber, operationLog.flag1, operationLog.flag2, operationLog.args});
+        }
+    }
+
     void clearFileAndAddNewCompressedOperations(std::shared_ptr<Map> db) {
+        printf("[SERVER] Compacting logs...\n");
+
         std::vector<MapEntry> allDataMap = db->all();
         FileUtils::clear(FileUtils::getFileInProgramBasePath("memdb", "oplog"));
         std::vector<uint8_t> toWriteCompressed{};
@@ -51,14 +64,4 @@ private:
         FileUtils::clear(FileUtils::getFileInProgramBasePath("memdb", "oplog"));
         FileUtils::appendBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog"), toWriteCompressed);
     }
-
-    void executeOperationLogs(std::shared_ptr<Map> db, const std::vector<OperationLog>& logs) {
-        int counter = 0;
-
-        for (const auto &operationLog : logs) {
-            counter++;
-            this->operationDispatcher->executeOperator(db, OperationBody{operationLog.operatorNumber, operationLog.flag1, operationLog.flag2, operationLog.args});
-        }
-    }
-
 };

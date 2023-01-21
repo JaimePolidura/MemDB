@@ -18,11 +18,13 @@ public:
 
         std::vector<uint8_t> serialized = this->serializeAll(toWrite);
 
-        this->appendSerialized(serialized);
+        this->writeAppendModeSerialized(serialized);
+
+        this->decreaseArgsRefCount(toWrite);
     }
 
 private:
-    void appendSerialized(const std::vector<uint8_t>& serialized) {
+    void writeAppendModeSerialized(const std::vector<uint8_t>& serialized) {
         writeFileLock.lock();
 
         FileUtils::appendBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog"), serialized);
@@ -42,5 +44,11 @@ private:
             this->operationLogSerializer.serialize(serialized, *actualOperation);
 
         return serialized;
+    }
+
+    void decreaseArgsRefCount(const std::vector<OperationLog>& operationsLog) {
+        for (const auto &operationLog: operationsLog)
+            for(auto arg = operationLog.args->begin(); arg < operationLog.args->end(); arg++)
+                arg->decreaseRefCount();
     }
 };

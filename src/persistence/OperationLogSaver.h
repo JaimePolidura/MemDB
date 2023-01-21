@@ -22,6 +22,8 @@ public:
         if(!configuration->getBoolean(ConfigurationKeys::USE_PERSISTENCE))
             return;
 
+        this->increaseArgsRefCount(request.operation.args);
+
         this->buffer->add(OperationLog{
             request.operation.args,
             request.operation.operatorNumber,
@@ -29,4 +31,11 @@ public:
             request.operation.flag2
         });
     }
+
+private:
+    void increaseArgsRefCount(std::shared_ptr<std::vector<SmallString>> args) {
+        for(int i = 0; i < args->size(); i++)
+            args->at(i).increaseRefCount();
+    }
+
 };

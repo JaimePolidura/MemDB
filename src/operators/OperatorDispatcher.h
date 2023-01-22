@@ -28,6 +28,7 @@ public:
         uint64_t requestNumber = request.requestNumber;
 
         if(operatorToExecute.get() == nullptr){
+            this->decreaseRequestArgumentsRefCount(request);
             Response result = Response::error(ErrorCode::UNKNOWN_OPERATOR);
             this->callOnResponseCallback(onResponse, result, requestNumber);
             return;

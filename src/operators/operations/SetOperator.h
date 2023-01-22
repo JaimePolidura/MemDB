@@ -12,13 +12,13 @@ public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x01;
 
     Response operate(const OperationBody& operation, std::shared_ptr<Map> map) override {
-        int valueSize = operation.args->at(1).size;
-        uint8_t * valueValue = (uint8_t *) operation.args->at(1).value;
+        SimpleString key = operation.args->at(0);
+        SimpleString value = operation.args->at(1);
 
-        SmallString key = operation.args->at(0);
-        key.increaseRefCount(); //We are going to store it in the db
+        key.increaseRefCount();
+        value.increaseRefCount();
 
-        map->put(key, valueValue, valueSize);
+        map->put(key, value);
 
         return Response::success();
     }

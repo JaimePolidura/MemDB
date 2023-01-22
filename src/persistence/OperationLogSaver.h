@@ -33,7 +33,7 @@ public:
     }
 
 private:
-    void increaseArgsRefCount(std::shared_ptr<std::vector<SmallString>> args) {
+    void increaseArgsRefCount(std::shared_ptr<std::vector<SimpleString>> args) {
         for(int i = 0; i < args->size(); i++)
             args->at(i).increaseRefCount();
     }

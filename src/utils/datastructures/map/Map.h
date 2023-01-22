@@ -10,16 +10,18 @@
 #include "../tree/AVLTree.h"
 
 struct MapEntry {
-    SmallString key;
+    SimpleString key;
     uint32_t keyHash;
-    uint8_t * value;
-    size_t valueSize;
+    SimpleString value;
 
-    MapEntry(const SmallString& key, uint32_t keyHash, uint8_t * value, size_t valueSize):
+    MapEntry(const SimpleString& key, uint32_t keyHash, const SimpleString& value):
         keyHash(keyHash),
         value(value),
-        valueSize(valueSize),
         key(key) {}
+
+    bool hasValue() {
+        return this->value.value != nullptr;
+    }
 };
 
 class shared_mutex;
@@ -34,13 +36,13 @@ private:
 public:
     Map(uint16_t numberBuckets);
 
-    void put(const SmallString& key, uint8_t * value, size_t valueSize);
+    void put(const SimpleString& key, const SimpleString& value);
 
-    std::optional<MapEntry> get(const SmallString& key) const;
+    std::optional<MapEntry> get(const SimpleString& key) const;
 
-    void remove(const SmallString& key);
+    void remove(const SimpleString& key);
 
-    bool contains(const SmallString& key) const;
+    bool contains(const SimpleString& key) const;
 
     std::vector<MapEntry> all();
 
@@ -49,7 +51,7 @@ public:
 private:
     static const uint8_t HASH_PRIME_FACTOR = 31;
 
-    uint32_t calculateHash(const SmallString& key) const {
+    uint32_t calculateHash(const SimpleString& key) const {
         uint32_t hashCode = 0;
 
         for(int i = 0; i < key.size; i++)

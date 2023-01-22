@@ -13,8 +13,11 @@ public:
     Response operate(const OperationBody& operation, std::shared_ptr<Map> map) override {
         std::optional<MapEntry> result = map->get(operation.args->at(0));
 
-        return result.has_value() ?
-               Response::success(result.value().valueSize, result.value().value) :
+        if(result.has_value() && result.value().hasValue())
+            result.value().value.increaseRefCount();
+
+        return result.has_value() && result.value().hasValue() ?
+               Response::success(result.value().value) :
                Response::error(ErrorCode::UNKNOWN_KEY); //No successful
     }
 

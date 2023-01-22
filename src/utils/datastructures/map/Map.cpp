@@ -9,13 +9,13 @@ Map::Map(uint16_t numberBuckets): numberBuckets(numberBuckets) {
     }
 }
 
-void Map::put(const SmallString& key, uint8_t * value, size_t valueSize) {
+void Map::put(const SimpleString& key, const SimpleString& value) {
     uint32_t keyHash = this->calculateHash(key);
 
     lockWrite(keyHash);
 
     AVLTree * bucket = this->getBucket(keyHash);
-    if(bucket->add(keyHash, value, valueSize, key))
+    if(bucket->add(key, keyHash, value))
         this->size++;
 
     unlockWrite(keyHash);
@@ -24,21 +24,23 @@ void Map::put(const SmallString& key, uint8_t * value, size_t valueSize) {
 std::vector<MapEntry> Map::all() {
     std::vector<MapEntry> all{};
 
-    for (const AVLTree bucket: this->buckets)
-        for (const auto node : bucket.all())
-            all.push_back(MapEntry{node->key, node->keyHash, node->value, node->valueLength});
+    for (const AVLTree bucket: this->buckets){
+        for (const auto node : bucket.all()){
+            all.push_back(MapEntry{node->key, node->keyHash, node->value});
+        }
+    }
 
     return all;
 }
 
-std::optional<MapEntry> Map::get(const SmallString& key) const {
+std::optional<MapEntry> Map::get(const SimpleString& key) const {
     uint32_t hash = this->calculateHash(key);
 
     lockRead(hash);
 
     AVLNode * node = this->getNodeByKeyHash(hash);
     const std::optional<MapEntry> response = node != nullptr ?
-            std::optional<MapEntry>{MapEntry{node->key, node->keyHash, node->value, node->valueLength}} :
+            std::optional<MapEntry>{MapEntry{node->key, node->keyHash, node->value}} :
             std::nullopt;
 
     unlockRead(hash);
@@ -46,7 +48,7 @@ std::optional<MapEntry> Map::get(const SmallString& key) const {
     return response;
 }
 
-void Map::remove(const SmallString& key) {
+void Map::remove(const SimpleString& key) {
     uint32_t hash = this->calculateHash(key);
 
     lockWrite(hash);
@@ -60,7 +62,7 @@ void Map::remove(const SmallString& key) {
     unlockWrite(hash);
 }
 
-bool Map::contains(const SmallString& key) const {
+bool Map::contains(const SimpleString& key) const {
     return this->getNodeByKeyHash(this->calculateHash(key)) != nullptr;
 }
 

@@ -43,7 +43,7 @@ private:
                 log.args->begin(),
                 log.args->end(),
                 log.args->size(),
-                [](int acc, const SmallString& it) {
+                [](int acc, const SimpleString& it) {
                     return acc + it.size;
                 });
 
@@ -89,7 +89,7 @@ private:
                     log.args->begin(),
                     log.args->end(),
                     log.args->size(),
-                    [](int acc, const SmallString& it) {
+                    [](int acc, const SimpleString& it) {
                         return acc + it.size;
                     });
 

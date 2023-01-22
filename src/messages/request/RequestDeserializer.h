@@ -53,7 +53,7 @@ public:
 
         int numerOfArguments = 0;
         uint64_t lastIndexChecked = initialOffset + 1; //Index first arg
-        std::shared_ptr<std::vector<SmallString>> arguments = std::make_shared<std::vector<SmallString>>();
+        std::shared_ptr<std::vector<SimpleString>> arguments = std::make_shared<std::vector<SimpleString>>();
 
         while (lastIndexChecked + 1 < buffer.size()) {
             unsigned short argLength = (unsigned short) buffer[lastIndexChecked];
@@ -65,7 +65,7 @@ public:
 
             lastIndexChecked = argValuePosition + argLength;
             numerOfArguments++;
-            arguments->emplace_back((char *) argValue, argLength);
+            arguments->emplace_back(argValue, argLength);
         }
 
         return OperationBody(operatorNumber, flagOperation1, flagOperation2, std::move(arguments));

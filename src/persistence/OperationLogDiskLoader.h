@@ -33,12 +33,8 @@ private:
     void executeOperationLogs(std::shared_ptr<Map> db, const std::vector<OperationLog>& logs) {
         printf("[SERVER] Applaying logs...\n");
 
-        int counter = 0;
-
-        for (const auto &operationLog : logs) {
-            counter++;
+        for (const auto &operationLog : logs)
             this->operationDispatcher->executeOperator(db, OperationBody{operationLog.operatorNumber, operationLog.flag1, operationLog.flag2, operationLog.args});
-        }
     }
 
     void clearFileAndAddNewCompressedOperations(std::shared_ptr<Map> db) {
@@ -54,9 +50,9 @@ private:
             toWriteCompressed.push_back(entry.key.size);
             for(std::size_t i = 0; i < entry.key.size; i++) //Key Hash
                 toWriteCompressed.push_back(* entry.key[i]);
-            toWriteCompressed.push_back(entry.valueSize); //Value size
-            for(int i = 0; i < entry.valueSize; i++) //Value content
-                toWriteCompressed.push_back(* (entry.value + i));
+            toWriteCompressed.push_back(entry.value.size); //Value size
+            for(int i = 0; i < entry.value.size; i++) //Value content
+                toWriteCompressed.push_back(* (entry.value.value + i));
 
             toWriteCompressed.push_back(0x00); //Padding
         }

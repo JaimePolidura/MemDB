@@ -40,6 +40,7 @@ public:
         this->callOnResponseCallback(onResponse, result, requestNumber);
 
         this->decreaseRequestArgumentsRefCount(request);
+        result.responseValue.decreaseRefCount();
     }
 
     Response executeOperator(std::shared_ptr<Map> map, const OperationBody& operationBody) {
@@ -50,7 +51,7 @@ public:
 
 private:
     void decreaseRequestArgumentsRefCount(Request &request) {
-        std::shared_ptr<std::vector<SmallString>> args = request.operation.args;
+        std::shared_ptr<std::vector<SimpleString>> args = request.operation.args;
 
         for(int i = 0; i < args->size(); i++)
             args->at(i).decreaseRefCount();

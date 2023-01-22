@@ -6,17 +6,16 @@
 #include <vector>
 #include <queue>
 
-#include "utils/strings/SmallString.h"
+#include "utils/strings/SimpleString.h"
 
 class AVLNode {
 public:
     AVLNode * left;
     AVLNode * right;
-    uint8_t * value;
-    SmallString key;
+    SimpleString value;
+    SimpleString key;
     uint32_t keyHash;
     int16_t height;
-    uint8_t valueLength;
 
     bool hasNoChild() {
         return this->left == nullptr && this->right == nullptr;
@@ -24,8 +23,8 @@ public:
 
     AVLNode() = default;
 
-    AVLNode(uint8_t * value, uint32_t keyHash, uint8_t valueLength, int16_t height, SmallString key):
-            left(nullptr), right(nullptr), value(value), keyHash(keyHash), valueLength(valueLength), height(height), key(key) {
+    AVLNode(SimpleString key, uint32_t keyHash, SimpleString value, int16_t height):
+            left(nullptr), right(nullptr), value(value), keyHash(keyHash), height(height), key(key) {
     }
 };
 
@@ -34,8 +33,8 @@ public:
     AVLNode * root;
 
 public:
-    bool add(uint32_t keyHash, uint8_t * value, uint8_t valueLength, const SmallString& key) {
-        AVLNode * newNode = new AVLNode(value, keyHash, valueLength, -1, key);
+    bool add(const SimpleString& key, uint32_t keyHash, const SimpleString& value) {
+        AVLNode * newNode = new AVLNode(key, keyHash, value, -1);
 
         if(this->root == nullptr){
             this->root = newNode;
@@ -107,7 +106,6 @@ private:
 
                 last->keyHash = temp->keyHash;
                 last->value = temp->value;
-                last->valueLength = temp->valueLength;
 
                 if(rootRemoved) this->root = last;
 
@@ -122,8 +120,7 @@ private:
                 if(rootRemoved) this->root = last;
 
                 temp->key.decreaseRefCount();
-
-//                delete[] last->value; Memory leak, this line sometimes doesn't work, possibly due to double free
+                temp->value.decreaseRefCount();
                 delete temp;
             }
         }
@@ -156,7 +153,6 @@ private:
         }else{
             last->keyHash = toInsert->keyHash;
             last->value = toInsert->value;
-            last->valueLength = toInsert->valueLength;
         }
         
         return last->keyHash != toInsert->keyHash ?

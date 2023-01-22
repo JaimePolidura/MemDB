@@ -3,10 +3,10 @@
 #include <stdint.h>
 #include <memory>
 
-#include "utils/strings/SmallString.h"
+#include "utils/strings/SimpleString.h"
 
 struct OperationBody {
-    std::shared_ptr<std::vector<SmallString>> args;
+    std::shared_ptr<std::vector<SimpleString>> args;
     uint8_t operatorNumber; //0 - 127
     bool flag1;
     bool flag2;
@@ -15,7 +15,7 @@ struct OperationBody {
 
     OperationBody(uint8_t operatorNumber, bool flag1, bool flag2): flag1(flag1), flag2(flag2), operatorNumber(operatorNumber) {}
 
-    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2, std::shared_ptr<std::vector<SmallString>> argsCons):
+    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2, std::shared_ptr<std::vector<SimpleString>> argsCons):
         flag1(flag1),
         flag2(flag2),
         operatorNumber(operatorNumber),

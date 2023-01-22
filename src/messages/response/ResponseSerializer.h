@@ -18,10 +18,10 @@ public:
             serialized.push_back(static_cast<uint8_t>(response.requestNumber >> (sizeof(uint64_t) * i)));
 
         serialized.push_back(response.errorCode << 1 | response.isSuccessful);
-        serialized.push_back(response.lengthResponse);
+        serialized.push_back(response.responseValue.size);
 
-        for (int i = 0; i < response.lengthResponse; ++i)
-            serialized.push_back(* (response.response + i));
+        for (int i = 0; i < response.responseValue.size; ++i)
+            serialized.push_back(* (response.responseValue.value + i));
 
         size_t writtenSize = serialized.size();
         for(int i = 0; i < MAX_RESPONSE_SIZE - writtenSize; i++)

@@ -9,22 +9,28 @@
 class SimpleString {
 public:
     uint8_t * value;
-    std::atomic_uint8_t * refCount;
+    std::atomic_int8_t * refCount;
     uint8_t size;
 public:
-    SimpleString(): value(nullptr), refCount(0), size(0) {}
+    SimpleString(uint8_t * value, std::atomic_int8_t * refCount, uint8_t size): value(value), refCount(refCount), size(size) {}
 
-    SimpleString(uint8_t * value, uint8_t size): value(value), size(size), refCount(new std::atomic_uint8_t(0)) {}
-
-    SimpleString(uint8_t * value, uint8_t size, uint8_t refCountCons): value(value), size(size), refCount(new std::atomic_uint8_t(refCountCons)) {}
+    SimpleString(uint8_t * value, uint8_t size): value(value), size(size), refCount(new std::atomic_int8_t(1)) {}
 
     void increaseRefCount() {
-        this->refCount++;
+        this->refCount->fetch_add(1);
     }
 
     void decreaseRefCount() {
-        if(--this->refCount == 0 && this->value)
-            delete[] this->value;
+        if(this->refCount && this->value) {
+            this->refCount->fetch_sub(1);
+
+            //TODO Fix concurrent frees
+            if(this->refCount && this->refCount->load() <= 0){
+                delete[] this->value;
+                delete this->refCount;
+            }
+
+        }
     }
 
     uint8_t * operator[](int index) const {
@@ -32,6 +38,6 @@ public:
     }
 
     static SimpleString empty() {
-        return SimpleString{};
+        return SimpleString{nullptr, nullptr, 0};
     }
 };

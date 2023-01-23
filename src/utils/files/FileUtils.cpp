@@ -26,6 +26,16 @@ void FileUtils::createFile(const std::string &path, const std::string &name) {
 #endif
 }
 
+void FileUtils::appendLines(const std::string &path, const std::vector<std::string> &lines) {
+    std::fstream file;
+    file.open(path, std::ios::out | std::ios::app);
+
+    for(auto line = lines.begin(); line < lines.end(); line++)
+        file << * line;
+
+    file.close();
+}
+
 void FileUtils::appendBytes(const std::string &path, const std::vector<uint8_t> &bytes) {
     std::fstream file;
     file.open(path, std::ios::out | std::ios::app);

@@ -29,12 +29,12 @@ private:
 
 public:
     TCPServer(std::shared_ptr<Configuration> configuration, Authenticator authenicator, std::shared_ptr<OperatorDispatcher> operatorDispatcher):
-        configuration(configuration),
-        port(configuration->get<uint16_t>(ConfigurationKeys::PORT)),
-        authenicator(std::move(authenicator)),
-        connectionThreadPool(5, configuration->get<int>(ConfigurationKeys::SERVER_MAX_THREADS), configuration->get<int>(ConfigurationKeys::SERVER_MIN_THREADS), 100, "TCPServer"),
-        operatorDispatcher(operatorDispatcher),
-        acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}) {};
+            configuration(configuration),
+            port(configuration->get<uint16_t>(ConfigurationKeys::PORT)),
+            authenicator(std::move(authenicator)),
+            connectionThreadPool(5, configuration->get<int>(ConfigurationKeys::SERVER_MAX_THREADS), configuration->get<int>(ConfigurationKeys::SERVER_MIN_THREADS), 100, "TCPServer"),
+            operatorDispatcher(operatorDispatcher),
+            acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}) {};
 
     void run() {
         printf("[SERVER] Initialized. Waiting for conenctions...\n");
@@ -79,7 +79,7 @@ private:
             this->sendResponse(connection, response);
         });
     }
-    
+
     void sendResponse(std::shared_ptr<Connection> connection, const Response& response) {
         if(connection->isOpen()){
             std::vector<uint8_t> serialized = this->responseSerializer.serialize(response);

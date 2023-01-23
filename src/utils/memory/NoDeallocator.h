@@ -1,8 +1,18 @@
-//
-// Created by polid on 23/01/2023.
-//
+#include <cstdint>
 
-#ifndef MEMDB_NODEALLOCATOR_H
-#define MEMDB_NODEALLOCATOR_H
+template<typename T>
+class NoDeallocator {
+public:
+    using value_type = T;
 
-#endif //MEMDB_NODEALLOCATOR_H
+    NoDeallocator() = default;
+
+    template <typename U>
+    NoDeallocator(const NoDeallocator<U>&) {}
+
+    T * allocate(std::size_t n) {
+        return static_cast<T *>(::operator new(n * sizeof(T)));
+    }
+
+    void deallocate(T*, std::size_t) {}
+};

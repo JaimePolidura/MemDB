@@ -17,6 +17,9 @@ public:
 
         std::map<std::string, std::string> configValues = lines.empty() ? createConfigurationFile(defaultConfiguartionValues) : readConfigFile(lines);
 
+        if(!lines.empty())
+            ConfiguartionLoader::writeConfigFileMissingDefaultConfig(configValues, defaultConfiguartionValues);
+
         return std::make_shared<Configuration>(configValues, defaultConfiguartionValues);
     }
 
@@ -78,5 +81,15 @@ private:
         }
 
         return configValues;
+    }
+
+    static void writeConfigFileMissingDefaultConfig(const std::map<std::string, std::string>& configFromFile, const std::map<std::string, std::string>& defaultConfig) {
+        std::vector<std::string> missingValuesToWrite{};
+
+        for(auto const& [key, value] : defaultConfig)
+            if(!configFromFile.contains(key))
+                missingValuesToWrite.push_back(key + "=" + value);
+
+        FileUtils::appendLines(FileUtils::getFileInProgramBasePath("memdb", "config.txt"), missingValuesToWrite);
     }
 };

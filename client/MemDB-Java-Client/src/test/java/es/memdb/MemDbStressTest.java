@@ -27,7 +27,9 @@ import java.util.stream.Collectors;
 public final class MemDbStressTest {
     @SneakyThrows
     public static void main(String[] args) {
-        int[] numberThreads = new int[]{1, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64};
+//        int[] numberThreads = new int[]{1, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64};
+        int[] numberThreads = new int[]{64};
+
 
         System.out.println("-------------------------------------------- THREADS TEST --------------------------------------------");
         System.out.println();
@@ -62,14 +64,10 @@ public final class MemDbStressTest {
 
         System.out.println("    ---------------------- operations: "+numberOperations+" threads: "+numberThreads+" "+name+" ----------------------");
 
-        long a = System.currentTimeMillis();
-        List<StressTestResult> results = memDbStressTestRunner.run(memDbExecutorProvider);
-        long b = System.currentTimeMillis();
-
-        Map<StressTestOperation, List<StressTestResult>> groupedByOperator = results.stream()
+        Map<StressTestOperation, List<StressTestResult>> groupedByOperator = memDbStressTestRunner.run(memDbExecutorProvider)
+                .stream()
                 .collect(Collectors.groupingBy(StressTestResult::operator));
 
-        System.out.println("    Finished in total time: " + TimeUnit.MILLISECONDS.toSeconds(b - a) + "s");
         for (StressTestOperation operator : groupedByOperator.keySet()) {
             double average = groupedByOperator.get(operator).stream()
                     .mapToLong(StressTestResult::time)

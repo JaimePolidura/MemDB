@@ -13,12 +13,14 @@ public:
     Response operate(const OperationBody& operation, std::shared_ptr<Map> map) override {
         std::optional<MapEntry> result = map->get(operation.args->at(0));
 
-        if(result.has_value() && result.value().hasValue())
-            result.value().value.increaseRefCount();
+        //The ref count increment we do it in Map.cpp in the lock protected code to make sure no other thread can interfere
+        if(result.has_value())
+            result.value().key.decreaseRefCount();
 
-        return result.has_value() && result.value().hasValue() ?
+        return result.has_value() ?
                Response::success(result.value().value) :
                Response::error(ErrorCode::UNKNOWN_KEY); //No successful
+
     }
 
     constexpr OperatorType type() override {

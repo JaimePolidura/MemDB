@@ -17,19 +17,21 @@ public:
     SimpleString(uint8_t * value, uint8_t size): value(value), size(size), refCount(new std::atomic_int8_t(1)) {}
 
     void increaseRefCount() {
+        if(!this->refCount && this->refCount->load() < 0)
+            return;
+
         this->refCount->fetch_add(1);
     }
 
     void decreaseRefCount() {
-        if(this->refCount && this->value) {
-            this->refCount->fetch_sub(1);
+        if(this->refCount == nullptr || this->refCount->load() < 1)
+            return;
 
-            //TODO Fix concurrent frees
-            if(this->refCount && this->refCount->load() <= 0){
-                delete[] this->value;
-                delete this->refCount;
-            }
+        int attempts = this->atomicDecrementRefcount();
 
+        if(attempts == 0){
+            delete[] this->value;
+            delete this->refCount;
         }
     }
 
@@ -39,5 +41,18 @@ public:
 
     static SimpleString empty() {
         return SimpleString{nullptr, nullptr, 0};
+    }
+
+private:
+    int atomicDecrementRefcount() {
+        int attempts = 0;
+        int8_t expected;
+
+        do {
+            expected = this->refCount->load();
+            attempts++;
+        } while (!this->refCount->compare_exchange_weak(expected, expected - 1));
+
+        return attempts;
     }
 };

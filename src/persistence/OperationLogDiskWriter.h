@@ -20,7 +20,7 @@ public:
 
         this->writeAppendModeSerialized(serialized);
 
-        this->decreaseArgsRefCount(toWrite);
+//        this->decreaseArgsRefCount(toWrite);
     }
 
 private:

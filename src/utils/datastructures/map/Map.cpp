@@ -39,9 +39,15 @@ std::optional<MapEntry> Map::get(const SimpleString& key) const {
     lockRead(hash);
 
     AVLNode * node = this->getNodeByKeyHash(hash);
-    const std::optional<MapEntry> response = node != nullptr ?
+
+    if(node != nullptr){
+        node->key.increaseRefCount();
+        node->value.increaseRefCount();
+    }
+
+    const std::optional<MapEntry> response = (node != nullptr ?
             std::optional<MapEntry>{MapEntry{node->key, node->keyHash, node->value}} :
-            std::nullopt;
+            std::nullopt);
 
     unlockRead(hash);
 

@@ -729,6 +729,10 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/utils/strings/SimpleString.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/utils/strings/StringUtils.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>

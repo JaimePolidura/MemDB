@@ -19,9 +19,6 @@ public:
     {}
 
     void save(const Request& request) {
-        if(!configuration->getBoolean(ConfigurationKeys::USE_PERSISTENCE))
-            return;
-
         this->increaseArgsRefCount(request.operation.args);
 
         this->buffer->add(OperationLog{

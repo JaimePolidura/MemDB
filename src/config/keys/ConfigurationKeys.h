@@ -9,6 +9,6 @@ public:
     static const std::string SERVER_MIN_THREADS;
     static const std::string SERVER_MAX_THREADS;
     static const std::string NUMBER_BUCKETS;
-    static const std::string USE_PERSISTENCE;
     static const std::string PERSISTANCE_WRITE_EVERY;
+    static const std::string USE_REPLICATION;
 };

@@ -28,9 +28,6 @@ public:
 
 private:
     void restoreDataFromOplog() {
-        if(!this->configuration->getBoolean(ConfigurationKeys::USE_PERSISTENCE))
-            return;
-
         OperationLogDiskLoader loader(this->operatorDispatcher);
         loader.loadIntoMapDb(this->dbMap);
     }

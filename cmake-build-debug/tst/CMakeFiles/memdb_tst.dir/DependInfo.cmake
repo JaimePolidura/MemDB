@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "C:/programacion/MemDB/tst/database/operators/OperatorRegistryTest.cpp" "tst/CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.obj.d"
+  "C:/programacion/MemDB/tst/database/operators/operations/DeleteOperatorTest.cpp" "tst/CMakeFiles/memdb_tst.dir/database/operators/operations/DeleteOperatorTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/database/operators/operations/DeleteOperatorTest.cpp.obj.d"
   "C:/programacion/MemDB/tst/database/operators/operations/GetOperatorTest.cpp" "tst/CMakeFiles/memdb_tst.dir/database/operators/operations/GetOperatorTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/database/operators/operations/GetOperatorTest.cpp.obj.d"
   "C:/programacion/MemDB/tst/database/operators/operations/SetOperatorTest.cpp" "tst/CMakeFiles/memdb_tst.dir/database/operators/operations/SetOperatorTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/database/operators/operations/SetOperatorTest.cpp.obj.d"
   "C:/programacion/MemDB/tst/main.cpp" "tst/CMakeFiles/memdb_tst.dir/main.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/main.cpp.obj.d"

@@ -1,39 +1,64 @@
 #include "gtest/gtest.h"
-#include "database/operators/operations/SetOperator.h"
+#include "messages/request/Request.h"
+#include "operators/operations/SetOperator.h"
 
 #include <string>
 #include <memory>
 
-OperationBody createOperation(uint8_t keyValue, uint8_t valueValue);
+OperationBody createOperation(uint8_t keyValue, uint8_t valueValue, uint64_t timestamp, uint16_t nodeId);
 
 TEST(SetOperator, CorrectConfig) {
     SetOperator setOperator{};
 
     ASSERT_EQ(setOperator.type(), WRITE);
-    ASSERT_EQ(setOperator.operatorNumber(), 0x01);
+    ASSERT_EQ(setOperator.operatorNumber(), SetOperator::OPERATOR_NUMBER);
 }
 
-TEST(SetOperator, ShouldSet) {
-    std::shared_ptr<Map> db = std::make_shared<Map>();
-
+TEST(SetOperator, ShouldntReplaceNewerKeyTimestamp) {
+    std::shared_ptr<Map> db = std::make_shared<Map>(64);
     SetOperator setOperator{};
+    db->put(SimpleString::fromChar(0x41), SimpleString::fromChar(0x01), 3, 1);
 
-    auto operation = createOperation(0x41, 0x01); //A -> 1
+    auto operation = createOperation(0x41, 0x02, 2, 1); //A -> 1
+    auto result = setOperator.operate(operation, db);
 
-    setOperator.operate(operation, db);
+    ASSERT_FALSE(!result.isSuccessful);
+    ASSERT_EQ(* db->get(SimpleString::fromChar('A')).value().value.value, 0x01);
+    ASSERT_EQ(result.errorCode, ErrorCode::ALREADY_REPLICATED);
+}
 
-    ASSERT_TRUE(db->contains("A"));
-    ASSERT_EQ(* db->get("A").value().value, 0x01);
+TEST(SetOperator, ShouldReplaceOldKeyTimestamp) {
+    std::shared_ptr<Map> db = std::make_shared<Map>(64);
+    SetOperator setOperator{};
+    db->put(SimpleString::fromChar(0x41), SimpleString::fromChar(0x01), 1, 1);
+
+    auto operation = createOperation(0x41, 0x02, 2, 1); //A -> 1
+    auto result = setOperator.operate(operation, db);
+
+    ASSERT_TRUE(result.isSuccessful);
+    ASSERT_EQ(* db->get(SimpleString::fromChar('A')).value().value.value, 0x02);
+}
+
+TEST(SetOperator, ShouldSetNewKey) {
+    std::shared_ptr<Map> db = std::make_shared<Map>(64);
+    SetOperator setOperator{};
+    auto operation = createOperation(0x41, 0x01, 1, 1); //A -> 1
+
+    Response response = setOperator.operate(operation, db);
+
+    ASSERT_TRUE(response.isSuccessful);
+    ASSERT_TRUE(db->contains(SimpleString::fromChar('A')));
+    ASSERT_EQ(* db->get(SimpleString::fromChar('A')).value().value.value, 0x01);
 }
 
 
-OperationBody createOperation(uint8_t keyValue, uint8_t valueValue) {
-    std::shared_ptr<uint8_t> key = std::make_shared<uint8_t>(keyValue);
-    std::shared_ptr<uint8_t> value = std::make_shared<uint8_t>(valueValue);
+OperationBody createOperation(uint8_t keyValue, uint8_t valueValue, uint64_t timestamp, uint16_t nodeId) {
+    SimpleString key = SimpleString::fromChar(keyValue);
+    SimpleString value = SimpleString::fromChar(valueValue);
 
-    std::vector<OperatorArgument> vector{};
-    vector.emplace_back(key, 1);
-    vector.emplace_back(value, 1);
+    std::shared_ptr<std::vector<SimpleString>> vector = std::make_shared<std::vector<SimpleString>>();
+    vector->push_back(key);
+    vector->push_back(value);
 
-    return OperationBody(0, false, false, std::move(vector), 2);
+    return OperationBody(SetOperator::OPERATOR_NUMBER, false, false, timestamp, nodeId, vector);
 }

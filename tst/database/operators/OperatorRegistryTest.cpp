@@ -4,7 +4,7 @@
 TEST(OperatorRegistry, GetOperatorFound) {
     OperatorRegistry registry{};
 
-    std::shared_ptr<Operator> operatorFound = registry.get(0x01); //Set operator
+    std::shared_ptr<Operator> operatorFound = registry.get(SetOperator::OPERATOR_NUMBER); //Set operator
 
     ASSERT_TRUE(operatorFound != nullptr && operatorFound.get() != nullptr);
     ASSERT_TRUE(operatorFound->type() == WRITE);

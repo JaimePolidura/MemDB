@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.obj"
   "CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.obj.d"
+  "CMakeFiles/memdb_tst.dir/database/operators/operations/DeleteOperatorTest.cpp.obj"
+  "CMakeFiles/memdb_tst.dir/database/operators/operations/DeleteOperatorTest.cpp.obj.d"
   "CMakeFiles/memdb_tst.dir/database/operators/operations/GetOperatorTest.cpp.obj"
   "CMakeFiles/memdb_tst.dir/database/operators/operations/GetOperatorTest.cpp.obj.d"
   "CMakeFiles/memdb_tst.dir/database/operators/operations/SetOperatorTest.cpp.obj"

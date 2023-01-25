@@ -198,6 +198,30 @@ database/operators/OperatorRegistryTest.cpp.s:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/OperatorRegistryTest.cpp.s
 .PHONY : database/operators/OperatorRegistryTest.cpp.s
 
+database/operators/operations/DeleteOperatorTest.obj: database/operators/operations/DeleteOperatorTest.cpp.obj
+.PHONY : database/operators/operations/DeleteOperatorTest.obj
+
+# target to build an object file
+database/operators/operations/DeleteOperatorTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/operations/DeleteOperatorTest.cpp.obj
+.PHONY : database/operators/operations/DeleteOperatorTest.cpp.obj
+
+database/operators/operations/DeleteOperatorTest.i: database/operators/operations/DeleteOperatorTest.cpp.i
+.PHONY : database/operators/operations/DeleteOperatorTest.i
+
+# target to preprocess a source file
+database/operators/operations/DeleteOperatorTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/operations/DeleteOperatorTest.cpp.i
+.PHONY : database/operators/operations/DeleteOperatorTest.cpp.i
+
+database/operators/operations/DeleteOperatorTest.s: database/operators/operations/DeleteOperatorTest.cpp.s
+.PHONY : database/operators/operations/DeleteOperatorTest.s
+
+# target to generate assembly for a file
+database/operators/operations/DeleteOperatorTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/database/operators/operations/DeleteOperatorTest.cpp.s
+.PHONY : database/operators/operations/DeleteOperatorTest.cpp.s
+
 database/operators/operations/GetOperatorTest.obj: database/operators/operations/GetOperatorTest.cpp.obj
 .PHONY : database/operators/operations/GetOperatorTest.obj
 
@@ -454,6 +478,9 @@ help:
 	@echo ... database/operators/OperatorRegistryTest.obj
 	@echo ... database/operators/OperatorRegistryTest.i
 	@echo ... database/operators/OperatorRegistryTest.s
+	@echo ... database/operators/operations/DeleteOperatorTest.obj
+	@echo ... database/operators/operations/DeleteOperatorTest.i
+	@echo ... database/operators/operations/DeleteOperatorTest.s
 	@echo ... database/operators/operations/GetOperatorTest.obj
 	@echo ... database/operators/operations/GetOperatorTest.i
 	@echo ... database/operators/operations/GetOperatorTest.s

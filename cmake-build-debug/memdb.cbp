@@ -585,6 +585,14 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/operators/buffer">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/operators/buffer/OperationLogBuffer.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/operators/operations">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
@@ -605,14 +613,6 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/persistence/OperationLog.h">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/persistence/OperationLogBuffer.h">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/persistence/OperationLogDeserializer.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
@@ -625,11 +625,15 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/persistence/OperationLogSaver.h">
+		<Unit filename="C:/programacion/MemDB/src/persistence/OperationLogSerializer.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/persistence/OperationLogSerializer.h">
+		<Unit filename="C:/programacion/MemDB/src/replication">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/replication/ReplicationNode.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
@@ -669,11 +673,23 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/utils/Utils.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/utils/benchmark">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/utils/benchmark/ScopeTimer.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/utils/clock">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/utils/clock/LamportClock.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
@@ -725,6 +741,14 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/utils/memory">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/src/utils/memory/NoDeallocator.h">
+			<Option target="memdb_run"/>
+			<Option target="memdb_lib"/>
+		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/utils/strings">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
@@ -762,6 +786,9 @@
 			<Option target="memdb_lib"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/database/operators/OperatorRegistryTest.cpp">
+			<Option target="memdb_tst"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/tst/database/operators/operations/DeleteOperatorTest.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/database/operators/operations/GetOperatorTest.cpp">

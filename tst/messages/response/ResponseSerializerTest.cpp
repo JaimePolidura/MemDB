@@ -4,45 +4,58 @@
 #include "messages/response/ErrorCode.h"
 
 #include <string>
-#include <memory>
 
 TEST(ResponseSerializer, ShouldSerializeSuccessWithData) {
     ResponseSerializer responseSerializer{};
 
-    std::string data = "hello";
+    Response response = Response::success(SimpleString::fromArray({0x68, 0x65, 0x6C, 0x6C, 0x6F}));
+    response.requestNumber = 0x02;
+    response.timestamp = 0x01;
 
-    Response response = Response::success(data.length(), reinterpret_cast<uint8_t *>(data.data()));
-    std::shared_ptr<std::vector<uint8_t>> serialized = responseSerializer.serialize(response);
+    std::vector<uint8_t> serialized = responseSerializer.serialize(response);
+    std::vector<uint8_t> expected = {
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, //Request number
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, //Timestamp
+            0x01, //Success
+            0x05, //Length response
+            0x68, 0x65, 0x6C, 0x6C, 0x6F //hello
+    };
 
-    ASSERT_EQ(serialized->size(), MAX_RESPONSE_SIZE);
-    ASSERT_EQ(serialized->at(0 + 8), 0x01);
-    ASSERT_EQ(serialized->at(1 + 8), 0x05);
-
-    ASSERT_EQ(serialized->at(2 + 8), 0x68); //h
-    ASSERT_EQ(serialized->at(3 + 8), 0x65); //e
-    ASSERT_EQ(serialized->at(4 + 8), 0x6C); //l
-    ASSERT_EQ(serialized->at(5 + 8), 0x6C); //l
-    ASSERT_EQ(serialized->at(6 + 8), 0x6F); //o
+    ASSERT_EQ(serialized, expected);
 }
 
 TEST(ResponseSerializer, ShouldSerializeSuccessNoData) {
     ResponseSerializer responseSerializer{};
 
     Response response = Response::success();
-    std::shared_ptr<std::vector<uint8_t>> serialized = responseSerializer.serialize(response);
+    response.timestamp = 0x01;
+    response.requestNumber = 0x02;
 
-    ASSERT_EQ(serialized->size(), MAX_RESPONSE_SIZE);
-    ASSERT_EQ(serialized->at(0 + 8), 0x01);
-    ASSERT_EQ(serialized->at(1 + 8), 0x00);
+    std::vector<uint8_t> serialized = responseSerializer.serialize(response);
+    std::vector<uint8_t> expected = {
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, //Request number
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, //Timestamp
+            0x01, //Success
+            0x00  //Length response
+    };
+
+    ASSERT_EQ(serialized, expected);
 }
 
 TEST(ResponseSerializer, ShouldSerializeErrorNoData) {
     ResponseSerializer responseSerializer{};
 
     Response response = Response::error(ErrorCode::UNKNOWN_KEY);
-    std::shared_ptr<std::vector<uint8_t>> serialized = responseSerializer.serialize(response);
+    response.timestamp = 0x01;
+    response.requestNumber = 0x02;
 
-    ASSERT_EQ(serialized->size(), MAX_RESPONSE_SIZE);
-    ASSERT_EQ(serialized->at(0 + 8), 0x02);
-    ASSERT_EQ(serialized->at(1 + 8), 0x00);
+    std::vector<uint8_t> serialized = responseSerializer.serialize(response);
+    std::vector<uint8_t> expected = {
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, //Request number
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, //Timestamp
+            0x02, //Error
+            0x00  //Length response
+    };
+
+    ASSERT_EQ(serialized, expected);
 }

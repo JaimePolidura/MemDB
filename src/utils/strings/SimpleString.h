@@ -43,6 +43,21 @@ public:
         return SimpleString{nullptr, nullptr, 0};
     }
 
+    static SimpleString fromArray(std::initializer_list<uint8_t> values) {
+        uint8_t * valuePtr = new uint8_t[values.size()];
+        for (int i = 0; i < values.size(); ++i)
+            * (valuePtr + i) = * (values.begin() + i);
+
+        return SimpleString{valuePtr, static_cast<uint8_t>(values.size())};
+    }
+
+    static SimpleString fromChar(char&& value) {
+        char * valuePtr = new char();
+        * valuePtr = value;
+
+        return SimpleString{(uint8_t *) valuePtr, 1};
+    }
+
 private:
     int atomicDecrementRefcount() {
         int attempts = 0;

@@ -10,15 +10,17 @@ public final class ResponseDeserializer {
 
     @SneakyThrows
     public Response deserialize(byte[] raw) {
+        long requestNumber = ByteBuffer.wrap(raw).getLong();
+        long timestamp = ByteBuffer.wrap(raw, 8, 8).getLong();
         boolean isSuccessFul = (raw[8 + 8] & SUCCESSFUL_MASK) == 1;
         short errorCode = (short) (raw[8 + 8] >> 1);
-        long timestamp = ByteBuffer.wrap(raw, 8, 8 + 8).getLong();
-        String response = (raw.length > (1 + 8 + 8) &&  raw[8 + 8] > 0) ?
-                new String(this.split(raw, 8 + 8, raw.length), StandardCharsets.US_ASCII) :
+        String response = (raw.length > (8 + 8 + 1) &&  raw[8 + 8 + 1] > 0) ?
+                new String(this.split(raw, 8 + 8 + 1, raw.length), StandardCharsets.US_ASCII) :
                 "";
 
         return Response.builder()
                 .errorCode(errorCode)
+                .requestNumber(requestNumber)
                 .timestamp(timestamp)
                 .isSuccessful(isSuccessFul)
                 .response(formatResponse(response))

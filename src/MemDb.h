@@ -11,6 +11,7 @@
 
 class MemDb {
 private:
+    std::shared_ptr<OperationLogBuffer> operationLogBuffer;
     std::shared_ptr<OperatorDispatcher> operatorDispatcher;
     std::shared_ptr<UsersRepository> usersRepository;
     std::shared_ptr<ReplicationNode> replicationNode;

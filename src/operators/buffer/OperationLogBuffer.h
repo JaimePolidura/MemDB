@@ -4,23 +4,25 @@
 #include <functional>
 #include <mutex>
 
-#include "OperationLogDiskWriter.h"
+#include "persistence/OperationLogDiskWriter.h"
 #include "config/Configuration.h"
 #include "config/keys/ConfigurationKeys.h"
 #include "utils/files/FileUtils.h"
-#include "OperationLog.h"
+#include "messages/request/Request.h"
 
 class OperationLogBuffer {
 private:
     std::shared_ptr<Configuration> configuration;
-    std::vector<OperationLog> operations;
+    std::vector<OperationBody> operations;
     OperationsLogDiskWriter diskWriter;
     std::mutex writeDiskLock;
 
 public:
     OperationLogBuffer(std::shared_ptr<Configuration> configuration): configuration(configuration) {}
 
-    void add(const OperationLog& operation) {
+    void add(const OperationBody& operation) {
+        this->increaseArgsRefCount(operation.args);
+
         this->operations.push_back(std::move(operation));
 
         if(this->operations.size() >= this->configuration->get<int>(ConfigurationKeys::PERSISTANCE_WRITE_EVERY)){
@@ -28,15 +30,21 @@ public:
         }
     }
 
+private:
     void writeOperationsToDisk() {
         if(!this->writeDiskLock.try_lock())
             return;
 
-        std::vector<OperationLog> copyBuffer;
+        std::vector<OperationBody> copyBuffer;
         this->operations.swap(copyBuffer);
 
         this->diskWriter.write(copyBuffer);
 
         this->writeDiskLock.unlock();
+    }
+
+    void increaseArgsRefCount(std::shared_ptr<std::vector<SimpleString>> args) {
+        for(int i = 0; i < args->size(); i++)
+            args->at(i).increaseRefCount();
     }
 };

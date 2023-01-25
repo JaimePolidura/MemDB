@@ -5,10 +5,9 @@
 
 #include "utils/files/FileUtils.h"
 #include "utils/datastructures/map/Map.h"
-
-#include "OperationLog.h"
 #include "OperationLogDeserializer.h"
 #include "operators/OperatorDispatcher.h"
+#include "messages/request/Request.h"
 
 class OperationLogDiskLoader {
 private:
@@ -23,7 +22,7 @@ public:
             return db;
 
         std::vector<uint8_t> bytesFromOpLog = FileUtils::readBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog"));
-        std::vector<OperationLog> logs = this->operationLogDeserializer.deserializeAll(bytesFromOpLog);
+        std::vector<OperationBody> logs = this->operationLogDeserializer.deserializeAll(bytesFromOpLog);
 
         this->executeOperationLogs(db, logs);
         this->clearFileAndAddNewCompressedOperations(db);
@@ -32,11 +31,11 @@ public:
     }
 
 private:
-    void executeOperationLogs(std::shared_ptr<Map> db, const std::vector<OperationLog>& logs) {
+    void executeOperationLogs(std::shared_ptr<Map> db, const std::vector<OperationBody>& operations) {
         printf("[SERVER] Applaying logs...\n");
 
-        for (const auto &operationLog : logs)
-            this->operationDispatcher->executeOperator(db, OperationBody{operationLog.operatorNumber, operationLog.flag1, operationLog.flag2, operationLog.args});
+        for (const auto &operation : operations)
+            this->operationDispatcher->executeOperator(db, operation);
     }
 
     void clearFileAndAddNewCompressedOperations(std::shared_ptr<Map> db) {

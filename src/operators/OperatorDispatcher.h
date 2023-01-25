@@ -9,19 +9,19 @@
 #include "OperatorRegistry.h"
 #include "utils/threads/dynamicthreadpool/SingleThreadPool.h"
 #include "messages/response/ErrorCode.h"
-#include "persistence/OperationLogSaver.h"
+#include "operators/buffer/OperationLogBuffer.h"
 #include "utils/clock/LamportClock.h"
 
 class OperatorDispatcher {
 private:
+    std::shared_ptr<OperationLogBuffer> operationLogBuffer;
     std::shared_ptr<LamportClock> clock;
-    std::shared_ptr<Map> db;
     OperatorRegistry operatorRegistry;
-    OperationLogSaver operationLogSaver;
+    std::shared_ptr<Map> db;
 
 public:
-    OperatorDispatcher(std::shared_ptr<Map> dbCons, std::shared_ptr<LamportClock> clock, const OperationLogSaver& operationLogSaver):
-        db(dbCons), operationLogSaver(std::move(operationLogSaver)), clock(clock)
+    OperatorDispatcher(std::shared_ptr<Map> dbCons, std::shared_ptr<LamportClock> clock, std::shared_ptr<OperationLogBuffer> operationLogBuffer):
+        db(dbCons), operationLogBuffer(operationLogBuffer), clock(clock)
     {}
 
     void dispatch(Request& request,
@@ -39,7 +39,10 @@ public:
         Response result = operatorToExecute->operate(request.operation, this->db);
 
         if(operatorToExecute->type() == WRITE && result.isSuccessful) {
-            this->operationLogSaver.save(request);
+            this->operationLogBuffer->add(request.operation);
+
+            if(!request.isReplication)
+                this->clock->tick(request.operation.timestamp);
         }
 
         this->callOnResponseCallback(onResponse, result, requestNumber);

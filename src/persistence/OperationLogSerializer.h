@@ -3,13 +3,17 @@
 #include <vector>
 #include <cstdint>
 
-#include "OperationLog.h"
+#include "messages/request/Request.h"
+#include "utils/Utils.h"
 
 class OperationLogSerializer {
 public:
-    std::vector<uint8_t> serialize(std::vector<uint8_t>& serializedOut, const OperationLog& toDeserialize) {
+    std::vector<uint8_t> serialize(std::vector<uint8_t>& serializedOut, const OperationBody& toDeserialize) {
         //Operator number
         serializedOut.push_back(toDeserialize.operatorNumber << 2 | toDeserialize.flag1 << 1 | toDeserialize.flag2);
+
+        //Timestamp
+        Utils::parseToBuffer(toDeserialize.timestamp, serializedOut, 1);
 
         //Args
         for(auto arg = toDeserialize.args->begin(); arg < toDeserialize.args->end(); arg++){

@@ -67,17 +67,20 @@ struct Request {
     AuthenticationBody authentication;
     OperationBody operation;
     uint64_t requestNumber;
+    bool isReplication = false; //Not setted in serialization
 
     Request(const Request& other) {
         this->authentication = other.authentication;
         this->operation = other.operation;
         this->requestNumber = other.requestNumber;
+        this->isReplication = other.isReplication;
     }
 
     Request(Request&& other) noexcept :
         authentication(std::move(other.authentication)),
         operation(std::move(other.operation)),
-        requestNumber(other.requestNumber)
+        requestNumber(other.requestNumber),
+        isReplication(other.isReplication)
         {
     };
 
@@ -85,6 +88,7 @@ struct Request {
         this->authentication = std::move(other.authentication);
         this->operation = std::move(other.operation);
         this->requestNumber = other.requestNumber;
+        this->isReplication = other.isReplication;
 
         return * this;
     }

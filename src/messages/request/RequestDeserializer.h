@@ -2,6 +2,7 @@
 
 #include "Request.h"
 #include "utils/benchmark/ScopeTimer.h"
+#include "utils/Utils.h"
 
 #include <memory>
 #include <vector>
@@ -13,24 +14,15 @@ private:
     static const uint8_t FLAG2_MASK = 0x10; //0100 0000
 
 public:
-    Request deserialize(const std::vector<uint8_t>& buffer) {
+    Request deserialize(const std::vector<uint8_t>& buffer, const bool includesNodeId = false) {
         uint8_t authLength = this->getValueWithoutFlags(buffer, sizeof(uint64_t));
 
         Request request{};
-        request.requestNumber = this->deserializeRequestNumber(buffer);
+        request.requestNumber = Utils::parseFromBuffer<uint64_t>(buffer);
         request.authentication = this->deserializeAuthenticacion(buffer);
-        request.operation = this->deserializeOperation(buffer, authLength + sizeof(uint64_t) + 1);
+        request.operation = this->deserializeOperation(buffer, authLength + sizeof(uint64_t) + 1, includesNodeId);
 
         return request;
-    }
-
-    uint64_t deserializeRequestNumber(const std::vector<uint8_t> &buffer) {
-        uint64_t result = 0;
-
-        for (std::size_t i = 0; i < sizeof(uint64_t); i++)
-            result |= static_cast<uint64_t>(buffer[i]) << (sizeof(uint64_t) * i);
-
-        return result;
     }
 
     AuthenticationBody deserializeAuthenticacion(const std::vector<uint8_t>& buffer) {
@@ -42,13 +34,25 @@ public:
         return AuthenticationBody(std::string((char *) authKey, authLength), flagAuth1, flagAuth2);
     }
 
-    OperationBody deserializeOperation(const std::vector<uint8_t>& buffer, const uint64_t initialOffset = 0) {
+    OperationBody deserializeOperation(const std::vector<uint8_t>& buffer, uint64_t initialOffset = 0,
+                                       const bool includesNodeId = false) {
         uint8_t operatorNumber = this->getValueWithoutFlags(buffer, initialOffset);
         bool flagOperation1 = this->getFlag(buffer, initialOffset, FLAG1_MASK); //Si es true, la longitud de los argumentos ocuparan 2 bytes
         bool flagOperation2 = this->getFlag(buffer, initialOffset, FLAG2_MASK);
 
+        initialOffset++;
+
+        uint64_t timestamp = Utils::parseFromBuffer<uint64_t>(buffer, initialOffset);
+        initialOffset += sizeof(uint64_t);
+
+        uint16_t nodeId = 1;
+        if(includesNodeId) {
+            nodeId = Utils::parseFromBuffer<uint16_t>(buffer, initialOffset);
+            initialOffset += sizeof(uint16_t);
+        }
+
         if(initialOffset == buffer.size() - 1){ //No args
-            return OperationBody(operatorNumber, flagOperation1, flagOperation2);
+            return OperationBody(operatorNumber, flagOperation1, flagOperation2, timestamp, nodeId);
         }
 
         int numerOfArguments = 0;
@@ -68,7 +72,7 @@ public:
             arguments->emplace_back(argValue, argLength);
         }
 
-        return OperationBody(operatorNumber, flagOperation1, flagOperation2, std::move(arguments));
+        return OperationBody(operatorNumber, flagOperation1, flagOperation2, timestamp, nodeId, std::move(arguments));
     }
 
 private:

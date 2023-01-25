@@ -66,7 +66,11 @@ private:
     }
 
     void onNewRequest(const std::vector<uint8_t>& requestRawBuffer, std::shared_ptr<Connection> connection) {
-        Request request = this->requestDeserializer.deserialize(requestRawBuffer);
+        bool isConnectionFromReplicaNode = this->isConnectionFromReplicaNode(connection);
+
+        Request request = this->requestDeserializer.deserialize(requestRawBuffer, isConnectionFromReplicaNode);
+        request.isReplication = isConnectionFromReplicaNode;
+
         bool authenticationValid = this->authenicator.authenticate(request.authentication.authKey);
 
         if(!authenticationValid){
@@ -85,5 +89,9 @@ private:
             std::vector<uint8_t> serialized = this->responseSerializer.serialize(response);
             connection->write(serialized);
         }
+    }
+
+    bool isConnectionFromReplicaNode(std::shared_ptr<Connection> connection) {
+        return false; //TODO Temporal
     }
 };

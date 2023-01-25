@@ -3,11 +3,10 @@ package es.memdb;
 import es.memdb.messages.response.expcetions.MemDbException;
 import es.memdb.messages.response.expcetions.UnknownKey;
 
-import java.util.Collections;
 import java.util.List;
 
 public enum Operator {
-    SET(1, Collections.EMPTY_LIST),
+    SET(1, List.of(UnknownKey.class)),
     GET(2, List.of(UnknownKey.class)),
     DELETE(3, List.of(UnknownKey.class));
 

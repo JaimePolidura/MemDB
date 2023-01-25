@@ -10,16 +10,18 @@
 #include "utils/threads/dynamicthreadpool/SingleThreadPool.h"
 #include "messages/response/ErrorCode.h"
 #include "persistence/OperationLogSaver.h"
+#include "utils/clock/LamportClock.h"
 
 class OperatorDispatcher {
 private:
+    std::shared_ptr<LamportClock> clock;
     std::shared_ptr<Map> db;
     OperatorRegistry operatorRegistry;
     OperationLogSaver operationLogSaver;
 
 public:
-    OperatorDispatcher(std::shared_ptr<Map> dbCons, const OperationLogSaver& operationLogSaver):
-        db(dbCons), operationLogSaver(std::move(operationLogSaver))
+    OperatorDispatcher(std::shared_ptr<Map> dbCons, std::shared_ptr<LamportClock> clock, const OperationLogSaver& operationLogSaver):
+        db(dbCons), operationLogSaver(std::move(operationLogSaver)), clock(clock)
     {}
 
     void dispatch(Request& request,
@@ -34,12 +36,14 @@ public:
             return;
         }
 
-        if(operatorToExecute->type() == WRITE)
-            this->operationLogSaver.save(request);
-
         Response result = operatorToExecute->operate(request.operation, this->db);
-        this->callOnResponseCallback(onResponse, result, requestNumber);
 
+        if(operatorToExecute->type() == WRITE && result.isSuccessful) {
+            this->operationLogSaver.save(request);
+        }
+
+        this->callOnResponseCallback(onResponse, result, requestNumber);
+        
         this->decreaseRequestArgumentsRefCount(request);
         result.responseValue.decreaseRefCount();
     }

@@ -7,18 +7,27 @@
 
 struct OperationBody {
     std::shared_ptr<std::vector<SimpleString>> args;
+    uint64_t timestamp;
+    uint16_t nodeId;
     uint8_t operatorNumber; //0 - 127
     bool flag1;
     bool flag2;
 
     OperationBody() = default;
 
-    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2): flag1(flag1), flag2(flag2), operatorNumber(operatorNumber) {}
-
-    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2, std::shared_ptr<std::vector<SimpleString>> argsCons):
+    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2, uint64_t timestamp, uint16_t nodeId):
         flag1(flag1),
         flag2(flag2),
+        nodeId(nodeId),
         operatorNumber(operatorNumber),
+        timestamp(timestamp) {}
+
+    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2, uint64_t timestamp, uint16_t nodeId, std::shared_ptr<std::vector<SimpleString>> argsCons):
+        flag1(flag1),
+        flag2(flag2),
+        nodeId(nodeId),
+        operatorNumber(operatorNumber),
+        timestamp(timestamp),
         args(argsCons) {}
 };
 
@@ -68,7 +77,8 @@ struct Request {
     Request(Request&& other) noexcept :
         authentication(std::move(other.authentication)),
         operation(std::move(other.operation)),
-        requestNumber(other.requestNumber) {
+        requestNumber(other.requestNumber)
+        {
     };
 
     Request& operator=(Request&& other) noexcept {

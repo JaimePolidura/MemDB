@@ -6,6 +6,7 @@
 #include "persistence/OperationLogSaver.h"
 #include "config/ConfigurationLoader.h"
 #include "config/keys/ConfigurationKeys.h"
+#include "replication/ReplicationNode.h"
 
 class MemDbCreator {
 public:
@@ -20,9 +21,11 @@ public:
 
         std::shared_ptr<OperatorDispatcher> operatorDispatcher = std::make_shared<OperatorDispatcher>(map, OperationLogSaver{configuration, operationLogBuffer});
 
+        std::shared_ptr<ReplicationNode> replicationNode = std::make_shared<ReplicationNode>(1); //TODO Temporal
+
         std::shared_ptr<TCPServer> tcpServer = std::make_shared<TCPServer>(configuration, Authenticator{usersRepository}, operatorDispatcher);
 
-        return std::make_shared<MemDb>(map, configuration, usersRepository, operatorDispatcher, tcpServer);
+        return std::make_shared<MemDb>(map, configuration, usersRepository, operatorDispatcher, tcpServer, replicationNode);
     }
 
 private:

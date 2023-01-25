@@ -2,18 +2,19 @@
 
 ## Setup
 
-- Necesitas variable entorno con llave: BOOST_ROOT y valor: C:\libs\C++\boost. Que apunte a la libreria boost.
+- You need an environtment variable called: BOOST_ROOT which points to boost v1.80.0 library's folder, folder name: boost_1_80_0
 
-## Funcionamiento
+## How it works
 
-- Cada usuario de autentica con una authKey, que enviara al abrir la conexion TCP. Podra tener como maximo 256 caracteres.
+- Each user will authenticate with an authkey. The max length will be 256 characters. It will be specified in config.txt
 
-## Formato peticion
-
+## Request format
 ````
              1 byte
 +-------------------------------+
 | Request number ... (8 bytes)  | 
++-------------------------------+
+| Timestamp ... (8 bytes)       |
 +-------------------------------+
 | Length auth authKey | f1 | f2 |   
 +-------------------------------+   
@@ -31,12 +32,13 @@
 +-------------------------------+
 ````
 
-## Formato respuesta
-
+## Response format
 ````
              1 byte
 +-------------------------------+
 | Request number ... (8 bytes)  |   
++-------------------------------+
+| Timestamp ... (8 bytes)       |
 +-------------------------------+
 | Error code              | suc |   
 +-------------------------------+   
@@ -47,7 +49,6 @@
 ````
 
 ## Formato persistencia
-
 ````
              1 byte
 +-------------------------------+   

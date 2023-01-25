@@ -7,13 +7,15 @@
 #include <queue>
 
 #include "utils/strings/SimpleString.h"
+#include "utils/clock/LamportClock.h"
 
 class AVLNode {
 public:
+    SimpleString key;
+    SimpleString value;
+    LamportClock timestamp;
     AVLNode * left;
     AVLNode * right;
-    SimpleString value;
-    SimpleString key;
     uint32_t keyHash;
     int16_t height;
 
@@ -21,10 +23,8 @@ public:
         return this->left == nullptr && this->right == nullptr;
     }
 
-    AVLNode() = default;
-
-    AVLNode(SimpleString key, uint32_t keyHash, SimpleString value, int16_t height):
-            left(nullptr), right(nullptr), value(value), keyHash(keyHash), height(height), key(key) {
+    AVLNode(SimpleString key, uint32_t keyHash, SimpleString value, int16_t height, uint16_t nodeId, uint64_t timestamp):
+            left(nullptr), right(nullptr), value(value), keyHash(keyHash), height(height), key(key), timestamp(nodeId, timestamp) {
     }
 };
 
@@ -33,8 +33,8 @@ public:
     AVLNode * root;
 
 public:
-    bool add(const SimpleString& key, uint32_t keyHash, const SimpleString& value) {
-        AVLNode * newNode = new AVLNode(key, keyHash, value, -1);
+    bool add(const SimpleString& key, uint32_t keyHash, const SimpleString& value, uint64_t timestamp, uint16_t nodeId) {
+        AVLNode * newNode = new AVLNode(key, keyHash, value, -1, nodeId, timestamp);
 
         if(this->root == nullptr){
             this->root = newNode;
@@ -45,8 +45,8 @@ public:
         return insertedNode != nullptr;
     }
 
-    void remove(uint32_t keyHash) {
-        this->removeRecursive(this->root, keyHash);
+    void remove(uint32_t keyHash, uint64_t timestamp, uint16_t nodeId) {
+        this->removeRecursive(this->root, keyHash, timestamp, nodeId);
     }
 
     std::vector<AVLNode *> all() const {
@@ -91,14 +91,18 @@ public:
     }
 
 private:
-    AVLNode * removeRecursive(AVLNode * last, uint32_t keyHashToRemove) {
+    AVLNode * removeRecursive(AVLNode * last, uint32_t keyHashToRemove, uint64_t timestamp, uint16_t nodeId) {
         if(last == nullptr){
             return last;
         }else if(last->keyHash > keyHashToRemove) {
-            last->left = this->removeRecursive(last->left, keyHashToRemove);
+            last->left = this->removeRecursive(last->left, keyHashToRemove, timestamp, nodeId);
         }else if (last->keyHash < keyHashToRemove) {
-            last->right = this->removeRecursive(last->right, keyHashToRemove);
+            last->right = this->removeRecursive(last->right, keyHashToRemove, timestamp, nodeId);
         }else{ //Found it
+            if(last->timestamp.compare(timestamp, nodeId)){ //Reject. Node has been updated by more updated node
+                return last;
+            }
+
             bool rootRemoved = this->root == last;
 
             if(last->left && last->right) {
@@ -109,7 +113,7 @@ private:
 
                 if(rootRemoved) this->root = last;
 
-                last->right = removeRecursive(last->right, last->keyHash);
+                last->right = removeRecursive(last->right, last->keyHash, last->timestamp.counter, last->timestamp.nodeId);
             }else{
                 AVLNode * temp = last;
                 if(last->left == nullptr)
@@ -151,8 +155,12 @@ private:
             if(inserted != nullptr) last->right = inserted;
 
         }else{
+            if(last->timestamp > toInsert->timestamp) //Reject. Node has been updated by more updated node
+                return nullptr;
+
             last->keyHash = toInsert->keyHash;
             last->value = toInsert->value;
+            last->timestamp = toInsert->timestamp;
         }
         
         return last->keyHash != toInsert->keyHash ?

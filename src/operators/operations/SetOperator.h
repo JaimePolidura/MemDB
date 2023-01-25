@@ -1,6 +1,7 @@
 #pragma once
 
 #include "operators/Operator.h"
+#include "messages/response/ErrorCode.h"
 
 #include <string>
 
@@ -15,12 +16,16 @@ public:
         SimpleString key = operation.args->at(0);
         SimpleString value = operation.args->at(1);
 
-        key.increaseRefCount();
-        value.increaseRefCount();
+        bool updated = map->put(key, value, operation.timestamp, operation.nodeId);
 
-        map->put(key, value);
+        if(updated){
+            key.increaseRefCount();
+            value.increaseRefCount();
+        }
 
-        return Response::success();
+        return updated ?
+            Response::success() :
+            Response::error(ErrorCode::ALREADY_REPLICATED);
     }
 
     constexpr OperatorType type() override {

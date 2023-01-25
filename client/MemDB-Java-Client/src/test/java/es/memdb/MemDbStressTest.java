@@ -67,7 +67,7 @@ public final class MemDbStressTest {
         Map<StressTestOperation, List<StressTestResult>> groupedByOperator = memDbStressTestRunner.run(memDbExecutorProvider)
                 .stream()
                 .collect(Collectors.groupingBy(StressTestResult::operator));
-
+        
         for (StressTestOperation operator : groupedByOperator.keySet()) {
             double average = groupedByOperator.get(operator).stream()
                     .mapToLong(StressTestResult::time)

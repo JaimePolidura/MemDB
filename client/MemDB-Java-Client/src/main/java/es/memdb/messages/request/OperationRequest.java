@@ -13,5 +13,6 @@ public final class OperationRequest {
     @Getter private final Operator operator;
     @Getter private final boolean flag1;
     @Getter private final boolean flag2;
+    @Getter private final long timestamp;
     @Getter private final List<String> args;
 }

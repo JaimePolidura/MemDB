@@ -1,6 +1,7 @@
 package es.memdb.connection;
 
 import es.memdb.Utils;
+import es.memdb.utils.clock.LamportClock;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
@@ -8,7 +9,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Map;
-import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -24,24 +24,17 @@ public final class AsyncMemDbConnection implements MemDbConnection {
 
     private final byte[] buffer = new byte[257];
 
-    private final Map<Long, Byte[]> requestWithoutCallbacks;
-    private final Map<Long, Consumer<Byte[]>> callbacks;
-    private final Executor callbackExecutorThreadPool;
-    private final Map<Long, WaitReadResponseCondition> readMutex;
-    private Lock writeSocketLock;
+    private final Executor callbackExecutorThreadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private final Map<Long, WaitReadResponseCondition> readMutex = new ConcurrentHashMap<>();
+    private final Map<Long, Byte[]> requestWithoutCallbacks = new ConcurrentHashMap<>();
+    private final Map<Long, Consumer<Byte[]>> callbacks = new ConcurrentHashMap<>();
+    private Lock writeSocketLock = new ReentrantLock(true);
 
-    private final ServerAsyncReader serverAsyncReader;
-    private final ServerAsyncWriter serverAsyncWriter;
+    private final ServerAsyncReader serverAsyncReader = new ServerAsyncReader();
+    private final ServerAsyncWriter serverAsyncWriter = new ServerAsyncWriter();
 
     public AsyncMemDbConnection(String host, int port) throws IOException {
-        this.callbackExecutorThreadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        this.writeSocketLock = new ReentrantLock(true);
-        this.requestWithoutCallbacks = new ConcurrentHashMap<>();
-        this.callbacks = new ConcurrentHashMap<>();
-        this.readMutex = new ConcurrentHashMap<>();
         this.host = host;
-        this.serverAsyncReader = new ServerAsyncReader();
-        this.serverAsyncWriter = new ServerAsyncWriter();
         this.port = port;
         this.connect();
     }

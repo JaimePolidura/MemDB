@@ -6,6 +6,7 @@ import es.memdb.messages.response.Response;
 import es.memdb.messages.response.ResponseDeserializer;
 import es.memdb.messages.response.expcetions.MemDbException;
 import es.memdb.messages.response.expcetions.MemDbExceptionsRegistry;
+import es.memdb.utils.clock.LamportClock;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
@@ -19,8 +20,10 @@ public final class MemDb {
     private ResponseDeserializer responseDeserializer = new ResponseDeserializer();
     private RequestSerializer requestSerializer = new RequestSerializer();
 
+    private final LamportClock clock = new LamportClock();
     private final MemDbConnection memDbConnection;
     private final String authKey;
+
 
     public String get(String key) {
         return this.sendRequest(OperationRequest.builder()
@@ -61,7 +64,7 @@ public final class MemDb {
     private String sendRequest(OperationRequest.OperationRequestBuilder operation) {
         Request request = this.createRequestObject(operation);
 
-        byte[] rawRequest = this.requestSerializer.serialize(request);
+        byte[] rawRequest = this.requestSerializer.serialize(request, this.clock.get());
 
         this.memDbConnection.write(rawRequest);
 
@@ -75,7 +78,7 @@ public final class MemDb {
 
     private void sendRequestAsync(Consumer<String> result, OperationRequest.OperationRequestBuilder operation) {
         Request request = this.createRequestObject(operation);
-        byte[] rawRequest = this.requestSerializer.serialize(request);
+        byte[] rawRequest = this.requestSerializer.serialize(request, this.clock.get());
 
         this.memDbConnection.write(rawRequest, rawResponse -> {
             Response response = this.responseDeserializer.deserialize(Utils.wrapperToPrimitive(rawResponse));

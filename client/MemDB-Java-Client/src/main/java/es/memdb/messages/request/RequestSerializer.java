@@ -10,10 +10,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class RequestSerializer {
-    public byte[] serialize(Request request) {
+    public byte[] serialize(Request request, long timestamp) {
         List<Byte> requestNumber = this.getRequestNumber(request);
         List<Byte> auth = this.getAuth(request);
-        List<Byte> operation = this.getOperations(request);
+        List<Byte> operation = this.getOperations(request, timestamp);
 
         byte[] totalRaw = new byte[requestNumber.size() + auth.size() + operation.size()];
 
@@ -36,10 +36,11 @@ public final class RequestSerializer {
         return Arrays.stream(Utils.primitiveToWrapper(bytes)).toList();
     }
 
-    private List<Byte> getOperations(Request request) {
+    private List<Byte> getOperations(Request request, long timestamp) {
         List<Byte> bytes = new ArrayList<>();
 
         bytes.add(this.getOperatorDesc(request.getOperationRequest()));
+        bytes.addAll(this.getTimestamp(timestamp));
 
         List<String> argsString = request.getOperationRequest().getArgs();
         for (String arg : argsString) {
@@ -58,6 +59,15 @@ public final class RequestSerializer {
         byte flag2 = (byte) booleanToInt(operationRequest.isFlag2());
 
         return (byte) (operatorNumber | flag1 | flag2);
+    }
+
+    private List<Byte> getTimestamp(long timestamp) {
+        byte[] bytes = ByteBuffer.allocate(Long.BYTES)
+                .order(ByteOrder.BIG_ENDIAN)
+                .putLong(timestamp)
+                .array();
+
+        return Arrays.stream(Utils.primitiveToWrapper(bytes)).toList();
     }
 
     private List<Byte> getAuth(Request request) {

@@ -12,14 +12,14 @@ TEST(RequesteRequestDeserializer, WithArgsAndNodeId) {
     std::vector<uint8_t> buffer = {
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xFF, //Req number -> 511
             0x0C, 0x4C, 0x4F, 0x4C, //Auth key -> LOL
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, //Timestamp -> 255
             0x09, //Opdesc -> op num: 0x02, flag1: 0, flag2: 1
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, //Timestamp -> 255
             0x02, 0xFF, //NodeNumber -> 767
             0x01, 0x41, //A
             0x02, 0x42, 0x43 //B
     };
 
-    Request deserializedRequest = requestDeserializer.deserialize(buffer);
+    Request deserializedRequest = requestDeserializer.deserialize(buffer, true);
 
     ASSERT_EQ(deserializedRequest.requestNumber, 511);
 

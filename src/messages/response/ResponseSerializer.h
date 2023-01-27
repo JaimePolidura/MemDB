@@ -13,7 +13,7 @@
 class ResponseSerializer {
 public:
     std::vector<uint8_t> serialize(const Response& response) {
-        std::vector<uint8_t> serialized;
+        std::vector<uint8_t> serialized{};
         serialized.reserve(MAX_RESPONSE_SIZE);
 
         Utils::parseToBuffer(response.requestNumber, serialized);

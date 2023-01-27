@@ -56,18 +56,17 @@ public:
         }
 
         int numerOfArguments = 0;
-        uint64_t lastIndexChecked = initialOffset + 1; //Index first arg
         std::shared_ptr<std::vector<SimpleString>> arguments = std::make_shared<std::vector<SimpleString>>();
 
-        while (lastIndexChecked + 1 < buffer.size()) {
-            unsigned short argLength = (unsigned short) buffer[lastIndexChecked];
+        while (initialOffset + 1 < buffer.size()) {
+            unsigned short argLength = (unsigned short) buffer[initialOffset];
             if(argLength == 0)
                 break;
 
-            int argValuePosition = lastIndexChecked + 1;
+            int argValuePosition = initialOffset + 1;
             uint8_t * argValue = this->fill(buffer, argValuePosition, argValuePosition + argLength);
 
-            lastIndexChecked = argValuePosition + argLength;
+            initialOffset = argValuePosition + argLength;
             numerOfArguments++;
             arguments->emplace_back(argValue, argLength);
         }

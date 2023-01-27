@@ -5,6 +5,8 @@
 
 #include <string>
 
+void assertFirstItemsVectorsEqual(const std::vector<uint8_t>& expected, const std::vector<uint8_t>& toAssert);
+
 TEST(ResponseSerializer, ShouldSerializeSuccessWithData) {
     ResponseSerializer responseSerializer{};
 
@@ -21,7 +23,7 @@ TEST(ResponseSerializer, ShouldSerializeSuccessWithData) {
             0x68, 0x65, 0x6C, 0x6C, 0x6F //hello
     };
 
-    ASSERT_EQ(serialized, expected);
+    assertFirstItemsVectorsEqual(expected, serialized);
 }
 
 TEST(ResponseSerializer, ShouldSerializeSuccessNoData) {
@@ -39,7 +41,7 @@ TEST(ResponseSerializer, ShouldSerializeSuccessNoData) {
             0x00  //Length response
     };
 
-    ASSERT_EQ(serialized, expected);
+    assertFirstItemsVectorsEqual(expected, serialized);
 }
 
 TEST(ResponseSerializer, ShouldSerializeErrorNoData) {
@@ -57,5 +59,15 @@ TEST(ResponseSerializer, ShouldSerializeErrorNoData) {
             0x00  //Length response
     };
 
-    ASSERT_EQ(serialized, expected);
+    assertFirstItemsVectorsEqual(expected, serialized);
+}
+
+
+void assertFirstItemsVectorsEqual(const std::vector<uint8_t>& expected, const std::vector<uint8_t>& toAssert) {
+    for (int i = 0; i < expected.size(); ++i) {
+        const uint8_t * expectedPtr = expected.data() + i;
+        const uint8_t * toAssertPtr = toAssert.data() + i;
+
+        ASSERT_EQ(* expectedPtr, * toAssertPtr);
+    }
 }

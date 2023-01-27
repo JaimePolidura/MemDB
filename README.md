@@ -7,6 +7,7 @@
 ## How it works
 
 - Each user will authenticate with an authkey. The max length will be 256 characters. It will be specified in config.txt
+- Data will be ASCII encoded using low endian format.
 
 ## Request format
 ````

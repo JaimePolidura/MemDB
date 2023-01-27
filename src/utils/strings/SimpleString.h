@@ -24,19 +24,25 @@ public:
     }
 
     void decreaseRefCount() {
-        if(this->refCount == nullptr || this->refCount->load() < 1)
+        if(this->isDeleted() || this->refCount->load() < 1)
             return;
 
         int attempts = this->atomicDecrementRefcount();
 
-        if(attempts == 0){
+        if(this->refCount->load() == 0 && attempts == 1){
             delete[] this->value;
             delete this->refCount;
+            this->value = nullptr;
+            this->refCount = nullptr;
         }
     }
 
     uint8_t * operator[](int index) const {
         return this->value + index;
+    }
+
+    bool isDeleted() {
+        return this->value == nullptr || this->refCount == nullptr;
     }
 
     static SimpleString empty() {

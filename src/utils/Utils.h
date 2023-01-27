@@ -21,8 +21,6 @@ public:
         for(int i = 0; i < sizeof(T); i++){
             size_t tomove = ((sizeof(T) - 1) - i) * sizeof(uint8_t) * 8;
             vectorOut.insert(vectorOut.begin() + (i + positionToWrite), static_cast<uint8_t>((toParse >> tomove) & 0xFF));
-
-//            vectorOut[i + positionToWrite] = static_cast<uint8_t>((toParse >> tomove) & 0xFF);
         }
 
         return vectorOut;

@@ -28,7 +28,7 @@ public:
         do {
             actualCountervalue = this->counter.load();
             newCounter = std::max(actualCountervalue, other) + 1;
-        } while(this->counter.compare_exchange_strong(actualCountervalue, newCounter));
+        } while(!this->counter.compare_exchange_strong(actualCountervalue, newCounter));
 
         return newCounter;
     }

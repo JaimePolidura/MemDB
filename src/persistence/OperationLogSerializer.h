@@ -15,12 +15,14 @@ public:
         //Timestamp
         Utils::parseToBuffer(toDeserialize.timestamp, serializedOut, 1);
 
-        //Args
-        for(auto arg = toDeserialize.args->begin(); arg < toDeserialize.args->end(); arg++){
-            serializedOut.push_back(arg->size);
+        if(toDeserialize.args.get() != nullptr){
+            //Args
+            for(auto arg = toDeserialize.args->begin(); arg < toDeserialize.args->end(); arg++){
+                serializedOut.push_back(arg->size);
 
-            for(uint8_t j = 0; j < arg->size; j++)
-                serializedOut.push_back(* (arg->value + j));
+                for(uint8_t j = 0; j < arg->size; j++)
+                    serializedOut.push_back(* (arg->value + j));
+            }
         }
 
         //Padding

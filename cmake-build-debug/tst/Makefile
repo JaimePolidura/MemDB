@@ -342,6 +342,78 @@ messages/response/ResponseSerializerTest.cpp.s:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/messages/response/ResponseSerializerTest.cpp.s
 .PHONY : messages/response/ResponseSerializerTest.cpp.s
 
+persistence/OperationLogDeserializerTest.obj: persistence/OperationLogDeserializerTest.cpp.obj
+.PHONY : persistence/OperationLogDeserializerTest.obj
+
+# target to build an object file
+persistence/OperationLogDeserializerTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/persistence/OperationLogDeserializerTest.cpp.obj
+.PHONY : persistence/OperationLogDeserializerTest.cpp.obj
+
+persistence/OperationLogDeserializerTest.i: persistence/OperationLogDeserializerTest.cpp.i
+.PHONY : persistence/OperationLogDeserializerTest.i
+
+# target to preprocess a source file
+persistence/OperationLogDeserializerTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/persistence/OperationLogDeserializerTest.cpp.i
+.PHONY : persistence/OperationLogDeserializerTest.cpp.i
+
+persistence/OperationLogDeserializerTest.s: persistence/OperationLogDeserializerTest.cpp.s
+.PHONY : persistence/OperationLogDeserializerTest.s
+
+# target to generate assembly for a file
+persistence/OperationLogDeserializerTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/persistence/OperationLogDeserializerTest.cpp.s
+.PHONY : persistence/OperationLogDeserializerTest.cpp.s
+
+persistence/OperationLogSerializerTest.obj: persistence/OperationLogSerializerTest.cpp.obj
+.PHONY : persistence/OperationLogSerializerTest.obj
+
+# target to build an object file
+persistence/OperationLogSerializerTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/persistence/OperationLogSerializerTest.cpp.obj
+.PHONY : persistence/OperationLogSerializerTest.cpp.obj
+
+persistence/OperationLogSerializerTest.i: persistence/OperationLogSerializerTest.cpp.i
+.PHONY : persistence/OperationLogSerializerTest.i
+
+# target to preprocess a source file
+persistence/OperationLogSerializerTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/persistence/OperationLogSerializerTest.cpp.i
+.PHONY : persistence/OperationLogSerializerTest.cpp.i
+
+persistence/OperationLogSerializerTest.s: persistence/OperationLogSerializerTest.cpp.s
+.PHONY : persistence/OperationLogSerializerTest.s
+
+# target to generate assembly for a file
+persistence/OperationLogSerializerTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/persistence/OperationLogSerializerTest.cpp.s
+.PHONY : persistence/OperationLogSerializerTest.cpp.s
+
+utils/clock/LamportClockTest.obj: utils/clock/LamportClockTest.cpp.obj
+.PHONY : utils/clock/LamportClockTest.obj
+
+# target to build an object file
+utils/clock/LamportClockTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/clock/LamportClockTest.cpp.obj
+.PHONY : utils/clock/LamportClockTest.cpp.obj
+
+utils/clock/LamportClockTest.i: utils/clock/LamportClockTest.cpp.i
+.PHONY : utils/clock/LamportClockTest.i
+
+# target to preprocess a source file
+utils/clock/LamportClockTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/clock/LamportClockTest.cpp.i
+.PHONY : utils/clock/LamportClockTest.cpp.i
+
+utils/clock/LamportClockTest.s: utils/clock/LamportClockTest.cpp.s
+.PHONY : utils/clock/LamportClockTest.s
+
+# target to generate assembly for a file
+utils/clock/LamportClockTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/clock/LamportClockTest.cpp.s
+.PHONY : utils/clock/LamportClockTest.cpp.s
+
 utils/datastructures/map/MapTest.obj: utils/datastructures/map/MapTest.cpp.obj
 .PHONY : utils/datastructures/map/MapTest.obj
 
@@ -414,6 +486,54 @@ utils/datastructures/tree/AVLTreeTest.cpp.s:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.s
 .PHONY : utils/datastructures/tree/AVLTreeTest.cpp.s
 
+utils/string/SimpleStringTest.obj: utils/string/SimpleStringTest.cpp.obj
+.PHONY : utils/string/SimpleStringTest.obj
+
+# target to build an object file
+utils/string/SimpleStringTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/string/SimpleStringTest.cpp.obj
+.PHONY : utils/string/SimpleStringTest.cpp.obj
+
+utils/string/SimpleStringTest.i: utils/string/SimpleStringTest.cpp.i
+.PHONY : utils/string/SimpleStringTest.i
+
+# target to preprocess a source file
+utils/string/SimpleStringTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/string/SimpleStringTest.cpp.i
+.PHONY : utils/string/SimpleStringTest.cpp.i
+
+utils/string/SimpleStringTest.s: utils/string/SimpleStringTest.cpp.s
+.PHONY : utils/string/SimpleStringTest.s
+
+# target to generate assembly for a file
+utils/string/SimpleStringTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/string/SimpleStringTest.cpp.s
+.PHONY : utils/string/SimpleStringTest.cpp.s
+
+utils/string/StringUtilsTest.obj: utils/string/StringUtilsTest.cpp.obj
+.PHONY : utils/string/StringUtilsTest.obj
+
+# target to build an object file
+utils/string/StringUtilsTest.cpp.obj:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/string/StringUtilsTest.cpp.obj
+.PHONY : utils/string/StringUtilsTest.cpp.obj
+
+utils/string/StringUtilsTest.i: utils/string/StringUtilsTest.cpp.i
+.PHONY : utils/string/StringUtilsTest.i
+
+# target to preprocess a source file
+utils/string/StringUtilsTest.cpp.i:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/string/StringUtilsTest.cpp.i
+.PHONY : utils/string/StringUtilsTest.cpp.i
+
+utils/string/StringUtilsTest.s: utils/string/StringUtilsTest.cpp.s
+.PHONY : utils/string/StringUtilsTest.s
+
+# target to generate assembly for a file
+utils/string/StringUtilsTest.cpp.s:
+	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/utils/string/StringUtilsTest.cpp.s
+.PHONY : utils/string/StringUtilsTest.cpp.s
+
 utils/threads/dynamicthreadpool/DynamicThreadPoolTest.obj: utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj
 .PHONY : utils/threads/dynamicthreadpool/DynamicThreadPoolTest.obj
 
@@ -472,6 +592,15 @@ help:
 	@echo ... messages/response/ResponseSerializerTest.obj
 	@echo ... messages/response/ResponseSerializerTest.i
 	@echo ... messages/response/ResponseSerializerTest.s
+	@echo ... persistence/OperationLogDeserializerTest.obj
+	@echo ... persistence/OperationLogDeserializerTest.i
+	@echo ... persistence/OperationLogDeserializerTest.s
+	@echo ... persistence/OperationLogSerializerTest.obj
+	@echo ... persistence/OperationLogSerializerTest.i
+	@echo ... persistence/OperationLogSerializerTest.s
+	@echo ... utils/clock/LamportClockTest.obj
+	@echo ... utils/clock/LamportClockTest.i
+	@echo ... utils/clock/LamportClockTest.s
 	@echo ... utils/datastructures/map/MapTest.obj
 	@echo ... utils/datastructures/map/MapTest.i
 	@echo ... utils/datastructures/map/MapTest.s
@@ -481,6 +610,12 @@ help:
 	@echo ... utils/datastructures/tree/AVLTreeTest.obj
 	@echo ... utils/datastructures/tree/AVLTreeTest.i
 	@echo ... utils/datastructures/tree/AVLTreeTest.s
+	@echo ... utils/string/SimpleStringTest.obj
+	@echo ... utils/string/SimpleStringTest.i
+	@echo ... utils/string/SimpleStringTest.s
+	@echo ... utils/string/StringUtilsTest.obj
+	@echo ... utils/string/StringUtilsTest.i
+	@echo ... utils/string/StringUtilsTest.s
 	@echo ... utils/threads/dynamicthreadpool/DynamicThreadPoolTest.obj
 	@echo ... utils/threads/dynamicthreadpool/DynamicThreadPoolTest.i
 	@echo ... utils/threads/dynamicthreadpool/DynamicThreadPoolTest.s

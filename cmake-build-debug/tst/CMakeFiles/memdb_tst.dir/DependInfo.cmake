@@ -15,9 +15,14 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "C:/programacion/MemDB/tst/main.cpp" "tst/CMakeFiles/memdb_tst.dir/main.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/main.cpp.obj.d"
   "C:/programacion/MemDB/tst/messages/request/RequestDeserializerTest.cpp" "tst/CMakeFiles/memdb_tst.dir/messages/request/RequestDeserializerTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/messages/request/RequestDeserializerTest.cpp.obj.d"
   "C:/programacion/MemDB/tst/messages/response/ResponseSerializerTest.cpp" "tst/CMakeFiles/memdb_tst.dir/messages/response/ResponseSerializerTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/messages/response/ResponseSerializerTest.cpp.obj.d"
+  "C:/programacion/MemDB/tst/persistence/OperationLogDeserializerTest.cpp" "tst/CMakeFiles/memdb_tst.dir/persistence/OperationLogDeserializerTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/persistence/OperationLogDeserializerTest.cpp.obj.d"
+  "C:/programacion/MemDB/tst/persistence/OperationLogSerializerTest.cpp" "tst/CMakeFiles/memdb_tst.dir/persistence/OperationLogSerializerTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/persistence/OperationLogSerializerTest.cpp.obj.d"
+  "C:/programacion/MemDB/tst/utils/clock/LamportClockTest.cpp" "tst/CMakeFiles/memdb_tst.dir/utils/clock/LamportClockTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/utils/clock/LamportClockTest.cpp.obj.d"
   "C:/programacion/MemDB/tst/utils/datastructures/map/MapTest.cpp" "tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/MapTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/utils/datastructures/map/MapTest.cpp.obj.d"
   "C:/programacion/MemDB/tst/utils/datastructures/queue/BlockingQueueTest.cpp" "tst/CMakeFiles/memdb_tst.dir/utils/datastructures/queue/BlockingQueueTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/utils/datastructures/queue/BlockingQueueTest.cpp.obj.d"
   "C:/programacion/MemDB/tst/utils/datastructures/tree/AVLTreeTest.cpp" "tst/CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/utils/datastructures/tree/AVLTreeTest.cpp.obj.d"
+  "C:/programacion/MemDB/tst/utils/string/SimpleStringTest.cpp" "tst/CMakeFiles/memdb_tst.dir/utils/string/SimpleStringTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/utils/string/SimpleStringTest.cpp.obj.d"
+  "C:/programacion/MemDB/tst/utils/string/StringUtilsTest.cpp" "tst/CMakeFiles/memdb_tst.dir/utils/string/StringUtilsTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/utils/string/StringUtilsTest.cpp.obj.d"
   "C:/programacion/MemDB/tst/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp" "tst/CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj" "gcc" "tst/CMakeFiles/memdb_tst.dir/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp.obj.d"
   )
 

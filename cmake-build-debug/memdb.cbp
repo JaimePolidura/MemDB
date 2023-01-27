@@ -767,10 +767,6 @@
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
 		</Unit>
-		<Unit filename="C:/programacion/MemDB/src/utils/threads/ReadWriteLock.h">
-			<Option target="memdb_run"/>
-			<Option target="memdb_lib"/>
-		</Unit>
 		<Unit filename="C:/programacion/MemDB/src/utils/threads/dynamicthreadpool">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
@@ -786,6 +782,9 @@
 		<Unit filename="C:/programacion/MemDB/src/utils/threads/dynamicthreadpool/SingleThreadPool.h">
 			<Option target="memdb_run"/>
 			<Option target="memdb_lib"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/tst/Assertions.h">
+			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/database/operators/OperatorRegistryTest.cpp">
 			<Option target="memdb_tst"/>
@@ -808,6 +807,15 @@
 		<Unit filename="C:/programacion/MemDB/tst/messages/response/ResponseSerializerTest.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
+		<Unit filename="C:/programacion/MemDB/tst/persistence/OperationLogDeserializerTest.cpp">
+			<Option target="memdb_tst"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/tst/persistence/OperationLogSerializerTest.cpp">
+			<Option target="memdb_tst"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/tst/utils/clock/LamportClockTest.cpp">
+			<Option target="memdb_tst"/>
+		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/utils/datastructures/map/MapTest.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
@@ -815,6 +823,12 @@
 			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/utils/datastructures/tree/AVLTreeTest.cpp">
+			<Option target="memdb_tst"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/tst/utils/string/SimpleStringTest.cpp">
+			<Option target="memdb_tst"/>
+		</Unit>
+		<Unit filename="C:/programacion/MemDB/tst/utils/string/StringUtilsTest.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/utils/threads/dynamicthreadpool/DynamicThreadPoolTest.cpp">

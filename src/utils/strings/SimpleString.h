@@ -43,6 +43,14 @@ public:
         return SimpleString{nullptr, nullptr, 0};
     }
 
+    static SimpleString fromString(std::string&& string) {
+        uint8_t * valuePtr = new uint8_t[string.size()];
+        for (int i = 0; i < string.size(); ++i)
+            * (valuePtr + i) = * (string.begin() + i);
+
+        return SimpleString{valuePtr, static_cast<uint8_t>(string.size())};
+    }
+
     static SimpleString fromArray(std::initializer_list<uint8_t> values) {
         uint8_t * valuePtr = new uint8_t[values.size()];
         for (int i = 0; i < values.size(); ++i)

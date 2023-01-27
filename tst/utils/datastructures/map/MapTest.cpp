@@ -2,54 +2,84 @@
 #include "utils/datastructures/map/Map.h"
 #include "string"
 
-struct Value {
-    int value;
+TEST(Map, ShouldPut) {
+    Map map{64};
 
-    Value(int valueCons): value(valueCons) {}
-};
-
-Value * insertValueInMap(Map * map, const std::string &key, int value);
-
-TEST(Map, ShouldRemove) {
-    Map map{};
-    Value * inserted = insertValueInMap(&map, "key1", 1);
-
-    map.remove("key1");
-
-    ASSERT_FALSE(map.contains("key1"));
-    ASSERT_FALSE(map.get("key1").has_value());
-}
-
-TEST(Map, ShouldGet) {
-    Map map { };
-
-    insertValueInMap(&map, "key1", 1);
+    bool placed = map.put(SimpleString::fromString("nombre"), SimpleString::fromString("jaime"), 1, 1);
+    ASSERT_TRUE(placed);
     ASSERT_EQ(map.getSize(), 1);
 
-    ASSERT_FALSE(map.get("key2").has_value());
-    const std::optional<MapEntry> anOptional = map.get("key1");
-    ASSERT_TRUE(anOptional.has_value());
-    const Value * valueOptional = (Value *) anOptional.value().value;
-    ASSERT_EQ(valueOptional->value, 1);
-}
-
-TEST(Map, ShouldPutAndContains) {
-    Map map {};
-
-    insertValueInMap(&map, "key1", 1);
+    bool placed2 = map.put(SimpleString::fromString("nombre"), SimpleString::fromString("pedro"), 2, 1);
+    ASSERT_TRUE(placed2);
     ASSERT_EQ(map.getSize(), 1);
-    ASSERT_TRUE(map.contains("key1"));
-    ASSERT_FALSE(map.contains("key2"));
+    ASSERT_TRUE(map.contains(SimpleString::fromString("nombre")));
 
-    insertValueInMap(&map, "key2", 1123);
-    ASSERT_EQ(map.getSize(), 2);
-    ASSERT_TRUE(map.contains("key1"));
-    ASSERT_TRUE(map.contains("key2"));
+    const std::optional<MapEntry> mapEntryNombre = map.get(SimpleString::fromString("nombre"));
+    std::string expectedValue = "pedro";
+    ASSERT_TRUE(mapEntryNombre.has_value());
+    ASSERT_TRUE(expectedValue.compare(std::string((char *) mapEntryNombre.value().value.value, mapEntryNombre.value().value.size)) == 0);
 }
 
-Value * insertValueInMap(Map * map, const std::string &key, int value){
-    Value * value1 = new Value(value);
-    map->put(key, (uint8_t *) value1, sizeof(Value));
+TEST(Map, ShouldntPut) {
+    Map map{64};
 
-    return value1;
+    map.put(SimpleString::fromString("nombre"), SimpleString::fromString("jaime"), 2, 1);
+    bool put = map.put(SimpleString::fromString("nombre"), SimpleString::fromString("jaime"), 1, 1);
+
+    ASSERT_FALSE(put);
+}
+
+TEST(Map, ShoudntGetEmpty) {
+    Map map{64};
+    auto result = map.get(SimpleString::fromString("a"));
+
+    ASSERT_FALSE(result.has_value());
+}
+
+TEST(Map, GetAll) {
+    Map map{2};
+    map.put(SimpleString::fromString("A"), SimpleString::fromString("jaime"), 2, 1);
+    map.put(SimpleString::fromString("B"), SimpleString::fromString("jaime"), 2, 1);
+    map.put(SimpleString::fromString("C"), SimpleString::fromString("jaime"), 2, 1);
+    map.put(SimpleString::fromString("D"), SimpleString::fromString("jaime"), 2, 1);
+
+    auto all = map.all();
+
+    ASSERT_TRUE(all.size() == 4);
+}
+
+TEST(Map, ShouldntGetAllEmpty) {
+    Map map{2};
+    auto all = map.all();
+
+    ASSERT_TRUE(all.size() == 0);
+}
+
+TEST(Map, ShouldntRemoveOldTimestamp) {
+    Map map{64};
+    map.put(SimpleString::fromString("A"), SimpleString::fromString("jaime"), 2, 1);
+    bool removed = map.remove(SimpleString::fromString("A"), 1, 1);
+
+    ASSERT_FALSE(removed);
+    ASSERT_EQ(1, map.getSize());
+    ASSERT_TRUE(map.contains(SimpleString::fromString("A")));
+    ASSERT_TRUE(map.get(SimpleString::fromString("A")).has_value());
+}
+
+TEST(Map, ShouldntRemoveNotFound) {
+    Map map{64};
+    bool removed = map.remove(SimpleString::fromString("A"), 3, 1);
+
+    ASSERT_FALSE(removed);
+}
+
+TEST(Map, ShouldRemoe) {
+    Map map{64};
+    map.put(SimpleString::fromString("A"), SimpleString::fromString("jaime"), 2, 1);
+    bool removed = map.remove(SimpleString::fromString("A"), 3, 1);
+
+    ASSERT_TRUE(removed);
+    ASSERT_EQ(0, map.getSize());
+    ASSERT_FALSE(map.contains(SimpleString::fromString("A")));
+    ASSERT_FALSE(map.get(SimpleString::fromString("A")).has_value());
 }

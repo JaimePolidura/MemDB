@@ -74,7 +74,7 @@ private:
         bool authenticationValid = this->authenicator.authenticate(request.authentication.authKey);
 
         if(!authenticationValid){
-            const Response errorAuthResponse = Response::error(ErrorCode::AUTH_ERROR, request.requestNumber);
+            const Response errorAuthResponse = Response::error(ErrorCode::AUTH_ERROR, request.requestNumber, request.operation.timestamp);
             this->sendResponse(connection, errorAuthResponse);
             return;
         }

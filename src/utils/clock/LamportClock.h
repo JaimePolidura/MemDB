@@ -33,27 +33,35 @@ public:
         return newCounter;
     }
 
+    //Returns if this clock is bigger than the passed by arguments
     bool compare(uint64_t otherCount, uint16_t otherNodeId) {
-        return this->counter.load() > otherCount || this->nodeId > otherNodeId;
+        return this->counter > otherCount ||
+            (this->counter == otherCount && this->nodeId > otherNodeId);
     }
 
     bool operator<(const LamportClock& other) { //this <= other
-        return other.counter.load() > this->counter.load() || other.nodeId > this->nodeId;
+        return this->counter < other.counter ||
+            (this->counter == other.counter && this->nodeId < other.nodeId);
     }
 
     bool operator<=(const LamportClock& other) { //this <= other
-        return other.counter.load() >= this->counter.load() || other.nodeId >= this->nodeId;
+        return (other.counter == this->counter && other.nodeId == this->nodeId) &&
+            this->counter < other.counter ||
+            (this->counter == other.counter && this->nodeId < other.nodeId);
     }
 
     bool operator>(const LamportClock& other){ // this > other
-        return other.counter.load() < this->counter.load() || other.nodeId < this->nodeId;
+        return this->counter > other.counter ||
+               (this->counter == other.counter && this->nodeId > other.nodeId);
     }
 
     bool operator>=(const LamportClock& other){ // this >= other
-        return other.counter.load() <= this->counter.load() || other.nodeId <= this->nodeId;
+        return (other.counter == this->counter && other.nodeId == this->nodeId) &&
+            this->counter > other.counter ||
+            (this->counter == other.counter && this->nodeId > other.nodeId);
     }
 
     bool operator==(const LamportClock& other){ // this == other
-        return other.counter.load() == this->counter.load() && other.nodeId == this->nodeId;
+        return other.counter == this->counter && other.nodeId == this->nodeId;
     }
 };

@@ -45,8 +45,11 @@ public:
         return insertedNode != nullptr;
     }
 
-    void remove(uint32_t keyHash, uint64_t timestamp, uint16_t nodeId) {
-        this->removeRecursive(this->root, keyHash, timestamp, nodeId);
+    bool remove(uint32_t keyHash, uint64_t timestamp, uint16_t nodeId) {
+        bool removed = false;
+        this->removeRecursive(this->root, keyHash, timestamp, nodeId, removed);
+
+        return removed;
     }
 
     std::vector<AVLNode *> all() const {
@@ -91,18 +94,19 @@ public:
     }
 
 private:
-    AVLNode * removeRecursive(AVLNode * last, uint32_t keyHashToRemove, uint64_t timestamp, uint16_t nodeId) {
+    AVLNode * removeRecursive(AVLNode * last, uint32_t keyHashToRemove, uint64_t timestamp, uint16_t nodeId, bool& removed) {
         if(last == nullptr){
             return last;
         }else if(last->keyHash > keyHashToRemove) {
-            last->left = this->removeRecursive(last->left, keyHashToRemove, timestamp, nodeId);
+            last->left = this->removeRecursive(last->left, keyHashToRemove, timestamp, nodeId, removed);
         }else if (last->keyHash < keyHashToRemove) {
-            last->right = this->removeRecursive(last->right, keyHashToRemove, timestamp, nodeId);
+            last->right = this->removeRecursive(last->right, keyHashToRemove, timestamp, nodeId, removed);
         }else{ //Found it
             if(last->timestamp.compare(timestamp, nodeId)){ //Reject. Node has been updated by more updated node
                 return last;
             }
 
+            removed = true;
             bool rootRemoved = this->root == last;
 
             if(last->left && last->right) {
@@ -113,7 +117,8 @@ private:
 
                 if(rootRemoved) this->root = last;
 
-                last->right = removeRecursive(last->right, last->keyHash, last->timestamp.counter, last->timestamp.nodeId);
+                bool ignore = false;
+                last->right = removeRecursive(last->right, last->keyHash, last->timestamp.counter, last->timestamp.nodeId, ignore);
             }else{
                 AVLNode * temp = last;
                 if(last->left == nullptr)
@@ -160,15 +165,21 @@ private:
 
             last->keyHash = toInsert->keyHash;
             last->value = toInsert->value;
+            last->key = toInsert->key;
             last->timestamp = toInsert->timestamp;
         }
-        
-        return last->keyHash != toInsert->keyHash ?
-                this->rebalance(last) :
-                nullptr;
+
+        return this->rebalance(last);
+
+//        return last->keyHash != toInsert->keyHash ?
+//                this->rebalance(last) :
+//                nullptr;
     }
 
     AVLNode * rebalance(AVLNode * node) {
+        if(node == nullptr)
+            return node;
+
         this->updateHeight(node);
 
         int16_t heightFactor = this->getHeightFactor(node);

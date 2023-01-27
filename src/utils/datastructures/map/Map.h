@@ -36,10 +36,16 @@ private:
 public:
     Map(uint16_t numberBuckets);
 
+    /**
+     * Returns true if operation was successful
+     */
     bool put(const SimpleString& key, const SimpleString& value, uint64_t timestamp, uint16_t nodeId);
 
     std::optional<MapEntry> get(const SimpleString& key) const;
 
+    /**
+     * Returns true if operation was successful
+     */
     bool remove(const SimpleString& key, uint64_t timestamp, uint16_t nodeId);
 
     bool contains(const SimpleString& key) const;

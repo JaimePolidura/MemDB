@@ -342,30 +342,6 @@ messages/response/ResponseSerializerTest.cpp.s:
 	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/messages/response/ResponseSerializerTest.cpp.s
 .PHONY : messages/response/ResponseSerializerTest.cpp.s
 
-users/UsersServiceTest.obj: users/UsersServiceTest.cpp.obj
-.PHONY : users/UsersServiceTest.obj
-
-# target to build an object file
-users/UsersServiceTest.cpp.obj:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/users/UsersServiceTest.cpp.obj
-.PHONY : users/UsersServiceTest.cpp.obj
-
-users/UsersServiceTest.i: users/UsersServiceTest.cpp.i
-.PHONY : users/UsersServiceTest.i
-
-# target to preprocess a source file
-users/UsersServiceTest.cpp.i:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/users/UsersServiceTest.cpp.i
-.PHONY : users/UsersServiceTest.cpp.i
-
-users/UsersServiceTest.s: users/UsersServiceTest.cpp.s
-.PHONY : users/UsersServiceTest.s
-
-# target to generate assembly for a file
-users/UsersServiceTest.cpp.s:
-	cd /d C:\programacion\MemDB\cmake-build-debug && $(MAKE) $(MAKESILENT) -f tst\CMakeFiles\memdb_tst.dir\build.make tst/CMakeFiles/memdb_tst.dir/users/UsersServiceTest.cpp.s
-.PHONY : users/UsersServiceTest.cpp.s
-
 utils/datastructures/map/MapTest.obj: utils/datastructures/map/MapTest.cpp.obj
 .PHONY : utils/datastructures/map/MapTest.obj
 
@@ -496,9 +472,6 @@ help:
 	@echo ... messages/response/ResponseSerializerTest.obj
 	@echo ... messages/response/ResponseSerializerTest.i
 	@echo ... messages/response/ResponseSerializerTest.s
-	@echo ... users/UsersServiceTest.obj
-	@echo ... users/UsersServiceTest.i
-	@echo ... users/UsersServiceTest.s
 	@echo ... utils/datastructures/map/MapTest.obj
 	@echo ... utils/datastructures/map/MapTest.i
 	@echo ... utils/datastructures/map/MapTest.s

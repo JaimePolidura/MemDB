@@ -181,6 +181,7 @@
 				<Option compiler="gcc"/>
 				<Compiler>
 					<Add directory="C:/programacion/MemDB/src"/>
+					<Add directory="C:/libs/C++/boost_1_80_0"/>
 					<Add directory="C:/programacion/MemDB/libs/googletest/googletest/include"/>
 					<Add directory="C:/programacion/MemDB/libs/googletest/googletest"/>
 					<Add directory="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++"/>
@@ -206,6 +207,7 @@
 				<Option compiler="gcc"/>
 				<Compiler>
 					<Add directory="C:/programacion/MemDB/src"/>
+					<Add directory="C:/libs/C++/boost_1_80_0"/>
 					<Add directory="C:/programacion/MemDB/libs/googletest/googletest/include"/>
 					<Add directory="C:/programacion/MemDB/libs/googletest/googletest"/>
 					<Add directory="C:/Users/polid/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/mingw/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++"/>
@@ -804,9 +806,6 @@
 			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/messages/response/ResponseSerializerTest.cpp">
-			<Option target="memdb_tst"/>
-		</Unit>
-		<Unit filename="C:/programacion/MemDB/tst/users/UsersServiceTest.cpp">
 			<Option target="memdb_tst"/>
 		</Unit>
 		<Unit filename="C:/programacion/MemDB/tst/utils/datastructures/map/MapTest.cpp">

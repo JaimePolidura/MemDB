@@ -31,7 +31,7 @@ TEST(AVLTree, ShouldReplaceKeys) {
     ASSERT_TRUE(replaced);
     ASSERT_TRUE(avlTree.contains(1));
 
-    auto replacedNode = avlTree.get(2);
+    auto replacedNode = avlTree.get(1);
     ASSERT_TRUE(replacedNode->keyHash == 1 &&
         *replacedNode->key.value == 'B' &&
         replacedNode->timestamp.nodeId == 1 &&
@@ -56,14 +56,15 @@ TEST(AVLTree, ShouldntReplaceKeysDifferentNodeId) {
     AVLTree avlTree{};
 
     avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), 1, 2);
-    auto addedNode = avlTree.get(1);
 
     bool replaced = avlTree.add(SimpleString::fromChar('B'), 1, SimpleString::fromChar('B'), 1, 1);
+    auto addedNode = avlTree.get(1);
+
     ASSERT_FALSE(replaced);
     ASSERT_TRUE(addedNode->keyHash == 1 &&
                 *addedNode->key.value == 'A' &&
-                addedNode->timestamp.nodeId == 1 &&
-                addedNode->timestamp.counter == 2);
+                addedNode->timestamp.nodeId == 2 &&
+                addedNode->timestamp.counter == 1);
 }
 
 TEST(AVLTree, ShouldGetAll) {
@@ -118,13 +119,13 @@ TEST(AVLTree, RemoveBiggerTree) {
     ASSERT_TRUE(leftToRootNode->left->keyHash == 1);
     ASSERT_TRUE(leftToRootNode->right->keyHash == 3);
     ASSERT_TRUE(rightToRootNode->left->keyHash == 5);
-    ASSERT_TRUE(rightToRootNode->right->keyHash == 6);
+    ASSERT_TRUE(rightToRootNode->right->keyHash == 8);
 }
 
 /**
- *    2            3
- *   / \    ->    /
- *  1   3        1
+ *    2            1
+ *   / \    ->      \
+ *  1   3            3
  */
 TEST(AVLTree, RemoveRoot) {
     AVLTree avlTree{};
@@ -137,13 +138,13 @@ TEST(AVLTree, RemoveRoot) {
     ASSERT_TRUE(avlTree.contains(1));
     ASSERT_TRUE(avlTree.contains(3));
 
-    avlTree.remove(3, 0, 0); //Shouldn't remove
+    avlTree.remove(1, 0, 0); //Shouldn't remove
     ASSERT_TRUE(avlTree.contains(1));
     ASSERT_TRUE(avlTree.contains(3));
 
-    avlTree.remove(3, 2, 0); //Remove
-    ASSERT_FALSE(avlTree.contains(3));
-    ASSERT_TRUE(avlTree.contains(1));
+    avlTree.remove(1, 2, 0); //Remove
+    ASSERT_TRUE(avlTree.contains(3));
+    ASSERT_FALSE(avlTree.contains(1));
 }
 
 /**

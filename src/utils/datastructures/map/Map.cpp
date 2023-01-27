@@ -15,10 +15,15 @@ bool Map::put(const SimpleString& key, const SimpleString& value, uint64_t times
     lockWrite(keyHash);
 
     AVLTree * bucket = this->getBucket(keyHash);
-    if(bucket->add(key, keyHash, value, timestamp, nodeId))
+    bool areadyContained = bucket->contains(keyHash);
+    bool added = bucket->add(key, keyHash, value, timestamp, nodeId);
+
+    if(added && !areadyContained)
         this->size++;
 
     unlockWrite(keyHash);
+
+    return added;
 }
 
 std::vector<MapEntry> Map::all() {
@@ -60,12 +65,14 @@ bool Map::remove(const SimpleString& key, uint64_t timestamp, uint16_t nodeId) {
     lockWrite(hash);
 
     AVLTree * bucket = this->getBucket(hash);
-    if(bucket->contains(hash)) {
-        bucket->remove(hash, timestamp, nodeId);
+    bool removed = false;
+    if(bucket->contains(hash) && (removed = bucket->remove(hash, timestamp, nodeId))) {
         this->size--;
     }
 
     unlockWrite(hash);
+
+    return removed;
 }
 
 bool Map::contains(const SimpleString& key) const {

@@ -1,3 +1,6 @@
+find_package(Boost 1.80.0 REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
+
 set(BINARY ${CMAKE_PROJECT_NAME}_tst)
 
 file(GLOB_RECURSE TEST_SOURCES LIST_DIRECTORIES false *.h *.cpp)

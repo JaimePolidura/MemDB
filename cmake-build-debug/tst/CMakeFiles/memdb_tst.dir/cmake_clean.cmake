@@ -13,8 +13,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/memdb_tst.dir/messages/request/RequestDeserializerTest.cpp.obj.d"
   "CMakeFiles/memdb_tst.dir/messages/response/ResponseSerializerTest.cpp.obj"
   "CMakeFiles/memdb_tst.dir/messages/response/ResponseSerializerTest.cpp.obj.d"
-  "CMakeFiles/memdb_tst.dir/users/UsersServiceTest.cpp.obj"
-  "CMakeFiles/memdb_tst.dir/users/UsersServiceTest.cpp.obj.d"
   "CMakeFiles/memdb_tst.dir/utils/datastructures/map/MapTest.cpp.obj"
   "CMakeFiles/memdb_tst.dir/utils/datastructures/map/MapTest.cpp.obj.d"
   "CMakeFiles/memdb_tst.dir/utils/datastructures/queue/BlockingQueueTest.cpp.obj"

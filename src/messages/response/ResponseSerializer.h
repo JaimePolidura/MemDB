@@ -6,6 +6,8 @@
 
 #include "Response.h"
 
+#include "utils/Utils.h"
+
 #define MAX_RESPONSE_SIZE 257
 
 class ResponseSerializer {
@@ -15,7 +17,7 @@ public:
         serialized.reserve(MAX_RESPONSE_SIZE);
 
         Utils::parseToBuffer(response.requestNumber, serialized);
-        Utils::parseToBuffer(response., serialized, 8);
+        Utils::parseToBuffer(response.timestamp, serialized, 8);
 
         serialized.push_back(response.errorCode << 1 | response.isSuccessful);
         serialized.push_back(response.responseValue.size);

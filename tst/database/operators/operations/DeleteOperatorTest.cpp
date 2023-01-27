@@ -1,11 +1,12 @@
 #include "gtest/gtest.h"
 #include "messages/request/Request.h"
 #include "operators/operations/DeleteOperator.h"
+#include "messages/response/ErrorCode.h"
 
 #include <string>
 #include <memory>
 
-OperationBody createOperation(uint8_t keyValue, uint64_t timestamp, uint16_t nodeId);
+OperationBody createOperationDelete(uint8_t keyValue, uint64_t timestamp, uint16_t nodeId);
 
 TEST(DeleteOperator, CorrectConfig) {
     DeleteOperator deleteOperator{};
@@ -20,7 +21,7 @@ TEST(DeleteOperator, ShouldntDeleteNewerKeyTimestamp){
 
     db->put(SimpleString::fromChar(0x41), SimpleString::fromChar(0x01), 2, 1);
 
-    auto response = deleteOperator.operate(createOperation(0x41, 1, 1), db);
+    auto response = deleteOperator.operate(createOperationDelete(0x41, 1, 1), db);
 
     ASSERT_FALSE(response.isSuccessful);
     ASSERT_TRUE(db->contains(SimpleString::fromChar(0x41)));
@@ -32,7 +33,7 @@ TEST(DeleteOperator, ShouldDeleteOlderKeyTimestamp){
 
     db->put(SimpleString::fromChar(0x41), SimpleString::fromChar(0x01), 1, 1);
 
-    auto response = deleteOperator.operate(createOperation(0x41, 2, 1), db);
+    auto response = deleteOperator.operate(createOperationDelete(0x41, 2, 1), db);
 
     ASSERT_TRUE(response.isSuccessful);
     ASSERT_FALSE(db->contains(SimpleString::fromChar(0x41)));
@@ -42,14 +43,13 @@ TEST(DeleteOperator, KeyNotFound){
     DeleteOperator deleteOperator{};
     std::shared_ptr<Map> db = std::make_shared<Map>(64);
 
-    auto response = deleteOperator.operate(createOperation(0x41, 1, 2), db);
+    auto response = deleteOperator.operate(createOperationDelete(0x41, 1, 2), db);
 
-    ASSERT_FALSE(!response.isSuccessful);
+    ASSERT_FALSE(response.isSuccessful);
     ASSERT_EQ(response.errorCode, ErrorCode::UNKNOWN_KEY);
-
 }
 
-OperationBody createOperation(uint8_t keyValue, uint64_t timestamp, uint16_t nodeId){
+OperationBody createOperationDelete(uint8_t keyValue, uint64_t timestamp, uint16_t nodeId){
     SimpleString key = SimpleString::fromChar(keyValue);
 
     std::shared_ptr<std::vector<SimpleString>> vector = std::make_shared<std::vector<SimpleString>>();

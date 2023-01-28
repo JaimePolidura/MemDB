@@ -5,11 +5,11 @@
 TEST(Map, ShouldPut) {
     Map map{64};
 
-    bool placed = map.put(SimpleString::fromString("nombre"), SimpleString::fromString("jaime"), 1, 1);
+    bool placed = map.put(SimpleString::fromString("nombre"), SimpleString::fromString("jaime"), NOT_IGNORE_TIMESTAMP, 1, 1);
     ASSERT_TRUE(placed);
     ASSERT_EQ(map.getSize(), 1);
 
-    bool placed2 = map.put(SimpleString::fromString("nombre"), SimpleString::fromString("pedro"), 2, 1);
+    bool placed2 = map.put(SimpleString::fromString("nombre"), SimpleString::fromString("pedro"), NOT_IGNORE_TIMESTAMP, 2, 1);
     ASSERT_TRUE(placed2);
     ASSERT_EQ(map.getSize(), 1);
     ASSERT_TRUE(map.contains(SimpleString::fromString("nombre")));
@@ -23,8 +23,8 @@ TEST(Map, ShouldPut) {
 TEST(Map, ShouldntPut) {
     Map map{64};
 
-    map.put(SimpleString::fromString("nombre"), SimpleString::fromString("jaime"), 2, 1);
-    bool put = map.put(SimpleString::fromString("nombre"), SimpleString::fromString("jaime"), 1, 1);
+    map.put(SimpleString::fromString("nombre"), SimpleString::fromString("jaime"), NOT_IGNORE_TIMESTAMP, 2, 1);
+    bool put = map.put(SimpleString::fromString("nombre"), SimpleString::fromString("jaime"), NOT_IGNORE_TIMESTAMP, 1, 1);
 
     ASSERT_FALSE(put);
 }
@@ -38,10 +38,10 @@ TEST(Map, ShoudntGetEmpty) {
 
 TEST(Map, GetAll) {
     Map map{2};
-    map.put(SimpleString::fromString("A"), SimpleString::fromString("jaime"), 2, 1);
-    map.put(SimpleString::fromString("B"), SimpleString::fromString("jaime"), 2, 1);
-    map.put(SimpleString::fromString("C"), SimpleString::fromString("jaime"), 2, 1);
-    map.put(SimpleString::fromString("D"), SimpleString::fromString("jaime"), 2, 1);
+    map.put(SimpleString::fromString("A"), SimpleString::fromString("jaime"), IGNORE_TIMESTAMP, 2, 1);
+    map.put(SimpleString::fromString("B"), SimpleString::fromString("jaime"), IGNORE_TIMESTAMP, 2, 1);
+    map.put(SimpleString::fromString("C"), SimpleString::fromString("jaime"), IGNORE_TIMESTAMP, 2, 1);
+    map.put(SimpleString::fromString("D"), SimpleString::fromString("jaime"), IGNORE_TIMESTAMP, 2, 1);
 
     auto all = map.all();
 
@@ -55,10 +55,21 @@ TEST(Map, ShouldntGetAllEmpty) {
     ASSERT_TRUE(all.size() == 0);
 }
 
+TEST(Map, ShouldRemoveEvenOldTimestamp) {
+    Map map{64};
+    map.put(SimpleString::fromString("A"), SimpleString::fromString("jaime"), IGNORE_TIMESTAMP, 2, 1);
+    bool removed = map.remove(SimpleString::fromString("A"), IGNORE_TIMESTAMP, 1, 1);
+
+    ASSERT_TRUE(removed);
+    ASSERT_EQ(0, map.getSize());
+    ASSERT_FALSE(map.contains(SimpleString::fromString("A")));
+    ASSERT_FALSE(map.get(SimpleString::fromString("A")).has_value());
+}
+
 TEST(Map, ShouldntRemoveOldTimestamp) {
     Map map{64};
-    map.put(SimpleString::fromString("A"), SimpleString::fromString("jaime"), 2, 1);
-    bool removed = map.remove(SimpleString::fromString("A"), 1, 1);
+    map.put(SimpleString::fromString("A"), SimpleString::fromString("jaime"), NOT_IGNORE_TIMESTAMP, 2, 1);
+    bool removed = map.remove(SimpleString::fromString("A"), NOT_IGNORE_TIMESTAMP, 1, 1);
 
     ASSERT_FALSE(removed);
     ASSERT_EQ(1, map.getSize());
@@ -68,15 +79,15 @@ TEST(Map, ShouldntRemoveOldTimestamp) {
 
 TEST(Map, ShouldntRemoveNotFound) {
     Map map{64};
-    bool removed = map.remove(SimpleString::fromString("A"), 3, 1);
+    bool removed = map.remove(SimpleString::fromString("A"), NOT_IGNORE_TIMESTAMP, 3, 1);
 
     ASSERT_FALSE(removed);
 }
 
 TEST(Map, ShouldRemoe) {
     Map map{64};
-    map.put(SimpleString::fromString("A"), SimpleString::fromString("jaime"), 2, 1);
-    bool removed = map.remove(SimpleString::fromString("A"), 3, 1);
+    map.put(SimpleString::fromString("A"), SimpleString::fromString("jaime"), NOT_IGNORE_TIMESTAMP, 2, 1);
+    bool removed = map.remove(SimpleString::fromString("A"), NOT_IGNORE_TIMESTAMP, 3, 1);
 
     ASSERT_TRUE(removed);
     ASSERT_EQ(0, map.getSize());

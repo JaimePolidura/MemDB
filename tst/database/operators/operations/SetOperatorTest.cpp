@@ -15,13 +15,25 @@ TEST(SetOperator, CorrectConfig) {
     ASSERT_EQ(setOperator.operatorNumber(), SetOperator::OPERATOR_NUMBER);
 }
 
-TEST(SetOperator, ShouldntReplaceNewerKeyTimestamp) {
+TEST(SetOperator, ShouldtReplaceEvenNewerKeyTimestamp) {
     std::shared_ptr<Map> db = std::make_shared<Map>(64);
     SetOperator setOperator{};
-    db->put(SimpleString::fromChar(0x41), SimpleString::fromChar(0x01), 3, 1);
+    db->put(SimpleString::fromChar(0x41), SimpleString::fromChar(0x01), IGNORE_TIMESTAMP, 3, 1);
 
     auto operation = createOperationSet(0x41, 0x02, 2, 1); //A -> 1
-    auto result = setOperator.operate(operation, db);
+    auto result = setOperator.operate(operation, OperationOptions{.requestFromReplication=false}, db);
+
+    ASSERT_TRUE(result.isSuccessful);
+    ASSERT_EQ(* db->get(SimpleString::fromChar('A')).value().value.value, 0x02);
+}
+
+TEST(SetOperator, ShouldntReplaceNewerKeyTimestamp) { //fails
+    std::shared_ptr<Map> db = std::make_shared<Map>(64);
+    SetOperator setOperator{};
+    db->put(SimpleString::fromChar(0x41), SimpleString::fromChar(0x01), IGNORE_TIMESTAMP, 3, 1);
+
+    auto operation = createOperationSet(0x41, 0x02, 2, 1); //A -> 1
+    auto result = setOperator.operate(operation, OperationOptions{.requestFromReplication=true}, db);
 
     ASSERT_FALSE(result.isSuccessful);
     ASSERT_EQ(* db->get(SimpleString::fromChar('A')).value().value.value, 0x01);
@@ -31,10 +43,10 @@ TEST(SetOperator, ShouldntReplaceNewerKeyTimestamp) {
 TEST(SetOperator, ShouldReplaceOldKeyTimestamp) {
     std::shared_ptr<Map> db = std::make_shared<Map>(64);
     SetOperator setOperator{};
-    db->put(SimpleString::fromChar(0x41), SimpleString::fromChar(0x01), 1, 1);
+    db->put(SimpleString::fromChar(0x41), SimpleString::fromChar(0x01), NOT_IGNORE_TIMESTAMP, 1, 1);
 
     auto operation = createOperationSet(0x41, 0x02, 2, 1); //A -> 1
-    auto result = setOperator.operate(operation, db);
+    auto result = setOperator.operate(operation, OperationOptions{.requestFromReplication=true}, db);
 
     ASSERT_TRUE(result.isSuccessful);
     ASSERT_EQ(* db->get(SimpleString::fromChar('A')).value().value.value, 0x02);
@@ -45,7 +57,7 @@ TEST(SetOperator, ShouldSetNewKey) {
     SetOperator setOperator{};
     auto operation = createOperationSet(0x41, 0x01, 1, 1); //A -> 1
 
-    Response response = setOperator.operate(operation, db);
+    Response response = setOperator.operate(operation, OperationOptions{.requestFromReplication=true}, db);
 
     ASSERT_TRUE(response.isSuccessful);
     ASSERT_TRUE(db->contains(SimpleString::fromChar('A')));

@@ -22,7 +22,7 @@ TEST(GetOperator, KeyNotFound) {
 
     auto operation = createOperationGet(0x41, 1, 1); //A
 
-    Response response = getOperator.operate(operation, db);
+    Response response = getOperator.operate(operation, OperationOptions{.requestFromReplication=false}, db);
 
     ASSERT_FALSE(response.isSuccessful);
     ASSERT_EQ(response.errorCode, 0x01);
@@ -32,11 +32,11 @@ TEST(GetOperator, KeyNotFound) {
 
 TEST(GetOperator, KeyFound) {
     std::shared_ptr<Map> db = std::make_shared<Map>(64);
-    db->put(SimpleString::fromChar('A'), SimpleString::fromArray({0x4C, 0x4F ,0x4C}), 1, 1);
+    db->put(SimpleString::fromChar('A'), SimpleString::fromArray({0x4C, 0x4F ,0x4C}), 1, 1, false);
     GetOperator getOperator{};
     auto operation = createOperationGet(0x41, 1, 1); //A
 
-    Response response = getOperator.operate(operation, db);
+    Response response = getOperator.operate(operation, OperationOptions{.requestFromReplication=false}, db);
 
     ASSERT_TRUE(response.isSuccessful);
     ASSERT_EQ(response.errorCode, 0);

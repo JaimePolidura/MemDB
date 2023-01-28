@@ -78,7 +78,7 @@ private:
         int8_t expected;
 
         do {
-            if(expected <= 0)
+            if(this->refCount->load() <= 0)
                 return -1;
 
             expected = this->refCount->load();

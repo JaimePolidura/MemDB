@@ -9,6 +9,9 @@
 #include "utils/strings/SimpleString.h"
 #include "utils/clock/LamportClock.h"
 
+#define IGNORE_TIMESTAMP true
+#define NOT_IGNORE_TIMESTAMP false
+
 class AVLNode {
 public:
     SimpleString key;
@@ -45,7 +48,7 @@ public:
         return insertedNode != nullptr;
     }
 
-    bool remove(uint32_t keyHash, uint64_t timestamp, uint16_t nodeId, bool ignoreTimeStamps) {
+    bool remove(uint32_t keyHash, bool ignoreTimeStamps, uint64_t timestamp, uint16_t nodeId) {
         bool removed = false;
         this->removeRecursive(this->root, keyHash, timestamp, nodeId, removed, ignoreTimeStamps);
 

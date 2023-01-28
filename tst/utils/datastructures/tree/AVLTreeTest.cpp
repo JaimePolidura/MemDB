@@ -8,13 +8,13 @@ struct ToSave {
 TEST(AVLTree, ShouldAddNewKeys) {
     AVLTree avlTree{};
 
-    bool addedA = avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), 1, 1);
+    bool addedA = avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
     ASSERT_TRUE(addedA);
     ASSERT_TRUE(avlTree.contains(1));
     auto addedNodeA = avlTree.get(1);
     ASSERT_TRUE(addedNodeA->keyHash == 1 && * addedNodeA->key.value == 'A');
 
-    bool addedB = avlTree.add(SimpleString::fromChar('B'), 2, SimpleString::fromChar('B'), 1, 1);
+    bool addedB = avlTree.add(SimpleString::fromChar('B'), 2, SimpleString::fromChar('B'), NOT_IGNORE_TIMESTAMP, 1, 1);
     ASSERT_TRUE(addedB);
     ASSERT_TRUE(avlTree.contains(2));
     auto addedNodeB = avlTree.get(2);
@@ -25,8 +25,8 @@ TEST(AVLTree, ShouldAddNewKeys) {
 TEST(AVLTree, ShouldReplaceKeys) {
     AVLTree avlTree{};
 
-    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), 1, 1);
-    bool replaced = avlTree.add(SimpleString::fromChar('B'), 1, SimpleString::fromChar('B'), 2, 1);
+    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    bool replaced = avlTree.add(SimpleString::fromChar('B'), 1, SimpleString::fromChar('B'), NOT_IGNORE_TIMESTAMP, 2, 1);
 
     ASSERT_TRUE(replaced);
     ASSERT_TRUE(avlTree.contains(1));
@@ -38,13 +38,28 @@ TEST(AVLTree, ShouldReplaceKeys) {
         replacedNode->timestamp.counter == 2);
 }
 
-TEST(AVLTree, ShouldntReplaceKeysDifferentCounter) {
+TEST(AVLTree, ShouldReplaceKeysEventDifferentTimestampCounter) {
     AVLTree avlTree{};
 
-    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), 2, 1);
+    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), IGNORE_TIMESTAMP, 2, 1);
     auto addedNode = avlTree.get(1);
 
-    bool replaced = avlTree.add(SimpleString::fromChar('B'), 1, SimpleString::fromChar('B'), 1, 1);
+    bool replaced = avlTree.add(SimpleString::fromChar('B'), 1, SimpleString::fromChar('B'), IGNORE_TIMESTAMP, 1, 1);
+    ASSERT_TRUE(replaced);
+    ASSERT_TRUE(addedNode->keyHash == 1 &&
+                *addedNode->key.value == 'B' &&
+                addedNode->timestamp.nodeId == 1 &&
+                addedNode->timestamp.counter == 1);
+}
+
+
+TEST(AVLTree, ShouldntReplaceKeysDifferentTimestampCounter) {
+    AVLTree avlTree{};
+
+    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 2, 1);
+    auto addedNode = avlTree.get(1);
+
+    bool replaced = avlTree.add(SimpleString::fromChar('B'), 1, SimpleString::fromChar('B'), NOT_IGNORE_TIMESTAMP, 1, 1);
     ASSERT_FALSE(replaced);
     ASSERT_TRUE(addedNode->keyHash == 1 &&
                 *addedNode->key.value == 'A' &&
@@ -52,12 +67,12 @@ TEST(AVLTree, ShouldntReplaceKeysDifferentCounter) {
                 addedNode->timestamp.counter == 2);
 }
 
-TEST(AVLTree, ShouldntReplaceKeysDifferentNodeId) {
+TEST(AVLTree, ShouldntReplaceKeysDifferentTimestampNodeId) {
     AVLTree avlTree{};
 
-    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), 1, 2);
+    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 2);
 
-    bool replaced = avlTree.add(SimpleString::fromChar('B'), 1, SimpleString::fromChar('B'), 1, 1);
+    bool replaced = avlTree.add(SimpleString::fromChar('B'), 1, SimpleString::fromChar('B'), NOT_IGNORE_TIMESTAMP, 1, 1);
     auto addedNode = avlTree.get(1);
 
     ASSERT_FALSE(replaced);
@@ -69,11 +84,11 @@ TEST(AVLTree, ShouldntReplaceKeysDifferentNodeId) {
 
 TEST(AVLTree, ShouldGetAll) {
     AVLTree avlTree{};
-    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), 1, 2);
-    avlTree.add(SimpleString::fromChar('A'), 2, SimpleString::fromChar('A'), 1, 2);
-    avlTree.add(SimpleString::fromChar('A'), 3, SimpleString::fromChar('A'), 1, 2);
-    avlTree.add(SimpleString::fromChar('A'), 4, SimpleString::fromChar('A'), 1, 2);
-    avlTree.add(SimpleString::fromChar('A'), 5, SimpleString::fromChar('A'), 1, 2);
+    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 2);
+    avlTree.add(SimpleString::fromChar('A'), 2, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 2);
+    avlTree.add(SimpleString::fromChar('A'), 3, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 2);
+    avlTree.add(SimpleString::fromChar('A'), 4, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 2);
+    avlTree.add(SimpleString::fromChar('A'), 5, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 2);
 
     auto allNodes = avlTree.all();
 
@@ -98,16 +113,16 @@ TEST(AVLTree, ShouldntGetAllEmpty) {
 TEST(AVLTree, RemoveBiggerTree) {
     AVLTree avlTree{};
 
-    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 2, SimpleString::fromChar('A'), 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 3, SimpleString::fromChar('A'), 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 4, SimpleString::fromChar('A'), 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 5, SimpleString::fromChar('A'), 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 6, SimpleString::fromChar('A'), 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 7, SimpleString::fromChar('A'), 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 8, SimpleString::fromChar('A'), 1, 1);
+    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString::fromChar('A'), 2, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString::fromChar('A'), 3, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString::fromChar('A'), 4, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString::fromChar('A'), 5, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString::fromChar('A'), 6, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString::fromChar('A'), 7, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString::fromChar('A'), 8, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
 
-    avlTree.remove(6, 2, 1);
+    avlTree.remove(6, NOT_IGNORE_TIMESTAMP, 2, 1);
 
     auto rootNode = avlTree.get(4);
     auto leftToRootNode = rootNode->left;
@@ -129,20 +144,20 @@ TEST(AVLTree, RemoveBiggerTree) {
  */
 TEST(AVLTree, RemoveRoot) {
     AVLTree avlTree{};
-    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 2, SimpleString::fromChar('A'), 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 3, SimpleString::fromChar('A'), 1, 1);
+    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString::fromChar('A'), 2, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString::fromChar('A'), 3, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
 
-    avlTree.remove(2, 2, 1); //Remove
+    avlTree.remove(2, NOT_IGNORE_TIMESTAMP, 2, 1); //Remove
     ASSERT_FALSE(avlTree.contains(2));
     ASSERT_TRUE(avlTree.contains(1));
     ASSERT_TRUE(avlTree.contains(3));
 
-    avlTree.remove(1, 0, 0); //Shouldn't remove
+    avlTree.remove(1, NOT_IGNORE_TIMESTAMP, 0, 0); //Shouldn't remove
     ASSERT_TRUE(avlTree.contains(1));
     ASSERT_TRUE(avlTree.contains(3));
 
-    avlTree.remove(1, 2, 0); //Remove
+    avlTree.remove(1, NOT_IGNORE_TIMESTAMP, 2, 0); //Remove
     ASSERT_TRUE(avlTree.contains(3));
     ASSERT_FALSE(avlTree.contains(1));
 }
@@ -154,20 +169,20 @@ TEST(AVLTree, RemoveRoot) {
  */
 TEST(AVLTree, RemoveLeaf) {
     AVLTree avlTree{};
-    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 2, SimpleString::fromChar('A'), 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 3, SimpleString::fromChar('A'), 1, 1);
+    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString::fromChar('A'), 2, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString::fromChar('A'), 3, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
 
-    avlTree.remove(1, 2, 1); //Remove
+    avlTree.remove(1, NOT_IGNORE_TIMESTAMP, 2, 1); //Remove
     ASSERT_FALSE(avlTree.contains(1));
     ASSERT_TRUE(avlTree.contains(2));
     ASSERT_TRUE(avlTree.contains(3));
 
-    avlTree.remove(3, 0, 0); //Shouldn't remove
+    avlTree.remove(3, NOT_IGNORE_TIMESTAMP, 0, 0); //Shouldn't remove
     ASSERT_TRUE(avlTree.contains(2));
     ASSERT_TRUE(avlTree.contains(3));
 
-    avlTree.remove(3, 2, 1); //Remove
+    avlTree.remove(3, NOT_IGNORE_TIMESTAMP, 2, 1); //Remove
     ASSERT_FALSE(avlTree.contains(3));
     ASSERT_TRUE(avlTree.contains(2));
 }

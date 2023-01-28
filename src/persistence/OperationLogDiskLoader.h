@@ -35,7 +35,7 @@ private:
         printf("[SERVER] Applaying logs...\n");
 
         for (const auto &operation : operations)
-            this->operationDispatcher->executeOperator(db, operation);
+            this->operationDispatcher->executeOperator(db, OperationOptions{.requestFromReplication = false}, operation);
     }
 
     void clearFileAndAddNewCompressedOperations(std::shared_ptr<Map> db) {

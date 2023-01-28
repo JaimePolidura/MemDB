@@ -66,7 +66,7 @@ bool Map::remove(const SimpleString& key, bool ignoreTimestamps, uint64_t timest
 
     AVLTree * bucket = this->getBucket(hash);
     bool removed = false;
-    if(bucket->contains(hash) && (removed = bucket->remove(hash, timestamp, nodeId, ignoreTimestamps))) {
+    if(bucket->contains(hash) && (removed = bucket->remove(hash, ignoreTimestamps, timestamp, nodeId))) {
         this->size--;
     }
 

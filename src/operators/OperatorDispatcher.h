@@ -58,10 +58,10 @@ public:
         result.responseValue.decreaseRefCount();
     }
 
-    Response executeOperator(std::shared_ptr<Map> map, const OperationBody& operationBody) {
+    Response executeOperator(std::shared_ptr<Map> map, const OperationOptions& options, const OperationBody& operationBody) {
         std::shared_ptr<Operator> operatorToExecute = this->operatorRegistry.get(operationBody.operatorNumber);
 
-        return operatorToExecute->operate(operationBody, OperationOptions{}, map);
+        return operatorToExecute->operate(operationBody, options, map);
     }
 
 private:

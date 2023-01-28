@@ -21,11 +21,12 @@ private:
     int maxThreads;
     int minThreads;
     uint8_t loadFactor;
+    std::atomic_uint64_t nextWorker;
 
 public:
     DynamicThreadPool(uint8_t loadFactor, int maxThreadsCons, int minThreadsCons, int inspectionPerTaskEnqueuedCons, const std::string& name = ""):
             loadFactor(loadFactor), maxThreads(maxThreadsCons), minThreads(minThreadsCons), inspectionPerTaskEnqueued(inspectionPerTaskEnqueuedCons),
-            name(std::move(name)) {
+            name(std::move(name)), nextWorker(0) {
 
         this->start();
     }
@@ -50,17 +51,18 @@ public:
 
 private:
     void sendTaskToWorker(Task task) {
-        std::shared_ptr<DynamicThreadPoolWorker> worker = * std::min_element(
-                this->workers.begin(),
-                this->workers.end(),
-                [](const std::shared_ptr<DynamicThreadPoolWorker>& a, const std::shared_ptr<DynamicThreadPoolWorker>& b) -> bool {
-                    return a->enqueuedTasks() > b->enqueuedTasks();
-                });
+        std::shared_ptr<DynamicThreadPoolWorker> worker = this->getWorker();
 
         bool taskEnqueued = worker->enqueue(task);
         if(!taskEnqueued){ //The worker have been removed
             sendTaskToWorker(task);
         }
+    }
+
+    std::shared_ptr<DynamicThreadPoolWorker> getWorker() {
+        this->nextWorker++;
+
+        return this->workers.at(this->nextWorker % this->workers.size());
     }
 
     void start() {

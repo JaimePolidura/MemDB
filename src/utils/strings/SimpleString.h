@@ -30,10 +30,10 @@ public:
         int attempts = this->atomicDecrementRefcount();
 
         if(this->refCount->load() == 0 && attempts == 1){
-            delete[] this->value;
-            delete this->refCount;
-            this->value = nullptr;
-            this->refCount = nullptr;
+//            delete[] this->value;
+//            delete this->refCount;
+//            this->value = nullptr;
+//            this->refCount = nullptr;
         }
     }
 
@@ -78,9 +78,12 @@ private:
         int8_t expected;
 
         do {
+            if(expected <= 0)
+                return -1;
+
             expected = this->refCount->load();
             attempts++;
-        } while (!this->refCount->compare_exchange_weak(expected, expected - 1));
+        } while (!this->refCount->compare_exchange_strong(expected, expected - 1));
 
         return attempts;
     }

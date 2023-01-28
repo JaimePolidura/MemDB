@@ -62,6 +62,8 @@ public final class MemDb {
     }
 
     private String sendRequest(OperationRequest.OperationRequestBuilder operation) {
+        System.out.println("Counter " + this.clock.get());
+
         Request request = this.createRequestObject(operation);
 
         byte[] rawRequest = this.requestSerializer.serialize(request, this.clock.get());
@@ -70,6 +72,8 @@ public final class MemDb {
 
         byte[] rawResponse = this.memDbConnection.read(request.getRequestNumber());
         Response response = this.responseDeserializer.deserialize(rawResponse);
+
+        this.clock.update(response.getTimestamp());
 
         return response.isFailed() ?
                 handleException(request, response) :

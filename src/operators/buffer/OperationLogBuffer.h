@@ -18,7 +18,9 @@ private:
     std::mutex writeDiskLock;
 
 public:
-    OperationLogBuffer(std::shared_ptr<Configuration> configuration): configuration(configuration) {}
+    OperationLogBuffer(std::shared_ptr<Configuration> configuration): configuration(configuration) {
+        this->operations.reserve(configuration->get<int>(ConfigurationKeys::PERSISTANCE_WRITE_EVERY));
+    }
 
     void add(const OperationBody& operation) {
         this->increaseArgsRefCount(operation.args);

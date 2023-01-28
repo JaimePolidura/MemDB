@@ -41,8 +41,10 @@ public:
         if(operatorToExecute->type() == WRITE && result.isSuccessful) {
             this->operationLogBuffer->add(request.operation);
 
-            if(!request.isReplication)
-                this->clock->tick(request.operation.timestamp);
+            if(!request.isReplication) {
+                uint64_t actualCount = this->clock->tick(request.operation.timestamp);
+                result.timestamp = actualCount;
+            }
         }
 
         this->callOnResponseCallback(onResponse, result, requestNumber);

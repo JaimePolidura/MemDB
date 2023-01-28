@@ -62,8 +62,6 @@ public final class MemDb {
     }
 
     private String sendRequest(OperationRequest.OperationRequestBuilder operation) {
-        System.out.println("Counter " + this.clock.get());
-
         Request request = this.createRequestObject(operation);
 
         byte[] rawRequest = this.requestSerializer.serialize(request, this.clock.get());

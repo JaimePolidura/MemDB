@@ -16,7 +16,8 @@ public final class MemDbExceptionsRegistry {
     private enum Exceptions {
         AUTH_KEY_INVALID(0x00, InvalidAuthKey.class),
         UNKNOWN_KEY(0x01, UnknownKey.class),
-        UNKNOWN_OPERATOR(0x02, UnknownOperator.class);
+        UNKNOWN_OPERATOR(0x02, UnknownOperator.class),
+        ALREADY_REPLICATED(0x03, AlreadyReplicated.class);
 
         public final int code;
         public final Class<? extends MemDbException> clazz;

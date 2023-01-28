@@ -13,21 +13,24 @@
 class OperationLogBuffer {
 private:
     std::shared_ptr<Configuration> configuration;
-    std::vector<OperationBody> operations;
+    std::vector<OperationBody> operationBuffer;
     OperationsLogDiskWriter diskWriter;
+    std::mutex writeBufferLock;
     std::mutex writeDiskLock;
 
 public:
     OperationLogBuffer(std::shared_ptr<Configuration> configuration): configuration(configuration) {
-        this->operations.reserve(configuration->get<int>(ConfigurationKeys::PERSISTANCE_WRITE_EVERY));
+        this->operationBuffer.reserve(configuration->get<int>(ConfigurationKeys::PERSISTANCE_WRITE_EVERY) + 1);
     }
 
     void add(const OperationBody& operation) {
         this->increaseArgsRefCount(operation.args);
 
-        this->operations.push_back(std::move(operation));
+        writeBufferLock.lock();
+        this->operationBuffer.push_back(std::move(operation));
+        writeBufferLock.unlock();
 
-        if(this->operations.size() >= this->configuration->get<int>(ConfigurationKeys::PERSISTANCE_WRITE_EVERY)){
+        if(this->operationBuffer.size() >= this->configuration->get<int>(ConfigurationKeys::PERSISTANCE_WRITE_EVERY)){
             this->writeOperationsToDisk();
         }
     }
@@ -38,7 +41,10 @@ private:
             return;
 
         std::vector<OperationBody> copyBuffer;
-        this->operations.swap(copyBuffer);
+
+        writeBufferLock.lock();
+        this->operationBuffer.swap(copyBuffer);
+        writeBufferLock.unlock();
 
         this->diskWriter.write(copyBuffer);
 

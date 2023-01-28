@@ -33,7 +33,7 @@ public:
     AVLNode * root;
 
 public:
-    bool add(const SimpleString& key, uint32_t keyHash, const SimpleString& value, uint64_t timestamp, uint16_t nodeId) {
+    bool add(const SimpleString& key, uint32_t keyHash, const SimpleString& value, bool ignoreTimeStamps, uint64_t timestamp, uint16_t nodeId) {
         AVLNode * newNode = new AVLNode(key, keyHash, value, -1, nodeId, timestamp);
 
         if(this->root == nullptr){
@@ -41,13 +41,13 @@ public:
             return true;
         }
 
-        AVLNode * insertedNode = this->insertRecursive(this->root, newNode);
+        AVLNode * insertedNode = this->insertRecursive(this->root, newNode, ignoreTimeStamps);
         return insertedNode != nullptr;
     }
 
-    bool remove(uint32_t keyHash, uint64_t timestamp, uint16_t nodeId) {
+    bool remove(uint32_t keyHash, uint64_t timestamp, uint16_t nodeId, bool ignoreTimeStamps) {
         bool removed = false;
-        this->removeRecursive(this->root, keyHash, timestamp, nodeId, removed);
+        this->removeRecursive(this->root, keyHash, timestamp, nodeId, removed, ignoreTimeStamps);
 
         return removed;
     }
@@ -94,15 +94,15 @@ public:
     }
 
 private:
-    AVLNode * removeRecursive(AVLNode * last, uint32_t keyHashToRemove, uint64_t timestamp, uint16_t nodeId, bool& removed) {
+    AVLNode * removeRecursive(AVLNode * last, uint32_t keyHashToRemove, uint64_t timestamp, uint16_t nodeId, bool& removed, bool ignoreTimeStamps) {
         if(last == nullptr){
             return last;
         }else if(last->keyHash > keyHashToRemove) {
-            last->left = this->removeRecursive(last->left, keyHashToRemove, timestamp, nodeId, removed);
+            last->left = this->removeRecursive(last->left, keyHashToRemove, timestamp, nodeId, removed, ignoreTimeStamps);
         }else if (last->keyHash < keyHashToRemove) {
-            last->right = this->removeRecursive(last->right, keyHashToRemove, timestamp, nodeId, removed);
+            last->right = this->removeRecursive(last->right, keyHashToRemove, timestamp, nodeId, removed, ignoreTimeStamps);
         }else{ //Found it
-            if(last->timestamp.compare(timestamp, nodeId)){ //Reject. Node has been updated by more updated node
+            if(!ignoreTimeStamps && last->timestamp.compare(timestamp, nodeId)){ //Reject. Node has been updated by more updated node
                 return last;
             }
 
@@ -118,7 +118,7 @@ private:
                 if(rootRemoved) this->root = last;
 
                 bool ignore = false;
-                last->right = removeRecursive(last->right, last->keyHash, last->timestamp.counter, last->timestamp.nodeId, ignore);
+                last->right = removeRecursive(last->right, last->keyHash, last->timestamp.counter, last->timestamp.nodeId, ignore, false);
             }else{
                 AVLNode * temp = last;
                 if(last->left == nullptr)
@@ -147,20 +147,20 @@ private:
         return node;
     }
 
-    AVLNode * insertRecursive(AVLNode * last, AVLNode * toInsert) {
+    AVLNode * insertRecursive(AVLNode * last, AVLNode * toInsert, bool ignoreTimeStamps) {
         if(last == nullptr)
             return toInsert;
 
         if(last->keyHash > toInsert->keyHash) {
-            AVLNode * inserted = insertRecursive(last->left, toInsert);
+            AVLNode * inserted = insertRecursive(last->left, toInsert, ignoreTimeStamps);
             if(inserted != nullptr) last->left = inserted;
 
         }else if(last->keyHash < toInsert->keyHash) {
-            AVLNode * inserted = insertRecursive(last->right, toInsert);
+            AVLNode * inserted = insertRecursive(last->right, toInsert, ignoreTimeStamps);
             if(inserted != nullptr) last->right = inserted;
 
         }else{
-            if(last->timestamp > toInsert->timestamp) //Reject. Node has been updated by more updated node
+            if(!ignoreTimeStamps && last->timestamp > toInsert->timestamp) //Reject. Node has been updated by more updated node
                 return nullptr;
 
             last->keyHash = toInsert->keyHash;
@@ -170,10 +170,6 @@ private:
         }
 
         return this->rebalance(last);
-
-//        return last->keyHash != toInsert->keyHash ?
-//                this->rebalance(last) :
-//                nullptr;
     }
 
     AVLNode * rebalance(AVLNode * node) {

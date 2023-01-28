@@ -36,7 +36,12 @@ public:
             return;
         }
 
-        Response result = operatorToExecute->operate(request.operation, this->db);
+        OperationOptions options = {
+                .requestFromReplication = request.isReplication
+        };
+
+        //When the operation is written, the timestamp write is from the client, we need a fresh version
+        Response result = operatorToExecute->operate(request.operation, options, this->db);
 
         if(operatorToExecute->type() == WRITE && result.isSuccessful) {
             this->operationLogBuffer->add(request.operation);
@@ -56,7 +61,7 @@ public:
     Response executeOperator(std::shared_ptr<Map> map, const OperationBody& operationBody) {
         std::shared_ptr<Operator> operatorToExecute = this->operatorRegistry.get(operationBody.operatorNumber);
 
-        return operatorToExecute->operate(operationBody, map);
+        return operatorToExecute->operate(operationBody, OperationOptions{}, map);
     }
 
 private:

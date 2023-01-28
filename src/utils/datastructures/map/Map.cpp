@@ -9,14 +9,14 @@ Map::Map(uint16_t numberBuckets): numberBuckets(numberBuckets) {
     }
 }
 
-bool Map::put(const SimpleString& key, const SimpleString& value, uint64_t timestamp, uint16_t nodeId) {
+bool Map::put(const SimpleString& key, const SimpleString& value, bool ignoreTimestamps, uint64_t timestamp, uint16_t nodeId) {
     uint32_t keyHash = this->calculateHash(key);
 
     lockWrite(keyHash);
 
     AVLTree * bucket = this->getBucket(keyHash);
     bool areadyContained = bucket->contains(keyHash);
-    bool added = bucket->add(key, keyHash, value, timestamp, nodeId);
+    bool added = bucket->add(key, keyHash, value, ignoreTimestamps, timestamp, nodeId);
 
     if(added && !areadyContained)
         this->size++;
@@ -59,14 +59,14 @@ std::optional<MapEntry> Map::get(const SimpleString& key) const {
     return response;
 }
 
-bool Map::remove(const SimpleString& key, uint64_t timestamp, uint16_t nodeId) {
+bool Map::remove(const SimpleString& key, bool ignoreTimestamps, uint64_t timestamp, uint16_t nodeId) {
     uint32_t hash = this->calculateHash(key);
 
     lockWrite(hash);
 
     AVLTree * bucket = this->getBucket(hash);
     bool removed = false;
-    if(bucket->contains(hash) && (removed = bucket->remove(hash, timestamp, nodeId))) {
+    if(bucket->contains(hash) && (removed = bucket->remove(hash, timestamp, nodeId, ignoreTimestamps))) {
         this->size--;
     }
 

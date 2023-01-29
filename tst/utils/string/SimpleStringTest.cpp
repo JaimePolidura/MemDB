@@ -1,5 +1,8 @@
 #include "gtest/gtest.h"
+
 #include "utils/strings/SimpleString.h"
+#include <thread>
+#include <vector>
 
 TEST(SimpleString, shouldIncreaseAndDecreaseRef) {
     SimpleString simpleString = SimpleString::fromString("hola");

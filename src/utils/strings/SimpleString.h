@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <atomic>
+#include <mutex>
 
 /**
  * Apparently you cannot create an string from already heap allocated char *. So we create this class
@@ -9,12 +10,12 @@
 class SimpleString {
 public:
     uint8_t * value;
-    std::atomic_int8_t * refCount;
+    volatile std::atomic_int32_t * refCount;
     uint8_t size;
 public:
-    SimpleString(uint8_t * value, std::atomic_int8_t * refCount, uint8_t size): value(value), refCount(refCount), size(size) {}
+    SimpleString(uint8_t * value, std::atomic_int32_t * refCount, uint8_t size): value(value), refCount(refCount), size(size) {}
 
-    SimpleString(uint8_t * value, uint8_t size): value(value), size(size), refCount(new std::atomic_int8_t(1)) {}
+    SimpleString(uint8_t * value, uint8_t size): value(value), size(size), refCount(new std::atomic_int32_t(1)) {}
 
     void increaseRefCount() {
         if(!this->refCount && this->refCount->load() < 0)
@@ -27,13 +28,13 @@ public:
         if(this->isDeleted() || this->refCount->load() < 1)
             return;
 
-        int attempts = this->atomicDecrementRefcount();
+        bool success = this->atomicDecrementRefcount();
 
-        if(this->refCount->load() == 0 && attempts == 1){
-//            delete[] this->value;
-//            delete this->refCount;
-//            this->value = nullptr;
-//            this->refCount = nullptr;
+        if(success){
+            delete[] this->value;
+            delete this->refCount;
+            this->value = nullptr;
+            this->refCount = nullptr;
         }
     }
 
@@ -73,18 +74,14 @@ public:
     }
 
 private:
-    int atomicDecrementRefcount() {
-        int attempts = 0;
-        int8_t expected;
+    bool atomicDecrementRefcount() {
+        int32_t expected;
+        bool success = false;
 
         do {
-            if(this->refCount->load() <= 0)
-                return -1;
-
             expected = this->refCount->load();
-            attempts++;
-        } while (!this->refCount->compare_exchange_strong(expected, expected - 1));
+        } while (expected > 0 && !(success = this->refCount->compare_exchange_strong(expected, expected - 1)));
 
-        return attempts;
+        return expected - 1 == 0 && success;
     }
 };

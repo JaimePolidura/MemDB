@@ -19,11 +19,6 @@ public:
         bool ignoreTimestmaps = !options.requestFromReplication;
         bool updated = map->put(key, value, ignoreTimestmaps, operation.timestamp, operation.nodeId);
 
-        if(updated){
-            key.increaseRefCount();
-            value.increaseRefCount();
-        }
-
         return updated ?
             Response::success() :
             Response::error(ErrorCode::ALREADY_REPLICATED);

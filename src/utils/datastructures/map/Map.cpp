@@ -9,7 +9,7 @@ Map::Map(uint16_t numberBuckets): numberBuckets(numberBuckets) {
     }
 }
 
-bool Map::put(const SimpleString& key, const SimpleString& value, bool ignoreTimestamps, uint64_t timestamp, uint16_t nodeId) {
+bool Map::put(SimpleString& key, SimpleString& value, bool ignoreTimestamps, uint64_t timestamp, uint16_t nodeId) {
     uint32_t keyHash = this->calculateHash(key);
 
     lockWrite(keyHash);
@@ -18,8 +18,9 @@ bool Map::put(const SimpleString& key, const SimpleString& value, bool ignoreTim
     bool areadyContained = bucket->contains(keyHash);
     bool added = bucket->add(key, keyHash, value, ignoreTimestamps, timestamp, nodeId);
 
-    if(added && !areadyContained)
+    if(added && !areadyContained) {
         this->size++;
+    }
 
     unlockWrite(keyHash);
 
@@ -59,7 +60,7 @@ std::optional<MapEntry> Map::get(const SimpleString& key) const {
     return response;
 }
 
-bool Map::remove(const SimpleString& key, bool ignoreTimestamps, uint64_t timestamp, uint16_t nodeId) {
+bool Map::remove(SimpleString& key, bool ignoreTimestamps, uint64_t timestamp, uint16_t nodeId) {
     uint32_t hash = this->calculateHash(key);
 
     lockWrite(hash);

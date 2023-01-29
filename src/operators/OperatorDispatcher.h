@@ -53,9 +53,9 @@ public:
         }
 
         this->callOnResponseCallback(onResponse, result, requestNumber);
-        
+
         this->decreaseRequestArgumentsRefCount(request);
-        result.responseValue.decreaseRefCount();
+        if(!result.responseValue.isDeleted()) result.responseValue.decreaseRefCount();
     }
 
     Response executeOperator(std::shared_ptr<Map> map, const OperationOptions& options, const OperationBody& operationBody) {

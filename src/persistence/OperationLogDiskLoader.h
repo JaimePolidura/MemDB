@@ -53,7 +53,7 @@ private:
                 toWriteCompressed.push_back(* entry.key[i]);
             toWriteCompressed.push_back(entry.value.size); //Value size
             for(int i = 0; i < entry.value.size; i++) //Value content
-                toWriteCompressed.push_back(* (entry.value.value + i));
+                toWriteCompressed.push_back(* (entry.value + i));
 
             toWriteCompressed.push_back(0x00); //Padding
         }

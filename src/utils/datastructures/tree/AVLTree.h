@@ -132,11 +132,6 @@ private:
 
                 if(rootRemoved) this->root = last;
 
-                if(!alreadyDeleted){
-                    temp->key.decreaseRefCount();
-                    temp->value.decreaseRefCount();
-                }
-
                 delete temp;
             }
         }
@@ -170,21 +165,10 @@ private:
             if(!ignoreTimeStamps && last->timestamp > toInsert->timestamp) //Reject. Node has been updated by more updated node
                 return nullptr;
 
-            auto oldKey = last->key;
-            auto oldValue = last->value;
-
-            if(last->keyHash == toInsert->keyHash){
-                oldKey.decreaseRefCount();
-                oldValue.decreaseRefCount();
-            }
-
             last->keyHash = toInsert->keyHash;
             last->value = toInsert->value;
             last->key = toInsert->key;
             last->timestamp = toInsert->timestamp;
-
-            toInsert->key.increaseRefCount();
-            toInsert->value.increaseRefCount();
         }
 
         return this->rebalance(last);

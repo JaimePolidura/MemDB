@@ -20,7 +20,7 @@ struct MapEntry {
         key(key) {}
 
     bool hasValue() {
-        return this->value.value != nullptr;
+        return this->value.data() != nullptr;
     }
 };
 
@@ -41,14 +41,14 @@ public:
      */
     bool put(SimpleString& key, SimpleString& value, bool ignoreTimeStamps, uint64_t timestamp, uint16_t nodeId);
 
-    std::optional<MapEntry> get(const SimpleString& key) const;
+    std::optional<MapEntry> get(SimpleString& key) const;
 
     /**
      * Returns true if operation was successful
      */
     bool remove(SimpleString& key, bool ignoreTimeStamps, uint64_t timestamp, uint16_t nodeId);
 
-    bool contains(const SimpleString& key) const;
+    bool contains(SimpleString& key) const;
 
     std::vector<MapEntry> all();
 

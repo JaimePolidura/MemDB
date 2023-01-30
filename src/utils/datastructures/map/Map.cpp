@@ -39,17 +39,12 @@ std::vector<MapEntry> Map::all() {
     return all;
 }
 
-std::optional<MapEntry> Map::get(const SimpleString& key) const {
+std::optional<MapEntry> Map::get(SimpleString& key) const {
     uint32_t hash = this->calculateHash(key);
 
     lockRead(hash);
 
     AVLNode * node = this->getNodeByKeyHash(hash);
-
-    if(node != nullptr){
-        node->key.increaseRefCount();
-        node->value.increaseRefCount();
-    }
 
     const std::optional<MapEntry> response = (node != nullptr ?
             std::optional<MapEntry>{MapEntry{node->key, node->keyHash, node->value}} :
@@ -76,7 +71,7 @@ bool Map::remove(SimpleString& key, bool ignoreTimestamps, uint64_t timestamp, u
     return removed;
 }
 
-bool Map::contains(const SimpleString& key) const {
+bool Map::contains(SimpleString& key) const {
     return this->getNodeByKeyHash(this->calculateHash(key)) != nullptr;
 }
 

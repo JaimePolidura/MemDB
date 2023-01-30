@@ -24,8 +24,6 @@ public:
     }
 
     void add(const OperationBody& operation) {
-        this->increaseArgsRefCount(operation.args);
-
         writeBufferLock.lock();
         this->operationBuffer.push_back(std::move(operation));
         writeBufferLock.unlock();
@@ -49,10 +47,5 @@ private:
         this->diskWriter.write(copyBuffer);
 
         this->writeDiskLock.unlock();
-    }
-
-    void increaseArgsRefCount(std::shared_ptr<std::vector<SimpleString>> args) {
-        for(int i = 0; i < args->size(); i++)
-            args->at(i).increaseRefCount();
     }
 };

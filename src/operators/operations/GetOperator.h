@@ -13,10 +13,6 @@ public:
     Response operate(const OperationBody& operation, const OperationOptions& operationOptions, std::shared_ptr<Map> map) override {
         std::optional<MapEntry> result = map->get(operation.args->at(0));
 
-        //The ref count increment we do it in Map.cpp in the lock protected code to make sure no other thread can interfere
-        if(result.has_value())
-            result.value().key.decreaseRefCount();
-
         return result.has_value() ?
                Response::success(result.value().value) :
                Response::error(ErrorCode::UNKNOWN_KEY); //No successful

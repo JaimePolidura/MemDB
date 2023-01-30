@@ -21,7 +21,7 @@ public:
                 serializedOut.push_back(arg->size);
 
                 for(uint8_t j = 0; j < arg->size; j++)
-                    serializedOut.push_back(* (arg->value + j));
+                    serializedOut.push_back(* (arg->data() + j));
             }
         }
 

@@ -23,7 +23,7 @@ public:
         serialized.push_back(response.responseValue.size);
 
         for (int i = 0; i < response.responseValue.size; ++i)
-            serialized.push_back(* (response.responseValue.value + i));
+            serialized.push_back(* (response.responseValue + i));
 
         size_t writtenSize = serialized.size();
         for(int i = 0; i < MAX_RESPONSE_SIZE - writtenSize; i++)

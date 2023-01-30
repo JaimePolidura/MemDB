@@ -30,7 +30,6 @@ public:
         uint64_t requestNumber = request.requestNumber;
 
         if(operatorToExecute.get() == nullptr){
-            this->decreaseRequestArgumentsRefCount(request);
             Response result = Response::error(ErrorCode::UNKNOWN_OPERATOR);
             this->callOnResponseCallback(onResponse, result, requestNumber);
             return;
@@ -53,9 +52,6 @@ public:
         }
 
         this->callOnResponseCallback(onResponse, result, requestNumber);
-
-        this->decreaseRequestArgumentsRefCount(request);
-        if(!result.responseValue.isDeleted()) result.responseValue.decreaseRefCount();
     }
 
     Response executeOperator(std::shared_ptr<Map> map, const OperationOptions& options, const OperationBody& operationBody) {
@@ -65,13 +61,6 @@ public:
     }
 
 private:
-    void decreaseRequestArgumentsRefCount(Request &request) {
-        std::shared_ptr<std::vector<SimpleString>> args = request.operation.args;
-
-        for(int i = 0; i < args->size(); i++)
-            args->at(i).decreaseRefCount();
-    }
-
     void callOnResponseCallback(const std::function<void(Response&)>& onResponse,
                                 Response& result,
                                 uint64_t requestNumber) {

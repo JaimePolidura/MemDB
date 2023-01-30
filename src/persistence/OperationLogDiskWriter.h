@@ -19,8 +19,6 @@ public:
         std::vector<uint8_t> serialized = this->serializeAll(toWrite);
 
         this->writeAppendModeSerialized(serialized);
-
-        this->decreaseArgsRefCount(toWrite);
     }
 
 private:
@@ -40,18 +38,9 @@ private:
 
     std::vector<uint8_t> serializeAll(const std::vector<OperationBody>& toSerialize) {
         std::vector<uint8_t> serialized{};
-        int counter = 0;
-        for (auto actualOperation = toSerialize.begin(); actualOperation < toSerialize.end(); actualOperation++) {
+        for (auto actualOperation = toSerialize.begin(); actualOperation < toSerialize.end(); actualOperation++)
             this->operationLogSerializer.serialize(serialized, *actualOperation);
-            counter++;
-        }
 
         return serialized;
-    }
-
-    void decreaseArgsRefCount(const std::vector<OperationBody>& operationsLog) {
-        for (const auto &operationLog: operationsLog)
-            for(auto arg = operationLog.args->begin(); arg < operationLog.args->end(); arg++)
-                arg->decreaseRefCount();
     }
 };

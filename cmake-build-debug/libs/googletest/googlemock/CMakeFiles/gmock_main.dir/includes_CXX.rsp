@@ -1,1 +1,0 @@
--IC:/programacion/MemDB/src -isystem C:/programacion/MemDB/libs/googletest/googlemock/include -isystem C:/programacion/MemDB/libs/googletest/googlemock -isystem C:/programacion/MemDB/libs/googletest/googletest/include -isystem C:/programacion/MemDB/libs/googletest/googletest

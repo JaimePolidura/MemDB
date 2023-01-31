@@ -2,8 +2,8 @@
 
 #include "Configuration.h"
 #include "keys/DefaultConfig.h"
-#include "../utils/files/FileUtils.h"
-#include "../utils/strings/StringUtils.h"
+#include "utils/files/FileUtils.h"
+#include "utils/strings/StringUtils.h"
 
 #include <memory>
 #include <vector>

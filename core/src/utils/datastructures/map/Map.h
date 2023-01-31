@@ -7,7 +7,7 @@
 #include <atomic>
 #include <boost/thread/shared_mutex.hpp>
 
-#include "../tree/AVLTree.h"
+#include "utils/datastructures/tree/AVLTree.h"
 
 struct MapEntry {
     SimpleString key;

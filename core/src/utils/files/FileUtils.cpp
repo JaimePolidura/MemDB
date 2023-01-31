@@ -10,13 +10,15 @@
     #include <sys/stat.h>
     #include <sys/types.h>
     #include <unistd.h>
+    #include <fcntl.h>
 #endif
 
 void FileUtils::createDirectory(const std::string &path, const std::string &name) {
 #ifdef _WIN32
     CreateDirectoryA((path + "\\" + name).c_str(), NULL);
 #else
-    mkdir(path + "/" + name, 0700);
+    std::string fullPath = path + "/" + name;
+    mkdir(fullPath.c_str(), 0700);
 #endif
 }
 
@@ -26,7 +28,8 @@ void FileUtils::createFile(const std::string &path, const std::string &name) {
 
     CloseHandle(handle);
 #else
-    int fd = open(path + "/" + name, O_CREAT | O_RDWR, 0600);
+    std::string fullPath = path + "/" + name;
+    int fd = open(fullPath.c_str(), O_CREAT | O_WRONLY | O_TRUNC, 0600);
     close(fd);
 #endif
 }

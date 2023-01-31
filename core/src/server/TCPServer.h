@@ -5,11 +5,11 @@
 
 #include "config/keys/ConfigurationKeys.h"
 #include "config/Configuration.h"
-#include "../Users/Authenticator.h"
+#include "users/Authenticator.h"
 #include "messages/request/RequestDeserializer.h"
 #include "messages/response/ResponseSerializer.h"
 #include "messages/response/ErrorCode.h"
-#include "../utils/threads/dynamicthreadpool/DynamicThreadPool.h"
+#include "utils/threads/dynamicthreadpool/DynamicThreadPool.h"
 #include "Connection.h"
 #include "operators/OperatorDispatcher.h"
 

@@ -13,10 +13,9 @@ using Task = std::function<void()>;
 class DynamicThreadPoolWorker {
 private:
     std::shared_ptr<BlockingQueue<Task>> pendingTasks;
-    std::thread thread;
     volatile bool isStoped;
     std::string name;
-
+    std::thread thread;
 public:
     DynamicThreadPoolWorker(std::string name):
         pendingTasks(std::make_shared<BlockingQueue<Task>>()), isStoped(false), name(name) {}

@@ -6,13 +6,17 @@
 
 #ifdef _WIN32
     #include <Windows.h>
+#else
+    #include <sys/stat.h>
+    #include <sys/types.h>
+    #include <unistd.h>
 #endif
 
 void FileUtils::createDirectory(const std::string &path, const std::string &name) {
 #ifdef _WIN32
     CreateDirectoryA((path + "\\" + name).c_str(), NULL);
 #else
-    throw std::logic_error("Not implemented");
+    mkdir(path + "/" + name, 0700);
 #endif
 }
 
@@ -22,7 +26,8 @@ void FileUtils::createFile(const std::string &path, const std::string &name) {
 
     CloseHandle(handle);
 #else
-    throw std::logic_error("Not implemented");
+    int fd = open(path + "/" + name, O_CREAT | O_RDWR, 0600);
+    close(fd);
 #endif
 }
 

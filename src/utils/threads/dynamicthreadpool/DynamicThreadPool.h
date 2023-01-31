@@ -36,7 +36,7 @@ public:
 
         this->sendTaskToWorker(task);
 
-        if(this->numberTaskEnqueued % this->inspectionPerTaskEnqueued == 0)
+        if((this->numberTaskEnqueued % this->inspectionPerTaskEnqueued) == 0)
             this->makeAutoscale();
     }
 

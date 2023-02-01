@@ -5,7 +5,7 @@
 #include <optional>
 #include <tgmath.h>
 #include <atomic>
-#include <boost/thread/shared_mutex.hpp>
+//#include <boost/thread/shared_mutex.hpp>
 
 #include "utils/datastructures/tree/AVLTree.h"
 
@@ -30,7 +30,7 @@ class Map {
 private:
     std::atomic_uint32_t size;
     std::vector<AVLTree> buckets;
-    std::vector<boost::shared_mutex *> locks;
+//    std::vector<boost::shared_mutex *> locks;
     uint16_t numberBuckets;
 
 public:
@@ -77,18 +77,18 @@ private:
     }
 
     void lockRead(uint32_t hashCode) const {
-        const_cast<boost::shared_mutex *>(this->locks.at(hashCode % numberBuckets))->lock_shared();
+//        const_cast<boost::shared_mutex *>(this->locks.at(hashCode % numberBuckets))->lock_shared();
     }
 
     void unlockRead(uint32_t hashCode) const {
-        const_cast<boost::shared_mutex *>(this->locks.at(hashCode % numberBuckets))->unlock_shared();
+//        const_cast<boost::shared_mutex *>(this->locks.at(hashCode % numberBuckets))->unlock_shared();
     }
 
     void lockWrite(uint32_t hashCode) const {
-        const_cast<boost::shared_mutex *>(this->locks.at(hashCode % numberBuckets))->lock();
+//        const_cast<boost::shared_mutex *>(this->locks.at(hashCode % numberBuckets))->lock();
     }
 
     void unlockWrite(uint32_t hashCode) const {
-        const_cast<boost::shared_mutex *>(this->locks.at(hashCode % numberBuckets))->unlock();
+//        const_cast<boost::shared_mutex *>(this->locks.at(hashCode % numberBuckets))->unlock();
     }
 };

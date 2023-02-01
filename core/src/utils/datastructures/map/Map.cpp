@@ -5,7 +5,7 @@ Map::Map(uint16_t numberBuckets): numberBuckets(numberBuckets) {
 
     for (int i = 0; i < numberBuckets; i++) {
         buckets.emplace_back();
-        locks.push_back(new boost::shared_mutex());
+//        locks.push_back(new boost::shared_mutex());
     }
 }
 

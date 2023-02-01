@@ -9,7 +9,7 @@ Map::Map(uint16_t numberBuckets): numberBuckets(numberBuckets) {
     }
 }
 
-bool Map::put(SimpleString& key, SimpleString& value, bool ignoreTimestamps, uint64_t timestamp, uint16_t nodeId) {
+bool Map::put(const SimpleString& key, const SimpleString& value, bool ignoreTimestamps, uint64_t timestamp, uint16_t nodeId) {
     uint32_t keyHash = this->calculateHash(key);
 
     lockWrite(keyHash);
@@ -39,7 +39,7 @@ std::vector<MapEntry> Map::all() {
     return all;
 }
 
-std::optional<MapEntry> Map::get(SimpleString& key) const {
+std::optional<MapEntry> Map::get(const SimpleString& key) const {
     uint32_t hash = this->calculateHash(key);
 
     lockRead(hash);
@@ -55,7 +55,7 @@ std::optional<MapEntry> Map::get(SimpleString& key) const {
     return response;
 }
 
-bool Map::remove(SimpleString& key, bool ignoreTimestamps, uint64_t timestamp, uint16_t nodeId) {
+bool Map::remove(const SimpleString& key, bool ignoreTimestamps, uint64_t timestamp, uint16_t nodeId) {
     uint32_t hash = this->calculateHash(key);
 
     lockWrite(hash);
@@ -71,7 +71,7 @@ bool Map::remove(SimpleString& key, bool ignoreTimestamps, uint64_t timestamp, u
     return removed;
 }
 
-bool Map::contains(SimpleString& key) const {
+bool Map::contains(const SimpleString& key) const {
     return this->getNodeByKeyHash(this->calculateHash(key)) != nullptr;
 }
 

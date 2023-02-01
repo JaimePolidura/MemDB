@@ -27,12 +27,16 @@ TEST(GetOperator, KeyNotFound) {
     ASSERT_FALSE(response.isSuccessful);
     ASSERT_EQ(response.errorCode, 0x01);
     ASSERT_EQ(response.responseValue.size, 0);
-    ASSERT_EQ(response.responseValue.value, nullptr);
+    ASSERT_EQ(response.responseValue.data(), nullptr);
 }
 
 TEST(GetOperator, KeyFound) {
     std::shared_ptr<Map> db = std::make_shared<Map>(64);
-    db->put(SimpleString::fromChar('A'), SimpleString::fromArray({0x4C, 0x4F ,0x4C}), 1, 1, false);
+    SimpleString key = SimpleString::fromChar('A');
+    SimpleString value = SimpleString::fromArray({0x4C, 0x4F, 0x4C});
+
+    db->put(key, value, 1, 1, false);
+
     GetOperator getOperator{};
     auto operation = createOperationGet(0x41, 1, 1); //A
 
@@ -41,9 +45,9 @@ TEST(GetOperator, KeyFound) {
     ASSERT_TRUE(response.isSuccessful);
     ASSERT_EQ(response.errorCode, 0);
     ASSERT_EQ(response.responseValue.size, 3);
-    ASSERT_EQ(* response.responseValue.value, 0x4C);
-    ASSERT_EQ(* (response.responseValue.value + 1), 0x4F);
-    ASSERT_EQ(* (response.responseValue.value + 2), 0x4C);
+    ASSERT_EQ(* response.responseValue.data(), 0x4C);
+    ASSERT_EQ(* (response.responseValue + 1), 0x4F);
+    ASSERT_EQ(* (response.responseValue + 2), 0x4C);
 }
 
 OperationBody createOperationGet(uint8_t keyValue, uint64_t timestamp, uint16_t nodeId) {

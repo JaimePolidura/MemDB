@@ -31,12 +31,12 @@ TEST(OperationLogDeserializer, ShouldDeserialize) {
     ASSERT_EQ(firstOperation.timestamp, 255);
     ASSERT_EQ(firstOperation.operatorNumber, 1);
     ASSERT_EQ(firstOperation.args->size(), 2);
-    ASSERT_EQ(* firstOperation.args->at(0).value, 0x041);
-    ASSERT_EQ(* firstOperation.args->at(1).value, 0x042);
+    ASSERT_EQ(* firstOperation.args->at(0).data(), 0x041);
+    ASSERT_EQ(* firstOperation.args->at(1).data(), 0x042);
 
     ASSERT_EQ(secondOperation.timestamp, 256);
     ASSERT_EQ(secondOperation.operatorNumber, 1);
     ASSERT_EQ(secondOperation.args->size(), 2);
-    ASSERT_EQ(* secondOperation.args->at(0).value, 0x041);
-    ASSERT_EQ(* secondOperation.args->at(1).value, 0x042);
+    ASSERT_EQ(* secondOperation.args->at(0).data(), 0x041);
+    ASSERT_EQ(* secondOperation.args->at(1).data(), 0x042);
 }

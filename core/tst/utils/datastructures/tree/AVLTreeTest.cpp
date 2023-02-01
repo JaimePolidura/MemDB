@@ -12,13 +12,13 @@ TEST(AVLTree, ShouldAddNewKeys) {
     ASSERT_TRUE(addedA);
     ASSERT_TRUE(avlTree.contains(1));
     auto addedNodeA = avlTree.get(1);
-    ASSERT_TRUE(addedNodeA->keyHash == 1 && * addedNodeA->key.value == 'A');
+    ASSERT_TRUE(addedNodeA->keyHash == 1 && * addedNodeA->key.data() == 'A');
 
     bool addedB = avlTree.add(SimpleString::fromChar('B'), 2, SimpleString::fromChar('B'), NOT_IGNORE_TIMESTAMP, 1, 1);
     ASSERT_TRUE(addedB);
     ASSERT_TRUE(avlTree.contains(2));
     auto addedNodeB = avlTree.get(2);
-    ASSERT_TRUE(addedNodeB->keyHash == 2 && * addedNodeB->key.value == 'B');
+    ASSERT_TRUE(addedNodeB->keyHash == 2 && * addedNodeB->key.data() == 'B');
 }
 
 
@@ -33,7 +33,7 @@ TEST(AVLTree, ShouldReplaceKeys) {
 
     auto replacedNode = avlTree.get(1);
     ASSERT_TRUE(replacedNode->keyHash == 1 &&
-        *replacedNode->key.value == 'B' &&
+        *replacedNode->key.data() == 'B' &&
         replacedNode->timestamp.nodeId == 1 &&
         replacedNode->timestamp.counter == 2);
 }
@@ -47,7 +47,7 @@ TEST(AVLTree, ShouldReplaceKeysEventDifferentTimestampCounter) {
     bool replaced = avlTree.add(SimpleString::fromChar('B'), 1, SimpleString::fromChar('B'), IGNORE_TIMESTAMP, 1, 1);
     ASSERT_TRUE(replaced);
     ASSERT_TRUE(addedNode->keyHash == 1 &&
-                *addedNode->key.value == 'B' &&
+                *addedNode->key.data() == 'B' &&
                 addedNode->timestamp.nodeId == 1 &&
                 addedNode->timestamp.counter == 1);
 }
@@ -62,7 +62,7 @@ TEST(AVLTree, ShouldntReplaceKeysDifferentTimestampCounter) {
     bool replaced = avlTree.add(SimpleString::fromChar('B'), 1, SimpleString::fromChar('B'), NOT_IGNORE_TIMESTAMP, 1, 1);
     ASSERT_FALSE(replaced);
     ASSERT_TRUE(addedNode->keyHash == 1 &&
-                *addedNode->key.value == 'A' &&
+                *addedNode->key.data() == 'A' &&
                 addedNode->timestamp.nodeId == 1 &&
                 addedNode->timestamp.counter == 2);
 }
@@ -77,7 +77,7 @@ TEST(AVLTree, ShouldntReplaceKeysDifferentTimestampNodeId) {
 
     ASSERT_FALSE(replaced);
     ASSERT_TRUE(addedNode->keyHash == 1 &&
-                *addedNode->key.value == 'A' &&
+                *addedNode->key.data() == 'A' &&
                 addedNode->timestamp.nodeId == 2 &&
                 addedNode->timestamp.counter == 1);
 }

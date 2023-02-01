@@ -36,11 +36,11 @@ TEST(RequesteRequestDeserializer, WithArgsAndNodeId) {
 
     SimpleString firstArg = deserializedRequest.operation.args->at(0);
     ASSERT_EQ(firstArg.size, 1);
-    ASSERT_TRUE(expectedArg1.compare(std::string((char *) firstArg.value, firstArg.size)) == 0);
+    ASSERT_TRUE(expectedArg1.compare(std::string((char *) firstArg.data(), firstArg.size)) == 0);
 
     SimpleString secondArg = deserializedRequest.operation.args->at(1);
     ASSERT_EQ(secondArg.size, 2);
-    ASSERT_TRUE(expectedArg2.compare(std::string((char *) secondArg.value, secondArg.size)) == 0);
+    ASSERT_TRUE(expectedArg2.compare(std::string((char *) secondArg.data(), secondArg.size)) == 0);
 }
 
 TEST(RequesteRequestDeserializer, WithArgsNoNodeId) {
@@ -74,11 +74,11 @@ TEST(RequesteRequestDeserializer, WithArgsNoNodeId) {
 
     SimpleString firstArg = deserializedRequest.operation.args->at(0);
     ASSERT_EQ(firstArg.size, 1);
-    ASSERT_TRUE(expectedArg1.compare(std::string((char *) firstArg.value, firstArg.size)) == 0);
+    ASSERT_TRUE(expectedArg1.compare(std::string((char *) firstArg.data(), firstArg.size)) == 0);
 
     SimpleString secondArg = deserializedRequest.operation.args->at(1);
     ASSERT_EQ(secondArg.size, 2);
-    ASSERT_TRUE(expectedArg2.compare(std::string((char *) secondArg.value, secondArg.size)) == 0);
+    ASSERT_TRUE(expectedArg2.compare(std::string((char *) secondArg.data(), secondArg.size)) == 0);
 }
 
 TEST(RequesteRequestDeserializer, EmptyArgsNodeId) {

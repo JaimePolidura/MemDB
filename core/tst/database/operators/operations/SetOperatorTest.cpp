@@ -24,7 +24,7 @@ TEST(SetOperator, ShouldtReplaceEvenNewerKeyTimestamp) {
     auto result = setOperator.operate(operation, OperationOptions{.requestFromReplication=false}, db);
 
     ASSERT_TRUE(result.isSuccessful);
-    ASSERT_EQ(* db->get(SimpleString::fromChar('A')).value().value.value, 0x02);
+    ASSERT_EQ(* db->get(SimpleString::fromChar('A')).value().value.data(), 0x02);
 }
 
 TEST(SetOperator, ShouldntReplaceNewerKeyTimestamp) { //fails
@@ -36,7 +36,7 @@ TEST(SetOperator, ShouldntReplaceNewerKeyTimestamp) { //fails
     auto result = setOperator.operate(operation, OperationOptions{.requestFromReplication=true}, db);
 
     ASSERT_FALSE(result.isSuccessful);
-    ASSERT_EQ(* db->get(SimpleString::fromChar('A')).value().value.value, 0x01);
+    ASSERT_EQ(* db->get(SimpleString::fromChar('A')).value().value.data(), 0x01);
     ASSERT_EQ(result.errorCode, ErrorCode::ALREADY_REPLICATED);
 }
 
@@ -49,7 +49,7 @@ TEST(SetOperator, ShouldReplaceOldKeyTimestamp) {
     auto result = setOperator.operate(operation, OperationOptions{.requestFromReplication=true}, db);
 
     ASSERT_TRUE(result.isSuccessful);
-    ASSERT_EQ(* db->get(SimpleString::fromChar('A')).value().value.value, 0x02);
+    ASSERT_EQ(* db->get(SimpleString::fromChar('A')).value().value.data(), 0x02);
 }
 
 TEST(SetOperator, ShouldSetNewKey) {
@@ -61,7 +61,7 @@ TEST(SetOperator, ShouldSetNewKey) {
 
     ASSERT_TRUE(response.isSuccessful);
     ASSERT_TRUE(db->contains(SimpleString::fromChar('A')));
-    ASSERT_EQ(* db->get(SimpleString::fromChar('A')).value().value.value, 0x01);
+    ASSERT_EQ(* db->get(SimpleString::fromChar('A')).value().value.data(), 0x01);
 }
 
 

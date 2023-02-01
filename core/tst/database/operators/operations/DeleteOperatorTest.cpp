@@ -19,24 +19,27 @@ TEST(DeleteOperator, ShouldntDeleteNewerKeyTimestamp){
     DeleteOperator deleteOperator{};
     std::shared_ptr<Map> db = std::make_shared<Map>(64);
 
-    db->put(SimpleString::fromChar(0x41), SimpleString::fromChar(0x01), NOT_IGNORE_TIMESTAMP, 2, 1);
+    SimpleString key = SimpleString::fromChar(0x41);
+    SimpleString value = SimpleString::fromChar(0x01);
+    db->put(key, value, NOT_IGNORE_TIMESTAMP, 2, 1);
 
     auto response = deleteOperator.operate(createOperationDelete(0x41, 1, 1), OperationOptions{.requestFromReplication = true}, db);
 
     ASSERT_FALSE(response.isSuccessful);
-    ASSERT_TRUE(db->contains(SimpleString::fromChar(0x41)));
+    ASSERT_TRUE(db->contains(key));
 }
 
 TEST(DeleteOperator, ShouldtDeleteEventNewerKeyTimestamp){
     DeleteOperator deleteOperator{};
     std::shared_ptr<Map> db = std::make_shared<Map>(64);
 
-    db->put(SimpleString::fromChar(0x41), SimpleString::fromChar(0x01), NOT_IGNORE_TIMESTAMP, 2, 1);
+    SimpleString key = SimpleString::fromChar(0x41);
+    db->put(key, SimpleString::fromChar(0x01), NOT_IGNORE_TIMESTAMP, 2, 1);
 
     auto response = deleteOperator.operate(createOperationDelete(0x41, 1, 1), OperationOptions{.requestFromReplication = false}, db);
 
     ASSERT_TRUE(response.isSuccessful);
-    ASSERT_FALSE(db->contains(SimpleString::fromChar(0x41)));
+    ASSERT_FALSE(db->contains(key));
 }
 
 TEST(DeleteOperator, ShouldDeleteOlderKeyTimestamp){

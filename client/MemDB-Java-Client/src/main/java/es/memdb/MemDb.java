@@ -71,7 +71,7 @@ public final class MemDb {
         byte[] rawResponse = this.memDbConnection.read(request.getRequestNumber());
         Response response = this.responseDeserializer.deserialize(rawResponse);
 
-        this.clock.update(response.getTimestamp());
+        this.clock.upda1te(response.getTimestamp());
 
         return response.isFailed() ?
                 handleException(request, response) :

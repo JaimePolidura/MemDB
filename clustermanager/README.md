@@ -6,3 +6,6 @@
 
 ## Requirements
 - etcd v3.5 instance
+
+## Limitations
+- Only one address of etcd instance

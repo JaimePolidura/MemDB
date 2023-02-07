@@ -36,7 +36,7 @@ func (client EtcdClient[T]) GetAll(key string) ([]T, error) {
 	nodes := make([]T, response.Count)
 
 	for index, value := range response.Kvs {
-		var node interface{}
+		var node T
 		err := json.Unmarshal(value.Value, &node)
 		if err != nil {
 			return nil, err
@@ -58,7 +58,7 @@ func (client EtcdClient[T]) Get(key string) (T, error) {
 		return returnNull, err
 	}
 
-	var nodeToReturn interface{}
+	var nodeToReturn T
 	if err := json.Unmarshal(rawResponse.Kvs[0].Value, &nodeToReturn); err != nil {
 		return nodeToReturn, err
 	}

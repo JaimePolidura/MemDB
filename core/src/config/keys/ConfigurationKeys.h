@@ -10,5 +10,9 @@ public:
     static const std::string SERVER_MAX_THREADS;
     static const std::string NUMBER_BUCKETS;
     static const std::string PERSISTANCE_WRITE_EVERY;
+    
     static const std::string USE_REPLICATION;
+    static const std::string ETCD_ADDRESS;
+    static const std::string ETCD_USER;
+    static const std::string ETCD_PASSWORD;
 };

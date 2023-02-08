@@ -8,8 +8,8 @@ import (
 )
 
 type EtcdClient[T any] struct {
-	nativeClient clientv3.Client
-	timeout      time.Duration
+	NativeClient *clientv3.Client
+	Timeout      time.Duration
 }
 
 func (client EtcdClient[T]) Put(key string, value T) error {
@@ -19,7 +19,7 @@ func (client EtcdClient[T]) Put(key string, value T) error {
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	_, err = client.nativeClient.Put(ctx, key, string(valueJson))
+	_, err = client.NativeClient.Put(ctx, key, string(valueJson))
 	cancel()
 
 	return err //It will be nil if it success
@@ -27,7 +27,7 @@ func (client EtcdClient[T]) Put(key string, value T) error {
 
 func (client EtcdClient[T]) GetAll(key string) ([]T, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	response, err := client.nativeClient.Get(ctx, key, clientv3.WithPrefix())
+	response, err := client.NativeClient.Get(ctx, key, clientv3.WithPrefix())
 	cancel()
 	if err != nil {
 		return nil, err
@@ -49,8 +49,8 @@ func (client EtcdClient[T]) GetAll(key string) ([]T, error) {
 }
 
 func (client EtcdClient[T]) Get(key string) (T, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), client.timeout)
-	rawResponse, err := client.nativeClient.Get(ctx, key, clientv3.WithPrefix())
+	ctx, cancel := context.WithTimeout(context.Background(), client.Timeout)
+	rawResponse, err := client.NativeClient.Get(ctx, key, clientv3.WithPrefix())
 	cancel()
 
 	if err != nil {

@@ -5,9 +5,6 @@
 
 #include <string>
 
-/**
- * flag1 set: key will be the hash
- */
 class SetOperator : public Operator {
 public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x01;
@@ -24,8 +21,12 @@ public:
             Response::error(ErrorCode::ALREADY_REPLICATED);
     }
 
+    AuthenticationType authorizedToExecute() override {
+        return AuthenticationType::USER;
+    }
+
     constexpr OperatorType type() override {
-        return WRITE;
+        return OperatorType::WRITE;
     }
 
     constexpr uint8_t operatorNumber() override {

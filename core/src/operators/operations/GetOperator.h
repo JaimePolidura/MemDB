@@ -19,8 +19,12 @@ public:
 
     }
 
+    AuthenticationType authorizedToExecute() override {
+        return AuthenticationType::USER;
+    }
+
     constexpr OperatorType type() override {
-        return READ;
+        return OperatorType::READ;
     }
 
     constexpr uint8_t operatorNumber() override {

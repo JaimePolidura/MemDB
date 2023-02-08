@@ -17,7 +17,7 @@ public:
                 {ConfigurationKeys::NUMBER_BUCKETS,          "64" },
                 {ConfigurationKeys::PERSISTANCE_WRITE_EVERY, "50" },
                 {ConfigurationKeys::USE_REPLICATION,         "false"},
-                {ConfigurationKeys::AUTH_CLUSTER_KEY,        "123"}
+                {ConfigurationKeys::AUTH_CLUSTER_KEY,        "abc"}
         };
     }
 };

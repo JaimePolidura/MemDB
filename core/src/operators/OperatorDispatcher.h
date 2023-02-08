@@ -29,8 +29,13 @@ public:
         std::shared_ptr<Operator> operatorToExecute = this->operatorRegistry.get(request.operation.operatorNumber);
         uint64_t requestNumber = request.requestNumber;
 
-        if(operatorToExecute.get() == nullptr){
+        if(operatorToExecute.get() == nullptr){ //Check if operator exists
             Response result = Response::error(ErrorCode::UNKNOWN_OPERATOR);
+            this->callOnResponseCallback(onResponse, result, requestNumber);
+            return;
+        }
+        if(operatorToExecute.get()->authorizedToExecute() != request.authenticationType) { //Check if it has permissions
+            Response result = Response::error(ErrorCode::NOT_AUTHORIZED);
             this->callOnResponseCallback(onResponse, result, requestNumber);
             return;
         }
@@ -39,7 +44,6 @@ public:
                 .requestFromReplication = request.authenticationType == AuthenticationType::CLUSTER
         };
 
-        //When the operation is written, the timestamp write is from the client, we need a fresh version
         Response result = operatorToExecute->operate(request.operation, options, this->db);
 
         if(operatorToExecute->type() == WRITE && result.isSuccessful) {

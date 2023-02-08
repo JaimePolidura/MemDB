@@ -17,8 +17,12 @@ public:
         return removed ? Response::success() : Response::error(ErrorCode::UNKNOWN_KEY);
     }
 
+    AuthenticationType authorizedToExecute() override {
+        return AuthenticationType::USER;
+    }
+
     constexpr OperatorType type() override {
-        return WRITE;
+        return OperatorType::WRITE;
     }
 
     constexpr uint8_t operatorNumber() override {

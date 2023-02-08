@@ -6,6 +6,7 @@ import (
 	configuration_keys "clustermanager/src/config/keys"
 	"clustermanager/src/healthchecks"
 	"clustermanager/src/nodes"
+	"clustermanager/src/nodes/connection"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"strings"
 	"time"
@@ -15,8 +16,14 @@ func CreateClusterManager() *ClusterManager {
 	loadedConfiguration := loadConfiguration()
 	etcdNativeClient := createEtcdNativeClient(loadedConfiguration)
 	healthService := createHealthCheckService(loadedConfiguration, etcdNativeClient)
-
-	return &ClusterManager{configuration: loadedConfiguration, etcdNativeClient: etcdNativeClient, healthCheckService: healthService}
+	nodeConnections := &connection.NodeConnections{}
+	
+	return &ClusterManager{
+		configuration:      loadedConfiguration,
+		etcdNativeClient:   etcdNativeClient,
+		healthCheckService: healthService,
+		nodeConnections:    nodeConnections,
+	}
 }
 
 func loadConfiguration() *configuration.Configuartion {

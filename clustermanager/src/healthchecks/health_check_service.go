@@ -84,6 +84,6 @@ func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.N
 		waitGroup.Done()
 		return
 	}
-	
+
 	waitGroup.Done()
 }

@@ -3,10 +3,10 @@ package response
 func Desrialize(rawResponse []byte) Response {
 	resultByte := rawResponse[16]
 	success := (resultByte & 0x01) == 1
-	errorCode := uint8(resultByte >> 1)
+	errorCode := resultByte >> 1
 	responseBody := getResponseBodyString(rawResponse)
 
-	return Response{errorCode: errorCode, success: success, responseBody: responseBody}
+	return Response{ErrorCode: errorCode, Success: success, ResponseBody: responseBody}
 }
 
 func getResponseBodyString(rawResponse []byte) string {

@@ -8,9 +8,9 @@ type Configuartion struct {
 	cachedConfigurationKeys map[string]string
 }
 
-func (configuartion *Configuartion) Get(key string) (string, error) {
+func (configuartion *Configuartion) Get(key string) string {
 	if cachedValue, inCache := configuartion.cachedConfigurationKeys[key]; inCache {
-		return cachedValue, nil
+		return cachedValue
 	}
 
 	envValue, envExists := os.LookupEnv(key)
@@ -21,5 +21,5 @@ func (configuartion *Configuartion) Get(key string) (string, error) {
 
 	configuartion.cachedConfigurationKeys[key] = envValue
 
-	return envValue, nil
+	return envValue
 }

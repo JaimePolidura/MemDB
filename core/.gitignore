@@ -39,6 +39,7 @@
 .idea/
 
 .libs/
+.libs/**
 
 # AWS User-specific
 .idea/**/aws.xml

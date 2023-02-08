@@ -18,7 +18,7 @@ func (nodeConnection NodeConnection) Send(requestToSend request.Request) (respon
 	if err != nil {
 		return response.Response{}, err
 	}
-	
+
 	responseBuffer := make([]byte, 274)
 	_, err = nodeConnection.connection.Read(responseBuffer)
 

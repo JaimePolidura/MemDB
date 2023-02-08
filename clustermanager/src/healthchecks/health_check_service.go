@@ -4,9 +4,10 @@ import (
 	configuration "clustermanager/src/config"
 	configuration_keys "clustermanager/src/config/keys"
 	"clustermanager/src/nodes"
+	"clustermanager/src/nodes/connection"
+	"clustermanager/src/nodes/connection/messages/request"
 	"clustermanager/src/nodes/states"
 	"fmt"
-	"net"
 	"sync"
 	"time"
 )
@@ -14,10 +15,10 @@ import (
 type HealthCheckService struct {
 	NodesRespository nodes.NodeRepository
 	Configuration    *configuration.Configuartion
+	NodeConnections  *connection.NodeConnections
 
 	periodHealthCheck         int64 //both expressed in seconds
 	healthCheckLastTimeRunned int64
-	nodeTcpConnections        map[uint32]net.Conn
 }
 
 func (healthCheckService *HealthCheckService) Start() {
@@ -67,26 +68,22 @@ func (healthCheckService *HealthCheckService) runHealthChecks() {
 func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.Node, waitGroup *sync.WaitGroup) {
 	waitGroup.Add(1)
 
-	connectionToNode := healthCheckService.getConnectionToNode(&node)
+	connectionToNode, err := healthCheckService.NodeConnections.GetByIdOrCreate(node)
 
-	connectionToNode.Write()
-
-	//SEND TCP Request with cluster_key
-
-	waitGroup.Done()
-}
-
-func (healthCheckService *HealthCheckService) getConnectionToNode(node *nodes.Node) net.Conn {
-	connection, exist := healthCheckService.nodeTcpConnections[node.NodeId]
-	if !exist {
-		connection, err := net.Dial("tcp", node.Address)
-
-		if err != nil {
-			healthCheckService.NodesRespository.Add(*node.WithNextErrorState())
-		}
-
-		healthCheckService.nodeTcpConnections[node.NodeId] = connection
+	if err != nil {
+		healthCheckService.NodesRespository.Add(*node.WithNextErrorState())
+		waitGroup.Done()
+		return
 	}
 
-	return connection
+	authKey := healthCheckService.Configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_AUTH_CLUSTER_KEY)
+	response, err := connectionToNode.Send(request.BuildHealthCheckRequest(authKey))
+
+	if err != nil || !response.Success {
+		healthCheckService.NodesRespository.Add(*node.WithNextErrorState())
+		waitGroup.Done()
+		return
+	}
+	
+	waitGroup.Done()
 }

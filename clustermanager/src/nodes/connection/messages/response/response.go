@@ -1,7 +1,7 @@
 package response
 
 type Response struct {
-	errorCode    uint8
-	success      bool
-	responseBody string
+	ErrorCode    uint8
+	Success      bool
+	ResponseBody string
 }

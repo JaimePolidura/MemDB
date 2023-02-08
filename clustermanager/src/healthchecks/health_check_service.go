@@ -6,6 +6,7 @@ import (
 	"clustermanager/src/nodes"
 	"clustermanager/src/nodes/states"
 	"fmt"
+	"net"
 	"sync"
 	"time"
 )
@@ -16,6 +17,7 @@ type HealthCheckService struct {
 
 	periodHealthCheck         int64 //both expressed in seconds
 	healthCheckLastTimeRunned int64
+	nodeTcpConnections        map[uint32]net.Conn
 }
 
 func (healthCheckService *HealthCheckService) Start() {
@@ -65,7 +67,26 @@ func (healthCheckService *HealthCheckService) runHealthChecks() {
 func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.Node, waitGroup *sync.WaitGroup) {
 	waitGroup.Add(1)
 
+	connectionToNode := healthCheckService.getConnectionToNode(&node)
+
+	connectionToNode.Write()
+
 	//SEND TCP Request with cluster_key
 
 	waitGroup.Done()
+}
+
+func (healthCheckService *HealthCheckService) getConnectionToNode(node *nodes.Node) net.Conn {
+	connection, exist := healthCheckService.nodeTcpConnections[node.NodeId]
+	if !exist {
+		connection, err := net.Dial("tcp", node.Address)
+
+		if err != nil {
+			healthCheckService.NodesRespository.Add(*node.WithNextErrorState())
+		}
+
+		healthCheckService.nodeTcpConnections[node.NodeId] = connection
+	}
+
+	return connection
 }

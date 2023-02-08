@@ -38,6 +38,8 @@
 .idea/**/shelf
 .idea/
 
+.libs/
+
 # AWS User-specific
 .idea/**/aws.xml
 

@@ -15,8 +15,9 @@ private:
     uint8_t requestBuffer[1500];
     std::function<void(const std::vector<uint8_t>&)> onRequestCallback;
     ip::tcp::socket socket;
-
 public:
+    AuthenticationType authenticationType;
+
     explicit Connection(ip::tcp::socket socket) : socket{std::move(socket)} {}
 
     void onRequest(std::function<void(const std::vector<uint8_t>&)> onRequestCallbackParam) {

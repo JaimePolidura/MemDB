@@ -20,7 +20,7 @@ public class RequestSerializerTest {
         Request request = Request.builder()
                 .requestNumber(1)
                 .authentication(AuthenticationRequest.builder()
-                        .authKey("123")
+                        .authClientKey("123")
                         .build())
                 .operationRequest(OperationRequest.builder()
                         .operator(Operator.SET)

@@ -36,7 +36,7 @@ public:
         }
 
         OperationOptions options = {
-                .requestFromReplication = request.isReplication
+                .requestFromReplication = request.authenticationType == AuthenticationType::CLUSTER
         };
 
         //When the operation is written, the timestamp write is from the client, we need a fresh version
@@ -45,7 +45,7 @@ public:
         if(operatorToExecute->type() == WRITE && result.isSuccessful) {
             this->operationLogBuffer->add(request.operation);
 
-            if(!request.isReplication) {
+            if(!options.requestFromReplication) {
                 uint64_t actualCount = this->clock->tick(request.operation.timestamp);
                 result.timestamp = actualCount;
             }

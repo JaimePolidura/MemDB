@@ -13,16 +13,15 @@ class MemDb {
 private:
     std::shared_ptr<OperationLogBuffer> operationLogBuffer;
     std::shared_ptr<OperatorDispatcher> operatorDispatcher;
-    std::shared_ptr<UsersRepository> usersRepository;
     std::shared_ptr<ReplicationNode> replicationNode;
     std::shared_ptr<Configuration> configuration;
     std::shared_ptr<TCPServer> tcpServer;
     std::shared_ptr<Map> dbMap;
 
 public:
-    MemDb(std::shared_ptr<Map> map, std::shared_ptr<Configuration> configuration, std::shared_ptr<UsersRepository> usersRepository,
-          std::shared_ptr<OperatorDispatcher> operatorDispatcher, std::shared_ptr<TCPServer> tcpServer, std::shared_ptr<ReplicationNode> replicationNode)
-            : dbMap(map), configuration(configuration), usersRepository(usersRepository), tcpServer(tcpServer), operatorDispatcher(operatorDispatcher),
+    MemDb(std::shared_ptr<Map> map, std::shared_ptr<Configuration> configuration, std::shared_ptr<OperatorDispatcher> operatorDispatcher,
+          std::shared_ptr<TCPServer> tcpServer, std::shared_ptr<ReplicationNode> replicationNode)
+            : dbMap(map), configuration(configuration), tcpServer(tcpServer), operatorDispatcher(operatorDispatcher),
             replicationNode(replicationNode)
           {}
 

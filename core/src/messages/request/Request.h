@@ -42,9 +42,9 @@ public:
     AuthenticationBody() = default;
 
     AuthenticationBody(AuthenticationBody&& other) noexcept :
-        flag1(other.flag1),
-        flag2(other.flag2),
-        authKey(std::move(other.authKey)){}
+            flag1(other.flag1),
+            flag2(other.flag2),
+            authKey(std::move(other.authKey)){}
 
     AuthenticationBody& operator=(const AuthenticationBody& other) {
         this->authKey = other.authKey;
@@ -67,28 +67,27 @@ struct Request {
     AuthenticationBody authentication;
     OperationBody operation;
     uint64_t requestNumber;
-    bool isReplication = false; //Not setted in serialization
+    AuthenticationType authenticationType; //Not setted in serialization
 
     Request(const Request& other) {
         this->authentication = other.authentication;
         this->operation = other.operation;
         this->requestNumber = other.requestNumber;
-        this->isReplication = other.isReplication;
+        this->authenticationType = other.authenticationType;
     }
 
     Request(Request&& other) noexcept :
         authentication(std::move(other.authentication)),
         operation(std::move(other.operation)),
         requestNumber(other.requestNumber),
-        isReplication(other.isReplication)
-        {
+        authenticationType(other.authenticationType) {
     };
 
     Request& operator=(Request&& other) noexcept {
         this->authentication = std::move(other.authentication);
         this->operation = std::move(other.operation);
         this->requestNumber = other.requestNumber;
-        this->isReplication = other.isReplication;
+        this->authenticationType = other.authenticationType;
 
         return * this;
     }

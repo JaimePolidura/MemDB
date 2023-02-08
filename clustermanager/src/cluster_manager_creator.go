@@ -26,7 +26,7 @@ func loadConfiguration() *configuration.Configuartion {
 func createEtcdNativeClient(configuration *configuration.Configuartion) *clientv3.Client {
 	client, err := clientv3.New(clientv3.Config{
 		Endpoints:   strings.Split(configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_ETCD_ENDPOINTS), ","),
-		DialTimeout: time.Minute,
+		DialTimeout: time.Second * 30,
 	})
 
 	if err != nil {

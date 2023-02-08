@@ -10,13 +10,14 @@ class DefaultConfig {
 public:
     static std::map<std::string, std::string> get() {
         return {
-                {ConfigurationKeys::AUTH_KEY,                "123", },
+                {ConfigurationKeys::AUTH_USER_KEY,           "123", },
                 {ConfigurationKeys::SERVER_MIN_THREADS,      "20"},
                 {ConfigurationKeys::SERVER_MAX_THREADS,      "100"},
                 {ConfigurationKeys::PORT,                    "10000"},
                 {ConfigurationKeys::NUMBER_BUCKETS,          "64" },
                 {ConfigurationKeys::PERSISTANCE_WRITE_EVERY, "50" },
-                {ConfigurationKeys::USE_REPLICATION,         "false"}
+                {ConfigurationKeys::USE_REPLICATION,         "false"},
+                {ConfigurationKeys::AUTH_CLUSTER_KEY,        "123"}
         };
     }
 };

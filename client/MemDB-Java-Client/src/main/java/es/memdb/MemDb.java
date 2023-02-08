@@ -22,7 +22,7 @@ public final class MemDb {
 
     private final LamportClock clock = new LamportClock();
     private final MemDbConnection memDbConnection;
-    private final String authKey;
+    private final String authClientKey;
 
 
     public String get(String key) {
@@ -71,7 +71,7 @@ public final class MemDb {
         byte[] rawResponse = this.memDbConnection.read(request.getRequestNumber());
         Response response = this.responseDeserializer.deserialize(rawResponse);
 
-        this.clock.upda1te(response.getTimestamp());
+        this.clock.update(response.getTimestamp());
 
         return response.isFailed() ?
                 handleException(request, response) :
@@ -97,7 +97,7 @@ public final class MemDb {
 
         return Request.builder()
                 .requestNumber(requestNumber)
-                .authentication(AuthenticationRequest.builder().authKey(authKey).build())
+                .authentication(AuthenticationRequest.builder().authClientKey(authClientKey).build())
                 .operationRequest(operation.build())
                 .build();
     }

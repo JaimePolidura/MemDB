@@ -5,7 +5,7 @@
 
 #include "config/keys/ConfigurationKeys.h"
 #include "config/Configuration.h"
-#include "users/Authenticator.h"
+#include "auth/Authenticator.h"
 #include "messages/request/RequestDeserializer.h"
 #include "messages/response/ResponseSerializer.h"
 #include "messages/response/ErrorCode.h"
@@ -69,8 +69,6 @@ private:
         bool isConnectionFromReplicaNode = this->isConnectionFromReplicaNode(connection);
 
         Request request = this->requestDeserializer.deserialize(requestRawBuffer, isConnectionFromReplicaNode);
-        request.isReplication = isConnectionFromReplicaNode;
-
         bool authenticationValid = this->authenicator.authenticate(request.authentication.authKey);
 
         if(!authenticationValid){
@@ -78,6 +76,10 @@ private:
             this->sendResponse(connection, errorAuthResponse);
             return;
         }
+
+        AuthenticationType authenticationType = this->authenicator.getAuthenticationType(request.authentication.authKey);
+        request.authenticationType = authenticationType;
+        connection->authenticationType = authenticationType;
 
         this->operatorDispatcher->dispatch(request, [this, connection](const Response& response){
             this->sendResponse(connection, response);

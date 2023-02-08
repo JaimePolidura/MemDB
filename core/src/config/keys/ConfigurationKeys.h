@@ -4,7 +4,7 @@
 
 class ConfigurationKeys {
 public:
-    static const std::string AUTH_KEY;
+    static const std::string AUTH_USER_KEY;
     static const std::string PORT;
     static const std::string SERVER_MIN_THREADS;
     static const std::string SERVER_MAX_THREADS;
@@ -12,7 +12,5 @@ public:
     static const std::string PERSISTANCE_WRITE_EVERY;
 
     static const std::string USE_REPLICATION;
-    static const std::string ETCD_ADDRESS;
-    static const std::string ETCD_USER;
-    static const std::string ETCD_PASSWORD;
+    static const std::string AUTH_CLUSTER_KEY;
 };

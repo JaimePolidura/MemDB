@@ -22,7 +22,7 @@ type HealthCheckService struct {
 }
 
 func (healthCheckService *HealthCheckService) Start() {
-	healthCheckService.periodHealthCheck = healthCheckService.Configuration.GetOrDefaultInt(configuration_keys.MEMDB_CLUSTERMANAGER_HEALTHCHECK_PERIOD, 60)
+	healthCheckService.periodHealthCheck = healthCheckService.Configuration.GetInt(configuration_keys.MEMDB_CLUSTERMANAGER_HEALTHCHECK_PERIOD)
 
 	go healthCheckService.startAsyncHealthCheckPeriodicRoutine()
 }
@@ -75,7 +75,7 @@ func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.N
 		waitGroup.Done()
 		return
 	}
-
+	
 	authKey := healthCheckService.Configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_AUTH_CLUSTER_KEY)
 	response, err := connectionToNode.Send(request.BuildHealthCheckRequest(authKey))
 

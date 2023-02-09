@@ -13,6 +13,10 @@ func (configuartion *Configuartion) Get(key string) string {
 	if cachedValue, inCache := configuartion.cachedConfigurationKeys[key]; inCache {
 		return cachedValue
 	}
+	if defaultValue, exist := DEFAULT_CONFIGURATION[key]; exist {
+		configuartion.cachedConfigurationKeys[key] = defaultValue
+		return defaultValue
+	}
 
 	envValue, envExists := os.LookupEnv(key)
 
@@ -25,8 +29,8 @@ func (configuartion *Configuartion) Get(key string) string {
 	return envValue
 }
 
-func (configuartion *Configuartion) GetOrDefaultInt(key string, defaultIfNotFound int64) int64 {
-	strValue := configuartion.GetOrDefault(key, strconv.FormatInt(defaultIfNotFound, 10))
+func (configuartion *Configuartion) GetInt(key string) int64 {
+	strValue := configuartion.Get(key)
 	intValue, err := strconv.ParseInt(strValue, 10, 64)
 
 	if err != nil {
@@ -34,20 +38,4 @@ func (configuartion *Configuartion) GetOrDefaultInt(key string, defaultIfNotFoun
 	}
 
 	return intValue
-}
-
-func (configuartion *Configuartion) GetOrDefault(key string, defaultIfNotFound string) string {
-	if cachedValue, inCache := configuartion.cachedConfigurationKeys[key]; inCache {
-		return cachedValue
-	}
-
-	envValue, envExists := os.LookupEnv(key)
-	if !envExists {
-		configuartion.cachedConfigurationKeys[key] = defaultIfNotFound
-		return defaultIfNotFound
-	}
-
-	configuartion.cachedConfigurationKeys[key] = defaultIfNotFound
-
-	return envValue
 }

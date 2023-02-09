@@ -39,3 +39,7 @@ func (configuartion *Configuartion) GetInt(key string) int64 {
 
 	return intValue
 }
+
+func LoadConfiguration() *Configuartion {
+	return &Configuartion{cachedConfigurationKeys: make(map[string]string)}
+}

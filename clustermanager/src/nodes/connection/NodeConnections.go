@@ -35,3 +35,7 @@ func (nodeConnections *NodeConnections) GetByNodeId(nodeId uint32) (NodeConnecti
 	value, exists := nodeConnections.connections[nodeId]
 	return value, exists
 }
+
+func CreateNodeConnectionsObject() *NodeConnections {
+	return &NodeConnections{connections: make(map[uint32]NodeConnection)}
+}

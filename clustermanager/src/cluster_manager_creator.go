@@ -7,17 +7,18 @@ import (
 	"clustermanager/src/healthchecks"
 	"clustermanager/src/nodes"
 	"clustermanager/src/nodes/connection"
+	"fmt"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"strings"
 	"time"
 )
 
 func CreateClusterManager() *ClusterManager {
-	loadedConfiguration := loadConfiguration()
+	loadedConfiguration := configuration.LoadConfiguration()
 	etcdNativeClient := createEtcdNativeClient(loadedConfiguration)
 	healthService := createHealthCheckService(loadedConfiguration, etcdNativeClient)
-	nodeConnections := &connection.NodeConnections{}
-	
+	nodeConnections := connection.CreateNodeConnectionsObject()
+
 	return &ClusterManager{
 		configuration:      loadedConfiguration,
 		etcdNativeClient:   etcdNativeClient,
@@ -26,11 +27,9 @@ func CreateClusterManager() *ClusterManager {
 	}
 }
 
-func loadConfiguration() *configuration.Configuartion {
-	return &configuration.Configuartion{}
-}
-
 func createEtcdNativeClient(configuration *configuration.Configuartion) *clientv3.Client {
+	fmt.Println(strings.Split(configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_ETCD_ENDPOINTS), ","))
+
 	client, err := clientv3.New(clientv3.Config{
 		Endpoints:   strings.Split(configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_ETCD_ENDPOINTS), ","),
 		DialTimeout: time.Second * 30,

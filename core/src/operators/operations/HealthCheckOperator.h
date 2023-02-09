@@ -9,6 +9,8 @@ class HealthCheckOperator : public Operator {
     static constexpr const uint8_t OPERATOR_NUMBER = 0x04;
 
     Response operate(const OperationBody& operation, const OperationOptions& options, std::shared_ptr<Map> map) override {
+        printf("Recieved health check\n");
+
         return Response::success();
     }
 

@@ -53,6 +53,8 @@ func (healthCheckService *HealthCheckService) runHealthChecks() {
 
 	var waitGroup sync.WaitGroup
 
+	fmt.Println("Starting new round of healthcheck")
+
 	for _, node := range nodesFromRepository {
 		if node.State != states.RUNNING && node.State != states.CRITICAL {
 			continue
@@ -67,6 +69,8 @@ func (healthCheckService *HealthCheckService) runHealthChecks() {
 
 func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.Node, waitGroup *sync.WaitGroup) {
 	waitGroup.Add(1)
+
+	fmt.Println("Started healthcheck in node " + fmt.Sprint(node.NodeId))
 
 	connectionToNode, err := healthCheckService.NodeConnections.GetByIdOrCreate(node)
 

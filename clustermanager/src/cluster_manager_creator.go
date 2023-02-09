@@ -7,7 +7,6 @@ import (
 	"clustermanager/src/healthchecks"
 	"clustermanager/src/nodes"
 	"clustermanager/src/nodes/connection"
-	"fmt"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"strings"
 	"time"
@@ -16,8 +15,8 @@ import (
 func CreateClusterManager() *ClusterManager {
 	loadedConfiguration := configuration.LoadConfiguration()
 	etcdNativeClient := createEtcdNativeClient(loadedConfiguration)
-	healthService := createHealthCheckService(loadedConfiguration, etcdNativeClient)
 	nodeConnections := connection.CreateNodeConnectionsObject()
+	healthService := createHealthCheckService(loadedConfiguration, nodeConnections, etcdNativeClient)
 
 	return &ClusterManager{
 		configuration:      loadedConfiguration,
@@ -28,23 +27,28 @@ func CreateClusterManager() *ClusterManager {
 }
 
 func createEtcdNativeClient(configuration *configuration.Configuartion) *clientv3.Client {
-	fmt.Println(strings.Split(configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_ETCD_ENDPOINTS), ","))
-
 	client, err := clientv3.New(clientv3.Config{
 		Endpoints:   strings.Split(configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_ETCD_ENDPOINTS), ","),
 		DialTimeout: time.Second * 30,
 	})
 
 	if err != nil {
-		panic("Cannot connect to etcd")
+		panic("Cannot connect to etcd: " + err.Error())
 	}
 
 	return client
 }
 
-func createHealthCheckService(configuration *configuration.Configuartion, etcdNativeClient *clientv3.Client) *healthchecks.HealthCheckService {
+func createHealthCheckService(configuration *configuration.Configuartion,
+	connections *connection.NodeConnections,
+	etcdNativeClient *clientv3.Client) *healthchecks.HealthCheckService {
+
 	customEtcdClient := &etcd.EtcdClient[nodes.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}
 	nodesRepository := nodes.EtcdNodeRepository{Client: customEtcdClient}
 
-	return &healthchecks.HealthCheckService{NodesRespository: nodesRepository, Configuration: configuration}
+	return &healthchecks.HealthCheckService{
+		NodesRespository: nodesRepository,
+		Configuration:    configuration,
+		NodeConnections:  connections,
+	}
 }

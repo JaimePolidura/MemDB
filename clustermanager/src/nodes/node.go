@@ -2,8 +2,10 @@ package nodes
 
 import "clustermanager/src/nodes/states"
 
+type NodeId_t string
+
 type Node struct {
-	NodeId  uint32           `json:"nodeId"`
+	NodeId  NodeId_t         `json:"nodeId"`
 	Address string           `json:"address"`
 	State   states.NodeState `json:"state"`
 }

@@ -89,5 +89,7 @@ func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.N
 		return
 	}
 
+	fmt.Println("Successful healthcheck:", response)
+
 	waitGroup.Done()
 }

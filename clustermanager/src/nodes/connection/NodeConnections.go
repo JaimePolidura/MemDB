@@ -6,7 +6,7 @@ import (
 )
 
 type NodeConnections struct {
-	connections map[uint32]NodeConnection
+	connections map[nodes.NodeId_t]NodeConnection
 }
 
 func (nodeConnections *NodeConnections) GetByIdOrCreate(node nodes.Node) (NodeConnection, error) {
@@ -20,7 +20,7 @@ func (nodeConnections *NodeConnections) GetByIdOrCreate(node nodes.Node) (NodeCo
 }
 
 func (nodeConnections *NodeConnections) Create(node nodes.Node) (NodeConnection, error) {
-	tcpConnection, err := net.Dial("tcp", node.Address)
+	tcpConnection, err := net.DialTimeout("tcp", node.Address, 10)
 	if err != nil {
 		return NodeConnection{}, err
 	}
@@ -31,11 +31,11 @@ func (nodeConnections *NodeConnections) Create(node nodes.Node) (NodeConnection,
 	return connection, nil
 }
 
-func (nodeConnections *NodeConnections) GetByNodeId(nodeId uint32) (NodeConnection, bool) {
+func (nodeConnections *NodeConnections) GetByNodeId(nodeId nodes.NodeId_t) (NodeConnection, bool) {
 	value, exists := nodeConnections.connections[nodeId]
 	return value, exists
 }
 
 func CreateNodeConnectionsObject() *NodeConnections {
-	return &NodeConnections{connections: make(map[uint32]NodeConnection)}
+	return &NodeConnections{connections: make(map[nodes.NodeId_t]NodeConnection)}
 }

@@ -6,7 +6,6 @@ import (
 	"clustermanager/src/nodes"
 	"clustermanager/src/nodes/connection"
 	"clustermanager/src/nodes/connection/messages/request"
-	"clustermanager/src/nodes/states"
 	"fmt"
 	"sync"
 	"time"
@@ -17,8 +16,8 @@ type HealthCheckService struct {
 	Configuration    *configuration.Configuartion
 	NodeConnections  *connection.NodeConnections
 
-	periodHealthCheck         int64 //both expressed in seconds
-	healthCheckLastTimeRunned int64
+	periodHealthCheck       int64 //both expressed in seconds
+	sendingHealthChecksLock sync.Mutex
 }
 
 func (healthCheckService *HealthCheckService) Start() {
@@ -34,10 +33,9 @@ func (healthCheckService *HealthCheckService) startAsyncHealthCheckPeriodicRouti
 	for {
 		select {
 		case <-ticker.C:
-			timeElapsedSinceLastHealtCheck := time.Now().Unix() - healthCheckService.healthCheckLastTimeRunned
-
-			if timeElapsedSinceLastHealtCheck >= healthCheckService.periodHealthCheck {
+			if healthCheckService.sendingHealthChecksLock.TryLock() {
 				healthCheckService.runHealthChecks()
+				healthCheckService.sendingHealthChecksLock.Unlock()
 			}
 		}
 	}
@@ -53,43 +51,33 @@ func (healthCheckService *HealthCheckService) runHealthChecks() {
 
 	var waitGroup sync.WaitGroup
 
-	fmt.Println("Starting new round of healthcheck")
-
 	for _, node := range nodesFromRepository {
-		if node.State != states.RUNNING && node.State != states.CRITICAL {
-			continue
-		}
-
 		go healthCheckService.sendHealthCheckToNode(node, &waitGroup)
 	}
 
 	waitGroup.Wait()
-	healthCheckService.healthCheckLastTimeRunned = time.Now().Unix()
 }
 
 func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.Node, waitGroup *sync.WaitGroup) {
 	waitGroup.Add(1)
 
-	fmt.Println("Started healthcheck in node " + fmt.Sprint(node.NodeId))
-
 	connectionToNode, err := healthCheckService.NodeConnections.GetByIdOrCreate(node)
 
 	if err != nil {
-		healthCheckService.NodesRespository.Add(*node.WithNextErrorState())
+		healthCheckService.NodesRespository.Add(*node.WithErrorState())
 		waitGroup.Done()
 		return
 	}
-	
+
 	authKey := healthCheckService.Configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_AUTH_CLUSTER_KEY)
 	response, err := connectionToNode.Send(request.BuildHealthCheckRequest(authKey))
 
 	if err != nil || !response.Success {
-		healthCheckService.NodesRespository.Add(*node.WithNextErrorState())
-		waitGroup.Done()
-		return
+		healthCheckService.NodesRespository.Add(*node.WithErrorState())
+		healthCheckService.NodeConnections.Delete(node.NodeId)
+	} else if node.IsInErrorState() { //Success & previous in error state
+		healthCheckService.NodesRespository.Add(*node.WithRunningState())
 	}
-
-	fmt.Println("Successful healthcheck:", response)
 
 	waitGroup.Done()
 }

@@ -14,9 +14,9 @@ func (repository EtcdNodeRepository) FindAll() ([]Node, error) {
 }
 
 func (repository EtcdNodeRepository) FindById(nodeId uint32) (Node, error) {
-	return repository.Client.Get("nodes/" + fmt.Sprint(nodeId))
+	return repository.Client.Get("/nodes/" + fmt.Sprint(nodeId))
 }
 
 func (repository EtcdNodeRepository) Add(node Node) error {
-	return repository.Client.Put(fmt.Sprint(node.NodeId), node)
+	return repository.Client.Put("/nodes/"+fmt.Sprint(node.NodeId), node)
 }

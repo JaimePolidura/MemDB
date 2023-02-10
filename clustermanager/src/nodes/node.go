@@ -1,6 +1,8 @@
 package nodes
 
-import "clustermanager/src/nodes/states"
+import (
+	"clustermanager/src/nodes/states"
+)
 
 type NodeId_t string
 
@@ -15,12 +17,16 @@ func (node *Node) WithState(state states.NodeState) *Node {
 	return node
 }
 
-func (node *Node) WithNextErrorState() *Node {
-	if node.State == states.CRITICAL {
-		node.State = states.RUNNING
-	} else {
-		node.State = states.CRITICAL
-	}
+func (node *Node) IsInErrorState() bool {
+	return node.State == states.SHUTDOWN
+}
 
+func (node *Node) WithRunningState() *Node {
+	node.State = states.RUNNING
+	return node
+}
+
+func (node *Node) WithErrorState() *Node {
+	node.State = states.SHUTDOWN
 	return node
 }

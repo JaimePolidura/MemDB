@@ -3,6 +3,7 @@ package etcd
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"time"
 )
@@ -19,8 +20,15 @@ func (client EtcdClient[T]) Put(key string, value T) error {
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	_, err = client.NativeClient.Put(ctx, key, string(valueJson))
+	_, err = client.NativeClient.Put(ctx, key, string(valueJson)) //TODO Los datos se envian bien, pero no se guardan en etcd. Razon la key es incorrecta
 	cancel()
+
+	fmt.Println(key)
+	fmt.Println(string(valueJson))
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 
 	return err //It will be nil if it success
 }
@@ -29,6 +37,7 @@ func (client EtcdClient[T]) GetAll(key string) ([]T, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	response, err := client.NativeClient.Get(ctx, key, clientv3.WithPrefix())
 	cancel()
+
 	if err != nil {
 		return nil, err
 	}
@@ -39,6 +48,8 @@ func (client EtcdClient[T]) GetAll(key string) ([]T, error) {
 		var node T
 		err := json.Unmarshal(value.Value, &node)
 		if err != nil {
+			fmt.Println(err.Error())
+
 			return nil, err
 		}
 

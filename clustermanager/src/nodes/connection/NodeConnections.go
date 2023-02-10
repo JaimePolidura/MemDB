@@ -19,6 +19,10 @@ func (nodeConnections *NodeConnections) GetByIdOrCreate(node nodes.Node) (NodeCo
 	}
 }
 
+func (nodeConnections *NodeConnections) Delete(nodeId nodes.NodeId_t) {
+	delete(nodeConnections.connections, nodeId)
+}
+
 func (nodeConnections *NodeConnections) Create(node nodes.Node) (NodeConnection, error) {
 	tcpConnection, err := net.DialTimeout("tcp", node.Address, 10)
 	if err != nil {

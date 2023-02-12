@@ -1,6 +1,6 @@
 # MemDB Core
 
-This is the code that belongs
+This is the main component. This stores the data and handles request & replication
 
 ## Setup
 

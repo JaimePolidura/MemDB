@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 3.23)
+set(CMAKE_CXX_STANDARD 23)
 project(memdb)
 
 option(BUILDING_LINUX_DEPLOYMENT OFF)
-
-set(CMAKE_CXX_STANDARD 23)
 
 if(NOT BUILDING_LINUX_DEPLOYMENT)
     set(VCPKG_ROOT "C:/vcpkg")

@@ -1,6 +1,4 @@
 #include "MemDbCreator.h"
-#include <cpr/cpr.h>
-#include <etcd/Client.hpp>
 
 int main() {
     printf("[SERVER] Initializing\n");

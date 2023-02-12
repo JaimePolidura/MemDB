@@ -9,16 +9,6 @@ add_executable(${BINARY}_run ${SOURCES})
 add_library(${BINARY}_lib STATIC ${SOURCES})
 target_link_libraries(${BINARY}_lib ${Boost_LIBRARIES})
 
-#find_package(etcd-cpp-api CONFIG REQUIRED)
-#target_link_libraries(${BINARY}_lib PRIVATE etcd-cpp-api)
-
-find_package(etcd-cpp-api CONFIG REQUIRED)
-target_link_libraries(${BINARY}_lib PRIVATE etcd-cpp-api)
-
-find_package(cpr CONFIG REQUIRED)
-target_link_libraries(${BINARY}_lib PRIVATE cpr::cpr)
-include_directories(${CMAKE_PREFIX_PATH}/include)
-
 if(MINGW)
     target_link_libraries(${BINARY}_run ws2_32)
     target_link_libraries(${BINARY}_run wsock32)

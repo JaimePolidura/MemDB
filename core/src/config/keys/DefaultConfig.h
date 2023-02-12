@@ -17,7 +17,8 @@ public:
                 {ConfigurationKeys::NUMBER_BUCKETS,          "64" },
                 {ConfigurationKeys::PERSISTANCE_WRITE_EVERY, "50" },
                 {ConfigurationKeys::USE_REPLICATION,         "false"},
-                {ConfigurationKeys::AUTH_CLUSTER_KEY,        "abc"}
+                {ConfigurationKeys::AUTH_CLUSTER_KEY,        "abc"},
+                {ConfigurationKeys::ETCD_ENDPOITS,           "127.0.0.1:2379"}
         };
     }
 };

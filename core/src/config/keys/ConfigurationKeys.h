@@ -13,4 +13,5 @@ public:
 
     static const std::string USE_REPLICATION;
     static const std::string AUTH_CLUSTER_KEY;
+    static const std::string ETCD_ENDPOITS;
 };

@@ -14,7 +14,8 @@ public:
         std::shared_ptr<Configuration> configuration = ConfiguartionLoader::load();
 
         std::shared_ptr<LamportClock> clock = std::make_shared<LamportClock>(1);
-        std::shared_ptr<ReplicationNode> replicationNode = std::make_shared<ReplicationNode>(1, clock);
+        std::shared_ptr<ReplicationNode> replicationNode = std::make_shared<ReplicationNode>(clock, configuration);
+        clock->nodeId = replicationNode->getNodeId();
 
         std::shared_ptr<OperationLogBuffer> operationLogBuffer = std::make_shared<OperationLogBuffer>(configuration);
 

@@ -9,3 +9,4 @@ const std::string ConfigurationKeys::PERSISTANCE_WRITE_EVERY = "PERSISTANCE_WRIT
 
 const std::string ConfigurationKeys::AUTH_CLUSTER_KEY = "AUTH_CLUSTER_KEY";
 const std::string ConfigurationKeys::USE_REPLICATION = "USE_REPLICATION";
+const std::string ConfigurationKeys::ETCD_ENDPOITS = "ETCD_ENDPOITS";

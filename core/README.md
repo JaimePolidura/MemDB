@@ -3,16 +3,27 @@
 This is the main component. This stores the data and handles request & replication
 
 ## Setup
+- Environtment variable BOOST_ROOT which points to boost v1.80.0 library's folder
+- Vcpkg dependencies: etcd-cpp-apiv3
 
-- You need an environtment variable called: BOOST_ROOT which points to boost v1.80.0 library's folder, folder name: boost_1_80_0
+### Windows
+- Use MSVC for compiling
+- Vcpkg installed on c:
+
+### Linux
+- Use gcc for compiling
+- To compile use linux-build.sh to automation
 
 ## How it works
-
-- Each user will authenticate with an authkey. The max length will be 256 characters. It will be specified in config.txt
-- Data will be ASCII encoded using low endian format.
-
-## Limitations
-- Max data length will be 256 bytes
+- Data is stored in a hashmap with fixed number of buckets (default 64). Each bucket will contain an autobalanced AVL Tree.
+- It is multithreaded. Each bucket will have a read/write lock.
+- It is persistent. When a write comes in, it will be stored in a buffer. When it reaches a threshold, the operations will be appended to a local file. When the server starts up, it will apply all operations stored in the file and compact them.
+- Authentication will be carried by a key (AUTH_USER_KEY), which will be present in every request.
+- Threads allocated for operations are dynamic. They grow or shrink depending on the demand.
+#### Replication
+- When a write comes in it will broadcast the write operation to every node. These nodes are queried periodicly to the cluster mamanger.
+- To authenticate to the cluster manager a specific auth key will be used (AUTH_CLUSTER_KEY)
+- For detecting conflics Lamport clocks are used in replication
 
 ## Request format
 ````
@@ -56,7 +67,7 @@ This is the main component. This stores the data and handles request & replicati
 +-------------------------------------+
 ````
 
-## Oplog format
+## Operation persistence format
 ````
              1 byte
 +-------------------------------------+

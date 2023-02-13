@@ -23,7 +23,7 @@ This is the main component. This stores the data and handles request & replicati
 #### Replication
 - When a write comes in it will broadcast the write operation to every node. These nodes are queried periodicly to the cluster mamanger.
 - To authenticate to the cluster manager a specific auth key will be used (AUTH_CLUSTER_KEY)
-- For detecting conflics Lamport clocks are used in replication
+- Conflic resolution is handled by LWW (Last write wins) approuch. Lamport clocks are used in replication
 
 ## Request format
 ````

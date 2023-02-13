@@ -9,7 +9,11 @@ add_executable(${BINARY}_run ${SOURCES})
 add_library(${BINARY}_lib STATIC ${SOURCES})
 target_link_libraries(${BINARY}_lib ${Boost_LIBRARIES})
 
-if(MINGW)
+include_directories(${CMAKE_PREFIX_PATH}/include)
+find_package(etcd-cpp-api CONFIG REQUIRED)
+target_link_libraries(${BINARY}_lib PRIVATE etcd-cpp-api)
+
+if(NOT BUILDING_LINUX_DEPLOYMENT)
     target_link_libraries(${BINARY}_run ws2_32)
     target_link_libraries(${BINARY}_run wsock32)
 else()

@@ -6,6 +6,7 @@ import (
 	nodes2 "clustermanager/src/_shared/nodes"
 	"clustermanager/src/_shared/nodes/connection"
 	"clustermanager/src/_shared/nodes/connection/messages/request"
+	"clustermanager/src/_shared/nodes/states"
 	"fmt"
 	"sync"
 	"time"
@@ -50,8 +51,12 @@ func (healthCheckService *HealthCheckService) runHealthChecks() {
 	}
 
 	var waitGroup sync.WaitGroup
-
+	
 	for _, node := range nodesFromRepository {
+		if node.State == states.BOOTING {
+			continue
+		}
+
 		go healthCheckService.sendHealthCheckToNode(node, &waitGroup)
 	}
 

@@ -1,4 +1,4 @@
-package login
+package api
 
 import (
 	configuration "clustermanager/src/_shared/config"
@@ -29,7 +29,7 @@ func (controller *LoginController) Login(c echo.Context) error {
 	unsingedToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 5)),
 	})
-	
+
 	signedToken, err := unsingedToken.SignedString(
 		[]byte(controller.Configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_API_SECRET_KEY)))
 

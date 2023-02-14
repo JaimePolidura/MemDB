@@ -12,6 +12,7 @@ public:
     static const std::string PERSISTANCE_WRITE_EVERY;
 
     static const std::string USE_REPLICATION;
+    static const std::string CLUSTER_MANAGER_ADDRESS;
     static const std::string AUTH_CLUSTER_KEY;
-    static const std::string ETCD_ENDPOITS;
+    static const std::string ETCD_ADDRESS;
 };

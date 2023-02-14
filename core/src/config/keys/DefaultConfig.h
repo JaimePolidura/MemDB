@@ -18,7 +18,8 @@ public:
                 {ConfigurationKeys::PERSISTANCE_WRITE_EVERY, "50" },
                 {ConfigurationKeys::USE_REPLICATION,         "false"},
                 {ConfigurationKeys::AUTH_CLUSTER_KEY,        "abc"},
-                {ConfigurationKeys::ETCD_ENDPOITS,           "127.0.0.1:2379"}
+                {ConfigurationKeys::ETCD_ADDRESS,            "127.0.0.1:2379"},
+                {ConfigurationKeys::CLUSTER_MANAGER_ADDRESS, "127.0.0.1:8080"}
         };
     }
 };

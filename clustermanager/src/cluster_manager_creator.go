@@ -6,8 +6,7 @@ import (
 	"clustermanager/src/_shared/etcd"
 	nodes2 "clustermanager/src/_shared/nodes"
 	"clustermanager/src/_shared/nodes/connection"
-	"clustermanager/src/api/login"
-	"clustermanager/src/api/self"
+	"clustermanager/src/api"
 	"clustermanager/src/healthchecks"
 	echojwt "github.com/labstack/echo-jwt"
 	"github.com/labstack/echo/v4"
@@ -72,12 +71,12 @@ func configureHttpApi(configuration *configuration.Configuartion, etcdNativeClie
 
 	customEtcdClient := &etcd.EtcdClient[nodes2.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}
 	nodesRepository := nodes2.EtcdNodeRepository{Client: customEtcdClient}
-
-	loginController := &login.LoginController{Configuration: configuration}
-	getSelfNode := &self.SelfNodeController{NodesRepository: nodesRepository}
+	
+	loginController := &api.LoginController{Configuration: configuration}
+	setupNodeController := &api.SetupNodeController{NodesRepository: nodesRepository}
 
 	echoApi.POST("/login", loginController.Login)
-	apiGroup.GET("/nodes/self", getSelfNode.GetSelfNode)
+	apiGroup.POST("/nodes/setup", setupNodeController.SetupNode)
 
 	return echoApi
 }

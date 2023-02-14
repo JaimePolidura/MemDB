@@ -1,5 +1,7 @@
 #pragma once
 
 enum NodeState {
-    RUNNING, SHUTDOWN, SEEDING
+    RUNNING,
+    SHUTDOWN,
+    BOOTING
 };

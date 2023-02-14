@@ -7,6 +7,7 @@ import (
 	nodes2 "clustermanager/src/_shared/nodes"
 	"clustermanager/src/_shared/nodes/connection"
 	"clustermanager/src/api/login"
+	"clustermanager/src/api/self"
 	"clustermanager/src/healthchecks"
 	echojwt "github.com/labstack/echo-jwt"
 	"github.com/labstack/echo/v4"
@@ -21,7 +22,7 @@ func CreateClusterManager() *ClusterManager {
 	etcdNativeClient := createEtcdNativeClient(loadedConfiguration)
 	nodeConnections := connection.CreateNodeConnectionsObject()
 	healthService := createHealthCheckService(loadedConfiguration, nodeConnections, etcdNativeClient)
-	apiEcho := configureHttpApi(loadedConfiguration)
+	apiEcho := configureHttpApi(loadedConfiguration, etcdNativeClient)
 
 	return &ClusterManager{
 		configuration:      loadedConfiguration,
@@ -59,19 +60,24 @@ func createHealthCheckService(configuration *configuration.Configuartion,
 	}
 }
 
-func configureHttpApi(configuration *configuration.Configuartion) *echo.Echo {
+func configureHttpApi(configuration *configuration.Configuartion, etcdNativeClient *clientv3.Client) *echo.Echo {
 	echoApi := echo.New()
 	echoApi.HideBanner = true
 	echoApi.Use(middleware.Recover())
 
 	apiGroup := echoApi.Group("/api")
 	apiGroup.Use(echojwt.WithConfig(echojwt.Config{
-		SigningKey: configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_API_SECRET_KEY),
+		SigningKey: []byte(configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_API_SECRET_KEY)),
 	}))
 
+	customEtcdClient := &etcd.EtcdClient[nodes2.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}
+	nodesRepository := nodes2.EtcdNodeRepository{Client: customEtcdClient}
+
 	loginController := &login.LoginController{Configuration: configuration}
+	getSelfNode := &self.SelfNodeController{NodesRepository: nodesRepository}
 
 	echoApi.POST("/login", loginController.Login)
+	apiGroup.GET("/nodes/self", getSelfNode.GetSelfNode)
 
 	return echoApi
 }

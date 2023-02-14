@@ -25,11 +25,11 @@ func (controller *LoginController) Login(c echo.Context) error {
 	if loginRequest.AuthKey != controller.Configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_AUTH_CLUSTER_KEY) {
 		return c.JSON(http.StatusForbidden, "Invalid auth key")
 	}
-	
+
 	unsingedToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 5)),
 	})
-
+	
 	signedToken, err := unsingedToken.SignedString(
 		[]byte(controller.Configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_API_SECRET_KEY)))
 

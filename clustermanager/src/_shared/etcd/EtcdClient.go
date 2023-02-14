@@ -3,6 +3,7 @@ package etcd
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"time"
 )
@@ -37,6 +38,8 @@ func (client EtcdClient[T]) GetAll(key string) ([]T, error) {
 	nodes := make([]T, response.Count)
 
 	for index, value := range response.Kvs {
+		fmt.Println(value.Value)
+		
 		var node T
 		err := json.Unmarshal(value.Value, &node)
 		if err != nil {

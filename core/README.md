@@ -22,7 +22,7 @@ This is the main component. This stores the data and handles request & replicati
 - Threads allocated for operations are dynamic. They grow or shrink depending on the demand.
 #### Replication
 - When a write comes in it will broadcast the write operation to every node. These nodes are queried periodicly to the cluster mamanger.
-- To authenticate to the cluster manager a specific auth key will be used (AUTH_CLUSTER_KEY)
+- To authenticate with the cluster manager a specific auth key will be used (AUTH_CLUSTER_KEY)
 - Conflic resolution is handled by LWW (Last write wins) approuch. Lamport clocks are used in replication
 
 ## Request format

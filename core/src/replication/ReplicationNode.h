@@ -14,12 +14,12 @@ private:
     int32_t nodeId;
 
 public:
-    ReplicationNode(std::shared_ptr<LamportClock> clock, std::shared_ptr<Configuration> configuration) : nodeId(-1), clock(clock) {}
+    ReplicationNode(std::shared_ptr<LamportClock> clock, std::shared_ptr<Configuration> configuration) :
+        nodeId(-1), clock(clock), configuration(configuration) {}
 
     uint16_t getNodeId() {
         if(this->nodeId != -1)
             return this->nodeId;
-
         if(!this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION))
             this->nodeId = 1;
         if(this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION))

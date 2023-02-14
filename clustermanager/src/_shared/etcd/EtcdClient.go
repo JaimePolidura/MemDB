@@ -17,9 +17,9 @@ func (client EtcdClient[T]) Put(key string, value T) error {
 	if err != nil {
 		return err
 	}
-	
+
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	_, err = client.NativeClient.Put(ctx, key, string(valueJson)) //TODO Los datos se envian bien, pero no se guardan en etcd. Razon la key es incorrecta
+	_, err = client.NativeClient.Put(ctx, key, string(valueJson))
 	cancel()
 
 	return err //It will be nil if it success

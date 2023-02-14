@@ -1,7 +1,7 @@
 package connection
 
 import (
-	"clustermanager/src/nodes"
+	"clustermanager/src/_shared/nodes"
 	"net"
 )
 

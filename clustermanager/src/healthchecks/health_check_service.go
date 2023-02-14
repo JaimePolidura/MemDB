@@ -1,18 +1,18 @@
 package healthchecks
 
 import (
-	configuration "clustermanager/src/config"
-	configuration_keys "clustermanager/src/config/keys"
-	"clustermanager/src/nodes"
-	"clustermanager/src/nodes/connection"
-	"clustermanager/src/nodes/connection/messages/request"
+	"clustermanager/src/_shared/config"
+	"clustermanager/src/_shared/config/keys"
+	nodes2 "clustermanager/src/_shared/nodes"
+	"clustermanager/src/_shared/nodes/connection"
+	"clustermanager/src/_shared/nodes/connection/messages/request"
 	"fmt"
 	"sync"
 	"time"
 )
 
 type HealthCheckService struct {
-	NodesRespository nodes.NodeRepository
+	NodesRespository nodes2.NodeRepository
 	Configuration    *configuration.Configuartion
 	NodeConnections  *connection.NodeConnections
 
@@ -58,7 +58,7 @@ func (healthCheckService *HealthCheckService) runHealthChecks() {
 	waitGroup.Wait()
 }
 
-func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.Node, waitGroup *sync.WaitGroup) {
+func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes2.Node, waitGroup *sync.WaitGroup) {
 	waitGroup.Add(1)
 
 	connectionToNode, err := healthCheckService.NodeConnections.GetByIdOrCreate(node)

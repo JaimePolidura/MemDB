@@ -17,6 +17,9 @@ public:
 
         std::shared_ptr<ReplicationNode> replicationNode = std::make_shared<ReplicationNode>(clock, configuration);
 
+        if(configuration->getBoolean(ConfigurationKeys::USE_REPLICATION))
+            replicationNode->setup();
+
         clock->nodeId = replicationNode->getNodeId();
 
         std::shared_ptr<OperationLogBuffer> operationLogBuffer = std::make_shared<OperationLogBuffer>(configuration);

@@ -25,15 +25,29 @@ func (controller *SetupNodeController) SetupNode(context echo.Context) error {
 
 	nodeByIp, err := controller.NodesRepository.FindByAddress(ip)
 	allNodes, err := controller.NodesRepository.FindAll()
-
+	
 	if err != nil {
 		return context.JSON(http.StatusNotFound, "Node not found for "+ip)
 	}
 
 	return context.JSON(http.StatusOK, SetupNodeResponse{
-		Nodes:  allNodes,
+		Nodes:  controller.filterNodesExceptSelf(nodeByIp.NodeId, allNodes),
 		NodeId: nodeByIp.NodeId,
 	})
+}
+
+func (controller *SetupNodeController) filterNodesExceptSelf(selfNodeId nodes.NodeId_t, allNodes []nodes.Node) []nodes.Node {
+	nodesToReturn := make([]nodes.Node, len(allNodes)-1)
+
+	for index, node := range allNodes {
+		if node.NodeId == selfNodeId {
+			return append(nodesToReturn, allNodes[index+1:]...)
+		}
+
+		nodesToReturn[index] = node
+	}
+
+	return nodesToReturn
 }
 
 func (controller *SetupNodeController) getIpRequest(context echo.Context) (string, error) {

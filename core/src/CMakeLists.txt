@@ -10,8 +10,15 @@ add_library(${BINARY}_lib STATIC ${SOURCES})
 target_link_libraries(${BINARY}_lib ${Boost_LIBRARIES})
 
 include_directories(${CMAKE_PREFIX_PATH}/include)
+
 find_package(etcd-cpp-api CONFIG REQUIRED)
 target_link_libraries(${BINARY}_lib PRIVATE etcd-cpp-api)
+
+find_package(nlohmann_json CONFIG REQUIRED)
+target_link_libraries(${BINARY}_lib PRIVATE nlohmann_json::nlohmann_json)
+
+find_package(cpr CONFIG REQUIRED)
+target_link_libraries(${BINARY}_lib PRIVATE cpr::cpr)
 
 if(NOT BUILDING_LINUX_DEPLOYMENT)
     target_link_libraries(${BINARY}_run ws2_32)

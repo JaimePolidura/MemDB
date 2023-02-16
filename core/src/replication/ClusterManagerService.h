@@ -27,19 +27,22 @@ public:
         std::string url = this->configuartion->get(ConfigurationKeys::CLUSTER_MANAGER_ADDRESS) + "/api/nodes/setup";
         HttpResponse response = HttpClient::post(url, this->authenticate());
 
+        if(!response.isSuccessful())
+            throw std::runtime_error("Cluster manager not found");
+
         std::vector<Node> allNodes;
         auto jsonNodes = response.body["nodes"];
         for (const auto& nodeJson : jsonNodes) {
             allNodes.push_back(Node{
-                .nodeId = nodeJson["nodeId"].get<int>(),
-                .address = nodeJson["address"].get<std::string>(),
-                .state = parseNodeStateFromString(nodeJson["state"].get<std::string>())
+                    .address = nodeJson["address"].get<std::string>(),
+                    .state = parseNodeStateFromString(nodeJson["state"].get<std::string>()),
+                    .nodeId = nodeJson["nodeId"].get<int>(),
             });
         }
 
         return SetupNodeResponse{
-            .nodeId = response.body["nodeId"].get<int>(),
-            .nodes = std::move(allNodes),
+                .nodes = allNodes,
+                .nodeId = response.body["nodeId"].get<int>(),
         };
     }
 

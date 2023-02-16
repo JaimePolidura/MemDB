@@ -17,8 +17,13 @@ target_link_libraries(${BINARY}_lib PRIVATE etcd-cpp-api)
 find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(${BINARY}_lib PRIVATE nlohmann_json::nlohmann_json)
 
-find_package(cpr CONFIG REQUIRED)
-target_link_libraries(${BINARY}_lib PRIVATE cpr::cpr)
+find_package(cpr REQUIRED)
+include_directories(C:\\libs\\C++\\cpr\\include\\cpr)
+target_link_libraries(${BINARY}_lib PRIVATE cpr)
+target_link_libraries(${BINARY}_lib ${cpr_LIBRARIES})
+
+
+add_compile_options(-lcpr -lcurl)
 
 if(NOT BUILDING_LINUX_DEPLOYMENT)
     target_link_libraries(${BINARY}_run ws2_32)

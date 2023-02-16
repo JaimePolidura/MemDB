@@ -26,7 +26,7 @@ public:
         if(authToken != "")
             headers.insert({{"Authorization", "Bearer " + authToken}});
 
-        cpr::Response response = cpr::Post(cpr::Url(url), body, headers, cpr::Timeout(30 * 1000));
+        cpr::Response response = cpr::Post(cpr::Url(url), body, headers);
 
         return HttpResponse{
                 .body = nlohmann::json::parse(response.text),

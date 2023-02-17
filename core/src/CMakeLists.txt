@@ -17,11 +17,8 @@ target_link_libraries(${BINARY}_lib PRIVATE etcd-cpp-api)
 find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(${BINARY}_lib PRIVATE nlohmann_json::nlohmann_json)
 
-find_package(cpr REQUIRED)
-include_directories(C:\\libs\\C++\\cpr\\include\\cpr)
-target_link_libraries(${BINARY}_lib PRIVATE cpr)
-target_link_libraries(${BINARY}_lib ${cpr_LIBRARIES})
-
+find_package(Poco REQUIRED Net)
+target_link_libraries(${BINARY}_lib PRIVATE Poco::Net)
 
 add_compile_options(-lcpr -lcurl)
 

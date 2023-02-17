@@ -25,7 +25,7 @@ public:
         this->token = this->authenticate();
 
         std::string url = this->configuartion->get(ConfigurationKeys::CLUSTER_MANAGER_ADDRESS) + "/api/nodes/setup";
-        HttpResponse response = HttpClient::post(url, this->authenticate());
+        HttpResponse response = HttpClient::post(url, {}, this->authenticate());
 
         if(!response.isSuccessful())
             throw std::runtime_error("Cluster manager not found");
@@ -47,10 +47,10 @@ public:
     }
 
     std::string authenticate() {
-        cpr::Body loginRequestBody = {{"authKey", this->configuartion->get(ConfigurationKeys::AUTH_CLUSTER_KEY)}};
-        std::string url = this->configuartion->get(ConfigurationKeys::CLUSTER_MANAGER_ADDRESS) + "/api/login";
-
-        HttpResponse response = HttpClient::post(url, loginRequestBody);
+        auto response =HttpClient::post(
+                this->configuartion->get(ConfigurationKeys::CLUSTER_MANAGER_ADDRESS) + "/api/login",
+                {{"authKey", this->configuartion->get(ConfigurationKeys::AUTH_CLUSTER_KEY)}}
+        );
 
         if (response.code == 403) {
             printf("[SERVER] Invalid auth key");

@@ -2,7 +2,14 @@
 
 #include <nlohmann/json.hpp>
 #include <string>
-#include <cpr/cpr.h>
+#include <map>
+#include <Poco/Net/HTTPClientSession.h>
+#include <Poco/Net/HTTPRequest.h>
+#include <Poco/Net/HTTPResponse.h>
+#include <Poco/JSON/Parser.h>
+
+using namespace Poco::Net;
+using namespace Poco::JSON;
 
 struct HttpResponse {
     nlohmann::json body;
@@ -19,18 +26,35 @@ struct HttpResponse {
 
 class HttpClient {
 public:
-    //TODO Hay que contemplar el timeout
-    static HttpResponse post(const std::string& url, cpr::Body body = cpr::Body(""), const std::string authToken = "") {
-        cpr::Header headers = {{"Content-Type", "application/json"}};
+    static HttpResponse post(const std::string& url,
+                             const std::map<std::string, std::string>& body = {},
+                             const std::string& authToken = "") {
+
+        HTTPClientSession session(url);
+        HTTPRequest request(HTTPRequest::HTTP_POST, url, HTTPMessage::HTTP_1_1);
+        request.setContentType("application/json");
 
         if(authToken != "")
-            headers.insert({{"Authorization", "Bearer " + authToken}});
+            request.set("Authorization", "Bearer " + authToken);
 
-        cpr::Response response = cpr::Post(cpr::Url(url), body, headers);
+        nlohmann::json jsonRequest;
+        for (const auto& pair : body) {
+            jsonRequest[pair.first] = pair.second;
+        }
+
+        std::ostream& requestStrem = session.sendRequest(request);
+        requestStrem << jsonRequest.dump();
+
+        Poco::Net::HTTPResponse response;
+        std::istream& responseStream = session.receiveResponse(response);
+
+        std::stringstream output_stream;
+        output_stream << responseStream.rdbuf();
+        std::string output_string = output_stream.str();
 
         return HttpResponse{
-                .body = nlohmann::json::parse(response.text),
-                .code = response.status_code
+                .body = nlohmann::json::parse(output_string),
+                .code = response.getStatus()
         };
     }
 };

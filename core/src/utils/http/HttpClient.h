@@ -3,13 +3,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 #include <map>
-#include <Poco/Net/HTTPClientSession.h>
-#include <Poco/Net/HTTPRequest.h>
-#include <Poco/Net/HTTPResponse.h>
-#include <Poco/JSON/Parser.h>
-
-using namespace Poco::Net;
-using namespace Poco::JSON;
+#include <cpr/cpr.h>
 
 struct HttpResponse {
     nlohmann::json body;
@@ -30,31 +24,16 @@ public:
                              const std::map<std::string, std::string>& body = {},
                              const std::string& authToken = "") {
 
-        HTTPClientSession session(url);
-        HTTPRequest request(HTTPRequest::HTTP_POST, url, HTTPMessage::HTTP_1_1);
-        request.setContentType("application/json");
+        cpr::Header headers = {{"Content-Type", "application/json"}};
 
         if(authToken != "")
-            request.set("Authorization", "Bearer " + authToken);
+            headers.insert({{"Authorization", "Bearer " + authToken}});
 
-        nlohmann::json jsonRequest;
-        for (const auto& pair : body) {
-            jsonRequest[pair.first] = pair.second;
-        }
-
-        std::ostream& requestStrem = session.sendRequest(request);
-        requestStrem << jsonRequest.dump();
-
-        Poco::Net::HTTPResponse response;
-        std::istream& responseStream = session.receiveResponse(response);
-
-        std::stringstream output_stream;
-        output_stream << responseStream.rdbuf();
-        std::string output_string = output_stream.str();
+        cpr::Response response = cpr::Post(cpr::Url(url), body, headers, cpr::Timeout(30 * 1000));
 
         return HttpResponse{
-                .body = nlohmann::json::parse(output_string),
-                .code = response.getStatus()
+                .body = nlohmann::json::parse(response.text),
+                .code = response.status_code
         };
     }
 };

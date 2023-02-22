@@ -2,13 +2,10 @@
 
 #include "config/Configuration.h"
 #include "Node.h"
-
-#include <memory>
-#include <cpr/cpr.h>
-#include <nlohmann/json.hpp>
-
-
 #include "utils/http/HttpClient.h"
+
+#include <nlohmann/json.hpp>
+#include <memory>
 
 struct SetupNodeResponse {
     std::vector<Node> nodes;

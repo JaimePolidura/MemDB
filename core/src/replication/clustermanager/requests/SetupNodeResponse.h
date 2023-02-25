@@ -11,6 +11,8 @@ public:
     int nodeId;
 
     static SetupNodeResponse fromJson(const nlohmann::json& json) {
+        auto xd = json.dump();
+
         int nodeId = json["nodeId"].get<int>();
 
         std::vector<Node> allNodes;

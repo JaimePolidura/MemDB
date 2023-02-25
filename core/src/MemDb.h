@@ -27,12 +27,12 @@ public:
           {}
 
     void run() {
+        uint64_t lastTimestampStored = this->restoreDataFromOplog();
         if(this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION)){
-            this->replicationNode->setup();
+            this->replicationNode->setup(lastTimestampStored);
             clock->nodeId = this->replicationNode->getNodeId();
         }
 
-        this->restoreDataFromOplog();
         this->tcpServer->run();
     }
 
@@ -41,8 +41,9 @@ public:
     }
 
 private:
-    void restoreDataFromOplog() {
-        OperationLogDiskLoader loader(this->operatorDispatcher);
-        loader.loadIntoMapDb(this->dbMap);
+    uint64_t restoreDataFromOplog() {
+        OperationLogDiskLoader loader{};
+
+        return loader.loadIntoMapDbAndCompact(this->dbMap, this->operatorDispatcher);
     }
 };

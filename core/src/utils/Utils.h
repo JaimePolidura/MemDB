@@ -6,6 +6,17 @@
 class Utils {
 public:
     template<typename T>
+    static T parse(const uint8_t * input) {
+        T parsedValue = 0;
+        for(int i = 0; i < sizeof(T); i++) {
+            size_t toMove = (sizeof(T) - 1 - i) * sizeof(T);
+            parsedValue |= static_cast<T>(input[i]) << toMove;
+        }
+        
+        return parsedValue;
+    }
+
+    template<typename T>
     static T parseFromBuffer(const std::vector<uint8_t>& buffer, const uint8_t initialPosition = 0) {
         T result = 0;
         for(int i = sizeof(T) - 1; i >= 0; i--){

@@ -25,7 +25,7 @@ public:
         nodeId(1), clock(clock), configuration(configuration), clusterManager(configuration), state(NodeState::BOOTING){
     }
 
-    void setup() {
+    void setup(uint64_t lastTimestampProcessed) {
         auto responseSetup = this->clusterManager.setupNode();
         this->nodeId = responseSetup.nodeId;
         this->otherNodes = responseSetup.nodes;
@@ -35,7 +35,6 @@ public:
 
         std::srand(std::time(nullptr));
         Node nodeToGetData = this->otherNodes[std::rand() % this->otherNodes.size()];
-
     }
 
     uint16_t getNodeId() {

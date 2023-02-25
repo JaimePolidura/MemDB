@@ -8,6 +8,7 @@
 #include "operators/operations/SetOperator.h"
 #include "operators/operations/DeleteOperator.h"
 #include "operators/operations/HealthCheckOperator.h"
+#include "operators/operations/SyncDataOperator.h"
 
 class AllOperators {
 public:
@@ -16,7 +17,8 @@ public:
             std::make_shared<GetOperator>(),
             std::make_shared<SetOperator>(),
             std::make_shared<DeleteOperator>(),
-            std::make_shared<HealthCheckOperator>()
+            std::make_shared<SyncDataOperator>(),
+            std::make_shared<HealthCheckOperator>(),
         };
     }
 };

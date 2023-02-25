@@ -11,31 +11,41 @@
 
 class OperationLogDiskLoader {
 private:
-    std::shared_ptr<OperatorDispatcher> operationDispatcher;
     OperationLogDeserializer operationLogDeserializer;
 
 public:
-    OperationLogDiskLoader(std::shared_ptr<OperatorDispatcher> operationDispatcher) : operationDispatcher(operationDispatcher) {}
-
-    std::shared_ptr<Map> loadIntoMapDb(std::shared_ptr<Map> db) {
+    std::vector<OperationBody> getAll() {
         if(!FileUtils::exists(FileUtils::getFileInProgramBasePath("memdb", "oplog")))
-            return db;
+            return std::vector<OperationBody>{};
 
         std::vector<uint8_t> bytesFromOpLog = FileUtils::readBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog"));
         std::vector<OperationBody> logs = this->operationLogDeserializer.deserializeAll(bytesFromOpLog);
 
-        this->executeOperationLogs(db, logs);
+        return logs;
+    }
+
+    /**
+     * @return The last log's timestamp
+     */
+    uint64_t loadIntoMapDbAndCompact(std::shared_ptr<Map> db, std::shared_ptr<OperatorDispatcher> operationDispatcher) {
+        if(!FileUtils::exists(FileUtils::getFileInProgramBasePath("memdb", "oplog")))
+            return 0;
+
+        std::vector<uint8_t> bytesFromOpLog = FileUtils::readBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog"));
+        std::vector<OperationBody> logs = this->operationLogDeserializer.deserializeAll(bytesFromOpLog);
+
+        this->executeOperationLogs(db, logs, operationDispatcher);
         this->clearFileAndAddNewCompressedOperations(db);
 
-        return db;
+        return logs[logs.size() - 1].timestamp;
     }
 
 private:
-    void executeOperationLogs(std::shared_ptr<Map> db, const std::vector<OperationBody>& operations) {
+    void executeOperationLogs(std::shared_ptr<Map> db, const std::vector<OperationBody>& operations, std::shared_ptr<OperatorDispatcher> operationDispatcher) {
         printf("[SERVER] Applaying logs...\n");
 
         for (const auto &operation : operations)
-            this->operationDispatcher->executeOperator(db, OperationOptions{.requestFromReplication = false}, operation);
+            operationDispatcher->executeOperator(db, OperationOptions{.requestFromReplication = false}, operation);
     }
 
     void clearFileAndAddNewCompressedOperations(std::shared_ptr<Map> db) {
@@ -45,7 +55,7 @@ private:
         FileUtils::clear(FileUtils::getFileInProgramBasePath("memdb", "oplog"));
         std::vector<uint8_t> toWriteCompressed{};
 
-        for (const MapEntry& entry: allDataMap) {
+        for (const MapEntry& entry: allDataMap) { //TODO When comapacting, add as well timestamp. Possible fix: current timestamp
             toWriteCompressed.push_back(SetOperator::OPERATOR_NUMBER << 2);
 
             toWriteCompressed.push_back(entry.key.size);

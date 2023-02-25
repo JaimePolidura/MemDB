@@ -44,7 +44,10 @@ public:
                 .requestFromReplication = request.authenticationType == AuthenticationType::CLUSTER
         };
 
-        Response result = operatorToExecute->operate(request.operation, options, this->db);
+        //TODO Improve
+        Response result = operatorToExecute->type() == OperatorType::CONTROL ?
+                operatorToExecute->operateControl(request.operation, options, this->operationLogBuffer) :
+                operatorToExecute->operate(request.operation, options, this->db);
 
         if(operatorToExecute->type() == WRITE && result.isSuccessful) {
             this->operationLogBuffer->add(request.operation);

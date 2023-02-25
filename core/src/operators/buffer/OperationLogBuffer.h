@@ -33,6 +33,22 @@ public:
         }
     }
 
+    std::vector<OperationBody> get() {
+        return std::vector<OperationBody>(this->operationBuffer);
+    }
+
+    uint64_t getFirstTimestampWritten() {
+        return this->operationBuffer.size() > 0 ? this->operationBuffer[0].timestamp : 0;
+    }
+
+    void lockWritesToDisk() {
+        return this->writeDiskLock.lock();
+    }
+
+    void unlockWritesToDisk() {
+        return this->writeDiskLock.unlock();
+    }
+
 private:
     void writeOperationsToDisk() {
         if(!this->writeDiskLock.try_lock())

@@ -25,6 +25,8 @@ public:
 
         std::shared_ptr<TCPServer> tcpServer = std::make_shared<TCPServer>(configuration, Authenticator{configuration}, operatorDispatcher);
 
-        return std::make_shared<MemDb>(map, configuration, operatorDispatcher, tcpServer, replicationNode, clock);
+        auto memdbD =  std::make_shared<MemDb>(map, configuration, operatorDispatcher, tcpServer, replicationNode, clock);
+
+        return memdbD;
     }
 };

@@ -3,8 +3,8 @@ package nodes
 import (
 	"clustermanager/src/_shared/nodes/states"
 )
-
-type NodeId_t string
+1
+type NodeId_t int
 
 type Node struct {
 	NodeId  NodeId_t         `json:"nodeId"`

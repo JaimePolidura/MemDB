@@ -4,7 +4,7 @@ import (
 	"clustermanager/src/_shared/config"
 	"clustermanager/src/_shared/config/keys"
 	"clustermanager/src/_shared/etcd"
-	nodes2 "clustermanager/src/_shared/nodes"
+	nodes "clustermanager/src/_shared/nodes"
 	"clustermanager/src/_shared/nodes/connection"
 	"clustermanager/src/api"
 	"clustermanager/src/healthchecks"
@@ -49,8 +49,8 @@ func createHealthCheckService(configuration *configuration.Configuartion,
 	connections *connection.NodeConnections,
 	etcdNativeClient *clientv3.Client) *healthchecks.HealthCheckService {
 
-	customEtcdClient := &etcd.EtcdClient[nodes2.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}
-	nodesRepository := nodes2.EtcdNodeRepository{Client: customEtcdClient}
+	customEtcdClient := &etcd.EtcdClient[nodes.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}
+	nodesRepository := nodes.EtcdNodeRepository{Client: customEtcdClient}
 
 	return &healthchecks.HealthCheckService{
 		NodesRespository: nodesRepository,
@@ -69,9 +69,9 @@ func configureHttpApi(configuration *configuration.Configuartion, etcdNativeClie
 		SigningKey: []byte(configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_API_SECRET_KEY)),
 	}))
 
-	customEtcdClient := &etcd.EtcdClient[nodes2.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}
-	nodesRepository := nodes2.EtcdNodeRepository{Client: customEtcdClient}
-	
+	customEtcdClient := &etcd.EtcdClient[nodes.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}
+	nodesRepository := nodes.EtcdNodeRepository{Client: customEtcdClient}
+
 	loginController := &api.LoginController{Configuration: configuration}
 	setupNodeController := &api.SetupNodeController{NodesRepository: nodesRepository}
 

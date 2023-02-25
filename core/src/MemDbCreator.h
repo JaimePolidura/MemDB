@@ -17,11 +17,6 @@ public:
 
         std::shared_ptr<ReplicationNode> replicationNode = std::make_shared<ReplicationNode>(clock, configuration);
 
-        if(configuration->getBoolean(ConfigurationKeys::USE_REPLICATION))
-            replicationNode->setup();
-
-        clock->nodeId = replicationNode->getNodeId();
-
         std::shared_ptr<OperationLogBuffer> operationLogBuffer = std::make_shared<OperationLogBuffer>(configuration);
 
         std::shared_ptr<Map> map = std::make_shared<Map>(configuration->get<uint16_t>(ConfigurationKeys::NUMBER_BUCKETS));
@@ -30,6 +25,6 @@ public:
 
         std::shared_ptr<TCPServer> tcpServer = std::make_shared<TCPServer>(configuration, Authenticator{configuration}, operatorDispatcher);
 
-        return std::make_shared<MemDb>(map, configuration, operatorDispatcher, tcpServer, replicationNode);
+        return std::make_shared<MemDb>(map, configuration, operatorDispatcher, tcpServer, replicationNode, clock);
     }
 };

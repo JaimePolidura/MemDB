@@ -15,17 +15,23 @@ private:
     std::shared_ptr<OperatorDispatcher> operatorDispatcher;
     std::shared_ptr<ReplicationNode> replicationNode;
     std::shared_ptr<Configuration> configuration;
+    std::shared_ptr<LamportClock> clock;
     std::shared_ptr<TCPServer> tcpServer;
     std::shared_ptr<Map> dbMap;
 
 public:
     MemDb(std::shared_ptr<Map> map, std::shared_ptr<Configuration> configuration, std::shared_ptr<OperatorDispatcher> operatorDispatcher,
-          std::shared_ptr<TCPServer> tcpServer, std::shared_ptr<ReplicationNode> replicationNode)
+          std::shared_ptr<TCPServer> tcpServer, std::shared_ptr<ReplicationNode> replicationNode, std::shared_ptr<LamportClock> clock)
             : dbMap(map), configuration(configuration), tcpServer(tcpServer), operatorDispatcher(operatorDispatcher),
-            replicationNode(replicationNode)
+            replicationNode(replicationNode), clock(clock)
           {}
 
     void run() {
+        if(this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION)){
+            this->replicationNode->setup();
+            clock->nodeId = this->replicationNode->getNodeId();
+        }
+
         this->restoreDataFromOplog();
         this->tcpServer->run();
     }

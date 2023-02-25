@@ -1,11 +1,13 @@
 #pragma once
 
+#include <cstdlib>
 #include <memory>
 #include <vector>
+#include <ctime>
 
 #include "utils/clock/LamportClock.h"
 #include "config/Configuration.h"
-#include "ClusterManagerService.h"
+#include "replication/clustermanager/ClusterManagerService.h"
 #include "NodeState.h"
 #include "config/keys/ConfigurationKeys.h"
 
@@ -27,6 +29,13 @@ public:
         auto responseSetup = this->clusterManager.setupNode();
         this->nodeId = responseSetup.nodeId;
         this->otherNodes = responseSetup.nodes;
+
+        if(this->otherNodes.empty())
+            return;
+
+        std::srand(std::time(nullptr));
+        Node nodeToGetData = this->otherNodes[std::rand() % this->otherNodes.size()];
+
     }
 
     uint16_t getNodeId() {

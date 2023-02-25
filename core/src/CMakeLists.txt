@@ -2,22 +2,11 @@ find_package(Boost 1.80.0 REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
 set(BINARY ${CMAKE_PROJECT_NAME})
-file(GLOB_RECURSE SOURCES LIST_DIRECTORIES true *.h *.cpp)
-set(SOURCES ${SOURCES})
+set(SOURCES main.cpp config/keys/ConfigurationKeys.cpp utils/datastructures/map/Map.cpp utils/files/FileUtils.cpp)
 add_executable(${BINARY}_run ${SOURCES})
 
 add_library(${BINARY}_lib STATIC ${SOURCES})
 target_link_libraries(${BINARY}_lib ${Boost_LIBRARIES})
-
-if(NOT BUILDING_LINUX_DEPLOYMENT)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-endif()
-include(FetchContent)
-FetchContent_Declare(cpr GIT_REPOSITORY https://github.com/libcpr/cpr.git
-        GIT_TAG 871ed52d350214a034f6ef8a3b8f51c5ce1bd400)
-FetchContent_MakeAvailable(cpr)
-target_link_libraries(${BINARY}_run PRIVATE cpr::cpr)
 
 # VCPKG Libraries
 if(NOT BUILDING_LINUX_DEPLOYMENT)

@@ -4,8 +4,6 @@ project(memdb)
 
 option(BUILDING_LINUX_DEPLOYMENT OFF)
 
-set(DEFAULT_BUILD_TYPE "Release")
-
 include_directories(src)
 add_subdirectory(src)
 

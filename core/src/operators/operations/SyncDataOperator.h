@@ -44,7 +44,7 @@ public:
                 this->operationLogSerializer.serialize(operationsToSendToTheClient, * it);
         }
 
-        return Response<uint64_t>::success();
+        return Response<uint64_t>::success(1);
     }
 
     AuthenticationType authorizedToExecute() override {

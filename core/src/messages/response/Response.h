@@ -27,24 +27,20 @@ public:
         return sizeof(ResponseValueLengthType);
     }
     
-    template<typename ResponseValueLengthType_success1 = uint8_t>
-    static Response success(const SimpleString<ResponseValueLengthType_success1> &response, uint64_t timestamp = 0) {
-        return Response(true, 0x00, timestamp, response);
+    static Response<ResponseValueLengthType> success(const SimpleString<ResponseValueLengthType> &response, uint64_t timestamp = 0) {
+        return Response<ResponseValueLengthType>(true, 0x00, timestamp, response);
     }
 
-    template<typename ResponseValueLengthType_success2 = uint8_t>
-    static Response success(uint64_t timestamp = 0) {
-        return Response(true, 0x00, timestamp, SimpleString<ResponseValueLengthType_success2>::empty());
+    static Response<ResponseValueLengthType> success(uint64_t timestamp = 0) {
+        return Response<ResponseValueLengthType>(true, 0x00, timestamp, SimpleString<ResponseValueLengthType>::empty());
     }
 
-    template<typename ResponseValueLengthType_error1 = uint8_t>
-    static Response error(uint8_t errorCode, uint64_t timestamp = 0) {
-        return Response(false, errorCode, timestamp, SimpleString<ResponseValueLengthType_error1>::empty());
+    static Response<ResponseValueLengthType> error(uint8_t errorCode, uint64_t timestamp = 0) {
+        return Response<ResponseValueLengthType>(false, errorCode, timestamp, SimpleString<ResponseValueLengthType>::empty());
     };
-    
-    template<typename ResponseValueLengthType_error2 = uint8_t>
-    static Response error(uint8_t errorCode, uint64_t requestNumber, uint64_t timestamp = 0) {
-        Response response = Response(false, errorCode, timestamp, SimpleString<ResponseValueLengthType_error2>::empty());
+
+    static Response<ResponseValueLengthType> error(uint8_t errorCode, uint64_t requestNumber, uint64_t timestamp = 0) {
+        Response response = Response<ResponseValueLengthType>(false, errorCode, timestamp, SimpleString<ResponseValueLengthType>::empty());
         response.requestNumber = requestNumber;
 
         return response;

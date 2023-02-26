@@ -17,10 +17,10 @@ private:
     std::shared_ptr<OperationLogBuffer> operationLogBuffer;
     std::shared_ptr<LamportClock> clock;
     OperatorRegistry operatorRegistry;
-    std::shared_ptr<Map> db;
+    memDbDataStore_t db;
 
 public:
-    OperatorDispatcher(std::shared_ptr<Map> dbCons, std::shared_ptr<LamportClock> clock, std::shared_ptr<OperationLogBuffer> operationLogBuffer):
+    OperatorDispatcher(memDbDataStore_t dbCons, std::shared_ptr<LamportClock> clock, std::shared_ptr<OperationLogBuffer> operationLogBuffer):
         db(dbCons), operationLogBuffer(operationLogBuffer), clock(clock)
     {}
 
@@ -61,7 +61,7 @@ public:
         this->callOnResponseCallback(onResponse, result, requestNumber);
     }
 
-    Response executeOperator(std::shared_ptr<Map> map, const OperationOptions& options, const OperationBody& operationBody) {
+    Response executeOperator(memDbDataStore_t map, const OperationOptions& options, const OperationBody& operationBody) {
         std::shared_ptr<Operator> operatorToExecute = this->operatorRegistry.get(operationBody.operatorNumber);
 
         return operatorToExecute->operate(operationBody, options, map);
@@ -75,3 +75,5 @@ private:
         onResponse(result);
     }
 };
+
+using operatorDisptacher_t = std::shared_ptr<OperatorDispatcher>;

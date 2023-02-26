@@ -3,6 +3,7 @@
 #include "Request.h"
 #include "utils/benchmark/ScopeTimer.h"
 #include "utils/Utils.h"
+#include "memdbtypes.h"
 
 #include <memory>
 #include <vector>
@@ -56,10 +57,12 @@ public:
         }
 
         int numerOfArguments = 0;
-        std::shared_ptr<std::vector<SimpleString>> arguments = std::make_shared<std::vector<SimpleString>>();
+        std::shared_ptr<std::vector<arg_t>> arguments = std::make_shared<std::vector<arg_t>>();
 
         while (initialOffset + 1 < buffer.size()) {
-            unsigned short argLength = (unsigned short) buffer[initialOffset];
+            defaultMemDbSize_t argLength = Utils::parseFromBuffer<defaultMemDbSize_t>(buffer, initialOffset);
+            initialOffset += sizeof(defaultMemDbSize_t);
+
             if(argLength == 0)
                 break;
 

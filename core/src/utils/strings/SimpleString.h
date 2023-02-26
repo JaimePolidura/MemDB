@@ -8,7 +8,7 @@
 /**
  * Apparently you cannot create an string from already heap allocated char *. So we create this class
  */
-template<typename StringLengthType = uint8_t>
+template<typename StringLengthType>
 class SimpleString {
     static_assert(std::is_unsigned_v<StringLengthType>, "StringLengthype should be unsigned");
 

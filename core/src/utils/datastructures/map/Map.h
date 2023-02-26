@@ -8,13 +8,15 @@
 
 #include "utils/datastructures/tree/AVLTree.h"
 #include "utils/threads/ReadWriteLock.h"
+#include "memdbtypes.h"
 
+template<typename SizeValue>
 struct MapEntry {
-    SimpleString key;
+    SimpleString<SizeValue> key;
     uint32_t keyHash;
-    SimpleString value;
+    SimpleString<SizeValue> value;
 
-    MapEntry(const SimpleString& key, uint32_t keyHash, const SimpleString& value):
+    MapEntry(const SimpleString<SizeValue>& key, uint32_t keyHash, const SimpleString<SizeValue>& value):
         keyHash(keyHash),
         value(value),
         key(key) {}
@@ -24,12 +26,11 @@ struct MapEntry {
     }
 };
 
-class shared_mutex;
-
+template<typename SizeValue>
 class Map {
 private:
     std::atomic_uint32_t size;
-    std::vector<AVLTree> buckets;
+    std::vector<AVLTree<SizeValue>> buckets;
     std::vector<ReadWriteLock *> locks;
     uint16_t numberBuckets;
 
@@ -39,25 +40,25 @@ public:
     /**
      * Returns true if operation was successful
      */
-    bool put(const SimpleString& key, const SimpleString& value, bool ignoreTimeStamps, uint64_t timestamp, uint16_t nodeId);
+    bool put(const SimpleString<SizeValue>& key, const SimpleString<SizeValue>& value, bool ignoreTimeStamps, uint64_t timestamp, uint16_t nodeId);
 
-    std::optional<MapEntry> get(const SimpleString& key) const;
+    std::optional<MapEntry<SizeValue>> get(const SimpleString<SizeValue>& key) const;
 
     /**
      * Returns true if operation was successful
      */
-    bool remove(const SimpleString& key, bool ignoreTimeStamps, uint64_t timestamp, uint16_t nodeId);
+    bool remove(const SimpleString<SizeValue>& key, bool ignoreTimeStamps, uint64_t timestamp, uint16_t nodeId);
 
-    bool contains(const SimpleString& key) const;
+    bool contains(const SimpleString<SizeValue>& key) const;
 
-    std::vector<MapEntry> all();
+    std::vector<MapEntry<SizeValue>> all();
 
     int getSize() const;
 
 private:
     static const uint8_t HASH_PRIME_FACTOR = 31;
 
-    uint32_t calculateHash(const SimpleString& key) const {
+    uint32_t calculateHash(const SimpleString<SizeValue>& key) const {
         uint32_t hashCode = 0;
 
         for(int i = 0; i < key.size; i++)
@@ -66,14 +67,14 @@ private:
         return hashCode;
     }
 
-    AVLNode * getNodeByKeyHash(uint32_t keyHash) const {
-        AVLTree * actualMapNode = this->getBucket(keyHash);
+    AVLNode<SizeValue> * getNodeByKeyHash(uint32_t keyHash) const {
+        AVLTree<SizeValue> * actualMapNode = this->getBucket(keyHash);
 
         return actualMapNode->get(keyHash);
     }
 
-    AVLTree * getBucket(uint32_t keyHash) const {
-        return const_cast<AVLTree *>(this->buckets.data()) + (keyHash % numberBuckets);
+    AVLTree<SizeValue> * getBucket(uint32_t keyHash) const {
+        return const_cast<AVLTree<SizeValue> *>(this->buckets.data()) + (keyHash % numberBuckets);
     }
 
     void lockRead(uint32_t hashCode) const {
@@ -92,3 +93,5 @@ private:
         const_cast<ReadWriteLock *>(this->locks.at(hashCode % numberBuckets))->unlockWrite();
     }
 };
+
+using memDbDataStore_t = std::shared_ptr<Map<defaultMemDbSize_t>>;

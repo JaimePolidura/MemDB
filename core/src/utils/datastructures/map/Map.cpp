@@ -1,6 +1,7 @@
 #include "Map.h"
 
-Map::Map(uint16_t numberBuckets): numberBuckets(numberBuckets) {
+template<typename SizeValue>
+Map<SizeValue>::Map(uint16_t numberBuckets): numberBuckets(numberBuckets) {
     buckets.reserve(numberBuckets);
 
     for (int i = 0; i < numberBuckets; i++) {
@@ -9,12 +10,13 @@ Map::Map(uint16_t numberBuckets): numberBuckets(numberBuckets) {
     }
 }
 
-bool Map::put(const SimpleString& key, const SimpleString& value, bool ignoreTimestamps, uint64_t timestamp, uint16_t nodeId) {
+template<typename SizeValue>
+bool Map<SizeValue>::put(const SimpleString<SizeValue>& key, const SimpleString<SizeValue>& value, bool ignoreTimestamps, uint64_t timestamp, uint16_t nodeId) {
     uint32_t keyHash = this->calculateHash(key);
 
     lockWrite(keyHash);
 
-    AVLTree * bucket = this->getBucket(keyHash);
+    AVLTree<SizeValue> * bucket = this->getBucket(keyHash);
     bool areadyContained = bucket->contains(keyHash);
     bool added = bucket->add(key, keyHash, value, ignoreTimestamps, timestamp, nodeId);
 
@@ -27,8 +29,9 @@ bool Map::put(const SimpleString& key, const SimpleString& value, bool ignoreTim
     return added;
 }
 
-std::vector<MapEntry> Map::all() {
-    std::vector<MapEntry> all{};
+template<typename SizeValue>
+std::vector<MapEntry<SizeValue>> Map<SizeValue>::all() {
+    std::vector<MapEntry<SizeValue>> all{};
 
     for (const AVLTree bucket: this->buckets){
         for (const auto node : bucket.all()){
@@ -39,15 +42,16 @@ std::vector<MapEntry> Map::all() {
     return all;
 }
 
-std::optional<MapEntry> Map::get(const SimpleString& key) const {
+template<typename SizeValue>
+std::optional<MapEntry<SizeValue>> Map<SizeValue>::get(const SimpleString<SizeValue>& key) const {
     uint32_t hash = this->calculateHash(key);
 
     lockRead(hash);
 
-    AVLNode * node = this->getNodeByKeyHash(hash);
+    AVLNode<SizeValue> * node = this->getNodeByKeyHash(hash);
 
-    const std::optional<MapEntry> response = (node != nullptr ?
-            std::optional<MapEntry>{MapEntry{node->key, node->keyHash, node->value}} :
+    const std::optional<MapEntry<SizeValue>> response = (node != nullptr ?
+            std::optional<MapEntry<SizeValue>>{MapEntry{node->key, node->keyHash, node->value}} :
             std::nullopt);
 
     unlockRead(hash);
@@ -55,12 +59,13 @@ std::optional<MapEntry> Map::get(const SimpleString& key) const {
     return response;
 }
 
-bool Map::remove(const SimpleString& key, bool ignoreTimestamps, uint64_t timestamp, uint16_t nodeId) {
+template<typename SizeValue>
+bool Map<SizeValue>::remove(const SimpleString<SizeValue>& key, bool ignoreTimestamps, uint64_t timestamp, uint16_t nodeId) {
     uint32_t hash = this->calculateHash(key);
 
     lockWrite(hash);
 
-    AVLTree * bucket = this->getBucket(hash);
+    AVLTree<SizeValue> * bucket = this->getBucket(hash);
     bool removed = false;
     if(bucket->contains(hash) && (removed = bucket->remove(hash, ignoreTimestamps, timestamp, nodeId))) {
         this->size--;
@@ -71,10 +76,12 @@ bool Map::remove(const SimpleString& key, bool ignoreTimestamps, uint64_t timest
     return removed;
 }
 
-bool Map::contains(const SimpleString& key) const {
+template<typename SizeValue>
+bool Map<SizeValue>::contains(const SimpleString<SizeValue>& key) const {
     return this->getNodeByKeyHash(this->calculateHash(key)) != nullptr;
 }
 
-int Map::getSize() const {
+template<typename SizeValue>
+int Map<SizeValue>::getSize() const {
     return this->size;
 }

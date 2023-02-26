@@ -12,13 +12,14 @@
 #define IGNORE_TIMESTAMP true
 #define NOT_IGNORE_TIMESTAMP false
 
+template<typename SizeValue>
 class AVLNode {
 public:
-    SimpleString key;
-    SimpleString value;
+    SimpleString<SizeValue> key;
+    SimpleString<SizeValue> value;
     LamportClock timestamp;
-    AVLNode * left;
-    AVLNode * right;
+    AVLNode<SizeValue> * left;
+    AVLNode<SizeValue> * right;
     uint32_t keyHash;
     int16_t height;
 
@@ -26,25 +27,26 @@ public:
         return this->left == nullptr && this->right == nullptr;
     }
 
-    AVLNode(SimpleString key, uint32_t keyHash, SimpleString value, int16_t height, uint16_t nodeId, uint64_t timestamp):
+    AVLNode(SimpleString<SizeValue> key, uint32_t keyHash, SimpleString<SizeValue> value, int16_t height, uint16_t nodeId, uint64_t timestamp):
             left(nullptr), right(nullptr), value(value), keyHash(keyHash), height(height), key(key), timestamp(nodeId, timestamp) {
     }
 };
 
+template<typename SizeValue>
 class AVLTree {
 public:
-    AVLNode * root;
+    AVLNode<SizeValue> * root;
 
 public:
-    bool add(const SimpleString& key, uint32_t keyHash, const SimpleString& value, bool ignoreTimeStamps, uint64_t timestamp, uint16_t nodeId) {
-        AVLNode * newNode = new AVLNode(key, keyHash, value, -1, nodeId, timestamp);
+    bool add(const SimpleString<SizeValue>& key, uint32_t keyHash, const SimpleString<SizeValue>& value, bool ignoreTimeStamps, uint64_t timestamp, uint16_t nodeId) {
+        AVLNode<SizeValue> * newNode = new AVLNode(key, keyHash, value, -1, nodeId, timestamp);
 
         if(this->root == nullptr){
             this->root = newNode;
             return true;
         }
 
-        AVLNode * insertedNode = this->insertRecursive(this->root, newNode, ignoreTimeStamps);
+        AVLNode<SizeValue> * insertedNode = this->insertRecursive(this->root, newNode, ignoreTimeStamps);
         return insertedNode != nullptr;
     }
 
@@ -55,15 +57,15 @@ public:
         return removed;
     }
 
-    std::vector<AVLNode *> all() const {
-        std::vector<AVLNode *> toReturn{};
+    std::vector<AVLNode<SizeValue> *> all() const {
+        std::vector<AVLNode<SizeValue> *> toReturn{};
         if(this->root == nullptr) return toReturn;
 
-        std::queue<AVLNode *> pending{};
+        std::queue<AVLNode<SizeValue> *> pending{};
         pending.push(this->root);
 
         while(!pending.empty()) {
-            AVLNode * node = pending.front();
+            AVLNode<SizeValue> * node = pending.front();
             pending.pop();
 
             if(node->left != nullptr)
@@ -81,8 +83,8 @@ public:
         return this->get(keyHashToSearch) != nullptr;
     }
 
-    AVLNode * get(uint32_t keyHashToSearch) const {
-        AVLNode * node = this->root;
+    AVLNode<SizeValue> * get(uint32_t keyHashToSearch) const {
+        AVLNode<SizeValue> * node = this->root;
 
         while (node != nullptr) {
             if (node->keyHash == keyHashToSearch)
@@ -97,7 +99,7 @@ public:
     }
 
 private:
-    AVLNode * removeRecursive(AVLNode * last, uint32_t keyHashToRemove, uint64_t timestamp, uint16_t nodeId,
+    AVLNode<SizeValue> * removeRecursive(AVLNode<SizeValue> * last, uint32_t keyHashToRemove, uint64_t timestamp, uint16_t nodeId,
                               bool& removed, bool ignoreTimeStamps, bool alreadyDeleted = false) {
         if(last == nullptr){
             return last;
@@ -114,7 +116,7 @@ private:
             bool rootRemoved = this->root == last;
 
             if(last->left && last->right) {
-                AVLNode * temp = this->mostLeftChild(last->right);
+                AVLNode<SizeValue> * temp = this->mostLeftChild(last->right);
 
                 last->keyHash = temp->keyHash;
                 last->value = temp->value;
@@ -124,7 +126,7 @@ private:
                 bool ignore = false;
                 last->right = removeRecursive(last->right, last->keyHash, last->timestamp.counter, last->timestamp.nodeId, ignore, false, true);
             }else{
-                AVLNode * temp = last;
+                AVLNode<SizeValue> * temp = last;
                 if(last->left == nullptr)
                     last = last->right;
                 else if(last->right == nullptr)
@@ -142,23 +144,23 @@ private:
         return last;
     }
 
-    AVLNode * mostLeftChild(AVLNode * node) const {
+    AVLNode<SizeValue> * mostLeftChild(AVLNode<SizeValue> * node) const {
         while (node->left != nullptr)
             node = node->left;
 
         return node;
     }
 
-    AVLNode * insertRecursive(AVLNode * last, AVLNode * toInsert, bool ignoreTimeStamps) {
+    AVLNode<SizeValue> * insertRecursive(AVLNode<SizeValue> * last, AVLNode<SizeValue> * toInsert, bool ignoreTimeStamps) {
         if(last == nullptr)
             return toInsert;
 
         if(last->keyHash > toInsert->keyHash) {
-            AVLNode * inserted = insertRecursive(last->left, toInsert, ignoreTimeStamps);
+            AVLNode<SizeValue> * inserted = insertRecursive(last->left, toInsert, ignoreTimeStamps);
             if(inserted != nullptr) last->left = inserted;
 
         }else if(last->keyHash < toInsert->keyHash) {
-            AVLNode * inserted = insertRecursive(last->right, toInsert, ignoreTimeStamps);
+            AVLNode<SizeValue> * inserted = insertRecursive(last->right, toInsert, ignoreTimeStamps);
             if(inserted != nullptr) last->right = inserted;
 
         }else{
@@ -174,7 +176,7 @@ private:
         return this->rebalance(last);
     }
 
-    AVLNode * rebalance(AVLNode * node) {
+    AVLNode<SizeValue> * rebalance(AVLNode<SizeValue> * node) {
         if(node == nullptr)
             return node;
 
@@ -197,8 +199,8 @@ private:
         return node;
     }
 
-    AVLNode * rotateRight(AVLNode * node) {
-        AVLNode * leftChild = node->left;
+    AVLNode<SizeValue> * rotateRight(AVLNode<SizeValue> * node) {
+        AVLNode<SizeValue> * leftChild = node->left;
 
         this->updateRootReferenceIfNeccesary(node, leftChild);
 
@@ -211,9 +213,8 @@ private:
         return leftChild;
     }
 
-
-    AVLNode * rotateLeft(AVLNode * node) {
-        AVLNode * rightChild = node->right;
+    AVLNode<SizeValue> * rotateLeft(AVLNode<SizeValue> * node) {
+        AVLNode<SizeValue> * rightChild = node->right;
 
         node->right = rightChild->left;
         rightChild->left = node;
@@ -226,23 +227,23 @@ private:
         return rightChild;
     }
 
-    void updateRootReferenceIfNeccesary(AVLNode * oldReference, AVLNode * newReference) {
+    void updateRootReferenceIfNeccesary(AVLNode<SizeValue> * oldReference, AVLNode<SizeValue> * newReference) {
         if(this->root == oldReference)
             this->root = newReference;
     }
 
-    int16_t getHeightFactor(AVLNode * node) const {
+    int16_t getHeightFactor(AVLNode<SizeValue> * node) const {
         return node == nullptr ? 0 : this->getHeight(node->right) - this->getHeight(node->left);
     }
 
-    void updateHeight(AVLNode * node) {
+    void updateHeight(AVLNode<SizeValue> * node) {
         int16_t rightHeight = this->getHeight(node->right);
         int16_t leftHeight = this->getHeight(node->left);
 
         node->height = std::max(leftHeight, rightHeight) + 1;
     }
 
-    int16_t getHeight(AVLNode * node) const {
+    int16_t getHeight(AVLNode<SizeValue> * node) const {
         return node == nullptr ? -1 : node->height;
     }
 };

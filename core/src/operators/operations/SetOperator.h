@@ -9,7 +9,7 @@ class SetOperator : public Operator {
 public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x01;
 
-    Response operate(const OperationBody& operation, const OperationOptions& options, std::shared_ptr<Map> map) override {
+    Response operate(const OperationBody& operation, const OperationOptions& options, std::shared_ptr<Map<defaultMemDbSize_t>> map) override {
         SimpleString key = operation.args->at(0);
         SimpleString value = operation.args->at(1);
 

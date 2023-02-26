@@ -8,11 +8,12 @@
 #include <string>
 
 class SyncDataOperator : public Operator {
-public:
-    static constexpr const uint8_t OPERATOR_NUMBER = 0x05;
-
+private:
     OperationLogDiskLoader operationLogDiskLoader;
     OperationLogSerializer operationLogSerializer;
+
+public:
+    static constexpr const uint8_t OPERATOR_NUMBER = 0x05;
 
     //TODO All the logs from disk might not ocuppy 2^32 bits
     Response operateControl(const OperationBody& operation, const OperationOptions& operationOptions, std::shared_ptr<OperationLogBuffer> operationLogBuffer) override {

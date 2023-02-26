@@ -9,7 +9,7 @@
 #include "operators/OperatorDispatcher.h"
 #include "messages/request/Request.h"
 
-class OperationLogDiskLoader {
+class OperationLogDiskLoader2 {
 private:
     OperationLogDeserializer operationLogDeserializer;
 

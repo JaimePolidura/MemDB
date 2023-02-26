@@ -9,7 +9,6 @@
 
 #include "messages/request/Request.h"
 #include "messages/request/RequestDeserializer.h"
-#include "utils/benchmark/ScopeTimer.h"
 
 class OperationLogDeserializer {
 private:
@@ -41,7 +40,7 @@ private:
                 deserialized.args->begin(),
                 deserialized.args->end(),
                 deserialized.args->size(),
-                [](int acc, const SimpleString& it) {
+                [](int acc, const auto& it) {
                     return acc + it.size;
                 });
 

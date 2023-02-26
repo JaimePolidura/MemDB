@@ -7,6 +7,8 @@
 
 #include "Operator.h"
 #include "OperatorRegistry.h"
+#include "DbOperator.h"
+#include "ControlOperator.h"
 #include "utils/threads/dynamicthreadpool/SingleThreadPool.h"
 #include "messages/response/ErrorCode.h"
 #include "operators/buffer/OperationLogBuffer.h"
@@ -44,10 +46,7 @@ public:
                 .requestFromReplication = request.authenticationType == AuthenticationType::CLUSTER
         };
 
-        //TODO Improve
-        Response result = operatorToExecute->type() == OperatorType::CONTROL ?
-                operatorToExecute->operateControl(request.operation, options, this->operationLogBuffer) :
-                operatorToExecute->operate(request.operation, options, this->db);
+        Response result = this->execute(operatorToExecute, request.operation, options);
 
         if(operatorToExecute->type() == WRITE && result.isSuccessful) {
             this->operationLogBuffer->add(request.operation);
@@ -64,10 +63,16 @@ public:
     Response executeOperator(memDbDataStore_t map, const OperationOptions& options, const OperationBody& operationBody) {
         std::shared_ptr<Operator> operatorToExecute = this->operatorRegistry.get(operationBody.operatorNumber);
 
-        return operatorToExecute->operate(operationBody, options, map);
+        return this->execute(operatorToExecute, operationBody, options);
     }
 
 private:
+    Response execute(std::shared_ptr<Operator> operatorToExecute, const OperationBody& operation, const OperationOptions& options) {
+        return operatorToExecute->type() == OperatorType::CONTROL ?
+               dynamic_cast<ControlOperator *>(operatorToExecute.get())->operate(operation, options, this->operationLogBuffer) :
+               dynamic_cast<DbOperator *>(operatorToExecute.get())->operate(operation, options, this->db);
+    }
+
     void callOnResponseCallback(const std::function<void(Response&)>& onResponse,
                                 Response& result,
                                 uint64_t requestNumber) {

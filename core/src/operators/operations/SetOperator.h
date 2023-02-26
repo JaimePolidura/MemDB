@@ -2,14 +2,15 @@
 
 #include "operators/Operator.h"
 #include "messages/response/ErrorCode.h"
+#include "operators/DbOperator.h"
 
 #include <string>
 
-class SetOperator : public Operator {
+class SetOperator : public Operator, public DbOperator {
 public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x01;
 
-    Response operate(const OperationBody& operation, const OperationOptions& options, std::shared_ptr<Map<defaultMemDbSize_t>> map) override {
+    Response operate(const OperationBody& operation, const OperationOptions& options, memDbDataStore_t map) override {
         SimpleString key = operation.args->at(0);
         SimpleString value = operation.args->at(1);
 

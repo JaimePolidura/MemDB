@@ -40,7 +40,7 @@ public:
     }
 
 private:
-    void clearFileAndAddNewCompressedOperations(std::shared_ptr<Map<defaultMemDbSize_t>> db) {
+    void clearFileAndAddNewCompressedOperations(memDbDataStore_t db) {
         printf("[SERVER] Compacting logs...\n");
 
         std::vector<MapEntry<defaultMemDbSize_t>> allDataMap = db->all();

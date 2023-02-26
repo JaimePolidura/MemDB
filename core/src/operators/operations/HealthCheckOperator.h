@@ -2,13 +2,14 @@
 
 #include "operators/Operator.h"
 #include "messages/response/ErrorCode.h"
+#include "operators/ControlOperator.h"
 
 #include <string>
 
-class HealthCheckOperator : public Operator {
+class HealthCheckOperator : public Operator, public ControlOperator {
     static constexpr const uint8_t OPERATOR_NUMBER = 0x04;
 
-    Response operateControl(const OperationBody& operation, const OperationOptions& operationOptions, std::shared_ptr<OperationLogBuffer> operationLogBuffer) override {
+    Response operate(const OperationBody& operation, const OperationOptions& operationOptions, operationLogBuffer_t operationLogBuffer) override {
         return Response::success();
     }
 

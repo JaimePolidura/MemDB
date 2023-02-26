@@ -3,20 +3,21 @@
 #include "operators/Operator.h"
 #include "messages/response/ErrorCode.h"
 #include "utils/Utils.h"
-//#include "persistence/OperationLogDiskLoader.h"
+#include "persistence/OperationLogDiskLoader.h"
+#include "operators/ControlOperator.h"
 
 #include <string>
 
-class SyncDataOperator : public Operator {
+class SyncDataOperator : public Operator, public ControlOperator {
 private:
-//    OperationLogDiskLoader operationLogDiskLoader;
+    OperationLogDiskLoader operationLogDiskLoader;
     OperationLogSerializer operationLogSerializer;
 
 public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x05;
 
     //TODO All the logs from disk might not ocuppy 2^32 bits
-    Response operateControl(const OperationBody& operation, const OperationOptions& operationOptions, std::shared_ptr<OperationLogBuffer> operationLogBuffer) override {
+    Response operate(const OperationBody& operation, const OperationOptions& operationOptions, operationLogBuffer_t operationLogBuffer) override {
         operationLogBuffer->lockWritesToDisk();
         std::vector<OperationBody> operationLogsInBuffer = operationLogBuffer->get();
 
@@ -34,8 +35,7 @@ public:
 
         } else {
             //Read from disk operations logs and add all the operations in the buffer
-//            std::vector<OperationBody> operationLogsInDisk = operationLogDiskLoader.getAll();
-            std::vector<OperationBody> operationLogsInDisk;
+            std::vector<OperationBody> operationLogsInDisk = operationLogDiskLoader.getAll();
             operationLogBuffer->unlockWritesToDisk();
 
             for(auto it = operationLogsInDisk.begin(); it < operationLogsInDisk.end() && it->timestamp > lastTimestampInClient; it++) //Very long log may collapse RAM TODO fix

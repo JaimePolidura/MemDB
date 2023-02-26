@@ -1,14 +1,7 @@
 #pragma once
 
-#include "messages/request/Request.h"
-#include "messages/response/Response.h"
-#include "utils/datastructures/map/Map.h"
 #include "operators/OperationOptions.h"
 #include "auth/AuthenticationType.h"
-#include "operators/buffer/OperationLogBuffer.h"
-#include "memdbtypes.h"
-
-#include <memory>
 
 enum OperatorType {
     READ, WRITE, CONTROL
@@ -16,11 +9,6 @@ enum OperatorType {
 
 class Operator {
 public:
-    //Used  for write and read operator type
-    virtual Response operate(const OperationBody& operation, const OperationOptions& operationOptions, std::shared_ptr<Map<defaultMemDbSize_t>> map);
-    //Used for control type operators type
-    virtual Response operateControl(const OperationBody& operation, const OperationOptions& operationOptions, std::shared_ptr<OperationLogBuffer> operationLogBuffer);
-
     virtual constexpr OperatorType type() = 0;
 
     virtual constexpr uint8_t operatorNumber() = 0;

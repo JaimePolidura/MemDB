@@ -65,3 +65,5 @@ private:
         this->writeDiskLock.unlock();
     }
 };
+
+using operationLogBuffer_t = std::shared_ptr<OperationLogBuffer>;

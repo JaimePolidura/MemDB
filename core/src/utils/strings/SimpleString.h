@@ -30,27 +30,29 @@ public:
     uint8_t * operator+(int other) const {
         return this->value.get() + other;
     }
+    
+    size_t getSizeOfStringLengthType() const {
+        return sizeof(StringLengthType);
+    }
 
     static SimpleString empty() {
         return SimpleString{nullptr, 0};
     }
 
-    template<typename StringLengthType_fromString = uint8_t>
-    static SimpleString<StringLengthType_fromString> fromString(std::string&& string) {
+    static SimpleString<StringLengthType> fromString(std::string&& string) {
         uint8_t * valuePtr = new uint8_t[string.size()];
         for (int i = 0; i < string.size(); ++i)
             * (valuePtr + i) = * (string.begin() + i);
 
-        return SimpleString<StringLengthType_fromString>{valuePtr, static_cast<StringLengthType_fromString>(string.size())};
+        return SimpleString<StringLengthType>{valuePtr, static_cast<StringLengthType>(string.size())};
     }
 
-    template<typename StringLengthType_fromArray = uint8_t>
-    static SimpleString<StringLengthType_fromArray> fromArray(std::initializer_list<uint8_t> values) {
+    static SimpleString<StringLengthType> fromArray(std::initializer_list<uint8_t> values) {
         uint8_t * valuePtr = new uint8_t[values.size()];
         for (int i = 0; i < values.size(); ++i)
             * (valuePtr + i) = * (values.begin() + i);
 
-        return SimpleString<StringLengthType_fromArray>{valuePtr, static_cast<StringLengthType_fromArray>(values.size())};
+        return SimpleString<StringLengthType>{valuePtr, static_cast<StringLengthType>(values.size())};
     }
 
     static SimpleString fromChar(char&& value) {

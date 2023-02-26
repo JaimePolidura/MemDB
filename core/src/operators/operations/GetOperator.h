@@ -16,7 +16,6 @@ public:
         return result.has_value() ?
                Response::success(result.value().value) :
                Response::error(ErrorCode::UNKNOWN_KEY); //No successful
-
     }
 
     AuthenticationType authorizedToExecute() override {

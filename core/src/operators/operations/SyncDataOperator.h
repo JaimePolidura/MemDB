@@ -14,7 +14,8 @@ public:
     OperationLogDiskLoader operationLogDiskLoader;
     OperationLogSerializer operationLogSerializer;
 
-    Response<uint64_t> operateControl(const OperationBody& operation, const OperationOptions& operationOptions, std::shared_ptr<OperationLogBuffer> operationLogBuffer) override {
+    //TODO All the logs from disk might not ocuppy 2^32 bits
+    Response operateControl(const OperationBody& operation, const OperationOptions& operationOptions, std::shared_ptr<OperationLogBuffer> operationLogBuffer) override {
         operationLogBuffer->lockWritesToDisk();
         std::vector<OperationBody> operationLogsInBuffer = operationLogBuffer->get();
 
@@ -22,29 +23,26 @@ public:
         uint64_t oldestTimestampInBuffer = operationLogBuffer->getFirstTimestampWritten();
 
         std::vector<uint8_t> operationsToSendToTheClient;
-
+        
         if(oldestTimestampInBuffer != 0 && oldestTimestampInBuffer < lastTimestampInClient) {
             //Take operations from item lastTimestampInClient + 1 to last item in buffer
             operationLogBuffer->unlockWritesToDisk();
 
-            for(auto it = operationLogsInBuffer.begin(); it < operationLogsInBuffer.end(); it++) {
-                if (it->timestamp < lastTimestampInClient)
-                    break;
+            for(auto it = operationLogsInBuffer.begin(); it < operationLogsInBuffer.end() && it->timestamp > lastTimestampInClient; it++)
                 this->operationLogSerializer.serialize(operationsToSendToTheClient, * it);
-            }
 
         } else {
             //Read from disk operations logs and add all the operations in the buffer
             std::vector<OperationBody> operationLogsInDisk = operationLogDiskLoader.getAll();
             operationLogBuffer->unlockWritesToDisk();
 
-            for(auto it = operationLogsInDisk.begin(); it < operationLogsInDisk.end(); it++)
+            for(auto it = operationLogsInDisk.begin(); it < operationLogsInDisk.end() && it->timestamp > lastTimestampInClient; it++) //Very long log may collapse RAM TODO fix
                 this->operationLogSerializer.serialize(operationsToSendToTheClient, * it);
-            for(auto it = operationLogsInBuffer.begin(); it < operationLogsInBuffer.end(); it++) //Very long log may collapse RAM TODO fix
+            for(auto it = operationLogsInBuffer.begin(); it < operationLogsInBuffer.end(); it++)
                 this->operationLogSerializer.serialize(operationsToSendToTheClient, * it);
         }
 
-        return Response<uint64_t>::success(1);
+        return Response::success(1);
     }
 
     AuthenticationType authorizedToExecute() override {

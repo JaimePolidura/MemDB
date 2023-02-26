@@ -36,4 +36,12 @@ public:
 
         return vectorOut;
     }
+
+    static std::vector<uint8_t> appendToBuffer(const uint8_t * toAppendPtr, const uint8_t totalToAppend, std::vector<uint8_t>& vectorOut) {
+        for(auto i = 0; i < totalToAppend; i++) {
+            vectorOut.push_back(* (toAppendPtr + i));
+        }
+
+        return vectorOut;
+    }
 };

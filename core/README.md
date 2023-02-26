@@ -26,6 +26,8 @@ This is the main component. This stores the data and handles request & replicati
 - Conflic resolution is handled by LWW (Last write wins) approach. Vector clocks are used to compare events.
 
 ## Request format
+- Length flag f1 ON : The response's reponse length will be 8 bytes intstead of 1 byte.
+
 ````
                  1 byte
 +-------------------------------------+

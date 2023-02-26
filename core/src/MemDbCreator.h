@@ -7,6 +7,7 @@
 #include "config/keys/ConfigurationKeys.h"
 #include "replication/ReplicationNode.h"
 #include "auth/Authenticator.h"
+#include "memdbtypes.h"
 
 class MemDbCreator {
 public:
@@ -19,7 +20,7 @@ public:
 
         std::shared_ptr<OperationLogBuffer> operationLogBuffer = std::make_shared<OperationLogBuffer>(configuration);
 
-        std::shared_ptr<Map> map = std::make_shared<Map>(configuration->get<uint16_t>(ConfigurationKeys::NUMBER_BUCKETS));
+        memDbDataStore_t map = std::make_shared<Map<defaultMemDbSize_t>>(configuration->get<uint16_t>(ConfigurationKeys::NUMBER_BUCKETS));
 
         std::shared_ptr<OperatorDispatcher> operatorDispatcher = std::make_shared<OperatorDispatcher>(map, clock, operationLogBuffer);
 

@@ -44,7 +44,12 @@ public:
 private:
     uint64_t restoreDataFromOplog() {
         OperationLogDiskLoader loader{};
+        auto opLogsFromDisk = loader.getAllAndSaveCompacted(this->dbMap);
 
-        return loader.loadIntoMapDbAndCompact(this->dbMap, this->operatorDispatcher);
+        printf("[SERVER] Applaying logs...\n");
+        for(const auto& operationLogInDisk : opLogsFromDisk)
+            this->operatorDispatcher->executeOperator(this->dbMap, OperationOptions{.requestFromReplication = false}, operationLogInDisk);
+
+        return !opLogsFromDisk.empty() ? opLogsFromDisk[opLogsFromDisk.size() - 1].timestamp : 0;
     }
 };

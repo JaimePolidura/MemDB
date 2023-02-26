@@ -3,13 +3,13 @@
 #include "operators/Operator.h"
 #include "messages/response/ErrorCode.h"
 #include "utils/Utils.h"
-#include "persistence/OperationLogDiskLoader.h"
+//#include "persistence/OperationLogDiskLoader.h"
 
 #include <string>
 
 class SyncDataOperator : public Operator {
 private:
-    OperationLogDiskLoader operationLogDiskLoader;
+//    OperationLogDiskLoader operationLogDiskLoader;
     OperationLogSerializer operationLogSerializer;
 
 public:
@@ -34,7 +34,8 @@ public:
 
         } else {
             //Read from disk operations logs and add all the operations in the buffer
-            std::vector<OperationBody> operationLogsInDisk = operationLogDiskLoader.getAll();
+//            std::vector<OperationBody> operationLogsInDisk = operationLogDiskLoader.getAll();
+            std::vector<OperationBody> operationLogsInDisk;
             operationLogBuffer->unlockWritesToDisk();
 
             for(auto it = operationLogsInDisk.begin(); it < operationLogsInDisk.end() && it->timestamp > lastTimestampInClient; it++) //Very long log may collapse RAM TODO fix

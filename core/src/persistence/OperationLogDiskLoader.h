@@ -23,31 +23,23 @@ public:
 
         return logs;
     }
-
+    
     /**
      * @return The last log's timestamp
      */
-    uint64_t loadIntoMapDbAndCompact(memDbDataStore_t db, operatorDisptacher_t operationDispatcher) {
+    std::vector<OperationBody> getAllAndSaveCompacted(memDbDataStore_t db) {
         if(!FileUtils::exists(FileUtils::getFileInProgramBasePath("memdb", "oplog")))
-            return 0;
+            return std::vector<OperationBody>{};
 
         std::vector<uint8_t> bytesFromOpLog = FileUtils::readBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog"));
         std::vector<OperationBody> logs = this->operationLogDeserializer.deserializeAll(bytesFromOpLog);
 
-        this->executeOperationLogs(db, logs, operationDispatcher);
         this->clearFileAndAddNewCompressedOperations(db);
 
-        return logs[logs.size() - 1].timestamp;
+        return logs;
     }
 
 private:
-    void executeOperationLogs(memDbDataStore_t db, const std::vector<OperationBody>& operations, operatorDisptacher_t operationDispatcher) {
-        printf("[SERVER] Applaying logs...\n");
-
-        for (const auto &operation : operations)
-            operationDispatcher->executeOperator(db, OperationOptions{.requestFromReplication = false}, operation);
-    }
-
     void clearFileAndAddNewCompressedOperations(std::shared_ptr<Map<defaultMemDbSize_t>> db) {
         printf("[SERVER] Compacting logs...\n");
 

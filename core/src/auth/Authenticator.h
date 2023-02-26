@@ -1,6 +1,5 @@
 #pragma once
 
-#include <utility>
 #include <memory>
 #include <map>
 
@@ -11,12 +10,12 @@
 class Authenticator {
 private:
     std::map<std::string, AuthenticationType> cachedAuthenticationTypes;
-    std::shared_ptr<Configuration> configuartion;
+    configuration_t configuartion;
 
 public:
     Authenticator() = default;
 
-    Authenticator(std::shared_ptr<Configuration> configuartion): configuartion(configuartion) {}
+    Authenticator(configuration_t configuartion): configuartion(configuartion) {}
 
     bool authenticate(const std::string& authKey) {
         return this->configuartion->get(ConfigurationKeys::AUTH_USER_KEY).compare(authKey) == 0 ||

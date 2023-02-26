@@ -10,7 +10,7 @@
 
 class ConfiguartionLoader {
 public:
-    static std::shared_ptr<Configuration> load() {
+    static configuration_t load() {
         const std::string configPath = FileUtils::getFileInProgramBasePath("memdb", "config.txt");
         std::vector<std::string> lines = FileUtils::readLines(configPath);
         std::map<std::string, std::string> defaultConfiguartionValues = DefaultConfig::get();

@@ -17,9 +17,9 @@ using namespace boost::asio;
 
 class TCPServer {
 private:
-    std::shared_ptr<Configuration> configuration;
+    operatorDispatcher_t operatorDispatcher;
+    configuration_t configuration;
     DynamicThreadPool connectionThreadPool;
-    std::shared_ptr<OperatorDispatcher> operatorDispatcher;
     uint16_t port;
     RequestDeserializer requestDeserializer;
     ResponseSerializer responseSerializer;
@@ -28,7 +28,7 @@ private:
     ip::tcp::acceptor acceptator;
 
 public:
-    TCPServer(std::shared_ptr<Configuration> configuration, Authenticator authenicator, std::shared_ptr<OperatorDispatcher> operatorDispatcher):
+    TCPServer(configuration_t configuration, Authenticator authenicator, operatorDispatcher_t operatorDispatcher):
             configuration(configuration),
             port(configuration->get<uint16_t>(ConfigurationKeys::PORT)),
             authenicator(std::move(authenicator)),
@@ -97,3 +97,5 @@ private:
         return false; //TODO Temporal
     }
 };
+
+using tcpServer_t = std::shared_ptr<TCPServer>;

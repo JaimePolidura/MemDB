@@ -4,7 +4,6 @@
 #include <mutex>
 
 #include "utils/files/FileUtils.h"
-#include "messages/request/Request.h"
 #include "OperationLogSerializer.h"
 
 class OperationsLogDiskWriter {

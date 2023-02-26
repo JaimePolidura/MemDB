@@ -1,7 +1,5 @@
 #pragma once
 
-#include <algorithm>
-#include <cstdint>
 #include <atomic>
 
 class LamportClock {
@@ -65,3 +63,5 @@ public:
         return other.counter == this->counter && other.nodeId == this->nodeId;
     }
 };
+
+using lamportClock_t = std::shared_ptr<LamportClock>;

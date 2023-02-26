@@ -5,7 +5,6 @@
 #include <condition_variable>
 #include <mutex>
 #include <memory>
-#include <atomic>
 
 template<typename T>
 class BlockingQueueNode {

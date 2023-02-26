@@ -4,25 +4,23 @@
 #include "config/Configuration.h"
 #include "config/keys/ConfigurationKeys.h"
 #include "persistence/OperationLogDiskLoader.h"
-#include "replication/ReplicationNode.h"
+#include "replication/Replication.h"
 #include "utils/clock/LamportClock.h"
 #include "memdbtypes.h"
 
-#include <memory>
-
 class MemDb {
 private:
-    std::shared_ptr<OperationLogBuffer> operationLogBuffer;
-    operatorDisptacher_t operatorDispatcher;
-    std::shared_ptr<ReplicationNode> replicationNode;
-    std::shared_ptr<Configuration> configuration;
-    std::shared_ptr<LamportClock> clock;
-    std::shared_ptr<TCPServer> tcpServer;
+    operationLogBuffer_t operationLogBuffer;
+    operatorDispatcher_t operatorDispatcher;
+    replication_t replicationNode;
+    configuration_t configuration;
+    lamportClock_t clock;
+    tcpServer_t tcpServer;
     memDbDataStore_t dbMap;
 
 public:
-    MemDb(memDbDataStore_t map, std::shared_ptr<Configuration> configuration, operatorDisptacher_t operatorDispatcher,
-          std::shared_ptr<TCPServer> tcpServer, std::shared_ptr<ReplicationNode> replicationNode, std::shared_ptr<LamportClock> clock)
+    MemDb(memDbDataStore_t map, configuration_t configuration, operatorDispatcher_t operatorDispatcher,
+          tcpServer_t tcpServer, replication_t replicationNode, lamportClock_t clock)
             : dbMap(map), configuration(configuration), tcpServer(tcpServer), operatorDispatcher(operatorDispatcher),
             replicationNode(replicationNode), clock(clock)
           {}

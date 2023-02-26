@@ -38,3 +38,5 @@ private:
             this->defaultConfigurationValues.at(key);
     }
 };
+
+using configuration_t = std::shared_ptr<Configuration>;

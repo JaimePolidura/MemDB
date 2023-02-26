@@ -1,25 +1,22 @@
 #pragma once
 
 #include <vector>
-#include <functional>
 #include <mutex>
 
 #include "persistence/OperationLogDiskWriter.h"
 #include "config/Configuration.h"
 #include "config/keys/ConfigurationKeys.h"
-#include "utils/files/FileUtils.h"
-#include "messages/request/Request.h"
 
 class OperationLogBuffer {
 private:
-    std::shared_ptr<Configuration> configuration;
     std::vector<OperationBody> operationBuffer;
     OperationsLogDiskWriter diskWriter;
+    configuration_t configuration;
     std::mutex writeBufferLock;
     std::mutex writeDiskLock;
 
 public:
-    OperationLogBuffer(std::shared_ptr<Configuration> configuration): configuration(configuration) {
+    OperationLogBuffer(configuration_t configuration): configuration(configuration) {
         this->operationBuffer.reserve(configuration->get<int>(ConfigurationKeys::PERSISTANCE_WRITE_EVERY) + 1);
     }
 

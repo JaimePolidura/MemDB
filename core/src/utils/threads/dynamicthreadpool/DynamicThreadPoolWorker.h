@@ -1,10 +1,6 @@
 #pragma once
 
-#include <atomic>
 #include <memory>
-#include <utility>
-#include <vector>
-#include <string>
 
 #include "utils/datastructures/queue/BlockingQueue.h"
 

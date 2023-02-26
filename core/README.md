@@ -26,12 +26,10 @@ This is the main component. This stores the data and handles request & replicati
 - Conflic resolution is handled by LWW (Last write wins) approach. Vector clocks are used to compare events.
 
 ## Request format
-- Length flag f1 ON : The response's reponse length will be 8 bytes intstead of 1 byte.
-
 ````
                  1 byte
 +-------------------------------------+
-| Request number... (8 bytes)         | 
+| Request number...         (8 bytes) | 
 +-------------------------------------+
 | Length auth authKey       | f1 | f2 |   
 +-------------------------------------+   
@@ -43,11 +41,11 @@ This is the main component. This stores the data and handles request & replicati
 +-------------------------------------+
 | NodeId (not required)...  (2 bytes) |
 +------------------------------------ +   
-| Length argument 1º                  | 
+| Length argument 1º ...    (4 bytes) |
 +-------------------------------------+
 |                 ...                 | 
 +-------------------------------------+
-| Length argument 2º                  | 
+| Length argument 2º ...    (4 bytes) | 
 +-------------------------------------+
 |                 ...                 | 
 +-------------------------------------+
@@ -57,13 +55,13 @@ This is the main component. This stores the data and handles request & replicati
 ````
                  1 byte
 +-------------------------------------+
-| Request number... (8 bytes)         | 
+| Request number...         (8 bytes) | 
 +-------------------------------------+
-| Timestamp ... (8 bytes)             |
+| Timestamp ...             (8 bytes) |
 +-------------------------------------+   
 | Error code                    | suc |   
 +-------------------------------------+   
-| Length response                     | 
+| Length response ...       (4 bytes) |
 +-------------------------------------+   
 |                 ...                 | 
 +-------------------------------------+
@@ -75,13 +73,13 @@ This is the main component. This stores the data and handles request & replicati
 +-------------------------------------+
 | Opererator number         | f1 | f2 |   
 +-------------------------------------+
-| Timestamp ... (8 bytes)             |
-+------------------------------------ +   
-| Length argument 1º                  | 
+| Timestamp ...             (8 bytes) |
++-------------------------------------+   
+| Length argument 1º ...    (4 bytes) |
 +-------------------------------------+
 |                 ...                 | 
 +-------------------------------------+
-| Length argument 2º                  | 
+| Length argument 2º ...    (4 bytes) | 
 +-------------------------------------+
 |                 ...                 | 
 +-------------------------------------+

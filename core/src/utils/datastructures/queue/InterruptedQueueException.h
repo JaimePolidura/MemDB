@@ -2,5 +2,4 @@
 
 #include <exception>
 
-class InterruptedQueueException : public std::exception {
-};
+class InterruptedQueueException : public std::exception {};

@@ -4,8 +4,6 @@
 #include "messages/response/ErrorCode.h"
 #include "operators/DbOperator.h"
 
-#include <string>
-
 class SetOperator : public Operator, public DbOperator {
 public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x01;

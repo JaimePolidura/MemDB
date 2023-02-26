@@ -1,28 +1,22 @@
 #pragma once
 
-#include <memory>
-#include <vector>
-#include <map>
-#include <functional>
-
 #include "Operator.h"
 #include "OperatorRegistry.h"
 #include "DbOperator.h"
 #include "ControlOperator.h"
-#include "utils/threads/dynamicthreadpool/SingleThreadPool.h"
 #include "messages/response/ErrorCode.h"
 #include "operators/buffer/OperationLogBuffer.h"
 #include "utils/clock/LamportClock.h"
 
 class OperatorDispatcher {
 private:
-    std::shared_ptr<OperationLogBuffer> operationLogBuffer;
-    std::shared_ptr<LamportClock> clock;
+    operationLogBuffer_t operationLogBuffer;
     OperatorRegistry operatorRegistry;
     memDbDataStore_t db;
+    lamportClock_t clock;
 
 public:
-    OperatorDispatcher(memDbDataStore_t dbCons, std::shared_ptr<LamportClock> clock, std::shared_ptr<OperationLogBuffer> operationLogBuffer):
+    OperatorDispatcher(memDbDataStore_t dbCons, lamportClock_t clock, operationLogBuffer_t operationLogBuffer):
         db(dbCons), operationLogBuffer(operationLogBuffer), clock(clock)
     {}
 
@@ -81,4 +75,4 @@ private:
     }
 };
 
-using operatorDisptacher_t = std::shared_ptr<OperatorDispatcher>;
+using operatorDispatcher_t = std::shared_ptr<OperatorDispatcher>;

@@ -6,8 +6,6 @@
 #include "persistence/OperationLogDiskLoader.h"
 #include "operators/ControlOperator.h"
 
-#include <string>
-
 class SyncDataOperator : public Operator, public ControlOperator {
 private:
     OperationLogDiskLoader operationLogDiskLoader;

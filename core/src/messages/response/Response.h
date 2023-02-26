@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdint.h>
 #include <memory>
 
 #include "utils/strings/SimpleString.h"

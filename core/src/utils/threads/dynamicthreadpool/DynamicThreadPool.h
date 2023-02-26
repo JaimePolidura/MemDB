@@ -4,11 +4,8 @@
 #include <memory>
 #include <vector>
 #include <string>
-#include <functional>
-#include <algorithm>
 #include <numeric>
 
-#include "utils/datastructures/queue/BlockingQueue.h"
 #include "./DynamicThreadPoolWorker.h"
 
 class DynamicThreadPool {

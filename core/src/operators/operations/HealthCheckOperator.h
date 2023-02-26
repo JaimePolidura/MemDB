@@ -4,8 +4,6 @@
 #include "messages/response/ErrorCode.h"
 #include "operators/ControlOperator.h"
 
-#include <string>
-
 class HealthCheckOperator : public Operator, public ControlOperator {
     static constexpr const uint8_t OPERATOR_NUMBER = 0x04;
 

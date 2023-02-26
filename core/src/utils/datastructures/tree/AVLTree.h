@@ -1,8 +1,5 @@
 #pragma once
 
-#include <cstdint>
-#include <functional>
-#include <mutex>
 #include <vector>
 #include <queue>
 

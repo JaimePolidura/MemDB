@@ -1,13 +1,11 @@
 #pragma once
 
 #include "Request.h"
-#include "utils/benchmark/ScopeTimer.h"
 #include "utils/Utils.h"
 #include "memdbtypes.h"
 
 #include <memory>
 #include <vector>
-#include <bitset>
 
 class RequestDeserializer {
 private:

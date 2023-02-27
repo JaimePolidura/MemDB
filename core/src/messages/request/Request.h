@@ -6,10 +6,8 @@
 #include "utils/strings/SimpleString.h"
 #include "memdbtypes.h"
 
-using arg_t = SimpleString<defaultMemDbSize_t>;
-
 struct OperationBody {
-    std::shared_ptr<std::vector<arg_t>> args;
+    std::shared_ptr<std::vector<SimpleString<defaultMemDbSize_t>>> args;
     uint64_t timestamp;
     uint16_t nodeId;
     uint8_t operatorNumber; //0 - 127
@@ -25,7 +23,7 @@ struct OperationBody {
         operatorNumber(operatorNumber),
         timestamp(timestamp) {}
 
-    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2, uint64_t timestamp, uint16_t nodeId, std::shared_ptr<std::vector<arg_t>> argsCons):
+    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2, uint64_t timestamp, uint16_t nodeId, std::shared_ptr<std::vector<SimpleString<defaultMemDbSize_t>>> argsCons):
         flag1(flag1),
         flag2(flag2),
         nodeId(nodeId),

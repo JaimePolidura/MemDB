@@ -10,12 +10,14 @@
 #include "replication/clustermanager/ClusterManagerService.h"
 #include "NodeState.h"
 #include "config/keys/ConfigurationKeys.h"
+#include "replication/othernodes/ClusterNodesConnections.h"
 
 class Replication {
 private:
-    ClusterManagerService clusterManager;
+    ClusterNodesConnections clusterNodesConnections;
     configuration_t configuration;
-    std::vector<Node> otherNodes;
+    ClusterManagerService clusterManager;
+
     lamportClock_t clock;
     NodeState state;
     int nodeId;
@@ -28,13 +30,11 @@ public:
     void setup(uint64_t lastTimestampProcessed) {
         auto responseSetup = this->clusterManager.setupNode();
         this->nodeId = responseSetup.nodeId;
-        this->otherNodes = responseSetup.nodes;
 
-        if(this->otherNodes.empty())
+        if(responseSetup.nodes.empty())
             return;
 
-        std::srand(std::time(nullptr));
-        Node nodeToGetData = this->otherNodes[std::rand() % this->otherNodes.size()];
+        this->clusterNodesConnections.createSocketsToNodes(responseSetup.nodes);
     }
 
     uint16_t getNodeId() {

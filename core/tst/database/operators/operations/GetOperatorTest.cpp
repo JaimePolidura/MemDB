@@ -14,10 +14,11 @@ TEST(GetOperator, CorrectConfig) {
 
     ASSERT_EQ(getOperator.type(), READ);
     ASSERT_EQ(getOperator.operatorNumber(), GetOperator::OPERATOR_NUMBER);
+    ASSERT_EQ(getOperator.authorizedToExecute(), AuthenticationType::USER);
 }
 
 TEST(GetOperator, KeyNotFound) {
-    std::shared_ptr<Map> db = std::make_shared<Map>(64);
+    memDbDataStore_t db = std::make_shared<Map<defaultMemDbSize_t>>(64);
     GetOperator getOperator{};
 
     auto operation = createOperationGet(0x41, 1, 1); //A
@@ -31,9 +32,9 @@ TEST(GetOperator, KeyNotFound) {
 }
 
 TEST(GetOperator, KeyFound) {
-    std::shared_ptr<Map> db = std::make_shared<Map>(64);
-    SimpleString key = SimpleString::fromChar('A');
-    SimpleString value = SimpleString::fromArray({0x4C, 0x4F, 0x4C});
+    memDbDataStore_t db = std::make_shared<Map<defaultMemDbSize_t>>(64);
+    SimpleString key = SimpleString<defaultMemDbSize_t>::fromChar('A');
+    SimpleString value = SimpleString<defaultMemDbSize_t>::fromArray({0x4C, 0x4F, 0x4C});
 
     db->put(key, value, 1, 1, false);
 
@@ -53,7 +54,7 @@ TEST(GetOperator, KeyFound) {
 OperationBody createOperationGet(uint8_t keyValue, uint64_t timestamp, uint16_t nodeId) {
     uint8_t * keyRawPtr = new uint8_t();
     * keyRawPtr = keyValue;
-    std::shared_ptr<std::vector<SimpleString>> args = std::make_shared<std::vector<SimpleString>>();
+    std::shared_ptr<std::vector<SimpleString<defaultMemDbSize_t>>> args = std::make_shared<std::vector<SimpleString<defaultMemDbSize_t>>>();
     args->emplace_back(keyRawPtr, 1);
 
     return OperationBody(GetOperator::OPERATOR_NUMBER, false, false, timestamp, nodeId, args);

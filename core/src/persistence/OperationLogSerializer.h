@@ -12,7 +12,7 @@ public:
         serializedOut.push_back(toDeserialize.operatorNumber << 2 | toDeserialize.flag1 << 1 | toDeserialize.flag2);
 
         //Timestamp
-        Utils::parseToBuffer(toDeserialize.timestamp, serializedOut, 1);
+        Utils::appendToBuffer(toDeserialize.timestamp, serializedOut);
 
         if(toDeserialize.args.get() != nullptr){
             //Args

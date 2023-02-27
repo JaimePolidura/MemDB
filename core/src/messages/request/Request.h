@@ -5,6 +5,7 @@
 
 #include "utils/strings/SimpleString.h"
 #include "memdbtypes.h"
+#include "auth/AuthenticationType.h"
 
 struct OperationBody {
     std::shared_ptr<std::vector<SimpleString<defaultMemDbSize_t>>> args;
@@ -68,7 +69,7 @@ struct Request {
     AuthenticationBody authentication;
     OperationBody operation;
     uint64_t requestNumber;
-    AuthenticationType authenticationType; //Not setted in serialization
+    AuthenticationType authenticationType;
 
     Request(const Request& other) {
         this->authentication = other.authentication;

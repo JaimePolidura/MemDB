@@ -11,11 +11,10 @@ public:
     std::vector<uint8_t> serialize(const Response& response) {
         std::vector<uint8_t> serialized{};
 
-        Utils::parseToBuffer(response.requestNumber, serialized);
-        Utils::parseToBuffer(response.timestamp, serialized, 8);
+        Utils::appendToBuffer(response.requestNumber, serialized);
+        Utils::appendToBuffer(response.timestamp, serialized);
         serialized.push_back(response.errorCode << 1 | response.isSuccessful);
-
-        Utils::parseToBuffer(response.responseValue.getSizeOfStringLengthType(), serialized, 17);
+        Utils::appendToBuffer(response.responseValue.size, serialized);
         Utils::appendToBuffer(response.responseValue.data(), response.responseValue.size, serialized);
 
         return serialized;

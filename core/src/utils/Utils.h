@@ -27,16 +27,6 @@ public:
     }
 
     template<typename T>
-    static std::vector<uint8_t> parseToBuffer(const T& toParse, std::vector<uint8_t>& vectorOut, const uint8_t positionToWrite = 0) {
-        for(int i = 0; i < sizeof(T); i++){
-            size_t tomove = ((sizeof(T) - 1) - i) * sizeof(uint8_t) * 8;
-            vectorOut.insert(vectorOut.begin() + (i + positionToWrite), static_cast<uint8_t>((toParse >> tomove) & 0xFF));
-        }
-
-        return vectorOut;
-    }
-
-    template<typename T>
     static std::vector<uint8_t> appendToBuffer(const T& toParse, std::vector<uint8_t>& vectorOut) {
         for(int i = 0; i < sizeof(T); i++){
             size_t tomove = ((sizeof(T) - 1) - i) * sizeof(uint8_t) * 8;

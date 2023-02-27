@@ -11,20 +11,23 @@
 #include "NodeState.h"
 #include "config/keys/ConfigurationKeys.h"
 #include "replication/othernodes/ClusterNodesConnections.h"
+#include "utils/strings/StringUtils.h"
 
 class Replication {
 private:
     ClusterNodesConnections clusterNodesConnections;
     configuration_t configuration;
     ClusterManagerService clusterManager;
-
-    lamportClock_t clock;
     NodeState state;
     int nodeId;
 
 public:
-    Replication(lamportClock_t clock, configuration_t configuration) :
-        nodeId(1), clock(clock), configuration(configuration), clusterManager(configuration), state(NodeState::BOOTING){
+    Replication() = default;
+
+    Replication(configuration_t configuration, int nodeId, const std::vector<Node>& otherNodes) :
+            clusterManager(configuration), configuration(configuration), state(NodeState::BOOTING), nodeId(nodeId)
+    {
+        this->clusterNodesConnections.createSocketsToNodes(otherNodes);
     }
 
     void setup(uint64_t lastTimestampProcessed) {
@@ -35,14 +38,38 @@ public:
             return;
 
         this->clusterNodesConnections.createSocketsToNodes(responseSetup.nodes);
+
+        auto syncDataResponse = this->sendSyncDataRequest(lastTimestampProcessed);
+    }
+
+    Response sendRequest(const Request& request) {
+        return this->clusterNodesConnections.sendRequest(request);
     }
 
     uint16_t getNodeId() {
         return this->nodeId;
     }
 
-    uint64_t tick(uint64_t other) {
-        return this->clock->tick(other);
+private:
+    Response sendSyncDataRequest(uint64_t timestamp) {
+        return this->clusterNodesConnections.sendRequest(this->createSyncDataRequest(timestamp));
+    }
+
+    Request createSyncDataRequest(uint64_t timestamp) {
+        auto authenticationBody = AuthenticationBody{this->configuration->get(ConfigurationKeys::AUTH_CLUSTER_KEY), false, false};
+        auto argsVector = std::make_shared<std::vector<SimpleString<defaultMemDbSize_t>>>();
+
+        argsVector->push_back(SimpleString<defaultMemDbSize_t>::fromString(StringUtils::toString(timestamp)));
+
+        OperationBody operationBody{};
+        operationBody.args = argsVector;
+        operationBody.operatorNumber = 0x05; //SyncDataOperator operator number
+
+        Request request{};
+        request.operation = operationBody;
+        request.authentication = authenticationBody;
+
+        return request;
     }
 };
 

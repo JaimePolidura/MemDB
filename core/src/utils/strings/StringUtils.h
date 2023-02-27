@@ -16,4 +16,11 @@ public:
         }
         return tokens;
     }
+
+    template<typename T>
+    static std::string toString(const T& toStringValue) {
+        std::ostringstream ss;
+        ss << toStringValue;
+        return ss.str();
+    }
 };

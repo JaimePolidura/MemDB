@@ -13,6 +13,8 @@ class ClusterManagerService {
     std::string token;
 
 public:
+    ClusterManagerService() = default;
+
     ClusterManagerService(std::shared_ptr<Configuration> configuartion): configuartion(configuartion), token("") {}
 
     SetupNodeResponse setupNode() {
@@ -31,6 +33,7 @@ public:
         return SetupNodeResponse::fromJson(response.body);
     }
 
+private:
     std::string authenticate() {
         auto response = HttpClient::post(
                 this->configuartion->get(ConfigurationKeys::CLUSTER_MANAGER_ADDRESS),

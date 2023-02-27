@@ -18,7 +18,7 @@ public:
         if(includeNodeIdTimestamp)
             Utils::appendToBuffer(request.operation.nodeId, bytes);
 
-        for(auto i = request.args->begin(); i < request.args->end(); i++) {
+        for(auto i = request.operation.args->begin(); i < request.operation.args->end(); i++) {
             SimpleString<defaultMemDbSize_t> arg = * i;
 
             Utils::appendToBuffer(arg.size, bytes);

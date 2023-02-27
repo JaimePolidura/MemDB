@@ -9,10 +9,12 @@
 #include "utils/strings/StringUtils.h"
 #include "messages/request/Request.h"
 #include "messages/request/RequestSerializer.h"
+#include "messages/response/ResponseDeserializer.h"
 
 class ClusterNodesConnections {
 private:
     std::map<int, boost::asio::ip::tcp::socket> sockets; //NodeId -> tcp socket
+    ResponseDeserializer responseDeserializer;
     RequestSerializer requestSerializer;
     boost::asio::io_context ioContext;
     std::vector<Node> otherNodes;
@@ -27,7 +29,7 @@ public:
         }
     }
 
-    void sendRequest(const Request& request, const bool includeNodeId = false) {
+    auto sendRequest(const Request& request, const bool includeNodeId = false) -> Response {
         auto nodeToSendRequest = this->selectRandomNodeToSendRequest();
         auto socket = std::move(this->sockets.at(nodeToSendRequest.nodeId));
         auto requestBytes = this->requestSerializer.serialize(request, includeNodeId);
@@ -38,7 +40,9 @@ public:
         socket.read_some(boost::asio::buffer(responseHeaderBuffer));
         auto responseBodyLenght = Utils::parseFromBuffer<uint32_t>(responseHeaderBuffer, 17);
         std::vector<uint8_t> responseBodyBuffer(responseBodyLenght);
-
+        responseHeaderBuffer.insert(responseHeaderBuffer.end(), responseBodyBuffer.begin(), responseBodyBuffer.end());
+        
+        return responseDeserializer.deserialize(responseHeaderBuffer);
     }
 
 private:

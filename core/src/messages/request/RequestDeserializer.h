@@ -55,7 +55,7 @@ public:
         }
 
         int numerOfArguments = 0;
-        std::shared_ptr<std::vector<arg_t>> arguments = std::make_shared<std::vector<arg_t>>();
+        auto arguments = std::make_shared<std::vector<SimpleString<defaultMemDbSize_t>>>();
 
         while (initialOffset + 1 < buffer.size()) {
             defaultMemDbSize_t argLength = Utils::parseFromBuffer<defaultMemDbSize_t>(buffer, initialOffset);

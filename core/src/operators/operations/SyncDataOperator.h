@@ -17,30 +17,16 @@ public:
     //TODO All the logs from disk might not ocuppy 2^32 bits
     Response operate(const OperationBody& operation, const OperationOptions& operationOptions, operationLogBuffer_t operationLogBuffer) override {
         operationLogBuffer->lockWritesToDisk();
-        std::vector<OperationBody> operationLogsInBuffer = operationLogBuffer->get();
 
         uint64_t lastTimestampInClient = Utils::parse<uint64_t>(operation.args->at(0).data());
         uint64_t oldestTimestampInBuffer = operationLogBuffer->getFirstTimestampWritten();
 
         std::vector<uint8_t> operationsToSendToTheClient;
         
-        if(oldestTimestampInBuffer != 0 && oldestTimestampInBuffer < lastTimestampInClient) {
-            //Take operations from item lastTimestampInClient + 1 to last item in buffer
-            operationLogBuffer->unlockWritesToDisk();
-
-            for(auto it = operationLogsInBuffer.begin(); it < operationLogsInBuffer.end() && it->timestamp > lastTimestampInClient; it++)
-                this->operationLogSerializer.serialize(operationsToSendToTheClient, * it);
-
-        } else {
-            //Read from disk operations logs and add all the operations in the buffer
-            std::vector<OperationBody> operationLogsInDisk = operationLogDiskLoader.getAll();
-            operationLogBuffer->unlockWritesToDisk();
-
-            for(auto it = operationLogsInDisk.begin(); it < operationLogsInDisk.end() && it->timestamp > lastTimestampInClient; it++) //Very long log may collapse RAM TODO fix
-                this->operationLogSerializer.serialize(operationsToSendToTheClient, * it);
-            for(auto it = operationLogsInBuffer.begin(); it < operationLogsInBuffer.end(); it++)
-                this->operationLogSerializer.serialize(operationsToSendToTheClient, * it);
-        }
+        if(oldestTimestampInBuffer != 0 && oldestTimestampInBuffer < lastTimestampInClient)
+            this->takeOperationsFromBufferAndSerialize(lastTimestampInClient, operationsToSendToTheClient, operationLogBuffer);
+        else
+            this->takeOperationsFromDiskAndBufferAndSerialize(lastTimestampInClient, operationsToSendToTheClient, operationLogBuffer);
 
         return Response::success(1);
     }
@@ -55,5 +41,27 @@ public:
 
     constexpr uint8_t operatorNumber() override {
         return OPERATOR_NUMBER;
+    }
+
+private:
+    void takeOperationsFromDiskAndBufferAndSerialize(uint64_t lastTimestampInClient, std::vector<uint8_t>& operationsToSendToTheClient,
+                                                     operationLogBuffer_t operationLogBuffer) {
+        std::vector<OperationBody> operationLogsInDisk = operationLogDiskLoader.getAll();
+        std::vector<OperationBody> operationLogsInBuffer =  operationLogBuffer->get();
+        operationLogBuffer->unlockWritesToDisk();
+
+        for(auto it = operationLogsInDisk.begin(); it < operationLogsInDisk.end() && it->timestamp > lastTimestampInClient; it++) //Very long log may collapse RAM TODO fix
+            this->operationLogSerializer.serialize(operationsToSendToTheClient, * it);
+        for(auto it = operationLogsInBuffer.begin(); it < operationLogsInBuffer.end(); it++)
+            this->operationLogSerializer.serialize(operationsToSendToTheClient, * it);
+    }
+
+    void takeOperationsFromBufferAndSerialize(uint64_t lastTimestampInClient, std::vector<uint8_t>& operationsToSendToTheClient,
+                                              operationLogBuffer_t operationLogBuffer) {
+        operationLogBuffer->unlockWritesToDisk();
+        std::vector<OperationBody> operationLogsInBuffer =  operationLogBuffer->get();
+
+        for(auto it = operationLogsInBuffer.begin(); it < operationLogsInBuffer.end() && it->timestamp > lastTimestampInClient; it++)
+            this->operationLogSerializer.serialize(operationsToSendToTheClient, * it);
     }
 };

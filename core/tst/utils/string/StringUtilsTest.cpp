@@ -1,6 +1,12 @@
 #include "gtest/gtest.h"
 #include "utils/strings/StringUtils.h"
 
+TEST(StringUtils, toString) {
+    auto parsedToString = StringUtils::toString(12);
+
+    ASSERT_TRUE(parsedToString.compare("12") == 0);
+}
+
 TEST(StringUtils, Split) {
     std::vector<std::string> splited = StringUtils::split("A B C D", ' ');
     ASSERT_EQ(splited.size(), 4);

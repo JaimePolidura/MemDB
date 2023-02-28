@@ -11,7 +11,7 @@ public:
             size_t toMove = (sizeof(T) - 1 - i) * sizeof(T);
             parsedValue |= static_cast<T>(input[i]) << toMove;
         }
-        
+
         return parsedValue;
     }
 

@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <map>
+#include <stdexcept>
 
 #include "config/Configuration.h"
 #include "config/keys/ConfigurationKeys.h"

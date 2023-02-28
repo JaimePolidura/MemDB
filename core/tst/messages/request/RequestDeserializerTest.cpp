@@ -15,8 +15,8 @@ TEST(RequesteRequestDeserializer, WithArgsAndNodeId) {
             0x09, //Opdesc -> op num: 0x02, flag1: 0, flag2: 1
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, //Timestamp -> 255
             0x02, 0xFF, //NodeNumber -> 767
-            0x01, 0x41, //A
-            0x02, 0x42, 0x43 //B
+            0x00, 0x00, 0x00, 0x01, 0x41, //A 23
+            0x00, 0x00, 0x00, 0x02, 0x42, 0x43 //B
     };
 
     Request deserializedRequest = requestDeserializer.deserialize(buffer, true);
@@ -35,6 +35,7 @@ TEST(RequesteRequestDeserializer, WithArgsAndNodeId) {
     ASSERT_EQ(deserializedRequest.operation.args->size(), 2);
 
     SimpleString firstArg = deserializedRequest.operation.args->at(0);
+    std::cout << *firstArg.data() << std::endl;
     ASSERT_EQ(firstArg.size, 1);
     ASSERT_TRUE(expectedArg1.compare(std::string((char *) firstArg.data(), firstArg.size)) == 0);
 

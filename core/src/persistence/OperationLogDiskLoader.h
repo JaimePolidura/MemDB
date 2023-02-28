@@ -3,6 +3,8 @@
 #include "utils/files/FileUtils.h"
 #include "utils/datastructures/map/Map.h"
 #include "OperationLogDeserializer.h"
+#include "operators/operations/SetOperator.h"
+
 
 class OperationLogDiskLoader {
 private:

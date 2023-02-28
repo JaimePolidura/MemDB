@@ -1,20 +1,21 @@
 #include "gtest/gtest.h"
 #include "utils/datastructures/tree/AVLTree.h"
+#include "memdbtypes.h"
 
 struct ToSave {
     int value;
 };
 
 TEST(AVLTree, ShouldAddNewKeys) {
-    AVLTree avlTree{};
+    AVLTree<defaultMemDbSize_t> avlTree{};
 
-    bool addedA = avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    bool addedA = avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 1, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
     ASSERT_TRUE(addedA);
     ASSERT_TRUE(avlTree.contains(1));
     auto addedNodeA = avlTree.get(1);
     ASSERT_TRUE(addedNodeA->keyHash == 1 && * addedNodeA->key.data() == 'A');
 
-    bool addedB = avlTree.add(SimpleString::fromChar('B'), 2, SimpleString::fromChar('B'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    bool addedB = avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('B'), 2, SimpleString<defaultMemDbSize_t>::fromChar('B'), NOT_IGNORE_TIMESTAMP, 1, 1);
     ASSERT_TRUE(addedB);
     ASSERT_TRUE(avlTree.contains(2));
     auto addedNodeB = avlTree.get(2);
@@ -23,10 +24,10 @@ TEST(AVLTree, ShouldAddNewKeys) {
 
 
 TEST(AVLTree, ShouldReplaceKeys) {
-    AVLTree avlTree{};
+    AVLTree<defaultMemDbSize_t> avlTree{};
 
-    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
-    bool replaced = avlTree.add(SimpleString::fromChar('B'), 1, SimpleString::fromChar('B'), NOT_IGNORE_TIMESTAMP, 2, 1);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 1, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    bool replaced = avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('B'), 1, SimpleString<defaultMemDbSize_t>::fromChar('B'), NOT_IGNORE_TIMESTAMP, 2, 1);
 
     ASSERT_TRUE(replaced);
     ASSERT_TRUE(avlTree.contains(1));
@@ -39,12 +40,12 @@ TEST(AVLTree, ShouldReplaceKeys) {
 }
 
 TEST(AVLTree, ShouldReplaceKeysEventDifferentTimestampCounter) {
-    AVLTree avlTree{};
+    AVLTree<defaultMemDbSize_t> avlTree{};
 
-    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), IGNORE_TIMESTAMP, 2, 1);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 1, SimpleString<defaultMemDbSize_t>::fromChar('A'), IGNORE_TIMESTAMP, 2, 1);
     auto addedNode = avlTree.get(1);
 
-    bool replaced = avlTree.add(SimpleString::fromChar('B'), 1, SimpleString::fromChar('B'), IGNORE_TIMESTAMP, 1, 1);
+    bool replaced = avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('B'), 1, SimpleString<defaultMemDbSize_t>::fromChar('B'), IGNORE_TIMESTAMP, 1, 1);
     ASSERT_TRUE(replaced);
     ASSERT_TRUE(addedNode->keyHash == 1 &&
                 *addedNode->key.data() == 'B' &&
@@ -54,12 +55,12 @@ TEST(AVLTree, ShouldReplaceKeysEventDifferentTimestampCounter) {
 
 
 TEST(AVLTree, ShouldntReplaceKeysDifferentTimestampCounter) {
-    AVLTree avlTree{};
+    AVLTree<defaultMemDbSize_t> avlTree{};
 
-    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 2, 1);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 1, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 2, 1);
     auto addedNode = avlTree.get(1);
 
-    bool replaced = avlTree.add(SimpleString::fromChar('B'), 1, SimpleString::fromChar('B'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    bool replaced = avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('B'), 1, SimpleString<defaultMemDbSize_t>::fromChar('B'), NOT_IGNORE_TIMESTAMP, 1, 1);
     ASSERT_FALSE(replaced);
     ASSERT_TRUE(addedNode->keyHash == 1 &&
                 *addedNode->key.data() == 'A' &&
@@ -68,11 +69,11 @@ TEST(AVLTree, ShouldntReplaceKeysDifferentTimestampCounter) {
 }
 
 TEST(AVLTree, ShouldntReplaceKeysDifferentTimestampNodeId) {
-    AVLTree avlTree{};
+    AVLTree<defaultMemDbSize_t> avlTree{};
 
-    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 2);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 1, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 2);
 
-    bool replaced = avlTree.add(SimpleString::fromChar('B'), 1, SimpleString::fromChar('B'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    bool replaced = avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('B'), 1, SimpleString<defaultMemDbSize_t>::fromChar('B'), NOT_IGNORE_TIMESTAMP, 1, 1);
     auto addedNode = avlTree.get(1);
 
     ASSERT_FALSE(replaced);
@@ -83,12 +84,12 @@ TEST(AVLTree, ShouldntReplaceKeysDifferentTimestampNodeId) {
 }
 
 TEST(AVLTree, ShouldGetAll) {
-    AVLTree avlTree{};
-    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 2);
-    avlTree.add(SimpleString::fromChar('A'), 2, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 2);
-    avlTree.add(SimpleString::fromChar('A'), 3, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 2);
-    avlTree.add(SimpleString::fromChar('A'), 4, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 2);
-    avlTree.add(SimpleString::fromChar('A'), 5, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 2);
+    AVLTree<defaultMemDbSize_t> avlTree{};
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 1, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 2);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 2, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 2);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 3, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 2);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 4, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 2);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 5, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 2);
 
     auto allNodes = avlTree.all();
 
@@ -96,7 +97,7 @@ TEST(AVLTree, ShouldGetAll) {
 }
 
 TEST(AVLTree, ShouldntGetAllEmpty) {
-    AVLTree avlTree{};
+    AVLTree<defaultMemDbSize_t> avlTree{};
     auto allNodes = avlTree.all();
     ASSERT_TRUE(allNodes.empty());
 }
@@ -111,16 +112,16 @@ TEST(AVLTree, ShouldntGetAllEmpty) {
  *                  8
  */
 TEST(AVLTree, RemoveBiggerTree) {
-    AVLTree avlTree{};
+    AVLTree<defaultMemDbSize_t> avlTree{};
 
-    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 2, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 3, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 4, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 5, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 6, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 7, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 8, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 1, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 2, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 3, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 4, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 5, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 6, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 7, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 8, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
 
     avlTree.remove(6, NOT_IGNORE_TIMESTAMP, 2, 1);
 
@@ -143,10 +144,10 @@ TEST(AVLTree, RemoveBiggerTree) {
  *  1   3            3
  */
 TEST(AVLTree, RemoveRoot) {
-    AVLTree avlTree{};
-    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 2, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 3, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    AVLTree<defaultMemDbSize_t> avlTree{};
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 1, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 2, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 3, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
 
     avlTree.remove(2, NOT_IGNORE_TIMESTAMP, 2, 1); //Remove
     ASSERT_FALSE(avlTree.contains(2));
@@ -168,10 +169,10 @@ TEST(AVLTree, RemoveRoot) {
  *  1   3         3
  */
 TEST(AVLTree, RemoveLeaf) {
-    AVLTree avlTree{};
-    avlTree.add(SimpleString::fromChar('A'), 1, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 2, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
-    avlTree.add(SimpleString::fromChar('A'), 3, SimpleString::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    AVLTree<defaultMemDbSize_t> avlTree{};
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 1, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 2, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
+    avlTree.add(SimpleString<defaultMemDbSize_t>::fromChar('A'), 3, SimpleString<defaultMemDbSize_t>::fromChar('A'), NOT_IGNORE_TIMESTAMP, 1, 1);
 
     avlTree.remove(1, NOT_IGNORE_TIMESTAMP, 2, 1); //Remove
     ASSERT_FALSE(avlTree.contains(1));

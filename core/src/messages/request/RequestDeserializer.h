@@ -33,41 +33,41 @@ public:
         return AuthenticationBody(std::string((char *) authKey, authLength), flagAuth1, flagAuth2);
     }
 
-    OperationBody deserializeOperation(const std::vector<uint8_t>& buffer, uint64_t initialOffset = 0,
+    OperationBody deserializeOperation(const std::vector<uint8_t>& buffer, uint64_t position = 0,
                                        const bool includesNodeId = false) {
-        uint8_t operatorNumber = this->getValueWithoutFlags(buffer, initialOffset);
-        bool flagOperation1 = this->getFlag(buffer, initialOffset, FLAG1_MASK); //Si es true, la longitud de los argumentos ocuparan 2 bytes
-        bool flagOperation2 = this->getFlag(buffer, initialOffset, FLAG2_MASK);
+        uint8_t operatorNumber = this->getValueWithoutFlags(buffer, position);
+        bool flagOperation1 = this->getFlag(buffer, position, FLAG1_MASK); //Si es true, la longitud de los argumentos ocuparan 2 bytes
+        bool flagOperation2 = this->getFlag(buffer, position, FLAG2_MASK);
 
-        initialOffset++;
+        position++;
 
-        uint64_t timestamp = Utils::parseFromBuffer<uint64_t>(buffer, initialOffset);
-        initialOffset += sizeof(uint64_t);
+        uint64_t timestamp = Utils::parseFromBuffer<uint64_t>(buffer, position);
+        position += sizeof(uint64_t);
 
         uint16_t nodeId = 1;
         if(includesNodeId) {
-            nodeId = Utils::parseFromBuffer<uint16_t>(buffer, initialOffset);
-            initialOffset += sizeof(uint16_t);
+            nodeId = Utils::parseFromBuffer<uint16_t>(buffer, position);
+            position += sizeof(uint16_t);
         }
 
-        if(initialOffset == buffer.size() - 1){ //No args
+        if(position == buffer.size() - 1){ //No args
             return OperationBody(operatorNumber, flagOperation1, flagOperation2, timestamp, nodeId);
         }
 
         int numerOfArguments = 0;
         auto arguments = std::make_shared<std::vector<SimpleString<defaultMemDbSize_t>>>();
 
-        while (initialOffset + 1 < buffer.size()) {
-            defaultMemDbSize_t argLength = Utils::parseFromBuffer<defaultMemDbSize_t>(buffer, initialOffset);
-            initialOffset += sizeof(defaultMemDbSize_t);
+        while (position + 1 < buffer.size()) {
+
+            defaultMemDbSize_t argLength = Utils::parseFromBuffer<defaultMemDbSize_t>(buffer, position);
+            position += sizeof(defaultMemDbSize_t);
 
             if(argLength == 0)
                 break;
 
-            int argValuePosition = initialOffset + 1;
-            uint8_t * argValue = this->fill(buffer, argValuePosition, argValuePosition + argLength);
+            uint8_t * argValue = this->fill(buffer, position, position + argLength);
 
-            initialOffset = argValuePosition + argLength;
+            position = position + argLength;
             numerOfArguments++;
             arguments->emplace_back(argValue, argLength);
         }

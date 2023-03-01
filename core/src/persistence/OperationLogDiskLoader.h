@@ -54,10 +54,16 @@ private:
             for(int i = 0; i < entry.value.size; i++) //Value content
                 toWriteCompressed.push_back(* (entry.value + i));
 
-            toWriteCompressed.push_back(0x00); //Padding
+            writePadding(toWriteCompressed);
         }
 
         FileUtils::clear(FileUtils::getFileInProgramBasePath("memdb", "oplog"));
         FileUtils::appendBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog"), toWriteCompressed);
+    }
+
+    void writePadding(std::vector<uint8_t>& buffer) {
+        for(int i = 0; i < sizeof(defaultMemDbSize_t); i++){
+            buffer.push_back(0x00);
+        }
     }
 };

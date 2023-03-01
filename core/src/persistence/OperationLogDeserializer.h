@@ -34,15 +34,15 @@ private:
         int totalArgLength = std::accumulate(
                 deserialized.args->begin(),
                 deserialized.args->end(),
-                deserialized.args->size(),
+                0,
                 [](int acc, const auto& it) {
-                    return acc + it.size;
+                    return acc + it.size + it.getSizeOfStringLengthType();
                 });
 
         return
             1 + //Operation number
             8 + //Timestamp
             totalArgLength + //Args length (value + size)
-            1; //Padding;
+            sizeof(defaultMemDbSize_t); //Padding;
     }
 };

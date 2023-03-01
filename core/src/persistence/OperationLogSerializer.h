@@ -24,9 +24,15 @@ public:
             }
         }
 
-        //Padding
-        serializedOut.push_back(0x00);
+        writePadding(serializedOut);
 
         return serializedOut;
+    }
+
+private:
+    void writePadding(std::vector<uint8_t>& buffer) {
+        for(int i = 0; i< sizeof(defaultMemDbSize_t); i++){
+            buffer.push_back(0x00);
+        }
     }
 };

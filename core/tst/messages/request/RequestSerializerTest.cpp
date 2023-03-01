@@ -33,7 +33,6 @@ TEST(RequestSerializer, WithArgsAndNodeId) {
         0x00, 0x00, 0x00, 0x01, 0x01, //Length arg 2 -> arg
     };
 
-
     Assertions::assertFirstItemsVectorsEqual(expected, actual);
 }
 

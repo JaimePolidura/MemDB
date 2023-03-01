@@ -1,15 +1,17 @@
 #include "utils/Utils.h"
+#include "messages/response/ResponseDeserializer.h"
 #include <cstdint>
 #include <cstdio>
 
 int main() {
-    auto copySource = std::vector<uint8_t>{0x00, 0x00, 0x01, 0xFF};
-    auto copyResult = Utils::copyFromBuffer(copySource, 2, 3);
-    for(int i = 0; i < 2; i++){
-        auto val =  * (copyResult + i);
-        auto wtf = 1;
-    }
+    ResponseDeserializer responseDeserializer{};
 
+    auto responseDeserialized = responseDeserializer.deserialize({
+                                                                         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, //Request number
+                                                                         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, //Timestamp
+                                                                         0x02, //error errorcode 1
+                                                                         0x00, 0x00, 0x00, 0x00, //Length response
+                                                                 });
 
-    printf("%i\n", 1);
+    auto a = 1;
 }

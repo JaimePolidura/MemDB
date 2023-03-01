@@ -19,9 +19,13 @@ public:
             this->operators.insert(std::make_pair(item->operatorNumber(), item));
     }
 
+    virtual ~OperatorRegistry() = default;
+
     std::shared_ptr<Operator> get(uint8_t operatorNumber) {
         std::map<uint8_t, std::shared_ptr<Operator>>::iterator iteratorFound = this->operators.find(operatorNumber);
 
         return iteratorFound != this->operators.end() ? iteratorFound->second : nullptr;
     }
 };
+
+using operatorRegistry_t = std::shared_ptr<OperatorRegistry>;

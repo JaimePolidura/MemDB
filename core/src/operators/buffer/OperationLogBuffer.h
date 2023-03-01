@@ -16,9 +16,9 @@ private:
     std::mutex writeDiskLock;
 
 public:
-    OperationLogBuffer(configuration_t configuration): configuration(configuration) {
-        this->operationBuffer.reserve(configuration->get<int>(ConfigurationKeys::PERSISTANCE_WRITE_EVERY) + 1);
-    }
+    OperationLogBuffer(configuration_t configuration): configuration(configuration) {}
+
+    virtual ~OperationLogBuffer() = default;
 
     void add(const OperationBody& operation) {
         writeBufferLock.lock();

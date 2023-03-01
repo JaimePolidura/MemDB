@@ -29,8 +29,8 @@ public:
         return Response(true, 0x00, timestamp, 0, SimpleString<defaultMemDbSize_t>::empty());
     }
 
-    static Response error(uint8_t errorCode, uint64_t timestamp = 0) {
-        return Response(false, errorCode, timestamp, 0, SimpleString<defaultMemDbSize_t>::empty());
+    static Response error(uint8_t errorCode) {
+        return Response(false, errorCode, 0, 0, SimpleString<defaultMemDbSize_t>::empty());
     };
 
     static Response error(uint8_t errorCode, uint64_t requestNumber, uint64_t timestamp = 0) {

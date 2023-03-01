@@ -83,7 +83,7 @@ This is the main component. This stores the data and handles request & replicati
 +-------------------------------------+
 |                 ...                 | 
 +-------------------------------------+
-| Padding 0000 0000                   |
+| Padding 0000 0000         (4 bytes) |
 +-------------------------------------+
 
 ````

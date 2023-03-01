@@ -81,9 +81,10 @@ private:
         request.authenticationType = authenticationType;
         connection->authenticationType = authenticationType;
 
-        this->operatorDispatcher->dispatch(request, [this, connection](const Response& response){
-            this->sendResponse(connection, response);
-        });
+        Response response = this->operatorDispatcher->dispatch(request);
+        response.requestNumber = request.requestNumber;
+
+        this->sendResponse(connection, response);
     }
 
     void sendResponse(std::shared_ptr<Connection> connection, const Response& response) {

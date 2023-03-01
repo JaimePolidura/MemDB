@@ -58,7 +58,6 @@ public:
         auto arguments = std::make_shared<std::vector<SimpleString<defaultMemDbSize_t>>>();
 
         while (position + 1 < buffer.size()) {
-
             defaultMemDbSize_t argLength = Utils::parseFromBuffer<defaultMemDbSize_t>(buffer, position);
             position += sizeof(defaultMemDbSize_t);
 

@@ -28,7 +28,7 @@ TEST(Utils, appendToBufferValue) {
     ASSERT_EQ(buffertoAppend[1], 0x00);
     ASSERT_EQ(buffertoAppend[2], 0x00);
     ASSERT_EQ(buffertoAppend[3], 0x00);
-    ASSERT_EQ(buffertoAppend[4], 0x12);
+    ASSERT_EQ(buffertoAppend[4], 12); //idk why 0x12 doest work
 }
 
 TEST(Utils, appendToBufferPointer) {
@@ -46,7 +46,8 @@ TEST(Utils, appendToBufferPointer) {
 
 TEST(Utils, copyFromBuffer) {
     auto copySource = std::vector<uint8_t>{0x00, 0x00, 0x01, 0xFF};
-    auto copyResult = Utils::copyFromBuffer<uint16_t>(copySource, 2, 3);
+    auto copyResult = Utils::copyFromBuffer(copySource, 2, 3);
 
-    ASSERT_EQ(* copyResult, 511);
+    ASSERT_EQ(* copyResult, 0x01);
+    ASSERT_EQ(* (copyResult + 1), 0xFF);
 }

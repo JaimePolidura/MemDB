@@ -21,7 +21,7 @@ public:
 
     virtual ~OperatorRegistry() = default;
 
-    std::shared_ptr<Operator> get(uint8_t operatorNumber) {
+    virtual std::shared_ptr<Operator> get(uint8_t operatorNumber) {
         std::map<uint8_t, std::shared_ptr<Operator>>::iterator iteratorFound = this->operators.find(operatorNumber);
 
         return iteratorFound != this->operators.end() ? iteratorFound->second : nullptr;

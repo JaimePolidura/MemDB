@@ -19,9 +19,9 @@ Request createRequest(uint8_t opNumber);
 TEST(OperatorDispatcher, OperatorNotFound) {
     std::shared_ptr<Configuration> configuration = std::make_shared<Configuration>();
     std::shared_ptr<OperationLogBufferMock> operationLogBufferMock = std::make_shared<OperationLogBufferMock>(configuration);
-    std::shared_ptr<OperatorRegistryMock> operatorRegistryMock = std::make_shared<OperatorRegistryMock>();
+    std::shared_ptr<OperatorRegistryMock> operatorRegistryMock = std::make_shared<OperatorRegistryMock>(); //No funciona
 
-    EXPECT_CALL(* operatorRegistryMock.get(), get(1)).WillOnce(testing::Return(nullptr));
+    ON_CALL(* operatorRegistryMock, get(testing::Eq(1))).WillByDefault(testing::Return(nullptr));
 
     OperatorDispatcher dispatcher{
         std::make_shared<Map<defaultMemDbSize_t>>(64),
@@ -34,6 +34,8 @@ TEST(OperatorDispatcher, OperatorNotFound) {
 
     ASSERT_FALSE(response.isSuccessful);
     ASSERT_EQ(response.errorCode, ErrorCode::UNKNOWN_OPERATOR);
+
+    operatorRegistryMock.reset();
 }
 
 Request createRequest(uint8_t opNumber) {

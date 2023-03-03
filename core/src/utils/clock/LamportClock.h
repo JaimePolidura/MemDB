@@ -18,7 +18,7 @@ public:
         return * this;
     }
 
-    uint64_t tick(uint64_t other) {
+    virtual uint64_t tick(uint64_t other) {
         uint64_t actualCountervalue = this->counter.load();
         uint64_t max = std::max(other, actualCountervalue);
         uint64_t newCounter = max + 1;

@@ -44,8 +44,7 @@ public:
             this->operationLogBuffer->add(request.operation);
 
             if(!options.requestFromReplication) {
-                uint64_t actualCount = this->clock->tick(request.operation.timestamp);
-                result.timestamp = actualCount;
+                result.timestamp = this->clock->tick(request.operation.timestamp);
             }
         }
 

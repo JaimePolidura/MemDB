@@ -20,7 +20,7 @@ public:
 
     virtual ~OperationLogBuffer() = default;
 
-    void add(const OperationBody& operation) {
+    virtual void add(const OperationBody& operation) {
         writeBufferLock.lock();
         this->operationBuffer.push_back(std::move(operation));
         writeBufferLock.unlock();

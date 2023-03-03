@@ -31,6 +31,15 @@ struct OperationBody {
         operatorNumber(operatorNumber),
         timestamp(timestamp),
         args(argsCons) {}
+
+    bool operator==(const OperationBody& a) const {
+        return a.timestamp == this->timestamp &&
+            a.nodeId == this->nodeId &&
+            a.operatorNumber == this->operatorNumber &&
+            a.flag1 == this->flag1 &&
+            a.flag2 == this->flag2 &&
+            a.args.get() == this->args.get();
+    }
 };
 
 struct AuthenticationBody {

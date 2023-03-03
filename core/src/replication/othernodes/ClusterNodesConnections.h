@@ -7,42 +7,45 @@
 
 #include "replication/Node.h"
 #include "utils/strings/StringUtils.h"
+#include "utils/threads/pool/FixedThreadPool.h"
 #include "messages/request/Request.h"
 #include "messages/request/RequestSerializer.h"
 #include "messages/response/ResponseDeserializer.h"
 
 class ClusterNodesConnections {
+public:
+    std::vector<Node> otherNodes;
 private:
+    configuration_t configuration;
     std::map<int, boost::asio::ip::tcp::socket> sockets; //NodeId -> tcp socket
     ResponseDeserializer responseDeserializer;
     RequestSerializer requestSerializer;
     boost::asio::io_context ioContext;
-    std::vector<Node> otherNodes;
+    FixedThreadPool requestPool;
+
 public:
-    ClusterNodesConnections() = default;
+    ClusterNodesConnections(configuration_t configuration, const std::vector<Node>& otherNodes): configuration(configuration),
+        requestPool(configuration->get<int>(ConfigurationKeys::SERVER_MAX_THREADS)), otherNodes(otherNodes) {
 
-    void createSocketsToNodes(const std::vector<Node>& nodes) {
-        this->otherNodes = nodes;
-
-        for (const auto& node : nodes) {
+        for (const auto& node : this->otherNodes)
             this->createSocket(node);
-        }
     }
 
-    auto sendRequest(const Request& request, const bool includeNodeId = false) -> Response {
+    auto sendRequestToRandomNode(const Request& request, const bool includeNodeId = false) -> Response {
         auto nodeToSendRequest = this->selectRandomNodeToSendRequest();
-        auto socket = std::move(this->sockets.at(nodeToSendRequest.nodeId));
-        auto requestBytes = this->requestSerializer.serialize(request, includeNodeId);
 
-        socket.write_some(boost::asio::buffer(requestBytes));
+        return this->sendRequestToNode(nodeToSendRequest, request);
+    }
 
-        std::vector<uint8_t> responseHeaderBuffer(21);
-        socket.read_some(boost::asio::buffer(responseHeaderBuffer));
-        auto responseBodyLenght = Utils::parseFromBuffer<uint32_t>(responseHeaderBuffer, 17);
-        std::vector<uint8_t> responseBodyBuffer(responseBodyLenght);
-        responseHeaderBuffer.insert(responseHeaderBuffer.end(), responseBodyBuffer.begin(), responseBodyBuffer.end());
-        
-        return responseDeserializer.deserialize(responseHeaderBuffer);
+    auto broadcast(const Request& request, const bool includeNodeId = false) -> void {
+        for(const auto& node : this->otherNodes){
+            if(node.state == NodeState::SHUTDOWN)
+                continue;
+
+            this->requestPool.submit([node, request, includeNodeId, this](){
+                this->sendRequestToNode(node, request, includeNodeId);
+            });
+        }
     }
 
 private:
@@ -62,8 +65,23 @@ private:
         throw std::runtime_error("No nodes available to sync data, try later");
     }
 
+    Response sendRequestToNode(const Node& node, const Request& request, const bool includeNodeId = false) {
+        auto socket = std::move(this->sockets.at(node.nodeId));
+        auto requestBytes = this->requestSerializer.serialize(request, includeNodeId);
+
+        socket.write_some(boost::asio::buffer(requestBytes));
+
+        std::vector<uint8_t> responseHeaderBuffer(21);
+        socket.read_some(boost::asio::buffer(responseHeaderBuffer));
+        auto responseBodyLenght = Utils::parseFromBuffer<uint32_t>(responseHeaderBuffer, 17);
+        std::vector<uint8_t> responseBodyBuffer(responseBodyLenght);
+        responseHeaderBuffer.insert(responseHeaderBuffer.end(), responseBodyBuffer.begin(), responseBodyBuffer.end());
+
+        return responseDeserializer.deserialize(responseHeaderBuffer);
+    }
+
     void createSocket(const Node& node) {
-        if(this->sockets.count(node.nodeId) == 1 || this->sockets.at(node.nodeId).is_open())
+        if(node.state == NodeState::SHUTDOWN || this->sockets.count(node.nodeId) == 1 || this->sockets.at(node.nodeId).is_open())
             return;
 
         auto splitedAddress = StringUtils::split(node.address, ':');

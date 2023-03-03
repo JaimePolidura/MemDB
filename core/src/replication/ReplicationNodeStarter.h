@@ -12,7 +12,7 @@ private:
 public:
     ReplicationNodeStarter(configuration_t configuration) : configuration(configuration),  clusterManagerService(configuration) {}
 
-    auto setup(uint64_t lastTimestampProcessedFromOpLog) -> replication_t {
+    auto setup() -> replication_t {
         auto setupResponse = this->clusterManagerService.setupNode();
 
         return std::make_shared<Replication>(configuration, setupResponse.nodeId, setupResponse.nodes);
@@ -31,7 +31,7 @@ public:
 
 private:
     Response sendSyncDataRequest(replication_t replication, uint64_t lastTimestampProcessedFromOpLog) {
-        return replication->sendRequest(this->createSyncDataRequest(lastTimestampProcessedFromOpLog));
+        return replication->sendRequestToRandomNode(this->createSyncDataRequest(lastTimestampProcessedFromOpLog));
     }
 
     Request createSyncDataRequest(uint64_t timestamp) {

@@ -19,6 +19,13 @@ public:
         this->onRequestCallback = onRequestCallbackParam;
     }
 
+    std::string getAddress() {
+        auto ip = this->socket.remote_endpoint().address().to_string();
+        auto port = this->socket.remote_endpoint().port();
+
+        return ip + ":" + std::to_string(port);
+    }
+
     void read() {
         std::shared_ptr<Connection> self = shared_from_this();
 

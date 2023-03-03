@@ -41,7 +41,6 @@ private:
     void setupReplicationNode(uint64_t lastTimestampProcessedFromOpLog) {
         ReplicationNodeStarter replicationNodeStarter{this->configuration};
 
-        this->replication = replicationNodeStarter.setup(lastTimestampProcessedFromOpLog);
         auto unsyncedOpLogs = replicationNodeStarter.getUnsyncedOpLogs(this->replication, lastTimestampProcessedFromOpLog);
 
         printf("[SERVER] Applaying unsynced logs from nodes...\n");

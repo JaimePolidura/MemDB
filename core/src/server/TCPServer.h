@@ -9,7 +9,7 @@
 #include "messages/request/RequestDeserializer.h"
 #include "messages/response/ResponseSerializer.h"
 #include "messages/response/ErrorCode.h"
-#include "utils/threads/dynamicthreadpool/DynamicThreadPool.h"
+#include "utils/threads/pool/DynamicThreadPool.h"
 #include "Connection.h"
 #include "operators/OperatorDispatcher.h"
 
@@ -26,10 +26,12 @@ private:
     Authenticator authenicator;
     io_context ioContext;
     ip::tcp::acceptor acceptator;
+    replication_t replication;
 
 public:
-    TCPServer(configuration_t configuration, Authenticator authenicator, operatorDispatcher_t operatorDispatcher):
+    TCPServer(configuration_t configuration, replication_t replication, Authenticator authenicator, operatorDispatcher_t operatorDispatcher):
             configuration(configuration),
+            replication(replication),
             port(configuration->get<uint16_t>(ConfigurationKeys::PORT)),
             authenicator(std::move(authenicator)),
             connectionThreadPool(5, configuration->get<int>(ConfigurationKeys::SERVER_MAX_THREADS), configuration->get<int>(ConfigurationKeys::SERVER_MIN_THREADS), 100, "TCPServer"),
@@ -64,7 +66,7 @@ private:
             this->acceptNewConnections();
         });
     }
-
+    
     void onNewRequest(const std::vector<uint8_t>& requestRawBuffer, std::shared_ptr<Connection> connection) {
         bool isConnectionFromReplicaNode = this->isConnectionFromReplicaNode(connection);
 
@@ -95,7 +97,8 @@ private:
     }
 
     bool isConnectionFromReplicaNode(std::shared_ptr<Connection> connection) {
-        return false; //TODO Temporal
+        return this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION) &&
+            this->replication->doesBelongToReplicationNode(connection->getAddress());
     }
 };
 

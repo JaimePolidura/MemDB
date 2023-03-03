@@ -15,35 +15,32 @@
 
 class Replication {
 private:
-    ClusterNodesConnections clusterNodesConnections;
     configuration_t configuration;
+    ClusterNodesConnections clusterNodesConnections;
     ClusterManagerService clusterManager;
     NodeState state;
     int nodeId;
 
 public:
-    Replication() = default;
-
     Replication(configuration_t configuration, int nodeId, const std::vector<Node>& otherNodes) :
-            clusterManager(configuration), configuration(configuration), state(NodeState::BOOTING), nodeId(nodeId)
-    {
-        this->clusterNodesConnections.createSocketsToNodes(otherNodes);
+            clusterManager(configuration), configuration(configuration), state(NodeState::BOOTING), nodeId(nodeId),
+            clusterNodesConnections(configuration, otherNodes)
+    {}
+
+    bool doesBelongToReplicationNode(const std::string& address) {
+        for(const auto& node : this->clusterNodesConnections.otherNodes)
+            if(node.address.compare(address) == 0)
+                return true;
+
+        return false;
     }
 
-    void setup(uint64_t lastTimestampProcessed) {
-        auto responseSetup = this->clusterManager.setupNode();
-        this->nodeId = responseSetup.nodeId;
-
-        if(responseSetup.nodes.empty())
-            return;
-
-        this->clusterNodesConnections.createSocketsToNodes(responseSetup.nodes);
-
-        auto syncDataResponse = this->sendSyncDataRequest(lastTimestampProcessed);
+    void broadcast(const Request& request, const bool includeNodeId = true) {
+        this->clusterNodesConnections.broadcast(request, includeNodeId);
     }
 
-    Response sendRequest(const Request& request) {
-        return this->clusterNodesConnections.sendRequest(request);
+    Response sendRequestToRandomNode(const Request& request) {
+        return this->clusterNodesConnections.sendRequestToRandomNode(request);
     }
 
     uint16_t getNodeId() {
@@ -52,7 +49,7 @@ public:
 
 private:
     Response sendSyncDataRequest(uint64_t timestamp) {
-        return this->clusterNodesConnections.sendRequest(this->createSyncDataRequest(timestamp));
+        return this->clusterNodesConnections.sendRequestToRandomNode(this->createSyncDataRequest(timestamp));
     }
 
     Request createSyncDataRequest(uint64_t timestamp) {

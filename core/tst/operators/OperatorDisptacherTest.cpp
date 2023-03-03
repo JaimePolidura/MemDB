@@ -102,7 +102,7 @@ TEST(OperatorDispatcher, SuccessfulWriteNotReplication) {
     OperatorDispatcher dispatcher{
             std::make_shared<Map<defaultMemDbSize_t>>(64),
             lamportClockMock,
-        1    operationLogBufferMock,
+            operationLogBufferMock,
             operatorRegistryMock
     };
 

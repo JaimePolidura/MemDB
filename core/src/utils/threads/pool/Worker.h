@@ -1,19 +1,20 @@
 #pragma once
 
 #include <memory>
+#include <functional>
 
 #include "utils/datastructures/queue/BlockingQueue.h"
 
 using Task = std::function<void()>;
 
-class DynamicThreadPoolWorker {
+class Worker {
 private:
     std::shared_ptr<BlockingQueue<Task>> pendingTasks;
     volatile bool isStoped;
     std::string name;
     std::thread thread;
 public:
-    DynamicThreadPoolWorker(std::string name):
+    Worker(std::string name):
         pendingTasks(std::make_shared<BlockingQueue<Task>>()), isStoped(false), name(name) {}
 
     void startThread() {

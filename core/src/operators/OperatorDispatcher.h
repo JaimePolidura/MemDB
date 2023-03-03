@@ -7,21 +7,28 @@
 #include "messages/response/ErrorCode.h"
 #include "operators/buffer/OperationLogBuffer.h"
 #include "utils/clock/LamportClock.h"
+#include "replication/Replication.h"
 
 class OperatorDispatcher {
 private:
     operationLogBuffer_t operationLogBuffer;
     operatorRegistry_t operatorRegistry;
-    memDbDataStore_t db;
+    configuration_t configuration;
+    replication_t replication;
     lamportClock_t clock;
+    memDbDataStore_t db;
 
 public:
-    OperatorDispatcher(memDbDataStore_t dbCons, lamportClock_t clock, operationLogBuffer_t operationLogBuffer):
-        db(dbCons), operationLogBuffer(operationLogBuffer), clock(clock), operatorRegistry(std::make_shared<OperatorRegistry>())
+    OperatorDispatcher(memDbDataStore_t dbCons, lamportClock_t clock, operationLogBuffer_t operationLogBuffer,
+                       replication_t replication, configuration_t configuration):
+        db(dbCons), operationLogBuffer(operationLogBuffer), clock(clock), operatorRegistry(std::make_shared<OperatorRegistry>()),
+        replication(replication), configuration(configuration)
     {}
 
-    OperatorDispatcher(memDbDataStore_t dbCons, lamportClock_t clock, operationLogBuffer_t operationLogBuffer, operatorRegistry_t operatorRegistry):
-            db(dbCons), operationLogBuffer(operationLogBuffer), clock(clock), operatorRegistry(operatorRegistry)
+    OperatorDispatcher(memDbDataStore_t dbCons, lamportClock_t clock, operationLogBuffer_t operationLogBuffer,
+                       operatorRegistry_t operatorRegistry, replication_t replication, configuration_t configuration):
+            db(dbCons), operationLogBuffer(operationLogBuffer), clock(clock), operatorRegistry(operatorRegistry),
+            replication(replication), configuration(configuration)
     {}
 
     Response dispatch(const Request& request) {
@@ -45,6 +52,9 @@ public:
 
             if(!options.requestFromReplication) {
                 result.timestamp = this->clock->tick(request.operation.timestamp);
+            }
+            if(this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION) && !options.requestFromReplication){
+                this->replication->broadcast(request);
             }
         }
 

@@ -6,11 +6,11 @@
 #include <string>
 #include <numeric>
 
-#include "./DynamicThreadPoolWorker.h"
+#include "utils/threads/pool/Worker.h"
 
 class DynamicThreadPool {
 private:
-    std::vector<std::shared_ptr<DynamicThreadPoolWorker>> workers;
+    std::vector<std::shared_ptr<Worker>> workers;
     std::uint64_t numberTaskEnqueued;
     std::mutex autoScaleLock;
     std::string name;
@@ -38,7 +38,7 @@ public:
     }
 
     void stop() {
-        for(const std::shared_ptr<DynamicThreadPoolWorker>& worker : this->workers)
+        for(const std::shared_ptr<Worker>& worker : this->workers)
             worker->stop();
     }
 
@@ -48,7 +48,7 @@ public:
 
 private:
     void sendTaskToWorker(Task task) {
-        std::shared_ptr<DynamicThreadPoolWorker> worker = this->getWorker();
+        std::shared_ptr<Worker> worker = this->getWorker();
 
         bool taskEnqueued = worker->enqueue(task);
         if(!taskEnqueued){ //The worker have been removed
@@ -56,7 +56,7 @@ private:
         }
     }
 
-    std::shared_ptr<DynamicThreadPoolWorker> getWorker() {
+    std::shared_ptr<Worker> getWorker() {
         this->nextWorker++;
 
         return this->workers.at(this->nextWorker % this->workers.size());
@@ -74,7 +74,7 @@ private:
                 this->workers.begin(),
                 this->workers.end(),
                 0,
-                [](int total, const std::shared_ptr<DynamicThreadPoolWorker>& act){ return total + act->enqueuedTasks();});
+                [](int total, const std::shared_ptr<Worker>& act){ return total + act->enqueuedTasks();});
 
         float actualLoadFactor = totalTask / this->workers.size();
         int newNumberOfWorkersNotAdjusted = totalTask / this->loadFactor;
@@ -94,7 +94,7 @@ private:
 
     void createWorkers(int numberWorkers) {
         for (int i = 0; i < numberWorkers; ++i){
-            std::shared_ptr<DynamicThreadPoolWorker> newWorker = std::make_shared<DynamicThreadPoolWorker>(this->name);
+            std::shared_ptr<Worker> newWorker = std::make_shared<Worker>(this->name);
             this->workers.push_back(newWorker);
             newWorker->startThread();
         }

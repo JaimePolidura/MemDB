@@ -17,7 +17,7 @@ func (repository EtcdNodeRepository) FindAll() ([]Node, error) {
 
 func (repository EtcdNodeRepository) FindByAddress(address string) (Node, error) {
 	allNodes, err := repository.FindAll()
-	
+
 	if err != nil {
 		return Node{}, err
 	}
@@ -31,7 +31,7 @@ func (repository EtcdNodeRepository) FindByAddress(address string) (Node, error)
 	return Node{}, errors.New("node not found")
 }
 
-func (repository EtcdNodeRepository) FindById(nodeId uint32) (Node, error) {
+func (repository EtcdNodeRepository) FindById(nodeId NodeId_t) (Node, error) {
 	return repository.Client.Get("/nodes/" + fmt.Sprint(nodeId))
 }
 

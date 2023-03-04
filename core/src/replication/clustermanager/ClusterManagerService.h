@@ -21,10 +21,9 @@ public:
         this->token = this->authenticate();
 
         std::string url =  + "";
-        HttpResponse response = HttpClient::post(
+        HttpResponse response = HttpClient::get(
                 this->configuartion->get(ConfigurationKeys::CLUSTER_MANAGER_ADDRESS),
-                "/api/nodes/setup",
-                {},
+                "/api/nodes/selfinfo",
                 this->token);
 
         if(!response.isSuccessful())

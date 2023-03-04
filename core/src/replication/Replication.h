@@ -75,6 +75,10 @@ public:
         return this->clusterNodesConnections->sendRequestToRandomNode(request);
     }
 
+    auto getNodeState() -> NodeState {
+        return this->selfNode.state;
+    }
+
     auto getNodeId() -> uint16_t {
         return this->selfNode.nodeId;
     }

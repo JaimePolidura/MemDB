@@ -28,6 +28,40 @@ struct HttpResponse {
 
 class HttpClient {
 public:
+    static HttpResponse get(const std::string& address,
+                             const std::string& endpoint,
+                             const std::string& authToken = "",
+                             const bool usingDns = false) {
+        boost::asio::io_context ioc;
+        tcp::socket socket(ioc);
+        connect(socket, ioc, address, usingDns);
+
+        http::request<http::string_body> req{http::verb::get, endpoint, 11};
+        req.set(http::field::host, address);
+        req.set(http::field::user_agent, "Boost");
+        req.set(http::field::content_type, "application/json");
+        if(!authToken.empty()){
+            req.set(http::field::authorization, "Bearer " + authToken);
+        }
+
+        req.prepare_payload();
+
+        http::write(socket, req);
+
+        boost::beast::flat_buffer buffer;
+        http::response<http::dynamic_body> res;
+        http::read(socket, buffer, res);
+
+        auto responseString = boost::beast::buffers_to_string(res.body().data());
+
+        socket.close();
+
+        return HttpResponse{
+                .body = nlohmann::json::parse(responseString),
+                .code = res.result_int()
+        };
+    }
+
     static HttpResponse post(const std::string& address,
                              const std::string& endpoint,
                              const std::map<std::string, std::string>& body = {},

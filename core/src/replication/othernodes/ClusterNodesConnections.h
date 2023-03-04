@@ -74,7 +74,7 @@ public:
 
     auto broadcast(const Request& request, const bool includeNodeId = false) -> void {
         for(const auto& node : this->otherNodes){
-            if(node.state == NodeState::SHUTDOWN)
+            if(!NodeStates::canAcceptRequest(node.state))
                 continue;
 
             this->requestPool.submit([node, request, includeNodeId, this](){
@@ -118,7 +118,7 @@ private:
     }
 
     void createSocket(const Node& node) {
-        if(node.state == NodeState::SHUTDOWN || this->sockets.count(node.nodeId) == 1 || this->sockets.at(node.nodeId).is_open())
+        if(!NodeStates::canAcceptRequest(node.state) || this->sockets.count(node.nodeId) == 1 || this->sockets.at(node.nodeId).is_open())
             return;
 
         auto splitedAddress = StringUtils::split(node.address, ':');

@@ -26,11 +26,12 @@ public:
 
     void run() {
         uint64_t lastTimestampStored = this->restoreDataFromOplog();
+
+        this->tcpServer->run();
+
         if(this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION)){
             this->setupReplicationNode(lastTimestampStored);
         }
-
-        this->tcpServer->run();
     }
 
     uint64_t tick(uint64_t other) {
@@ -39,11 +40,13 @@ public:
 
 private:
     void setupReplicationNode(uint64_t lastTimestampProcessedFromOpLog) {
-        auto unsyncedOpLogs = this->replication->getUnsyncedOpLogs(lastTimestampProcessedFromOpLog);
-
-        printf("[SERVER] Applaying unsynced logs from nodes...\n");
-        this->applyAllLogs(unsyncedOpLogs);
         this->clock->nodeId = this->replication->getNodeId();
+
+        auto unsyncedOpLogs = this->replication->getUnsyncedOpLogs(lastTimestampProcessedFromOpLog);
+        this->applyOperationLogs(unsyncedOpLogs);
+
+        this->operatorDispatcher->applyReplicatedOperationBuffer();
+        this->replication->setRunning();
     }
 
     uint64_t restoreDataFromOplog() {
@@ -51,12 +54,12 @@ private:
         auto opLogsFromDisk = loader.getAllAndSaveCompacted(this->dbMap);
 
         printf("[SERVER] Applaying logs from disk...\n");
-        this->applyAllLogs(opLogsFromDisk);
+        this->applyOperationLogs(opLogsFromDisk);
 
         return !opLogsFromDisk.empty() ? opLogsFromDisk[opLogsFromDisk.size() - 1].timestamp : 0;
     }
 
-    void applyAllLogs(const std::vector<OperationBody>& opLogs) {
+    void applyOperationLogs(const std::vector<OperationBody>& opLogs) {
         for(const auto& operationLogInDisk : opLogs)
             this->operatorDispatcher->executeOperator(this->dbMap, OperationOptions{.requestFromReplication = false}, operationLogInDisk);
     }

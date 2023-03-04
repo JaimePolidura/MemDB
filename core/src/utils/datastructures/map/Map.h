@@ -5,7 +5,7 @@
 #include <tgmath.h>
 
 #include "utils/datastructures/tree/AVLTree.h"
-#include "utils/threads/ReadWriteLock.h"
+#include "utils/threads/SharedLock.h"
 #include "memdbtypes.h"
 
 template<typename SizeValue>
@@ -29,7 +29,7 @@ class Map {
 private:
     std::atomic_uint32_t size;
     std::vector<AVLTree<SizeValue>> buckets;
-    std::vector<ReadWriteLock *> locks;
+    std::vector<SharedLock *> locks;
     uint16_t numberBuckets;
 
 public:
@@ -76,19 +76,19 @@ private:
     }
 
     void lockRead(uint32_t hashCode) const {
-        const_cast<ReadWriteLock *>(this->locks.at(hashCode % numberBuckets))->lockRead();
+        const_cast<SharedLock *>(this->locks.at(hashCode % numberBuckets))->lockShared();
     }
 
     void unlockRead(uint32_t hashCode) const {
-        const_cast<ReadWriteLock *>(this->locks.at(hashCode % numberBuckets))->unlockRead();
+        const_cast<SharedLock *>(this->locks.at(hashCode % numberBuckets))->unlockShared();
     }
 
     void lockWrite(uint32_t hashCode) const {
-        const_cast<ReadWriteLock *>(this->locks.at(hashCode % numberBuckets))->lockWrite();
+        const_cast<SharedLock *>(this->locks.at(hashCode % numberBuckets))->lockExclusive();
     }
 
     void unlockWrite(uint32_t hashCode) const {
-        const_cast<ReadWriteLock *>(this->locks.at(hashCode % numberBuckets))->unlockWrite();
+        const_cast<SharedLock *>(this->locks.at(hashCode % numberBuckets))->unlockExclusive();
     }
 };
 
@@ -100,7 +100,7 @@ Map<SizeValue>::Map(uint16_t numberBuckets): numberBuckets(numberBuckets) {
 
     for (int i = 0; i < numberBuckets; i++) {
         buckets.emplace_back();
-        locks.push_back(new ReadWriteLock());
+        locks.push_back(new SharedLock());
     }
 }
 

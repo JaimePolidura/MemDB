@@ -1,16 +1,16 @@
 #include "gtest/gtest.h"
-#include "utils/threads/ReadWriteLock.h"
+#include "utils/threads/SharedLock.h"
 
 TEST(ReadWriteLock, ShouldntBlock) {
-    ReadWriteLock lock{};
+    SharedLock lock{};
 
-    lock.lockRead();
-    lock.lockRead();
-    lock.unlockRead();
-    lock.unlockRead();
+    lock.lockShared();
+    lock.lockShared();
+    lock.unlockShared();
+    lock.unlockShared();
 
-    lock.lockWrite();
-    lock.unlockWrite();
+    lock.lockExclusive();
+    lock.unlockExclusive();
 
-    lock.lockRead();
+    lock.lockShared();
 }

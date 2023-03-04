@@ -16,13 +16,13 @@ public:
     }
 
     static std::string toJson(const Node& node) {
-        return "{\"nodeId\": \""+std::to_string(node.nodeId)+"\", \"address\": \""+node.address+"\", \"state\": \""+parseNodeStateToString(node.state)+"\"}";
+        return "{\"nodeId\": \""+std::to_string(node.nodeId)+"\", \"address\": \""+node.address+"\", \"state\": \""+NodeStates::parseNodeStateToString(node.state)+"\"}";
     }
 
     static Node fromJson(const nlohmann::json& json) {
         return Node{
                 .address = json["address"].get<std::string>(),
-                .state = parseNodeStateFromString(json["state"].get<std::string>()),
+                .state = NodeStates::parseNodeStateFromString(json["state"].get<std::string>()),
                 .nodeId = json["nodeId"].get<int>(),
         };
     }

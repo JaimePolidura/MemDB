@@ -17,6 +17,8 @@ target_link_libraries(${BINARY}_lib PRIVATE etcd-cpp-api)
 find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(${BINARY}_lib PRIVATE nlohmann_json::nlohmann_json)
 
+target_link_libraries(${BINARY}_run PRIVATE ${BINARY}_lib)
+
 if(NOT BUILDING_LINUX_DEPLOYMENT)
     target_link_libraries(${BINARY}_run PRIVATE ws2_32 wsock32)
 else()

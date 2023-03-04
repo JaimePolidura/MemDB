@@ -19,20 +19,24 @@ class Replication {
 private:
     configuration_t configuration;
     clusterNodesConnections_t clusterNodesConnections;
+    ClusterDbNodeChangeHandler clusterDbNodeChangeHandler;
     clusterManagerService_t clusterManager;
     clusterdb_t clusterDb;
-    ClusterDbNodeChangeHandler clusterDbNodeChangeHandler;
-    NodeState state;
-    int nodeId;
+    Node selfNode;
 
 public:
     Replication(configuration_t configuration): configuration(configuration) {}
 
     Replication(configuration_t configuration, clusterManagerService_t clusterManager, SetupNodeResponse setupNodeResponse) :
-            configuration(configuration), state(NodeState::BOOTING), nodeId(setupNodeResponse.nodeId),
-            clusterNodesConnections(std::make_shared<ClusterNodesConnections>(configuration, setupNodeResponse.nodes)),
-            clusterDb(std::make_shared<ClusterDb>(configuration)), clusterManager(clusterManager), clusterDbNodeChangeHandler(this->clusterNodesConnections)
+            configuration(configuration), selfNode(setupNodeResponse.self), clusterDb(std::make_shared<ClusterDb>(configuration)),
+            clusterNodesConnections(std::make_shared<ClusterNodesConnections>(configuration, setupNodeResponse.otherNodes)),
+            clusterManager(clusterManager), clusterDbNodeChangeHandler(this->clusterNodesConnections)
     {}
+
+    auto setRunning() -> void {
+        this->selfNode.state = NodeState::RUNNING;
+        this->clusterDb->set(this->selfNode.nodeId, this->selfNode);
+    }
 
     auto watchForChangesInClusterDb() -> void {
         this->watchForChangesInNodesInCluster();
@@ -72,7 +76,7 @@ public:
     }
 
     auto getNodeId() -> uint16_t {
-        return this->nodeId;
+        return this->selfNode.nodeId;
     }
 
 private:
@@ -80,7 +84,9 @@ private:
         this->clusterDb->watch("/nodes", [this](ClusterDbValueChanged nodeChangedEvent){
             auto node = Node::fromJson(nodeChangedEvent.value);
 
-            this->clusterDbNodeChangeHandler.handleChange(node, nodeChangedEvent.changeType);
+            if(node.nodeId != this->selfNode.nodeId){
+                this->clusterDbNodeChangeHandler.handleChange(node, nodeChangedEvent.changeType);
+            }
         });
     }
 

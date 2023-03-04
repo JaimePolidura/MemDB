@@ -10,6 +10,7 @@ import es.memdb.utils.clock.LamportClock;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -23,7 +24,6 @@ public final class MemDb {
     private final LamportClock clock = new LamportClock();
     private final MemDbConnection memDbConnection;
     private final String authClientKey;
-
 
     public String get(String key) {
         return this.sendRequest(OperationRequest.builder()

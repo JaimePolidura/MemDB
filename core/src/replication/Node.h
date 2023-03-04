@@ -15,6 +15,10 @@ public:
         return node.state == NodeState::RUNNING;
     }
 
+    static std::string toJson(const Node& node) {
+        return "{\"nodeId\": \""+std::to_string(node.nodeId)+"\", \"address\": \""+node.address+"\", \"state\": \""+parseNodeStateToString(node.state)+"\"}";
+    }
+
     static Node fromJson(const nlohmann::json& json) {
         return Node{
                 .address = json["address"].get<std::string>(),

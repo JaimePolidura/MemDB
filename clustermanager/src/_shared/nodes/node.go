@@ -3,7 +3,7 @@ package nodes
 import (
 	"clustermanager/src/_shared/nodes/states"
 )
-1
+
 type NodeId_t int
 
 type Node struct {

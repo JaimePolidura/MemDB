@@ -46,7 +46,8 @@ public final class RequestSerializer {
         for (String arg : argsString) {
             int argSize = arg.length();
 
-            bytes.add((byte) argSize);
+            var sizeArg = Utils.primitiveToWrapper(ByteBuffer.allocate(4).putInt(argSize).array());
+            bytes.addAll(Arrays.asList(sizeArg));
             bytes.addAll(this.stringToBytes(arg));
         }
 

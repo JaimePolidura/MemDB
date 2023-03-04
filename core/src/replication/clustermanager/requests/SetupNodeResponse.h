@@ -7,21 +7,20 @@
 
 struct SetupNodeResponse {
 public:
-    std::vector<Node> nodes;
-    int nodeId;
+    std::vector<Node> otherNodes;
+    Node self;
 
     static SetupNodeResponse fromJson(const nlohmann::json& json) {
-        int nodeId = json["nodeId"].get<int>();
+        auto self = Node::fromJson(json["self"]);
 
-        std::vector<Node> allNodes;
-        auto jsonNodes = json["nodes"];
-
-        for (const auto& nodeJson : jsonNodes)
-            allNodes.push_back(Node::fromJson(nodeJson));
+        std::vector<Node> otherNodes;
+        auto jsonOtherNodes = json["nodes"];
+        for (const auto& otherNodeJson : jsonOtherNodes)
+            otherNodes.push_back(Node::fromJson(otherNodeJson));
 
         return SetupNodeResponse{
-                .nodes = allNodes,
-                .nodeId = nodeId,
+                .otherNodes = otherNodes,
+                .self = self,
         };
     }
 };

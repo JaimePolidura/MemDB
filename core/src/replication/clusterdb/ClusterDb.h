@@ -22,6 +22,10 @@ public:
             watch(directory, onChange);
         });
     }
+
+    auto set(int nodeId, const Node& node) -> void {
+        this->client.put("/nodes/" + nodeId, Node::toJson(node)).get();
+    }
 };
 
 using clusterdb_t = std::shared_ptr<ClusterDb>;

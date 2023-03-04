@@ -12,8 +12,8 @@ type SetupNodeController struct {
 }
 
 type SetupNodeResponse struct {
-	Nodes  []nodes.Node   `json:"nodes"`
-	NodeId nodes.NodeId_t `json:"nodeId"`
+	OtherNodes []nodes.Node `json:"otherNodes"`
+	Self       nodes.Node   `json:"self"`
 }
 
 func (controller *SetupNodeController) SetupNode(context echo.Context) error {
@@ -27,12 +27,12 @@ func (controller *SetupNodeController) SetupNode(context echo.Context) error {
 	allNodes, err := controller.NodesRepository.FindAll()
 	
 	if err != nil {
-		return context.JSON(http.StatusNotFound, "Node not found for "+ip)
+		return context.JSON(http.StatusNotFound, "Node not found your ip "+ip)
 	}
 
 	return context.JSON(http.StatusOK, SetupNodeResponse{
-		Nodes:  controller.filterNodesExceptSelf(nodeByIp.NodeId, allNodes),
-		NodeId: nodeByIp.NodeId,
+		OtherNodes: controller.filterNodesExceptSelf(nodeByIp.NodeId, allNodes),
+		Self:       nodeByIp,
 	})
 }
 

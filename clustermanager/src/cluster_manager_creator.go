@@ -76,7 +76,7 @@ func configureHttpApi(configuration *configuration.Configuartion, etcdNativeClie
 	setupNodeController := &api.SetupNodeController{NodesRepository: nodesRepository}
 
 	echoApi.POST("/login", loginController.Login)
-	apiGroup.POST("/nodes/setup", setupNodeController.SetupNode)
+	apiGroup.GET("/nodes/selfinfo", setupNodeController.SetupNode)
 
 	return echoApi
 }

@@ -26,7 +26,42 @@ private:
 public:
     ClusterNodesConnections(configuration_t configuration, const std::vector<Node>& otherNodes): configuration(configuration),
         requestPool(configuration->get<int>(ConfigurationKeys::SERVER_MAX_THREADS)), otherNodes(otherNodes) {
+    }
 
+    void replaceNode(const Node& node) {
+        for(int i = 0; i < this->otherNodes.size(); i++){
+            if(this->otherNodes.at(i).nodeId == node.nodeId){
+                this->otherNodes[i] = node;
+                return;
+            }
+        }
+    }
+
+    void addNode(const Node& node) {
+        this->otherNodes.push_back(node);
+    }
+
+    bool existsByNodeId(int nodeId) {
+        for(int i = 0; i < this->otherNodes.size(); i++){
+            if(this->otherNodes.at(i).nodeId == nodeId){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    void deleteNodeById(int nodeId) {
+        for(int i = 0; i < this->otherNodes.size(); i++){
+            if(this->otherNodes.at(i).nodeId == nodeId){
+                this->otherNodes.erase(this->otherNodes.begin() + i);
+                this->sockets.erase(nodeId);
+                break;
+            }
+        }
+    }
+
+    void createConnections() {
         for (const auto& node : this->otherNodes)
             this->createSocket(node);
     }
@@ -56,7 +91,7 @@ private:
         while(alreadyCheckedNodesId.size() != otherNodes.size()) {
             Node randomNode = this->otherNodes[std::rand() % this->otherNodes.size()];
 
-            if(Nodes::canSendRequestUnicast(randomNode))
+            if(Node::canSendRequestUnicast(randomNode))
                 return randomNode;
 
             alreadyCheckedNodesId.insert(randomNode.nodeId);
@@ -95,3 +130,5 @@ private:
         this->sockets.insert({node.nodeId, std::move(socket)});
     }
 };
+
+using clusterNodesConnections_t = std::shared_ptr<ClusterNodesConnections>;

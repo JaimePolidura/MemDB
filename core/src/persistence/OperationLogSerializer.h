@@ -17,7 +17,7 @@ public:
         if(toDeserialize.args.get() != nullptr){
             //Args
             for(auto arg = toDeserialize.args->begin(); arg < toDeserialize.args->end(); arg++){
-                serializedOut.push_back(arg->size);
+                Utils::appendToBuffer(arg->size, serializedOut);
 
                 for(uint8_t j = 0; j < arg->size; j++)
                     serializedOut.push_back(* (arg->data() + j));

@@ -3,6 +3,8 @@
 #include <map>
 #include <string>
 
+#include "utils/strings/StringUtils.h"
+
 class Configuration {
 private:
     const std::map<std::string, std::string> actualConfigurationValues;
@@ -15,6 +17,10 @@ public:
                   const std::map<std::string, std::string>& defaultConfigurationValues):
         actualConfigurationValues(std::move(actualConfigurationValues)),
         defaultConfigurationValues(std::move(defaultConfigurationValues)) {}
+
+    std::vector<std::string> getArray(const std::string& key) {
+        return StringUtils::split(this->get(key), ',');
+    }
 
     std::string get(const std::string& key) const {
         return this->getOrDefault(key);

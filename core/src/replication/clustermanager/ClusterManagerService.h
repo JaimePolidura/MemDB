@@ -48,3 +48,5 @@ private:
         return response.body["token"];
     }
 };
+
+using clusterManagerService_t = std::shared_ptr<ClusterManagerService>;

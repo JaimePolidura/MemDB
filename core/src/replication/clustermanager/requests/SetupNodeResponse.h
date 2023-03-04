@@ -15,13 +15,9 @@ public:
 
         std::vector<Node> allNodes;
         auto jsonNodes = json["nodes"];
-        for (const auto& nodeJson : jsonNodes) {
-            allNodes.push_back(Node{
-                    .address = nodeJson["address"].get<std::string>(),
-                    .state = parseNodeStateFromString(nodeJson["state"].get<std::string>()),
-                    .nodeId = nodeJson["nodeId"].get<int>(),
-            });
-        }
+
+        for (const auto& nodeJson : jsonNodes)
+            allNodes.push_back(Node::fromJson(nodeJson));
 
         return SetupNodeResponse{
                 .nodes = allNodes,

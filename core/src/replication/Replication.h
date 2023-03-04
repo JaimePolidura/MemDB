@@ -12,44 +12,76 @@
 #include "config/keys/ConfigurationKeys.h"
 #include "replication/othernodes/ClusterNodesConnections.h"
 #include "utils/strings/StringUtils.h"
+#include "replication/clusterdb/ClusterDb.h"
+#include "ClusterDbNodeChangeHandler.h"
 
 class Replication {
 private:
     configuration_t configuration;
-    ClusterNodesConnections clusterNodesConnections;
-    ClusterManagerService clusterManager;
+    clusterNodesConnections_t clusterNodesConnections;
+    clusterManagerService_t clusterManager;
+    clusterdb_t clusterDb;
+    ClusterDbNodeChangeHandler clusterDbNodeChangeHandler;
     NodeState state;
     int nodeId;
 
 public:
-    Replication(configuration_t configuration, int nodeId, const std::vector<Node>& otherNodes) :
-            clusterManager(configuration), configuration(configuration), state(NodeState::BOOTING), nodeId(nodeId),
-            clusterNodesConnections(configuration, otherNodes)
+    Replication(configuration_t configuration): configuration(configuration) {}
+
+    Replication(configuration_t configuration, clusterManagerService_t clusterManager, SetupNodeResponse setupNodeResponse) :
+            configuration(configuration), state(NodeState::BOOTING), nodeId(setupNodeResponse.nodeId),
+            clusterNodesConnections(std::make_shared<ClusterNodesConnections>(configuration, setupNodeResponse.nodes)),
+            clusterDb(std::make_shared<ClusterDb>(configuration)), clusterManager(clusterManager), clusterDbNodeChangeHandler(this->clusterNodesConnections)
     {}
 
-    bool doesBelongToReplicationNode(const std::string& address) {
-        for(const auto& node : this->clusterNodesConnections.otherNodes)
+    auto watchForChangesInClusterDb() -> void {
+        this->watchForChangesInNodesInCluster();
+    }
+
+    auto initializeNodeConnections() -> void {
+        this->clusterNodesConnections->createConnections();
+    }
+
+    auto doesBelongToReplicationNode(const std::string& address) -> bool {
+        for(const auto& node : this->clusterNodesConnections->otherNodes)
             if(node.address.compare(address) == 0)
                 return true;
 
         return false;
     }
 
-    void broadcast(const Request& request, const bool includeNodeId = true) {
-        this->clusterNodesConnections.broadcast(request, includeNodeId);
+    auto getUnsyncedOpLogs(uint64_t lastTimestampProcessedFromOpLog) -> std::vector<OperationBody> {
+        OperationLogDeserializer operationLogDeserializer{};
+
+        auto responseFromSyncData = this->clusterNodesConnections->sendRequestToRandomNode(this->createSyncDataRequest(lastTimestampProcessedFromOpLog));
+        uint8_t * begin = responseFromSyncData.responseValue.data();
+        auto bytes = std::vector<uint8_t>(begin, begin + responseFromSyncData.responseValue.size);
+
+        if(responseFromSyncData.isSuccessful)
+            return operationLogDeserializer.deserializeAll(bytes);
+        else
+            throw std::runtime_error("Unexpected error in syncing data");
     }
 
-    Response sendRequestToRandomNode(const Request& request) {
-        return this->clusterNodesConnections.sendRequestToRandomNode(request);
+    auto broadcast(const Request& request, const bool includeNodeId = true) -> void {
+        this->clusterNodesConnections->broadcast(request, includeNodeId);
     }
 
-    uint16_t getNodeId() {
+    auto sendRequestToRandomNode(const Request& request) -> Response {
+        return this->clusterNodesConnections->sendRequestToRandomNode(request);
+    }
+
+    auto getNodeId() -> uint16_t {
         return this->nodeId;
     }
 
 private:
-    Response sendSyncDataRequest(uint64_t timestamp) {
-        return this->clusterNodesConnections.sendRequestToRandomNode(this->createSyncDataRequest(timestamp));
+    auto watchForChangesInNodesInCluster() -> void {
+        this->clusterDb->watch("/nodes", [this](ClusterDbValueChanged nodeChangedEvent){
+            auto node = Node::fromJson(nodeChangedEvent.value);
+
+            this->clusterDbNodeChangeHandler.handleChange(node, nodeChangedEvent.changeType);
+        });
     }
 
     Request createSyncDataRequest(uint64_t timestamp) {

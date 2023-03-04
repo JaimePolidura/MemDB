@@ -7,7 +7,7 @@
 #include "replication/Replication.h"
 #include "utils/clock/LamportClock.h"
 #include "memdbtypes.h"
-#include "replication/ReplicationNodeStarter.h"
+#include "replication/ReplicationCreator.h"
 
 class MemDb {
 private:
@@ -39,9 +39,7 @@ public:
 
 private:
     void setupReplicationNode(uint64_t lastTimestampProcessedFromOpLog) {
-        ReplicationNodeStarter replicationNodeStarter{this->configuration};
-
-        auto unsyncedOpLogs = replicationNodeStarter.getUnsyncedOpLogs(this->replication, lastTimestampProcessedFromOpLog);
+        auto unsyncedOpLogs = this->replication->getUnsyncedOpLogs(lastTimestampProcessedFromOpLog);
 
         printf("[SERVER] Applaying unsynced logs from nodes...\n");
         this->applyAllLogs(unsyncedOpLogs);

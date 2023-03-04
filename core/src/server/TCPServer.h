@@ -98,7 +98,7 @@ private:
 
     bool isConnectionFromReplicaNode(std::shared_ptr<Connection> connection) {
         return this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION) &&
-            this->replication->doesBelongToReplicationNode(connection->getAddress());
+                this->replication->doesAddressBelongToReplicationNode(connection->getAddress());
     }
 };
 

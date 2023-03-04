@@ -42,7 +42,7 @@ public:
         this->clusterNodesConnections->createConnections();
     }
 
-    auto doesBelongToReplicationNode(const std::string& address) -> bool {
+    auto doesAddressBelongToReplicationNode(const std::string& address) -> bool {
         for(const auto& node : this->clusterNodesConnections->otherNodes)
             if(node.address.compare(address) == 0)
                 return true;

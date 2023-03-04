@@ -101,6 +101,8 @@ private:
     }
 
     Response sendRequestToNode(const Node& node, const Request& request, const bool includeNodeId = false) {
+        const_cast<Request&>(request).authentication.authKey = this->configuration->get(ConfigurationKeys::AUTH_CLUSTER_KEY);
+
         auto socket = std::move(this->sockets.at(node.nodeId));
         auto requestBytes = this->requestSerializer.serialize(request, includeNodeId);
 

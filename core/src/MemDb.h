@@ -47,6 +47,11 @@ private:
 
         this->operatorDispatcher->applyReplicatedOperationBuffer();
         this->replication->setRunning();
+
+        this->replication->setReloadUnsyncedOpsCallback([this](std::vector<OperationBody> unsyncedOperations){
+            this->applyOperationLogs(unsyncedOperations);
+            this->operatorDispatcher->applyReplicatedOperationBuffer();
+        });
     }
 
     uint64_t restoreDataFromOplog() {

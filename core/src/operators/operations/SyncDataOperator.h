@@ -14,7 +14,6 @@ private:
 public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x05;
 
-    //TODO All the logs from disk might not ocuppy 2^32 bits
     Response operate(const OperationBody& operation, const OperationOptions& operationOptions, operationLogBuffer_t operationLogBuffer) override {
         operationLogBuffer->lockWritesToDisk();
 

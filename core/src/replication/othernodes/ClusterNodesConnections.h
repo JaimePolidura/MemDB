@@ -39,6 +39,7 @@ public:
 
     void addNode(const Node& node) {
         this->otherNodes.push_back(node);
+        this->createSocket(node);
     }
 
     bool existsByNodeId(int nodeId) {
@@ -57,6 +58,15 @@ public:
                 this->otherNodes.erase(this->otherNodes.begin() + i);
                 this->sockets.erase(nodeId);
                 break;
+            }
+        }
+    }
+
+    void deleteAllConnections() {
+        for (const auto& node : this->otherNodes) {
+            if(this->sockets.contains(node.nodeId)) {
+                this->sockets.at(node.nodeId).close();
+                this->sockets.erase(node.nodeId);
             }
         }
     }

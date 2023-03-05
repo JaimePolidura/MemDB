@@ -1,6 +1,6 @@
 #pragma once
 
-#include "replication/clustermanager/requests/SetupNodeResponse.h"
+#include "replication/clustermanager/requests/InfoNodeResponse.h"
 #include "config/Configuration.h"
 #include "utils/http/HttpClient.h"
 #include "replication/Node.h"
@@ -17,7 +17,7 @@ public:
 
     ClusterManagerService(std::shared_ptr<Configuration> configuartion): configuartion(configuartion), token("") {}
 
-    SetupNodeResponse setupNode() {
+    InfoNodeResponse getInfoNode() {
         this->token = this->authenticate();
 
         std::string url =  + "";
@@ -29,7 +29,7 @@ public:
         if(!response.isSuccessful())
             throw std::runtime_error("Cluster manager not found");
 
-        return SetupNodeResponse::fromJson(response.body);
+        return InfoNodeResponse::fromJson(response.body);
     }
 
 private:

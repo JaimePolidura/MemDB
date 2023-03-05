@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <ctime>
+#include <atomic>
 
 #include "utils/clock/LamportClock.h"
 #include "config/Configuration.h"
@@ -20,30 +21,39 @@ private:
     configuration_t configuration;
     clusterNodesConnections_t clusterNodesConnections;
     ClusterDbNodeChangeHandler clusterDbNodeChangeHandler;
+    std::atomic_uint64_t lastTimestampBroadcasted;
     clusterManagerService_t clusterManager;
     clusterdb_t clusterDb;
     Node selfNode;
 
+    std::function<void(std::vector<OperationBody>)> reloadUnsyncedOpsCallback;
+
 public:
     Replication(configuration_t configuration): configuration(configuration) {}
 
-    Replication(configuration_t configuration, clusterManagerService_t clusterManager, SetupNodeResponse setupNodeResponse) :
-            configuration(configuration), selfNode(setupNodeResponse.self), clusterDb(std::make_shared<ClusterDb>(configuration)),
-            clusterNodesConnections(std::make_shared<ClusterNodesConnections>(configuration, setupNodeResponse.otherNodes)),
+    Replication(configuration_t configuration, clusterManagerService_t clusterManager, InfoNodeResponse infoNodeResponse) :
+            configuration(configuration), selfNode(infoNodeResponse.self), clusterDb(std::make_shared<ClusterDb>(configuration)),
+            clusterNodesConnections(std::make_shared<ClusterNodesConnections>(configuration, infoNodeResponse.otherNodes)),
             clusterManager(clusterManager), clusterDbNodeChangeHandler(this->clusterNodesConnections)
     {}
+
+    auto setReloadUnsyncedOpsCallback(std::function<void(std::vector<OperationBody>)> callback) -> void {
+        this->reloadUnsyncedOpsCallback = callback;
+    }
+
+    auto setBooting() -> void {
+        this->selfNode.state = NodeState::BOOTING;
+        this->clusterDb->set(this->selfNode.nodeId, this->selfNode);
+    }
 
     auto setRunning() -> void {
         this->selfNode.state = NodeState::RUNNING;
         this->clusterDb->set(this->selfNode.nodeId, this->selfNode);
     }
 
-    auto watchForChangesInClusterDb() -> void {
-        this->watchForChangesInNodesInCluster();
-    }
-
-    auto initializeNodeConnections() -> void {
-        this->clusterNodesConnections->createConnections();
+    auto initialize() -> void {
+        this->watchForChangesInClusterDb();
+        this->initializeNodeConnections();
     }
 
     auto doesAddressBelongToReplicationNode(const std::string& address) -> bool {
@@ -68,11 +78,8 @@ public:
     }
 
     auto broadcast(const Request& request, const bool includeNodeId = true) -> void {
+        this->lastTimestampBroadcasted = request.operation.timestamp;
         this->clusterNodesConnections->broadcast(request, includeNodeId);
-    }
-
-    auto sendRequestToRandomNode(const Request& request) -> Response {
-        return this->clusterNodesConnections->sendRequestToRandomNode(request);
     }
 
     auto getNodeState() -> NodeState {
@@ -87,14 +94,29 @@ private:
     auto watchForChangesInNodesInCluster() -> void {
         this->clusterDb->watch("/nodes", [this](ClusterDbValueChanged nodeChangedEvent){
             auto node = Node::fromJson(nodeChangedEvent.value);
+            auto sameNodeChanged = node.nodeId == this->selfNode.nodeId;
 
-            if(node.nodeId != this->selfNode.nodeId){
+            if(!sameNodeChanged){
                 this->clusterDbNodeChangeHandler.handleChange(node, nodeChangedEvent.changeType);
+            }
+            if(sameNodeChanged && (node.state == NodeState::SHUTDOWN || node.state == NodeState::BOOTING)) {
+                this->reload();
             }
         });
     }
 
-    Request createSyncDataRequest(uint64_t timestamp) {
+    auto reload() -> void {
+        auto infoNodeRepsonse = this->clusterManager->getInfoNode();
+        this->selfNode = infoNodeRepsonse.self;
+        this->clusterNodesConnections->otherNodes = infoNodeRepsonse.otherNodes;
+        this->initialize();
+
+        auto unsyncedOps = this->getUnsyncedOpLogs(this->lastTimestampBroadcasted);
+        this->reloadUnsyncedOpsCallback(unsyncedOps);
+        this->setRunning();
+    }
+
+    auto createSyncDataRequest(uint64_t timestamp) -> Request {
         auto authenticationBody = AuthenticationBody{this->configuration->get(ConfigurationKeys::AUTH_CLUSTER_KEY), false, false};
         auto argsVector = std::make_shared<std::vector<SimpleString<defaultMemDbSize_t>>>();
 
@@ -109,6 +131,15 @@ private:
         request.authentication = authenticationBody;
 
         return request;
+    }
+
+    auto watchForChangesInClusterDb() -> void {
+        this->watchForChangesInNodesInCluster();
+    }
+
+    auto initializeNodeConnections() -> void {
+        this->clusterNodesConnections->deleteAllConnections();
+        this->clusterNodesConnections->createConnections();
     }
 };
 

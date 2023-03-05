@@ -24,6 +24,11 @@ func (nodeConnections *NodeConnections) Delete(nodeId nodes.NodeId_t) {
 }
 
 func (nodeConnections *NodeConnections) Create(node nodes.Node) (NodeConnection, error) {
+	if conn, exists := nodeConnections.GetByNodeId(node.NodeId); exists {
+		conn.connection.Close()
+		nodeConnections.Delete(node.NodeId)
+	}
+
 	tcpConnection, err := net.DialTimeout("tcp", node.Address, 10)
 	if err != nil {
 		return NodeConnection{}, err

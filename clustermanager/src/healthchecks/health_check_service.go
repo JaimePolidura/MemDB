@@ -3,7 +3,7 @@ package healthchecks
 import (
 	"clustermanager/src/_shared/config"
 	"clustermanager/src/_shared/config/keys"
-	nodes2 "clustermanager/src/_shared/nodes"
+	"clustermanager/src/_shared/nodes"
 	"clustermanager/src/_shared/nodes/connection"
 	"clustermanager/src/_shared/nodes/connection/messages/request"
 	"clustermanager/src/_shared/nodes/states"
@@ -13,7 +13,7 @@ import (
 )
 
 type HealthCheckService struct {
-	NodesRespository nodes2.NodeRepository
+	NodesRespository nodes.NodeRepository
 	Configuration    *configuration.Configuartion
 	NodeConnections  *connection.NodeConnections
 
@@ -51,7 +51,7 @@ func (healthCheckService *HealthCheckService) runHealthChecks() {
 	}
 
 	var waitGroup sync.WaitGroup
-	
+
 	for _, node := range nodesFromRepository {
 		if node.State == states.BOOTING {
 			continue
@@ -63,13 +63,13 @@ func (healthCheckService *HealthCheckService) runHealthChecks() {
 	waitGroup.Wait()
 }
 
-func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes2.Node, waitGroup *sync.WaitGroup) {
+func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.Node, waitGroup *sync.WaitGroup) {
 	waitGroup.Add(1)
 
 	connectionToNode, err := healthCheckService.NodeConnections.GetByIdOrCreate(node)
 
 	if err != nil {
-		healthCheckService.NodesRespository.Add(*node.WithErrorState())
+		healthCheckService.NodesRespository.Add(*node.WithState(states.BOOTING))
 		waitGroup.Done()
 		return
 	}
@@ -78,10 +78,11 @@ func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes2.
 	response, err := connectionToNode.Send(request.BuildHealthCheckRequest(authKey))
 
 	if err != nil || !response.Success {
-		healthCheckService.NodesRespository.Add(*node.WithErrorState())
+		healthCheckService.NodesRespository.Add(*node.WithState(states.SHUTDOWN))
 		healthCheckService.NodeConnections.Delete(node.NodeId)
-	} else if node.IsInErrorState() { //Success & previous in error state
-		healthCheckService.NodesRespository.Add(*node.WithRunningState())
+	} else if node.State == states.SHUTDOWN && response.Success {
+		healthCheckService.NodesRespository.Add(*node.WithState(states.BOOTING))
+		healthCheckService.NodeConnections.Create(node)
 	}
 
 	waitGroup.Done()

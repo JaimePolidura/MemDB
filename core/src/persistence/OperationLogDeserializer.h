@@ -43,6 +43,6 @@ private:
             1 + //Operation number
             8 + //Timestamp
             totalArgLength + //Args length (value + size)
-            sizeof(defaultMemDbSize_t); //Padding;
+            sizeof(defaultMemDbLength_t); //Padding;
     }
 };

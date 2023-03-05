@@ -1,5 +1,9 @@
 package response
 
+import (
+	"encoding/binary"
+)
+
 func Desrialize(rawResponse []byte) Response {
 	resultByte := rawResponse[16]
 	success := (resultByte & 0x01) == 1
@@ -12,9 +16,9 @@ func Desrialize(rawResponse []byte) Response {
 func getResponseBodyString(rawResponse []byte) string {
 	var responseBody string
 
-	if len(rawResponse) > 18 {
-		ressponseLength := uint8(rawResponse[17])
-		responseBody = string(rawResponse[18:(18 + ressponseLength)])
+	if len(rawResponse) > 17 {
+		ressponseLength := binary.BigEndian.Uint32(rawResponse[13:16])
+		responseBody = string(rawResponse[17:(17 + ressponseLength)])
 	} else {
 		responseBody = ""
 	}

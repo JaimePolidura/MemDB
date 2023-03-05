@@ -29,7 +29,9 @@ This is the main component. This stores the data and handles request & replicati
 ````
                  1 byte
 +-------------------------------------+
-| Request number...         (8 bytes) | 
+| Total request length...   (4 bytes) |                 
++-------------------------------------+
+| Request number...         (4 bytes) | 
 +-------------------------------------+
 | Length auth authKey       | f1 | f2 |   
 +-------------------------------------+   
@@ -55,7 +57,7 @@ This is the main component. This stores the data and handles request & replicati
 ````
                  1 byte
 +-------------------------------------+
-| Request number...         (8 bytes) | 
+| Request number...         (4 bytes) | 
 +-------------------------------------+
 | Timestamp ...             (8 bytes) |
 +-------------------------------------+   

@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public final class Request {
-    @Getter private final long requestNumber;
+    @Getter private final int requestNumber;
     @Getter private final AuthenticationRequest authentication;
     @Getter private final OperationRequest operationRequest;
 

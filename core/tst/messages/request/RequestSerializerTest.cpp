@@ -4,7 +4,7 @@
 #include <string>
 #include "../../Assertions.h"
 
-Request createRequestNodeId(std::shared_ptr<std::vector<SimpleString<defaultMemDbSize_t>>> args, std::string authKey,
+Request createRequestNodeId(std::shared_ptr<std::vector<SimpleString<defaultMemDbLength_t>>> args, std::string authKey,
                             uint16_t nodeId, uint8_t opNumber, uint64_t timestamp, uint64_t reqNumber, bool flag1Auth = false,
                             bool flag2Auth = false, bool flag1Op = false, bool flag2Op = false);
 
@@ -17,9 +17,9 @@ Request createRequestNodeId(std::shared_ptr<std::vector<SimpleString<defaultMemD
  */
 TEST(RequestSerializer, WithArgsAndNodeId) {
     RequestSerializer requestSerializer{};
-    auto args = std::make_shared<std::vector<SimpleString<defaultMemDbSize_t>>>();
-    args->push_back(SimpleString<defaultMemDbSize_t>::fromChar(0x01));
-    args->push_back(SimpleString<defaultMemDbSize_t>::fromChar(0x01));
+    auto args = std::make_shared<std::vector<SimpleString<defaultMemDbLength_t>>>();
+    args->push_back(SimpleString<defaultMemDbLength_t>::fromChar(0x01));
+    args->push_back(SimpleString<defaultMemDbLength_t>::fromChar(0x01));
     Request request = createRequestNodeId(args, "123", 1, 5, 0x1FF, 2); //00000001 11111111
 
     auto actual = requestSerializer.serialize(request, true);
@@ -46,9 +46,9 @@ TEST(RequestSerializer, WithArgsAndNodeId) {
  */
 TEST(RequestSerializer, WithoutArgsAndFlags) {
     RequestSerializer requestSerializer{};
-    auto args = std::make_shared<std::vector<SimpleString<defaultMemDbSize_t>>>();
-    args->push_back(SimpleString<defaultMemDbSize_t>::fromChar(0x01));
-    args->push_back(SimpleString<defaultMemDbSize_t>::fromChar(0x01));
+    auto args = std::make_shared<std::vector<SimpleString<defaultMemDbLength_t>>>();
+    args->push_back(SimpleString<defaultMemDbLength_t>::fromChar(0x01));
+    args->push_back(SimpleString<defaultMemDbLength_t>::fromChar(0x01));
     Request request = createRequestNodeId(args, "123", 0, 5, 0x1FF, 2, false, true, true, false);
 
     auto actual = requestSerializer.serialize(request, false);
@@ -62,7 +62,7 @@ TEST(RequestSerializer, WithoutArgsAndFlags) {
     Assertions::assertFirstItemsVectorsEqual(expected, actual);
 }
 
-Request createRequestNodeId(std::shared_ptr<std::vector<SimpleString<defaultMemDbSize_t>>> args, std::string authKey,
+Request createRequestNodeId(std::shared_ptr<std::vector<SimpleString<defaultMemDbLength_t>>> args, std::string authKey,
                             uint16_t nodeId, uint8_t opNumber, uint64_t timestamp, uint64_t reqNumber, bool flag1Auth,
                             bool flag2Auth, bool flag1Op, bool flag2Op) {
     AuthenticationBody authenticationBody{};

@@ -14,23 +14,28 @@ public final class RequestSerializer {
         List<Byte> requestNumber = this.getRequestNumber(request);
         List<Byte> auth = this.getAuth(request);
         List<Byte> operation = this.getOperations(request, timestamp);
+        int totalSize = requestNumber.size() + auth.size() + operation.size();
 
-        byte[] totalRaw = new byte[requestNumber.size() + auth.size() + operation.size()];
+        byte[] serialized = new byte[4 + requestNumber.size() + auth.size() + operation.size()];
 
+        serialized = ByteBuffer.wrap(serialized)
+                .order(ByteOrder.BIG_ENDIAN)
+                .putInt(totalSize)
+                .array();
         for (int i = 0; i < requestNumber.size(); i++)
-            totalRaw[i] = requestNumber.get(i);
+            serialized[i + 4] = requestNumber.get(i);
         for (int i = 0; i < auth.size(); i++)
-            totalRaw[i + requestNumber.size()] = auth.get(i);
+            serialized[i + 4 + requestNumber.size()] = auth.get(i);
         for (int i = 0; i < operation.size(); i++)
-            totalRaw[i + requestNumber.size() + auth.size()] = operation.get(i);
+            serialized[i + 4 + requestNumber.size() + auth.size()] = operation.get(i);
 
-        return totalRaw;
+        return serialized;
     }
 
     private List<Byte> getRequestNumber(Request request) {
         byte[] bytes = ByteBuffer.allocate(Long.BYTES)
                 .order(ByteOrder.BIG_ENDIAN)
-                .putLong(request.getRequestNumber())
+                .putInt(request.getRequestNumber())
                 .array();
 
         return Arrays.stream(Utils.primitiveToWrapper(bytes)).toList();

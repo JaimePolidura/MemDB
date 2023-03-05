@@ -8,7 +8,7 @@
 #include "auth/AuthenticationType.h"
 
 struct OperationBody {
-    std::shared_ptr<std::vector<SimpleString<defaultMemDbSize_t>>> args;
+    std::shared_ptr<std::vector<SimpleString<defaultMemDbLength_t>>> args;
     uint64_t timestamp;
     uint16_t nodeId;
     uint8_t operatorNumber; //0 - 127
@@ -24,7 +24,7 @@ struct OperationBody {
         operatorNumber(operatorNumber),
         timestamp(timestamp) {}
 
-    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2, uint64_t timestamp, uint16_t nodeId, std::shared_ptr<std::vector<SimpleString<defaultMemDbSize_t>>> argsCons):
+    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2, uint64_t timestamp, uint16_t nodeId, std::shared_ptr<std::vector<SimpleString<defaultMemDbLength_t>>> argsCons):
         flag1(flag1),
         flag2(flag2),
         nodeId(nodeId),
@@ -39,6 +39,19 @@ struct OperationBody {
             a.flag1 == this->flag1 &&
             a.flag2 == this->flag2 &&
             a.args.get() == this->args.get();
+    }
+
+    defaultMemDbRequestLength_t getTotalLength(bool includesNodeId = false) const {
+        defaultMemDbRequestLength_t totalLength = 0;
+        totalLength += 8; //Timestamp
+        if(includesNodeId) totalLength += 2;
+
+        for(auto arg = this->args->begin(); arg < this->args->end(); arg++) {
+            totalLength += sizeof(defaultMemDbLength_t); //Arg length
+            totalLength += arg->size; //Arg length
+        }
+
+        return totalLength;
     }
 };
 
@@ -72,13 +85,17 @@ public:
 
         return * this;
     }
+
+    defaultMemDbRequestLength_t getTotalLength() const {
+        return 1 + authKey.size();
+    }
 };
 
 struct Request {
     AuthenticationBody authentication;
     OperationBody operation;
-    uint64_t requestNumber;
-    AuthenticationType authenticationType;
+    defaultMemDbRequestNumberLength_t requestNumber;
+    AuthenticationType authenticationType; //Not in serializetion
 
     Request(const Request& other) {
         this->authentication = other.authentication;
@@ -104,5 +121,14 @@ struct Request {
     }
 
     Request() = default;
+
+    defaultMemDbRequestLength_t getTotalLength() const {
+        defaultMemDbRequestLength_t length;
+        length += sizeof(defaultMemDbRequestNumberLength_t);
+        length += this->authentication.getTotalLength();
+        length += this->operation.getTotalLength(this->authenticationType == AuthenticationType::CLUSTER);
+
+        return length;
+    }
 };
 

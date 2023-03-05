@@ -118,9 +118,9 @@ private:
 
     auto createSyncDataRequest(uint64_t timestamp) -> Request {
         auto authenticationBody = AuthenticationBody{this->configuration->get(ConfigurationKeys::AUTH_CLUSTER_KEY), false, false};
-        auto argsVector = std::make_shared<std::vector<SimpleString<defaultMemDbSize_t>>>();
+        auto argsVector = std::make_shared<std::vector<SimpleString<defaultMemDbLength_t>>>();
 
-        argsVector->push_back(SimpleString<defaultMemDbSize_t>::fromString(StringUtils::toString(timestamp)));
+        argsVector->push_back(SimpleString<defaultMemDbLength_t>::fromString(StringUtils::toString(timestamp)));
 
         OperationBody operationBody{};
         operationBody.args = argsVector;

@@ -13,22 +13,23 @@ private:
     static const uint8_t FLAG2_MASK = 0x10; //0100 0000
 
 public:
+    //In buffer we dont pass total request length
     Request deserialize(const std::vector<uint8_t>& buffer, const bool includesNodeId = false) {
         uint8_t authLength = this->getValueWithoutFlags(buffer, sizeof(uint64_t));
 
         Request request{};
-        request.requestNumber = Utils::parseFromBuffer<uint64_t>(buffer);
+        request.requestNumber = Utils::parseFromBuffer<defaultMemDbRequestNumberLength_t>(buffer);
         request.authentication = this->deserializeAuthenticacion(buffer);
-        request.operation = this->deserializeOperation(buffer, authLength + sizeof(uint64_t) + 1, includesNodeId);
+        request.operation = this->deserializeOperation(buffer, authLength + sizeof(defaultMemDbRequestNumberLength_t) + 1, includesNodeId);
 
         return request;
     }
 
     AuthenticationBody deserializeAuthenticacion(const std::vector<uint8_t>& buffer) {
-        uint8_t authLength = this->getValueWithoutFlags(buffer, sizeof(uint64_t));
-        uint8_t * authKey = this->fill(buffer, sizeof(uint64_t) + 1, sizeof(uint64_t) + authLength + 1);
-        bool flagAuth1 = this->getFlag(buffer, sizeof(uint64_t), FLAG1_MASK);
-        bool flagAuth2 = this->getFlag(buffer, sizeof(uint64_t), FLAG2_MASK);
+        uint8_t authLength = this->getValueWithoutFlags(buffer, sizeof(defaultMemDbRequestNumberLength_t));
+        uint8_t * authKey = this->fill(buffer, sizeof(defaultMemDbRequestNumberLength_t) + 1, sizeof(defaultMemDbRequestNumberLength_t) + authLength + 1);
+        bool flagAuth1 = this->getFlag(buffer, sizeof(defaultMemDbRequestNumberLength_t), FLAG1_MASK);
+        bool flagAuth2 = this->getFlag(buffer, sizeof(defaultMemDbRequestNumberLength_t), FLAG2_MASK);
 
         return AuthenticationBody(std::string((char *) authKey, authLength), flagAuth1, flagAuth2);
     }
@@ -55,11 +56,11 @@ public:
         }
 
         int numerOfArguments = 0;
-        auto arguments = std::make_shared<std::vector<SimpleString<defaultMemDbSize_t>>>();
+        auto arguments = std::make_shared<std::vector<SimpleString<defaultMemDbLength_t>>>();
 
         while (position + 1 < buffer.size()) {
-            defaultMemDbSize_t argLength = Utils::parseFromBuffer<defaultMemDbSize_t>(buffer, position);
-            position += sizeof(defaultMemDbSize_t);
+            defaultMemDbLength_t argLength = Utils::parseFromBuffer<defaultMemDbLength_t>(buffer, position);
+            position += sizeof(defaultMemDbLength_t);
 
             if(argLength == 0)
                 break;

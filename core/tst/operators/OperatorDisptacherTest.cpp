@@ -72,7 +72,7 @@ TEST(OperatorDispatcher, SuccessfulWriteReplication) {
     ON_CALL(* lamportClockMock, tick(_)).WillByDefault(testing::Return(3));
 
     OperatorDispatcher dispatcher{
-            std::make_shared<Map<defaultMemDbSize_t>>(64),
+            std::make_shared<Map<defaultMemDbLength_t>>(64),
             lamportClockMock,
             operationLogBufferMock,
             operatorRegistryMock
@@ -100,7 +100,7 @@ TEST(OperatorDispatcher, SuccessfulWriteNotReplication) {
     ON_CALL(* lamportClockMock, tick(_)).WillByDefault(testing::Return(3));
 
     OperatorDispatcher dispatcher{
-            std::make_shared<Map<defaultMemDbSize_t>>(64),
+            std::make_shared<Map<defaultMemDbLength_t>>(64),
             lamportClockMock,
             operationLogBufferMock,
             operatorRegistryMock
@@ -127,7 +127,7 @@ TEST(OperatorDispatcher, UnsuccessfulOperationExecutor) {
     ON_CALL(* operatorMock, operate(_, _, _)).WillByDefault(testing::Return(Response::error(ErrorCode::UNKNOWN_KEY)));
 
     OperatorDispatcher dispatcher{
-            std::make_shared<Map<defaultMemDbSize_t>>(64),
+            std::make_shared<Map<defaultMemDbLength_t>>(64),
             lamportClockMock,
             operationLogBufferMock,
             operatorRegistryMock
@@ -147,7 +147,7 @@ TEST(OperatorDispatcher, NotAuthrozied) {
     std::shared_ptr<OperatorRegistry> operatorRegistryMock = std::make_shared<OperatorRegistry>();
 
     OperatorDispatcher dispatcher{
-            std::make_shared<Map<defaultMemDbSize_t>>(64),
+            std::make_shared<Map<defaultMemDbLength_t>>(64),
             std::make_shared<LamportClock>(1),
             operationLogBufferMock,
             operatorRegistryMock
@@ -167,7 +167,7 @@ TEST(OperatorDispatcher, OperatorNotFound) {
     ON_CALL(* operatorRegistryMock, get(testing::Eq(1))).WillByDefault(testing::Return(nullptr));
 
     OperatorDispatcher dispatcher{
-        std::make_shared<Map<defaultMemDbSize_t>>(64),
+        std::make_shared<Map<defaultMemDbLength_t>>(64),
         std::make_shared<LamportClock>(1),
         operationLogBufferMock,
         operatorRegistryMock

@@ -40,7 +40,7 @@ private:
     void clearFileAndAddNewCompressedOperations(memDbDataStore_t db) {
         printf("[SERVER] Compacting logs...\n");
 
-        std::vector<MapEntry<defaultMemDbSize_t>> allDataMap = db->all();
+        std::vector<MapEntry<defaultMemDbLength_t>> allDataMap = db->all();
         FileUtils::clear(FileUtils::getFileInProgramBasePath("memdb", "oplog"));
         std::vector<uint8_t> toWriteCompressed{};
 
@@ -62,7 +62,7 @@ private:
     }
 
     void writePadding(std::vector<uint8_t>& buffer) {
-        for(int i = 0; i < sizeof(defaultMemDbSize_t); i++){
+        for(int i = 0; i < sizeof(defaultMemDbLength_t); i++){
             buffer.push_back(0x00);
         }
     }

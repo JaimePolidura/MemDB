@@ -16,7 +16,7 @@ public:
         replication_t replication = createReplicationObject(configuration);
         lamportClock_t clock = std::make_shared<LamportClock>(1);
         operationLogBuffer_t operationLogBuffer = std::make_shared<OperationLogBuffer>(configuration);
-        memDbDataStore_t map = std::make_shared<Map<defaultMemDbSize_t>>(configuration->get<uint16_t>(ConfigurationKeys::NUMBER_BUCKETS));
+        memDbDataStore_t map = std::make_shared<Map<defaultMemDbLength_t>>(configuration->get<uint16_t>(ConfigurationKeys::NUMBER_BUCKETS));
         operatorDispatcher_t operatorDispatcher = std::make_shared<OperatorDispatcher>(map, clock, operationLogBuffer, replication, configuration);
         tcpServer_t tcpServer = std::make_shared<TCPServer>(configuration, replication, Authenticator{configuration}, operatorDispatcher);
 

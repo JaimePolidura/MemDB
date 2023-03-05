@@ -10,7 +10,7 @@
 TEST(ResponseSerializer, ShouldSerializeSuccessWithData) {
     ResponseSerializer responseSerializer{};
 
-    Response response = Response::success(SimpleString<defaultMemDbSize_t>::fromArray({0x68, 0x65, 0x6C, 0x6C, 0x6F}));
+    Response response = Response::success(SimpleString<defaultMemDbLength_t>::fromArray({0x68, 0x65, 0x6C, 0x6C, 0x6F}));
     response.requestNumber = 0x02;
     response.timestamp = 0x01;
 

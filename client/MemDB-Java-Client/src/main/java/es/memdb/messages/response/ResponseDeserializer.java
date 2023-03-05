@@ -12,7 +12,7 @@ public final class ResponseDeserializer {
     public Response deserialize(byte[] raw) {
         int requestNumber = ByteBuffer.wrap(raw).getInt();
         long timestamp = ByteBuffer.wrap(raw, 4, 8).getLong();
-        boolean isSuccessFul = (raw[8 + 8] & SUCCESSFUL_MASK) == 1;
+        boolean isSuccessFul = (raw[4 + 8] & SUCCESSFUL_MASK) == 1;
         short errorCode = (short) (raw[4 + 8] >> 1);
         String response = (raw.length > (4 + 8 + 1) && raw[4 + 8 + 1 + 4] > 0) ?
                 new String(this.split(raw, 4 + 8 + 1 + 4, raw.length), StandardCharsets.US_ASCII) :

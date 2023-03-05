@@ -93,7 +93,7 @@ public final class MemDb {
     }
 
     private Request createRequestObject(OperationRequest.OperationRequestBuilder operation) {
-        long requestNumber = this.requestNumberGenerator.next();
+        int requestNumber = this.requestNumberGenerator.next();
 
         return Request.builder()
                 .requestNumber(requestNumber)

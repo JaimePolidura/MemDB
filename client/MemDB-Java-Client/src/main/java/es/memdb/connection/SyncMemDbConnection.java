@@ -50,7 +50,7 @@ public final class SyncMemDbConnection implements MemDbConnection {
         try {
             this.operationLock.lock();
 
-            long requestNumber = Utils.toLong(value);
+            int requestNumber = Utils.toInt(value);
 
             this.output.write(value);
 
@@ -63,7 +63,7 @@ public final class SyncMemDbConnection implements MemDbConnection {
     }
 
     @Override
-    public byte[] read(long requestNumber) {
+    public byte[] read(int requestNumber) {
         try{
             while (this.input.read(buffer) != -1)
                 return this.buffer;

@@ -33,7 +33,7 @@ public final class RequestSerializer {
     }
 
     private List<Byte> getRequestNumber(Request request) {
-        byte[] bytes = ByteBuffer.allocate(Long.BYTES)
+        byte[] bytes = ByteBuffer.allocate(Integer.BYTES)
                 .order(ByteOrder.BIG_ENDIAN)
                 .putInt(request.getRequestNumber())
                 .array();

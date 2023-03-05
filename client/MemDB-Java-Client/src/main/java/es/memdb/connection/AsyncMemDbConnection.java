@@ -25,9 +25,9 @@ public final class AsyncMemDbConnection implements MemDbConnection {
     private final byte[] buffer = new byte[257];
 
     private final Executor callbackExecutorThreadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-    private final Map<Long, WaitReadResponseCondition> readMutex = new ConcurrentHashMap<>();
-    private final Map<Long, Byte[]> requestWithoutCallbacks = new ConcurrentHashMap<>();
-    private final Map<Long, Consumer<Byte[]>> callbacks = new ConcurrentHashMap<>();
+    private final Map<Integer, WaitReadResponseCondition> readMutex = new ConcurrentHashMap<>();
+    private final Map<Integer, Byte[]> requestWithoutCallbacks = new ConcurrentHashMap<>();
+    private final Map<Integer, Consumer<Byte[]>> callbacks = new ConcurrentHashMap<>();
     private Lock writeSocketLock = new ReentrantLock(true);
 
     private final ServerAsyncReader serverAsyncReader = new ServerAsyncReader();
@@ -56,7 +56,7 @@ public final class AsyncMemDbConnection implements MemDbConnection {
 
     @Override
     @SneakyThrows
-    public byte[] read(long requestNumber) {
+    public byte[] read(int requestNumber) {
         Byte[] value = this.requestWithoutCallbacks.get(requestNumber);
 
         if(value == null){
@@ -77,7 +77,7 @@ public final class AsyncMemDbConnection implements MemDbConnection {
     @Override
     public void write(byte[] value) {
         try {
-            long requestNumber = Utils.toLong(value);
+            int requestNumber = Utils.toInt(value);
 
             Lock lock = new ReentrantLock();
             Condition condition = lock.newCondition();
@@ -92,7 +92,7 @@ public final class AsyncMemDbConnection implements MemDbConnection {
     @Override
     public void write(byte[] value, Consumer<Byte[]> onResponseCallback) {
         try {
-            long requestNumber = Utils.toLong(value);
+            int requestNumber = Utils.toInt(value);
 
             this.writeToStream(value);
 
@@ -149,7 +149,7 @@ public final class AsyncMemDbConnection implements MemDbConnection {
                 byte[] fromBufferRaw = read();
                 Byte[] fromBufferNotRaw = Utils.primitiveToWrapper(fromBufferRaw);
 
-                long requestNumber = Utils.toLong(fromBufferRaw);
+                int requestNumber = Utils.toInt(fromBufferRaw);
 
                 Consumer<Byte[]> callback = callbacks.get(requestNumber);
 

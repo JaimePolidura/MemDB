@@ -3,8 +3,8 @@ package es.memdb;
 import java.nio.ByteBuffer;
 
 public final class Utils {
-    public static long toLong(byte[] bytes) {
-        return ByteBuffer.wrap(bytes).getLong();
+    public static int toInt(byte[] bytes) {
+        return ByteBuffer.wrap(bytes).getInt();
     }
 
     public static byte[] wrapperToPrimitive(Byte[] wrapper) {

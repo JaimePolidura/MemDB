@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 public interface MemDbConnection extends AutoCloseable{
     void connect() throws IOException;
 
-    byte[] read(long requestNumber);
+    byte[] read(int requestNumber);
 
     void write(byte[] value);
 

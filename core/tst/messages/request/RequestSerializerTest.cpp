@@ -24,7 +24,8 @@ TEST(RequestSerializer, WithArgsAndNodeId) {
 
     auto actual = requestSerializer.serialize(request, true);
     auto expected = std::vector<uint8_t>{
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, //Req number
+        0x00, 0x00, 0x00, 0x1D,
+        0x00, 0x00, 0x00, 0x02, //Req number
         0x0C, 0x31, 0x32, 0x33, //Auth
         0x14, //Op number
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xFF, //Timestamp
@@ -47,13 +48,13 @@ TEST(RequestSerializer, WithArgsAndNodeId) {
 TEST(RequestSerializer, WithoutArgsAndFlags) {
     RequestSerializer requestSerializer{};
     auto args = std::make_shared<std::vector<SimpleString<defaultMemDbLength_t>>>();
-    args->push_back(SimpleString<defaultMemDbLength_t>::fromChar(0x01));
-    args->push_back(SimpleString<defaultMemDbLength_t>::fromChar(0x01));
     Request request = createRequestNodeId(args, "123", 0, 5, 0x1FF, 2, false, true, true, false);
+    request.authenticationType = AuthenticationType::USER;
 
     auto actual = requestSerializer.serialize(request, false);
     auto expected = std::vector<uint8_t>{
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, //Req number
+            0x00, 0x00, 0x00, 0x11,
+            0x00, 0x00, 0x00, 0x02, //Req number
             0x0D, 0x31, 0x32, 0x33, //Auth
             0x16, //Op number
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xFF, //Timestamp

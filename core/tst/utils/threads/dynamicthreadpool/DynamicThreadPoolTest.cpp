@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "./utils/threads/dynamicthreadpool/DynamicThreadPool.h"
+#include "utils/threads/pool/DynamicThreadPool.h"
 
 #include <functional>
 

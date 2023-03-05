@@ -6,6 +6,7 @@
 
 #include <memory>
 #include <vector>
+#include <iostream>
 
 class RequestDeserializer {
 private:
@@ -15,12 +16,10 @@ private:
 public:
     //In buffer we dont pass total request length
     Request deserialize(const std::vector<uint8_t>& buffer, const bool includesNodeId = false) {
-        uint8_t authLength = this->getValueWithoutFlags(buffer, sizeof(uint64_t));
-
         Request request{};
         request.requestNumber = Utils::parseFromBuffer<defaultMemDbRequestNumberLength_t>(buffer);
         request.authentication = this->deserializeAuthenticacion(buffer);
-        request.operation = this->deserializeOperation(buffer, authLength + sizeof(defaultMemDbRequestNumberLength_t) + 1, includesNodeId);
+        request.operation = this->deserializeOperation(buffer, request.authentication.getTotalLength() + sizeof(defaultMemDbRequestNumberLength_t), includesNodeId);
 
         return request;
     }
@@ -33,7 +32,7 @@ public:
 
         return AuthenticationBody(std::string((char *) authKey, authLength), flagAuth1, flagAuth2);
     }
-
+    
     OperationBody deserializeOperation(const std::vector<uint8_t>& buffer, uint64_t position = 0,
                                        const bool includesNodeId = false) {
         uint8_t operatorNumber = this->getValueWithoutFlags(buffer, position);

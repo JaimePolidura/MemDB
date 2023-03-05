@@ -22,27 +22,11 @@ public:
 
             logs.push_back(operationDeserialized);
 
-            uint8_t toIncrease = this->calculateOperationLogSizeInDisk(operationDeserialized);
+            uint8_t toIncrease = operationDeserialized.getTotalLength(false) +
+                    sizeof(defaultMemDbLength_t); //Padding
             bytesPtr = bytesPtr + toIncrease;
         }
 
         return logs;
-    }
-
-private:
-    uint8_t calculateOperationLogSizeInDisk(const OperationBody& deserialized) const {
-        int totalArgLength = std::accumulate(
-                deserialized.args->begin(),
-                deserialized.args->end(),
-                0,
-                [](int acc, const auto& it) {
-                    return acc + it.size + it.getSizeOfStringLengthType();
-                });
-
-        return
-            1 + //Operation number
-            8 + //Timestamp
-            totalArgLength + //Args length (value + size)
-            sizeof(defaultMemDbLength_t); //Padding;
     }
 };

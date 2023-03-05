@@ -47,11 +47,13 @@ public:
 
         OperationOptions options = {.requestFromReplication = request.authenticationType == AuthenticationType::CLUSTER};
 
-        if(!NodeStates::canAcceptRequest(this->replication->getNodeState()) ||
-            (!options.requestFromReplication && !NodeStates::cantExecuteRequest(this->replication->getNodeState()))) {
+        if(this->isInReplicationMode() &&
+            (!NodeStates::canAcceptRequest(this->replication->getNodeState()) ||
+            (!options.requestFromReplication && !NodeStates::cantExecuteRequest(this->replication->getNodeState())))) {
             return Response::error(ErrorCode::INVALID_NODE_STATE);
         }
-        if(options.requestFromReplication && NodeStates::cantExecuteRequest(this->replication->getNodeState())){
+        if(this->isInReplicationMode() && options.requestFromReplication &&
+            !NodeStates::cantExecuteRequest(this->replication->getNodeState())){
             this->replicationOperationBuffer->add(request);
             return Response::success();
         }

@@ -8,12 +8,12 @@
 struct Response {
 public:
     SimpleString<defaultMemDbLength_t> responseValue;
-    uint64_t requestNumber;
+    defaultMemDbRequestNumberLength_t requestNumber;
     uint64_t timestamp;
     uint8_t errorCode;
     bool isSuccessful;
 
-    Response(bool isSuccessful, uint8_t errorCode, uint64_t timestamp, uint64_t reqNumber, const SimpleString<defaultMemDbLength_t> &response) :
+    Response(bool isSuccessful, uint8_t errorCode, uint64_t timestamp, defaultMemDbRequestNumberLength_t reqNumber, const SimpleString<defaultMemDbLength_t> &response) :
             isSuccessful(isSuccessful),
             responseValue(response),
             requestNumber(reqNumber),
@@ -33,7 +33,7 @@ public:
         return Response(false, errorCode, 0, 0, SimpleString<defaultMemDbLength_t>::empty());
     };
 
-    static Response error(uint8_t errorCode, uint64_t requestNumber, uint64_t timestamp = 0) {
+    static Response error(uint8_t errorCode, defaultMemDbRequestNumberLength_t requestNumber, uint64_t timestamp = 0) {
         Response response = Response(false, errorCode, timestamp, 0, SimpleString<defaultMemDbLength_t>::empty());
         response.requestNumber = requestNumber;
 

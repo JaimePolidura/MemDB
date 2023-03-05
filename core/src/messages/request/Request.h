@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <memory>
+#include <iostream>
 
 #include "utils/strings/SimpleString.h"
 #include "memdbtypes.h"
@@ -41,8 +42,9 @@ struct OperationBody {
             a.args.get() == this->args.get();
     }
 
-    defaultMemDbRequestLength_t getTotalLength(bool includesNodeId = false) const {
+    defaultMemDbRequestLength_t getTotalLength(bool includesNodeId) const {
         defaultMemDbRequestLength_t totalLength = 0;
+        totalLength += 1; //Op number
         totalLength += 8; //Timestamp
         if(includesNodeId) totalLength += 2;
 
@@ -122,12 +124,18 @@ struct Request {
 
     Request() = default;
 
-    defaultMemDbRequestLength_t getTotalLength() const {
-        defaultMemDbRequestLength_t length;
-        length += sizeof(defaultMemDbRequestNumberLength_t);
-        length += this->authentication.getTotalLength();
-        length += this->operation.getTotalLength(this->authenticationType == AuthenticationType::CLUSTER);
+    defaultMemDbRequestLength_t getTotalLength(bool includeNodeId = false) const {
+        defaultMemDbRequestLength_t length = 0;
+        std::cout << length << std::endl;
 
+        length += sizeof(defaultMemDbRequestNumberLength_t);
+        std::cout << length << std::endl;
+
+        length += this->authentication.getTotalLength();
+        std::cout << length << std::endl;
+
+        length += this->operation.getTotalLength(includeNodeId);
+        std::cout << length << std::endl;
         return length;
     }
 };

@@ -101,7 +101,7 @@ public:
     }
 
 private:
-    static void connect(tcp::socket& socket, io_context& ioContext, const std::string& address, const bool usingDns) {
+    static void connect(tcp::socket& socket, boost::asio::io_context& ioContext, const std::string& address, const bool usingDns) {
         auto urlValues = StringUtils::split(address, ':');
         auto ipUrl = urlValues[0];
         auto portUrl = urlValues[1];

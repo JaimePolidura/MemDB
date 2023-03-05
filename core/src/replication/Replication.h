@@ -77,12 +77,12 @@ public:
             throw std::runtime_error("Unexpected error in syncing data");
     }
 
-    auto broadcast(const Request& request, const bool includeNodeId = true) -> void {
+    virtual auto broadcast(const Request& request, const bool includeNodeId = true) -> void {
         this->lastTimestampBroadcasted = request.operation.timestamp;
         this->clusterNodesConnections->broadcast(request, includeNodeId);
     }
 
-    auto getNodeState() -> NodeState {
+    virtual auto getNodeState() -> NodeState {
         return this->selfNode.state;
     }
 

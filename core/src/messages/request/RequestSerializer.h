@@ -10,7 +10,7 @@ public:
     std::vector<uint8_t> serialize(const Request& request, const bool includeNodeIdTimestamp = false) {
         std::vector<uint8_t> bytes{};
 
-        Utils::appendToBuffer(request.getTotalLength(), bytes);
+        Utils::appendToBuffer(request.getTotalLength(includeNodeIdTimestamp), bytes);
         Utils::appendToBuffer(request.requestNumber, bytes);
         bytes.push_back(request.authentication.authKey.size() << 2 | request.authentication.flag1 << 1 | request.authentication.flag2);
         Utils::appendToBuffer((uint8_t *) request.authentication.authKey.data(), request.authentication.authKey.size(), bytes);

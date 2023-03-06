@@ -7,7 +7,7 @@ using namespace boost::asio;
 
 class Connection : public std::enable_shared_from_this<Connection> {
 private:
-    uint8_t requestBuffer[1500];
+    uint8_t requestLengthBuffer[sizeof(defaultMemDbRequestLength_t)];
     std::function<void(const std::vector<uint8_t>&)> onRequestCallback;
     ip::tcp::socket socket;
 public:
@@ -29,12 +29,16 @@ public:
     void read() {
         std::shared_ptr<Connection> self = shared_from_this();
 
-        this->socket.async_read_some(boost::asio::buffer(requestBuffer, 1500), [this, self](boost::system::error_code ec, std::size_t length){
+        this->socket.async_read_some(boost::asio::buffer(requestLengthBuffer, sizeof(defaultMemDbRequestLength_t)), [this, self](boost::system::error_code ec, std::size_t lengthRead){
             if(ec) return;
 
-            std::vector<uint8_t> vectorBuffer(this->requestBuffer, this->requestBuffer + length);
+            auto requestLength = Utils::parse<defaultMemDbRequestLength_t>(requestLengthBuffer);
 
-            this->onRequestCallback(vectorBuffer);
+            std::vector<uint8_t> requestBuffer(requestLength);
+
+            this->socket.read_some(boost::asio::buffer(requestBuffer));
+
+            this->onRequestCallback(requestBuffer);
 
             this->read();
         });

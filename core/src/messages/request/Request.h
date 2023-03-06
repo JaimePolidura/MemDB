@@ -126,16 +126,10 @@ struct Request {
 
     defaultMemDbRequestLength_t getTotalLength(bool includeNodeId = false) const {
         defaultMemDbRequestLength_t length = 0;
-        std::cout << length << std::endl;
-
         length += sizeof(defaultMemDbRequestNumberLength_t);
-        std::cout << length << std::endl;
-
         length += this->authentication.getTotalLength();
-        std::cout << length << std::endl;
-
         length += this->operation.getTotalLength(includeNodeId);
-        std::cout << length << std::endl;
+
         return length;
     }
 };

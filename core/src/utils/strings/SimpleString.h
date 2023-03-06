@@ -1,6 +1,8 @@
 #pragma once
 
 #include <memory>
+#include <cstring>
+#include <string>
 
 /**
  * Apparently you cannot create an string from already heap allocated char *. So we create this class
@@ -27,7 +29,11 @@ public:
     uint8_t * operator+(int other) const {
         return this->value.get() + other;
     }
-    
+
+    bool operator<(const SimpleString<StringLengthType>& a) const {
+        return std::strcmp((char *) this->value.get(), (char *) a.value.get()) < 0;
+    }
+
     size_t getSizeOfStringLengthType() const {
         return sizeof(StringLengthType);
     }

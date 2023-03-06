@@ -7,6 +7,16 @@
 
 class OperationLogSerializer {
 public:
+    std::vector<uint8_t> serializeAll(const std::vector<OperationBody>& toSerialize) {
+        std::vector<uint8_t> serialized{};
+
+        for(int i = 0; i < toSerialize.size(); i++){
+            this->serialize(serialized, toSerialize.at(i));
+        }
+
+        return serialized;
+    }
+
     std::vector<uint8_t> serialize(std::vector<uint8_t>& serializedOut, const OperationBody& toDeserialize) {
         //Operator number
         serializedOut.push_back(toDeserialize.operatorNumber << 2 | toDeserialize.flag1 << 1 | toDeserialize.flag2);

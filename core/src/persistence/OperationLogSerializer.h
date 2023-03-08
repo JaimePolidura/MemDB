@@ -7,6 +7,8 @@
 
 class OperationLogSerializer {
 public:
+    OperationLogSerializer() = default;
+
     std::vector<uint8_t> serializeAll(const std::vector<OperationBody>& toSerialize) {
         std::vector<uint8_t> serialized{};
 

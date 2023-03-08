@@ -6,7 +6,7 @@
 #include <map>
 
 #include "messages/request/Request.h"
-#include "CompactionBlock.h"
+#include "MultithreadedCompactionBlock.h"
 
 class MultithreadedLogCompactor {
 public:
@@ -15,14 +15,14 @@ public:
     }
 
 private:
-    static CompactionBlock * createCompactionTree(allOperationLogs_t uncompacted) {
+    static MultithreadedCompactionBlock * createCompactionTree(allOperationLogs_t uncompacted) {
         auto blocksByPhase = createBlocksByPhaseMap(uncompacted);
         blocksByPhase = fillTreeChilds(blocksByPhase);
 
         return blocksByPhase[0].at(0);
     }
 
-    static std::map<int, std::vector<CompactionBlock *>> fillTreeChilds(std::map<int, std::vector<CompactionBlock *>>& blocksByPhase) {
+    static std::map<int, std::vector<MultithreadedCompactionBlock *>> fillTreeChilds(std::map<int, std::vector<MultithreadedCompactionBlock *>>& blocksByPhase) {
         uint32_t numberThreads = std::thread::hardware_concurrency();
         uint32_t height = std::log2(numberThreads);
 
@@ -48,24 +48,24 @@ private:
         return blocksByPhase;
     }
 
-    static std::map<int, std::vector<CompactionBlock *>> createBlocksByPhaseMap(allOperationLogs_t uncompacted) {
+    static std::map<int, std::vector<MultithreadedCompactionBlock *>> createBlocksByPhaseMap(allOperationLogs_t uncompacted) {
         uint32_t numberThreads = std::thread::hardware_concurrency();
         uint32_t height = std::log2(numberThreads);
-        std::map<int, std::vector<CompactionBlock *>> blocksByPhase;
+        std::map<int, std::vector<MultithreadedCompactionBlock *>> blocksByPhase;
 
         for (int actualPhase = 0; actualPhase < height; actualPhase++) {
-            blocksByPhase[actualPhase] = std::vector<CompactionBlock * >{};
+            blocksByPhase[actualPhase] = std::vector<MultithreadedCompactionBlock * >{};
             int nodesToCreateInThisPhase = std::pow(2, actualPhase + 1);
             bool firstPhase = actualPhase == 0;
             bool lastPhase = actualPhase + 1 == height;
 
             for(int j = 0; j < nodesToCreateInThisPhase; j++){
                 if(firstPhase){
-                    blocksByPhase[actualPhase].push_back(CompactionBlock::root());
+                    blocksByPhase[actualPhase].push_back(MultithreadedCompactionBlock::root());
                 }else if(lastPhase) {
-                    blocksByPhase[actualPhase].push_back(CompactionBlock::leaf(uncompacted, j, nodesToCreateInThisPhase));
+                    blocksByPhase[actualPhase].push_back(MultithreadedCompactionBlock::leaf(uncompacted, j, nodesToCreateInThisPhase));
                 }else {
-                    blocksByPhase[actualPhase].push_back(CompactionBlock::node());
+                    blocksByPhase[actualPhase].push_back(MultithreadedCompactionBlock::node());
                 }
             }
         }

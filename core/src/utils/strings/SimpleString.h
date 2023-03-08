@@ -58,10 +58,38 @@ public:
         return SimpleString<StringLengthType>{valuePtr, static_cast<StringLengthType>(values.size())};
     }
 
-    static SimpleString fromChar(char&& value) {
+    static SimpleString fromChar(const char& value) {
         char * valuePtr = new char();
         * valuePtr = value;
 
         return SimpleString{(uint8_t *) valuePtr, 1};
+    }
+};
+
+template <typename StringLengthType>
+struct SimpleStringHash {
+    std::size_t operator()(const SimpleString<StringLengthType>& str) const {
+        // Compute a hash value for the string
+        std::size_t seed = 0;
+        for (StringLengthType i = 0; i < str.size; ++i) {
+            seed ^= *(str.data() + i) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        }
+        return seed;
+    }
+};
+
+template <typename StringLengthType>
+struct SimpleStringEqual {
+    bool operator()(const SimpleString<StringLengthType>& lhs, const SimpleString<StringLengthType>& rhs) const {
+        // Compare two strings for equality
+        if (lhs.size != rhs.size) {
+            return false;
+        }
+        for (StringLengthType i = 0; i < lhs.size; ++i) {
+            if (* (lhs.data() + i) != * (rhs.data() + i)) {
+                return false;
+            }
+        }
+        return true;
     }
 };

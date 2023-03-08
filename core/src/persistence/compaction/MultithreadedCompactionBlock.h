@@ -4,25 +4,25 @@
 #include <thread>
 
 #include "messages/request/Request.h"
-#include "persistence/OperationLogCompacter.h"
+#include "SingleThreadedLogCompacter.h"
 #include "utils/threads/Exchanger.h"
 
 using allOperationLogs_t = std::shared_ptr<std::vector<OperationBody>>;
 
-class CompactionBlock {
+class MultithreadedCompactionBlock {
 public:
-    CompactionBlock * left;
-    CompactionBlock * right;
+    MultithreadedCompactionBlock * left;
+    MultithreadedCompactionBlock * right;
 private:
     std::vector<OperationBody> operationsFirstPhase;
-    OperationLogCompacter operationLogCompacter;
+    SingleThreadedLogCompacter operationLogCompacter;
     bool firstPhase;
 
 public:
-    CompactionBlock(bool firstPhase, std::vector<OperationBody> operations):
+    MultithreadedCompactionBlock(bool firstPhase, std::vector<OperationBody> operations):
             firstPhase(firstPhase), operationsFirstPhase(operations) {}
 
-    CompactionBlock(): firstPhase(false) {}
+    MultithreadedCompactionBlock(): firstPhase(false) {}
 
     std::vector<OperationBody> get() {
         if(this->firstPhase)
@@ -69,19 +69,19 @@ private:
     }
 
 public:
-    static CompactionBlock * node() {
-        return new CompactionBlock();
+    static MultithreadedCompactionBlock * node() {
+        return new MultithreadedCompactionBlock();
     }
 
-    static CompactionBlock * root() {
-        return new CompactionBlock();
+    static MultithreadedCompactionBlock * root() {
+        return new MultithreadedCompactionBlock();
     }
 
-    static CompactionBlock * leaf(allOperationLogs_t uncompacted, int numerBlock, int totalBlocks) {
+    static MultithreadedCompactionBlock * leaf(allOperationLogs_t uncompacted, int numerBlock, int totalBlocks) {
         int logsPerBlock = uncompacted->size() / totalBlocks;
         auto beginPtr = uncompacted->begin() + (logsPerBlock * numerBlock);
         auto endPtr = numerBlock + 1 != totalBlocks ? uncompacted->begin() + (logsPerBlock * (numerBlock + 1)) : uncompacted->end();
 
-        return new CompactionBlock(true, std::vector<OperationBody>(beginPtr, endPtr));
+        return new MultithreadedCompactionBlock(true, std::vector<OperationBody>(beginPtr, endPtr));
     }
 };

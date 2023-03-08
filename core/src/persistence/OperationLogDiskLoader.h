@@ -4,13 +4,14 @@
 #include "utils/datastructures/map/Map.h"
 #include "OperationLogDeserializer.h"
 #include "operators/operations/SetOperator.h"
-#include "OperationLogCompacter.h"
+#include "persistence/compaction/SingleThreadedLogCompacter.h"+
+#include "persistence/OperationLogSerializer.h"
 
 class OperationLogDiskLoader {
 private:
     OperationLogDeserializer operationLogDeserializer;
+    SingleThreadedLogCompacter operationLogCompater;
     OperationLogSerializer operationLogSerializer;
-    OperationLogCompacter operationLogCompater;
 
 public:
     std::vector<OperationBody> getAll() {

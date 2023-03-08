@@ -7,27 +7,26 @@
 #include "persistence/OperationLogCompacter.h"
 #include "utils/threads/Exchanger.h"
 
-class CompactionBlock {
-private:
-    OperationLogCompacter operationLogCompacter;
+using allOperationLogs_t = std::shared_ptr<std::vector<OperationBody>>;
 
-    int phase;
+class CompactionBlock {
+public:
     CompactionBlock * left;
     CompactionBlock * right;
-    std::thread compacterThread;
-    std::vector<OperationBody> operations;
-    std::shared_ptr<std::vector<OperationBody>> sourceData;
-    int numberBlock;
-    int totalBlocks;
+private:
+    std::vector<OperationBody> operationsFirstPhase;
+    OperationLogCompacter operationLogCompacter;
+    bool firstPhase;
+
 public:
-    CompactionBlock(int phase, CompactionBlock * left, CompactionBlock * right, std::shared_ptr<std::vector<OperationBody>> sourceData,
-                    int numberBlock, int totalBlocks, std::vector<OperationBody> operations): phase(phase), left(left), right(right), sourceData(sourceData),
-                    numberBlock(numberBlock), totalBlocks(totalBlocks), operations(operations) {
-    }
+    CompactionBlock(bool firstPhase, std::vector<OperationBody> operations):
+            firstPhase(firstPhase), operationsFirstPhase(operations) {}
+
+    CompactionBlock(): firstPhase(false) {}
 
     std::vector<OperationBody> get() {
-        if(this->firstPhase())
-            return this->operations;
+        if(this->firstPhase)
+            return this->operationsFirstPhase;
 
         auto compactionBlockLeft = this->left->get();
         auto compactionBlockRight = this->right->get();
@@ -69,11 +68,20 @@ private:
         return compactedOut;
     }
 
-    bool lastBlock() {
-        return this->numberBlock == this->totalBlocks;
+public:
+    static CompactionBlock * node() {
+        return new CompactionBlock();
     }
 
-    bool firstPhase() {
-        return this->phase == 0;
+    static CompactionBlock * root() {
+        return new CompactionBlock();
+    }
+
+    static CompactionBlock * leaf(allOperationLogs_t uncompacted, int numerBlock, int totalBlocks) {
+        int logsPerBlock = uncompacted->size() / totalBlocks;
+        auto beginPtr = uncompacted->begin() + (logsPerBlock * numerBlock);
+        auto endPtr = numerBlock + 1 != totalBlocks ? uncompacted->begin() + (logsPerBlock * (numerBlock + 1)) : uncompacted->end();
+
+        return new CompactionBlock(true, std::vector<OperationBody>(beginPtr, endPtr));
     }
 };

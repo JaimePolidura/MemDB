@@ -17,9 +17,9 @@ This is the main component. This stores the data and handles request & replicati
 ## How it works
 - Data is stored in a hashmap with fixed number of buckets (default 64). Each bucket will contain an autobalanced AVL Tree.
 - It is multithreaded. Each bucket will have a read/write lock.
-- It is persistent. When a write comes in, it will be stored in a buffer. When it reaches a threshold, the operations will be appended to a local file. When the server starts up, it will apply all operations stored in the file and compact them.
+- It is persistent. When a write comes in, it will be stored in a buffer. When it reaches a threshold, the operationsFirstPhase will be appended to a local file. When the server starts up, it will apply all operationsFirstPhase stored in the file and compact them.
 - Authentication will be carried by a key (AUTH_USER_KEY), which will be present in every request.
-- Threads allocated for operations are dynamic. They grow or shrink depending on the demand.
+- Threads allocated for operationsFirstPhase are dynamic. They grow or shrink depending on the demand.
 #### Replication
 - When a write comes in it will broadcast the write operation to every node. These nodes are queried periodicly to the cluster mamanger.
 - To authenticate with the cluster manager a specific auth key will be used (AUTH_CLUSTER_KEY)

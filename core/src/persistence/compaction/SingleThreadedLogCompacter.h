@@ -8,14 +8,15 @@
 
 #include "messages/request/Request.h"
 
+using alreadySennKeys_t = std::unordered_set<SimpleString<defaultMemDbLength_t>, SimpleStringHash<defaultMemDbLength_t>, SimpleStringEqual<defaultMemDbLength_t>>;
+
 class SingleThreadedLogCompacter {
 public:
-    auto compact(const std::vector<OperationBody>& uncompacted) -> std::vector<OperationBody> {
+    auto compact(const std::vector<OperationBody>& uncompacted,
+                 const std::vector<OperationBody>& compacted = {},
+                 const alreadySennKeys_t& seenOperationKeys = {}) -> std::vector<OperationBody> {
         if(uncompacted.empty())
             return uncompacted;
-
-        std::unordered_set<SimpleString<defaultMemDbLength_t>, SimpleStringHash<defaultMemDbLength_t>, SimpleStringEqual<defaultMemDbLength_t>> seenOperationKeys;
-        std::vector<OperationBody> compacted{};
 
         for(int i = uncompacted.size() - 1; i >= 0; i--) {
             auto actualOperation = uncompacted[i];
@@ -25,8 +26,8 @@ public:
                 continue;
             }
 
-            seenOperationKeys.insert(actualOperationKey);
-            compacted.push_back(actualOperation);
+            const_cast<alreadySennKeys_t&>(seenOperationKeys).insert(actualOperationKey);
+            const_cast<std::vector<OperationBody>&>(compacted).push_back(actualOperation);
         }
 
         return compacted;

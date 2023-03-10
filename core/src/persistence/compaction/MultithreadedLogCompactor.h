@@ -1,9 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <thread>
-#include <math.h>
-#include <map>
+#include "shared.h"
 
 #include "messages/request/Request.h"
 #include "MultiThreadedCompactionBlock.h"

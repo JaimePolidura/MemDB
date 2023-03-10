@@ -3,7 +3,7 @@
 #include "Request.h"
 #include "utils/Utils.h"
 
-#include <vector>
+#include "shared.h"
 
 class RequestSerializer {
 public:

@@ -1,7 +1,6 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
-#include <etcd/Client.hpp>
+#include "shared.h"
 
 enum ClusterDbChangeType {
     DELETED, PUT

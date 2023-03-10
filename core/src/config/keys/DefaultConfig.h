@@ -1,8 +1,6 @@
 #pragma once
 
-#include <string>
-#include <vector>
-#include <map>
+#include "shared.h"
 
 #include "config/keys/ConfigurationKeys.h"
 

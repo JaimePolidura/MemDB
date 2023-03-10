@@ -1,10 +1,6 @@
 #pragma once
 
-#include <cstdlib>
-#include <memory>
-#include <vector>
-#include <ctime>
-#include <atomic>
+#include "shared.h"
 
 #include "utils/clock/LamportClock.h"
 #include "config/Configuration.h"

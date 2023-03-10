@@ -1,7 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <numeric>
+#include "shared.h"
 
 #include "messages/request/RequestDeserializer.h"
 

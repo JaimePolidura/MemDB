@@ -1,7 +1,6 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
-#include <vector>
+#include "shared.h"
 
 #include "replication/Node.h"
 

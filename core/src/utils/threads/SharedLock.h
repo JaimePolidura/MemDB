@@ -1,6 +1,6 @@
 #pragma once
 
-#include <condition_variable>
+#include "shared.h"
 
 class SharedLock {
 private:

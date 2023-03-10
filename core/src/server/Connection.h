@@ -1,7 +1,6 @@
 #pragma once
 
-#include <memory>
-#include <boost/asio.hpp>
+#include "shared.h"
 
 using namespace boost::asio;
 

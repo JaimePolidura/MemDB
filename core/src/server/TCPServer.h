@@ -1,7 +1,6 @@
 #pragma once
 
-#include <string>
-#include <boost/asio.hpp>
+#include "shared.h"
 
 #include "config/keys/ConfigurationKeys.h"
 #include "config/Configuration.h"

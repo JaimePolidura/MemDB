@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstdint>
+#include "shared.h"
 
 class ErrorCode {
 public:

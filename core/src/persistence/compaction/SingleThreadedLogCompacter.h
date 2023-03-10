@@ -1,10 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <map>
-#include <set>
-#include <unordered_set>
-#include <iostream>
+#include "shared.h"
 
 #include "messages/request/Request.h"
 

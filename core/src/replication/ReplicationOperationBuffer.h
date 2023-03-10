@@ -1,9 +1,7 @@
 #pragma once
 
 #include "messages/request/Request.h"
-
-#include <mutex>
-#include <queue>
+#include "shared.h"
 
 class ReplicationOperationBuffer {
 private:

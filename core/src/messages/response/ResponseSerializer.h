@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include "shared.h"
 
 #include "Response.h"
 

@@ -1,8 +1,6 @@
 #pragma once
 
-#include <string>
-#include <nlohmann/json.hpp>
-
+#include "shared.h"
 #include "NodeState.h"
 
 struct Node {

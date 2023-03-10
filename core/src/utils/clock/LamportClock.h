@@ -1,6 +1,6 @@
 #pragma once
 
-#include <atomic>
+#include "shared.h"
 
 class LamportClock {
 public:

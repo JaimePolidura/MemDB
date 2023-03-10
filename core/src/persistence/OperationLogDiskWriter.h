@@ -1,7 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <mutex>
+#include "shared.h"
 
 #include "utils/files/FileUtils.h"
 #include "OperationLogSerializer.h"

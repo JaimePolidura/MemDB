@@ -1,8 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <cstdint>
-#include <cstdio>
+#include "shared.h"
 
 class Utils {
 public:

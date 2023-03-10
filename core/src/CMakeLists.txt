@@ -8,6 +8,8 @@ add_executable(${BINARY}_run ${SOURCES})
 add_library(${BINARY}_lib STATIC ${SOURCES})
 target_link_libraries(${BINARY}_lib ${Boost_LIBRARIES})
 
+cotire(${BINARY}_lib)
+
 # VCPKG Libraries
 include_directories(${CMAKE_PREFIX_PATH}/include)
 
@@ -16,8 +18,6 @@ target_link_libraries(${BINARY}_lib PRIVATE etcd-cpp-api)
 
 find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(${BINARY}_lib PRIVATE nlohmann_json::nlohmann_json)
-
-target_precompile_headers(${BINARY}_lib PRIVATE "shared.h")
 
 target_link_libraries(${BINARY}_run PRIVATE ${BINARY}_lib)
 

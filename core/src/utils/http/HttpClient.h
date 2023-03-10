@@ -1,12 +1,6 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
-#include <boost/asio.hpp>
-#include <boost/beast.hpp>
-#include <boost/beast/core/tcp_stream.hpp>
-#include <boost/beast/core/flat_buffer.hpp>
-#include <string>
-#include <map>
+#include "shared.h"
 
 #include "utils/strings/StringUtils.h"
 

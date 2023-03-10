@@ -1,7 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <memory>
+#include "shared.h"
 
 #include "Operator.h"
 #include "operators/operations/GetOperator.h"

@@ -1,8 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <mutex>
-
+#include "shared.h"
 #include "persistence/OperationLogDiskWriter.h"
 #include "config/Configuration.h"
 #include "config/keys/ConfigurationKeys.h"

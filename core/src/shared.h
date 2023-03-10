@@ -5,8 +5,10 @@
 #include <queue>
 #include <map>
 #include <unordered_set>
+#include <set>
 
 //Concurrency
+#include <thread>
 #include <mutex>
 #include <future>
 #include <atomic>
@@ -30,6 +32,15 @@
 #include <tgmath.h>
 #include <optional>
 #include <filesystem>
+#include <math.h>
+
+//Deps
+#include <boost/beast.hpp>
+#include <boost/beast/core/tcp_stream.hpp>
+#include <boost/beast/core/flat_buffer.hpp>
+#include <nlohmann/json.hpp>
+#include <boost/asio.hpp>
+#include <etcd/Client.hpp>
 
 //OS
 //#ifdef _WIN32
@@ -40,10 +51,3 @@
 //    #include <unistd.h>
 //    #include <fcntl.h>
 //#endif
-
-//Deps
-#include <boost/beast.hpp>
-#include <boost/beast/core/tcp_stream.hpp>
-#include <boost/beast/core/flat_buffer.hpp>
-#include <nlohmann/json.hpp>
-#include <boost/asio.hpp>

@@ -2,9 +2,7 @@
 
 #include "InterruptedQueueException.h"
 
-#include <condition_variable>
-#include <mutex>
-#include <memory>
+#include "shared.h"
 
 template<typename T>
 class BlockingQueueNode {

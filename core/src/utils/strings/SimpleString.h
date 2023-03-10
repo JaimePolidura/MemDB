@@ -1,8 +1,6 @@
 #pragma once
 
-#include <memory>
-#include <cstring>
-#include <string>
+#include "shared.h"
 
 /**
  * Apparently you cannot create an string from already heap allocated char *. So we create this class

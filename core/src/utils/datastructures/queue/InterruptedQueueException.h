@@ -1,5 +1,5 @@
 #pragma once
 
-#include <exception>
+#include "shared.h"
 
 class InterruptedQueueException : public std::exception {};

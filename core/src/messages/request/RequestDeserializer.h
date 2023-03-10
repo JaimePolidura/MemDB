@@ -4,9 +4,7 @@
 #include "utils/Utils.h"
 #include "memdbtypes.h"
 
-#include <memory>
-#include <vector>
-#include <iostream>
+#include "shared.h"
 
 class RequestDeserializer {
 private:

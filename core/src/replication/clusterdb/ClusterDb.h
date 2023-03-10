@@ -1,7 +1,6 @@
 #pragma once
 
-#include <etcd/Client.hpp>
-#include <nlohmann/json.hpp>
+#include "shared.h"
 
 #include "config/Configuration.h"
 #include "config/keys/ConfigurationKeys.h"

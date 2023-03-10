@@ -1,7 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <queue>
+#include "shared.h"
 
 #include "utils/strings/SimpleString.h"
 #include "utils/clock/LamportClock.h"

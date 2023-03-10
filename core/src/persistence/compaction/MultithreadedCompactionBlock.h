@@ -1,9 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <thread>
-#include <iostream>
-#include <future>
+#include "shared.h"
 
 #include "messages/request/Request.h"
 #include "SingleThreadedLogCompacter.h"

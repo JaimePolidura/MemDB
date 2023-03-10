@@ -1,9 +1,6 @@
 #pragma once
 
-#include <map>
-#include <string>
-#include <iostream>
-
+#include "shared.h"
 #include "utils/strings/StringUtils.h"
 
 class Configuration {

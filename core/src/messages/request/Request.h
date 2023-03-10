@@ -1,8 +1,6 @@
 #pragma once
 
-#include <stdint.h>
-#include <memory>
-#include <iostream>
+#include "shared.h"
 
 #include "utils/strings/SimpleString.h"
 #include "memdbtypes.h"

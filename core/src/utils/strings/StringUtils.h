@@ -1,8 +1,6 @@
 #pragma once
 
-#include <sstream>
-#include <vector>
-#include <string>
+#include "shared.h"
 
 class StringUtils {
 public:

@@ -5,8 +5,7 @@
 #include "utils/http/HttpClient.h"
 #include "replication/Node.h"
 
-#include <nlohmann/json.hpp>
-#include <memory>
+#include "shared.h"
 
 class ClusterManagerService {
     std::shared_ptr<Configuration> configuartion;

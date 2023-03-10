@@ -1,7 +1,6 @@
 #pragma once
 
-#include <memory>
-#include <functional>
+#include "shared.h"
 
 #include "utils/datastructures/queue/BlockingQueue.h"
 

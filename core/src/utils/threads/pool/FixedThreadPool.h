@@ -1,7 +1,7 @@
 #include "utils/threads/pool/Worker.h"
 #include "utils/threads/pool/DynamicThreadPool.h"
 
-#include <vector>
+#include "shared.h"
 
 class FixedThreadPool : public DynamicThreadPool {
 public:

@@ -1,11 +1,6 @@
 #pragma once
 
-#include <atomic>
-#include <memory>
-#include <vector>
-#include <string>
-#include <numeric>
-
+#include "shared.h"
 #include "utils/threads/pool/Worker.h"
 
 class DynamicThreadPool {

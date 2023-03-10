@@ -1,8 +1,6 @@
 #pragma once
 
-#include <map>
-#include <cstdint>
-#include <memory>
+#include "shared.h"
 
 #include "Operator.h"
 #include "AllOperators.h"

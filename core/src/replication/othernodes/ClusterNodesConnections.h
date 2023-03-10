@@ -1,9 +1,6 @@
 #pragma once
 
-#include <map>
-#include <boost/asio.hpp>
-#include <vector>
-#include <set>
+#include "shared.h"
 
 #include "replication/Node.h"
 #include "utils/strings/StringUtils.h"

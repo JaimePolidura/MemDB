@@ -4,14 +4,14 @@
 #include "utils/datastructures/map/Map.h"
 #include "OperationLogDeserializer.h"
 #include "operators/operations/SetOperator.h"
-#include "persistence/compaction/SingleThreadedLogCompacter.h"+
 #include "persistence/OperationLogSerializer.h"
+#include "persistence/compaction/OperationLogCompacter.h"
 
 class OperationLogDiskLoader {
 private:
     OperationLogDeserializer operationLogDeserializer;
-    SingleThreadedLogCompacter operationLogCompater;
     OperationLogSerializer operationLogSerializer;
+    OperationLogCompacter operationLogCompacter;
 
 public:
     std::vector<OperationBody> getAll() {
@@ -30,7 +30,7 @@ public:
 
         std::vector<uint8_t> bytesFromOpLog = FileUtils::readBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog"));
         std::vector<OperationBody> unCompactedLogs = this->operationLogDeserializer.deserializeAll(bytesFromOpLog);
-        std::vector<OperationBody> compactedLogs = this->operationLogCompater.compact(unCompactedLogs);
+        std::vector<OperationBody> compactedLogs = this->operationLogCompacter.compact(unCompactedLogs);
 
         this->writeToDisk(compactedLogs);
 

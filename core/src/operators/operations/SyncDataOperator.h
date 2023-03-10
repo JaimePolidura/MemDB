@@ -5,11 +5,13 @@
 #include "utils/Utils.h"
 #include "persistence/OperationLogDiskLoader.h"
 #include "operators/ControlOperator.h"
+#include "persistence/compaction/OperationLogCompacter.h"
 
 class SyncDataOperator : public Operator, public ControlOperator {
 private:
     OperationLogDiskLoader operationLogDiskLoader;
     OperationLogSerializer operationLogSerializer;
+    OperationLogCompacter operationLogCompacter;
 
 public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x05;
@@ -49,16 +51,20 @@ private:
         std::vector<OperationBody> operationLogsInBuffer =  operationLogBuffer->get();
         operationLogBuffer->unlockWritesToDisk();
 
-        for(auto it = operationLogsInDisk.begin(); it < operationLogsInDisk.end() && it->timestamp > lastTimestampInClient; it++) //Very long log may collapse RAM TODO fix
+        auto compactedFromDisk = this->operationLogCompacter.compact(operationLogsInDisk);
+        auto compactedFromBuffer = this->operationLogCompacter.compact(operationLogsInBuffer);
+
+        for(auto it = compactedFromDisk.begin(); it < compactedFromDisk.end() && it->timestamp > lastTimestampInClient; it++) //Very long log may collapse RAM TODO fix
             this->operationLogSerializer.serialize(operationsToSendToTheClient, * it);
-        for(auto it = operationLogsInBuffer.begin(); it < operationLogsInBuffer.end(); it++)
+        for(auto it = compactedFromBuffer.begin(); it < compactedFromBuffer.end(); it++)
             this->operationLogSerializer.serialize(operationsToSendToTheClient, * it);
     }
 
-    void takeOperationsFromBufferAndSerialize(uint64_t lastTimestampInClient, std::vector<uint8_t>& operationsToSendToTheClient,
+    void takeOperationsFromBufferAndSerialize(uint64_t lastTimestampInClient,
+                                              std::vector<uint8_t>& operationsToSendToTheClient,
                                               operationLogBuffer_t operationLogBuffer) {
         operationLogBuffer->unlockWritesToDisk();
-        std::vector<OperationBody> operationLogsInBuffer =  operationLogBuffer->get();
+        std::vector<OperationBody> operationLogsInBuffer = operationLogBuffer->get();
 
         for(auto it = operationLogsInBuffer.begin(); it < operationLogsInBuffer.end() && it->timestamp > lastTimestampInClient; it++)
             this->operationLogSerializer.serialize(operationsToSendToTheClient, * it);

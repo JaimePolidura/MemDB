@@ -4,7 +4,6 @@
 
 #include "messages/request/Request.h"
 #include "SingleThreadedLogCompacter.h"
-#include "utils/threads/Exchanger.h"
 
 using allOperationLogs_t = std::shared_ptr<std::vector<OperationBody>>;
 

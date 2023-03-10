@@ -1,8 +1,6 @@
 #pragma once
 
-#include <memory>
-#include <map>
-#include <stdexcept>
+#include "shared.h"
 
 #include "config/Configuration.h"
 #include "config/keys/ConfigurationKeys.h"

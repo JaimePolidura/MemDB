@@ -12,6 +12,12 @@ if(NOT BUILDING_LINUX_DEPLOYMENT)
     set(CMAKE_TOOLCHAIN_FILE "C:/vcpkg/scripts/buildsystems/vcpkg.cmake")
     set(CMAKE_PREFIX_PATH "${VCPKG_ROOT}/installed/x64-windows")
 endif()
+if(BUILDING_LINUX_DEPLOYMENT)
+    set(VCPKG_ROOT "opt/vcpkg")
+    set(VCPKG_TARGET_TRIPLET "x64-linux")
+    set(CMAKE_TOOLCHAIN_FILE "/opt/vcpkg/scripts/buildsystems/vcpkg.cmake")
+    set(CMAKE_PREFIX_PATH "${VCPKG_ROOT}/installed/x64-linux")
+endif()
 
 include(cotire)
 

@@ -4,6 +4,7 @@ rm -r tst
 rm -r playground
 rm -r cmake-build-debug-coverage
 rm -r cmake-build-debug
+rm .r cmake-build-visualstudio-debug-coverage
 rm -r .idea
 
 cd src

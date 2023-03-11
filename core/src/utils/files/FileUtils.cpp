@@ -1,8 +1,6 @@
 #include "FileUtils.h"
 
-#include <stdexcept>
-#include <fstream>
-#include <filesystem>
+#include "shared.h"
 
 #ifdef _WIN32
     #include <Windows.h>
@@ -28,8 +26,7 @@ void FileUtils::createFile(const std::string &path, const std::string &name) {
 
     CloseHandle(handle);
 #else
-    std::string fullPath = path + "/" + name;
-    int fd = open(fullPath.c_str(), O_CREAT | O_WRONLY | O_TRUNC, 0600);
+    int fd = open(path.c_str(), O_CREAT | O_WRONLY | O_TRUNC, 0600);
     close(fd);
 #endif
 }

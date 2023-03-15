@@ -63,7 +63,6 @@ public final class MemDb {
 
     private String sendRequest(OperationRequest.OperationRequestBuilder operation) {
         Request request = this.createRequestObject(operation);
-
         byte[] rawRequest = this.requestSerializer.serialize(request, this.clock.get());
 
         this.memDbConnection.write(rawRequest);

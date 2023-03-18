@@ -1,2 +1,5 @@
-package es.memdb.cluster;public final class NodeState {
+package es.memdb.cluster;
+
+public enum NodeState {
+    RUNNING, SHUTDOWN, BOOTING
 }

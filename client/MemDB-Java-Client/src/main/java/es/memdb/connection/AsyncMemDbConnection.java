@@ -1,7 +1,6 @@
 package es.memdb.connection;
 
 import es.memdb.Utils;
-import es.memdb.utils.clock.LamportClock;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
@@ -27,7 +26,7 @@ public final class AsyncMemDbConnection implements MemDbConnection {
     private final Executor callbackExecutorThreadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     private final Map<Integer, WaitReadResponseCondition> readMutex = new ConcurrentHashMap<>();
     private final Map<Integer, Byte[]> requestWithoutCallbacks = new ConcurrentHashMap<>();
-    private final Map<Integer, Consumer<Byte[]>> callbacks = new ConcurrentHashMap<>();
+    private final Map<Integer, Consumer<Byte[]>> requestWithCallbacks = new ConcurrentHashMap<>();
     private Lock writeSocketLock = new ReentrantLock(true);
 
     private final ServerAsyncReader serverAsyncReader = new ServerAsyncReader();
@@ -96,10 +95,15 @@ public final class AsyncMemDbConnection implements MemDbConnection {
 
             this.writeToStream(value);
 
-            this.callbacks.put(requestNumber, onResponseCallback);
+            this.requestWithCallbacks.put(requestNumber, onResponseCallback);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean isClosed() {
+        return this.socket.isClosed();
     }
 
     private byte[] read() {
@@ -151,7 +155,7 @@ public final class AsyncMemDbConnection implements MemDbConnection {
 
                 int requestNumber = Utils.toInt(fromBufferRaw);
 
-                Consumer<Byte[]> callback = callbacks.get(requestNumber);
+                Consumer<Byte[]> callback = requestWithCallbacks.get(requestNumber);
 
                 if(callback != null) {
                     callbackExecutorThreadPool.execute(() -> callback.accept(fromBufferNotRaw));

@@ -63,6 +63,11 @@ public final class SyncMemDbConnection implements MemDbConnection {
     }
 
     @Override
+    public boolean isClosed() {
+        return this.socket.isClosed();
+    }
+
+    @Override
     public byte[] read(int requestNumber) {
         try{
             while (this.input.read(buffer) != -1)

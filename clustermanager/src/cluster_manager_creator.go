@@ -75,10 +75,12 @@ func configureHttpApi(configuration *configuration.Configuartion, etcdNativeClie
 	loginController := &api.LoginController{Configuration: configuration}
 	setupNodeController := &api.SetupNodeController{NodesRepository: nodesRepository}
 	createNodeController := &api.CreateNodeController{NodesRepository: nodesRepository}
-
+	getAllNodesController := api.GetAllNodeController{NodesRepository: nodesRepository}
+	
 	echoApi.POST("/login", loginController.Login)
 	apiGroup.GET("/nodes/selfinfo", setupNodeController.SetupNode)
 	apiGroup.POST("/nodes/create", createNodeController.CreateNode)
+	apiGroup.GET("/nodes/all", getAllNodesController.GetAllNodes)
 
 	return echoApi
 }

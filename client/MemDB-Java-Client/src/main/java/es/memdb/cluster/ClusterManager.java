@@ -19,10 +19,9 @@ public final class ClusterManager {
     private final String authClusterKey;
     private String lastToken;
 
-    public ClusterManager(List<String> addresses, String authClusterKey, String lastToken) {
+    public ClusterManager(List<String> addresses, String authClusterKey) {
         this.addresses = addresses;
         this.authClusterKey = authClusterKey;
-        this.lastToken = lastToken;
         this.lastToken = authenticate();
     }
 

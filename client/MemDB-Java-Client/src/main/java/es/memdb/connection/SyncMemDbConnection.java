@@ -1,11 +1,14 @@
 package es.memdb.connection;
 
 import es.memdb.Utils;
+import lombok.SneakyThrows;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
@@ -17,7 +20,7 @@ public final class SyncMemDbConnection implements MemDbConnection {
     private OutputStream output;
     private InputStream input;
 
-    private final byte[] buffer = new byte[257];
+    private final ResponseReader responseReader = new ResponseReader();
     private final Lock operationLock = new ReentrantLock(true);
 
     public SyncMemDbConnection(String host, int port) throws IOException {
@@ -72,11 +75,8 @@ public final class SyncMemDbConnection implements MemDbConnection {
     @Override
     public byte[] read(int requestNumber) {
         try{
-            while (this.input.read(buffer) != -1)
-                return this.buffer;
-
-            return this.buffer;
-        }catch (IOException e) {
+            return this.responseReader.read(this.input);
+        }catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }finally {

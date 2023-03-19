@@ -21,8 +21,6 @@ public final class AsyncMemDbConnection implements MemDbConnection {
     private OutputStream output;
     private InputStream input;
 
-    private final byte[] buffer = new byte[257];
-
     private final Executor callbackExecutorThreadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     private final Map<Integer, WaitReadResponseCondition> readMutex = new ConcurrentHashMap<>();
     private final Map<Integer, Byte[]> requestWithoutCallbacks = new ConcurrentHashMap<>();
@@ -40,12 +38,14 @@ public final class AsyncMemDbConnection implements MemDbConnection {
 
     @Override
     public void connect() throws IOException {
-        this.socket = new Socket(this.host, this.port);
-        this.output = this.socket.getOutputStream();
-        this.input = this.socket.getInputStream();
+        if(this.isClosed()){
+            this.socket = new Socket(this.host, this.port);
+            this.output = this.socket.getOutputStream();
+            this.input = this.socket.getInputStream();
 
-        this.serverAsyncReader.start();
-        this.serverAsyncWriter.start();
+            this.serverAsyncReader.start();
+            this.serverAsyncWriter.start();
+        }
     }
 
     @Override
@@ -103,19 +103,7 @@ public final class AsyncMemDbConnection implements MemDbConnection {
 
     @Override
     public boolean isClosed() {
-        return this.socket.isClosed();
-    }
-
-    private byte[] read() {
-        try{
-            while (this.input.read(buffer) != -1)
-                return this.buffer;
-
-            return this.buffer;
-        }catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
+        return this.socket == null || this.socket.isClosed();
     }
 
     private void writeToStream(byte[] toWrite) throws IOException {
@@ -147,10 +135,12 @@ public final class AsyncMemDbConnection implements MemDbConnection {
     }
 
     private class ServerAsyncReader extends Thread {
+        private final ResponseReader responseReader = new ResponseReader();
+
         @Override
         public void run() {
             while (!socket.isClosed()) {
-                byte[] fromBufferRaw = read();
+                byte[] fromBufferRaw = this.responseReader.read(input);
                 Byte[] fromBufferNotRaw = Utils.primitiveToWrapper(fromBufferRaw);
 
                 int requestNumber = Utils.toInt(fromBufferRaw);
@@ -196,5 +186,4 @@ public final class AsyncMemDbConnection implements MemDbConnection {
             }
         }
     }
-
 }

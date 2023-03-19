@@ -3,7 +3,6 @@ package es.memdb.cluster;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.memdb.cluster.messages.GetAllNodesResponse;
 import es.memdb.cluster.messages.LoginResponse;
-import io.vavr.control.Try;
 import lombok.SneakyThrows;
 
 import java.net.URI;
@@ -28,7 +27,7 @@ public final class ClusterManager {
     }
 
     @SneakyThrows
-    public GetAllNodesResponse getAllNodes() {
+    public List<Node> getAllNodes() {
         HttpRequest getAllNodesRequest = HttpRequest.newBuilder()
                 .uri(URI.create(getRandomClusterManagerAddress()))
                 .setHeader("Authentication", "Bearer " + this.lastToken)
@@ -41,7 +40,7 @@ public final class ClusterManager {
             this.lastToken = authenticate();
             return this.getAllNodes();
         }else{
-            return this.objectMapper.readValue(response.body(), GetAllNodesResponse.class);
+            return this.objectMapper.readValue(response.body(), GetAllNodesResponse.class).getNodes();
         }
     }
 

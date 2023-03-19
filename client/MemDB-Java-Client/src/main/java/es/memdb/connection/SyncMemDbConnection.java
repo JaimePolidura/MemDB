@@ -28,9 +28,11 @@ public final class SyncMemDbConnection implements MemDbConnection {
 
     @Override
     public void connect() throws IOException {
-        this.socket = new Socket(this.host, this.port);
-        this.output = this.socket.getOutputStream();
-        this.input = this.socket.getInputStream();
+        if(this.isClosed()){
+            this.socket = new Socket(this.host, this.port);
+            this.output = this.socket.getOutputStream();
+            this.input = this.socket.getInputStream();
+        }
     }
 
     @Override
@@ -64,7 +66,7 @@ public final class SyncMemDbConnection implements MemDbConnection {
 
     @Override
     public boolean isClosed() {
-        return this.socket.isClosed();
+        return this.socket == null || this.socket.isClosed();
     }
 
     @Override

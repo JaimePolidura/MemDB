@@ -8,7 +8,7 @@
 #include "operators/buffer/OperationLogBuffer.h"
 #include "utils/clock/LamportClock.h"
 #include "replication/Replication.h"
-#include "replication/ReplicationOperationBuffer.h"
+#include "replication/PendingReplicationOperationBuffer.h"
 
 class OperatorDispatcher {
 private:
@@ -24,13 +24,13 @@ public:
     OperatorDispatcher(memDbDataStore_t dbCons, lamportClock_t clock, operationLogBuffer_t operationLogBuffer,
                        replication_t replication, configuration_t configuration):
             db(dbCons), operationLogBuffer(operationLogBuffer), clock(clock), operatorRegistry(std::make_shared<OperatorRegistry>()),
-            replication(replication), configuration(configuration), replicationOperationBuffer(std::make_shared<ReplicationOperationBuffer>())
+            replication(replication), configuration(configuration), replicationOperationBuffer(std::make_shared<PendingReplicationOperationBuffer>())
     {}
 
     OperatorDispatcher(memDbDataStore_t dbCons, lamportClock_t clock, operationLogBuffer_t operationLogBuffer,
                        operatorRegistry_t operatorRegistry, replication_t replication, configuration_t configuration):
             db(dbCons), operationLogBuffer(operationLogBuffer), clock(clock), operatorRegistry(operatorRegistry),
-            replication(replication), configuration(configuration), replicationOperationBuffer(std::make_shared<ReplicationOperationBuffer>())
+            replication(replication), configuration(configuration), replicationOperationBuffer(std::make_shared<PendingReplicationOperationBuffer>())
     {}
 
     Response dispatch(const Request& request) {

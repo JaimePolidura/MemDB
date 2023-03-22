@@ -3,7 +3,7 @@
 #include "messages/request/Request.h"
 #include "shared.h"
 
-class ReplicationOperationBuffer {
+class PendingReplicationOperationBuffer {
 private:
     std::queue<Request> requests;
     std::mutex lock;
@@ -31,4 +31,4 @@ public:
     }
 };
 
-using replicationOperationBuffer_t = std::shared_ptr<ReplicationOperationBuffer>;
+using replicationOperationBuffer_t = std::shared_ptr<PendingReplicationOperationBuffer>;

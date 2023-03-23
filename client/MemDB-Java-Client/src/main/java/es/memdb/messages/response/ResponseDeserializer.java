@@ -1,20 +1,17 @@
 package es.memdb.messages.response;
 
-import lombok.SneakyThrows;
-
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 public final class ResponseDeserializer {
     private static final byte SUCCESSFUL_MASK = 0x01; //00000001
 
-    @SneakyThrows
     public Response deserialize(byte[] raw) {
         int requestNumber = ByteBuffer.wrap(raw).getInt();
         long timestamp = ByteBuffer.wrap(raw, 4, 8).getLong();
         boolean isSuccessFul = (raw[4 + 8] & SUCCESSFUL_MASK) == 1;
         short errorCode = (short) (raw[4 + 8] >> 1);
-        String response = (raw.length > (4 + 8 + 1) && raw[4 + 8 + 1 + 4] > 0) ?
+        String response = (raw.length > (4 + 8 + 1) && raw[4 + 8 + 1 + 4 - 1] > 0) ?
                 new String(this.split(raw, 4 + 8 + 1 + 4, raw.length), StandardCharsets.US_ASCII) :
                 "";
 

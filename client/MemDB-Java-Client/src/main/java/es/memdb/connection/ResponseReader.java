@@ -17,8 +17,7 @@ public final class ResponseReader {
 
             byte[] bufferWithResponseBody = Arrays.copyOf(bufferWithoutResponseBody, bufferWithoutResponseBody.length + responseLength);
 
-            while (input.read(bufferWithResponseBody) != -1)
-                return bufferWithResponseBody;
+            input.read(bufferWithResponseBody, 17, responseLength);
 
             return bufferWithResponseBody;
         }catch (IOException e) {

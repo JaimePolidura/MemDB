@@ -2,7 +2,7 @@
 
 #include "utils/files/FileUtils.h"
 #include "utils/datastructures/map/Map.h"
-#include "OperationLogDeserializer.h"
+#include "persistence/OperationLogDeserializer.h"
 #include "operators/operations/SetOperator.h"
 #include "persistence/OperationLogSerializer.h"
 #include "persistence/compaction/OperationLogCompacter.h"

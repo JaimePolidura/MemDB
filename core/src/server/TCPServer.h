@@ -9,7 +9,7 @@
 #include "messages/response/ResponseSerializer.h"
 #include "messages/response/ErrorCode.h"
 #include "utils/threads/pool/DynamicThreadPool.h"
-#include "Connection.h"
+#include "server/Connection.h"
 #include "operators/OperatorDispatcher.h"
 
 using namespace boost::asio;

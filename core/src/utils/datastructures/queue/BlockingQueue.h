@@ -1,6 +1,6 @@
 #pragma once
 
-#include "InterruptedQueueException.h"
+#include "utils/datastructures/queue/InterruptedQueueException.h"
 
 #include "shared.h"
 

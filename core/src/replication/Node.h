@@ -1,7 +1,7 @@
 #pragma once
 
 #include "shared.h"
-#include "NodeState.h"
+#include "replication/NodeState.h"
 
 struct Node {
 public:

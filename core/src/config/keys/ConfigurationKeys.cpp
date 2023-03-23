@@ -1,4 +1,4 @@
-#include "ConfigurationKeys.h"
+#include "config/keys/ConfigurationKeys.h"
 
 const std::string ConfigurationKeys::AUTH_USER_KEY = "AUTH_USER_KEY";
 const std::string ConfigurationKeys::PORT = "PORT";

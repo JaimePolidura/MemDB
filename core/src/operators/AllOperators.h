@@ -2,7 +2,7 @@
 
 #include "shared.h"
 
-#include "Operator.h"
+#include "operators/Operator.h"
 #include "operators/operations/GetOperator.h"
 #include "operators/operations/SetOperator.h"
 #include "operators/operations/DeleteOperator.h"

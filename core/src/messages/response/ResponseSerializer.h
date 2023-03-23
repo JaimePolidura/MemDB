@@ -1,9 +1,7 @@
 #pragma once
 
 #include "shared.h"
-
-#include "Response.h"
-
+#include "messages/response/Response.h"
 #include "utils/Utils.h"
 
 class ResponseSerializer {

@@ -3,7 +3,7 @@
 #include "shared.h"
 
 #include "utils/files/FileUtils.h"
-#include "OperationLogSerializer.h"
+#include "persistence/OperationLogSerializer.h"
 
 class OperationsLogDiskWriter {
 private:

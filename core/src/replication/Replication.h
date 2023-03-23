@@ -2,16 +2,18 @@
 
 #include "shared.h"
 
-#include "utils/clock/LamportClock.h"
-#include "config/Configuration.h"
 #include "replication/clustermanager/ClusterManagerService.h"
-#include "NodeState.h"
-#include "config/keys/ConfigurationKeys.h"
+#include "replication/NodeState.h"
 #include "replication/othernodes/ClusterNodesConnections.h"
-#include "utils/strings/StringUtils.h"
 #include "replication/clusterdb/ClusterDb.h"
-#include "ClusterDbNodeChangeHandler.h"
+#include "replication/ClusterDbNodeChangeHandler.h"
 #include "replication/othernodes/ClusterNodesBroadcaster.h"
+
+#include "utils/clock/LamportClock.h"
+#include "utils/strings/StringUtils.h"
+
+#include "config/Configuration.h"
+#include "config/keys/ConfigurationKeys.h"
 
 class Replication {
 private:

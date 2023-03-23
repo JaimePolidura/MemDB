@@ -4,7 +4,7 @@
 
 #include "config/Configuration.h"
 #include "config/keys/ConfigurationKeys.h"
-#include "AuthenticationType.h"
+#include "auth/AuthenticationType.h"
 
 class Authenticator {
 private:

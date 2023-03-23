@@ -4,7 +4,7 @@
 
 #include "config/Configuration.h"
 #include "config/keys/ConfigurationKeys.h"
-#include "ClusterDbValueChanged.h"
+#include "replication/clusterdb/ClusterDbValueChanged.h"
 
 class ClusterDb {
 private:

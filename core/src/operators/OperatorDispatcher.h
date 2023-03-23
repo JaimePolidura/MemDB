@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Operator.h"
-#include "OperatorRegistry.h"
-#include "DbOperator.h"
-#include "ControlOperator.h"
+#include "operators/Operator.h"
+#include "operators/OperatorRegistry.h"
+#include "operators/DbOperator.h"
+#include "operators/ControlOperator.h"
 #include "messages/response/ErrorCode.h"
 #include "operators/buffer/OperationLogBuffer.h"
 #include "utils/clock/LamportClock.h"
@@ -81,7 +81,7 @@ public:
         }
     }
 
-    Response executeOperator(memDbDataStore_t map, const OperationOptions& options, const OperationBody& operationBody) {
+    Response executeOperator(const OperationOptions &options, const OperationBody &operationBody) {
         std::shared_ptr<Operator> operatorToExecute = this->operatorRegistry->get(operationBody.operatorNumber);
 
         return this->execute(operatorToExecute, operationBody, options);

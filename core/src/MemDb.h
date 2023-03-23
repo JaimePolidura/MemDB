@@ -66,6 +66,7 @@ private:
 
     void applyOperationLogs(const std::vector<OperationBody>& opLogs) {
         for(const auto& operationLogInDisk : opLogs)
-            this->operatorDispatcher->executeOperator(this->dbMap, OperationOptions{.requestFromReplication = false}, operationLogInDisk);
+            this->operatorDispatcher->executeOperator(OperationOptions{.requestFromReplication = false},
+                                                      operationLogInDisk);
     }
 };

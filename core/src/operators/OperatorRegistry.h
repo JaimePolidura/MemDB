@@ -2,8 +2,8 @@
 
 #include "shared.h"
 
-#include "Operator.h"
-#include "AllOperators.h"
+#include "operators/Operator.h"
+#include "operators/AllOperators.h"
 
 class OperatorRegistry {
 private:

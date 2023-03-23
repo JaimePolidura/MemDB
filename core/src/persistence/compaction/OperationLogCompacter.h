@@ -3,8 +3,8 @@
 #include "shared.h"
 
 #include "messages/request/Request.h"
-#include "MultiThreadedLogCompactor.h"
-#include "SingleThreadedLogCompacter.h"
+#include "persistence/compaction/MultiThreadedLogCompactor.h"
+#include "persistence/compaction/SingleThreadedLogCompacter.h"
 
 class OperationLogCompacter {
 private:

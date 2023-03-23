@@ -3,7 +3,7 @@
 #include "shared.h"
 
 #include "messages/request/Request.h"
-#include "SingleThreadedLogCompacter.h"
+#include "persistence/compaction/SingleThreadedLogCompacter.h"
 
 using allOperationLogs_t = std::shared_ptr<std::vector<OperationBody>>;
 

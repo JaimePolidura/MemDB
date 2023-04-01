@@ -11,9 +11,7 @@ private:
 public:
     Configuration() = default;
 
-    Configuration(const std::map<std::string, std::string>& actualConfigurationValues,
-                  const std::map<std::string, std::string>& defaultConfigurationValues):
-        actualConfigurationValues(std::move(actualConfigurationValues)),
+    Configuration(const std::map<std::string, std::string>& defaultConfigurationValues):
         defaultConfigurationValues(std::move(defaultConfigurationValues)) {}
 
     virtual std::string get(const std::string& key) {
@@ -33,10 +31,11 @@ public:
 
 private:
     std::string getOrDefault(const std::string& key) {
-        bool containedInActual = this->actualConfigurationValues.contains(key);
+        char * fromEnvVariable = std::getenv(key.data());
+        bool containedInActual = fromEnvVariable != nullptr;
 
         return containedInActual ?
-            this->actualConfigurationValues.at(key) :
+            std::string(fromEnvVariable) :
             this->defaultConfigurationValues.at(key);
     }
 };

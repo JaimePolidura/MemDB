@@ -2,7 +2,7 @@ set(BINARY ${CMAKE_PROJECT_NAME})
 file(GLOB_RECURSE SOURCES LIST_DIRECTORIES true *.h *.cpp)
 add_executable(${BINARY}_run ${SOURCES})
 
-add_library(${BINARY}_lib STATIC ${SOURCES} replication/othernodes/ClusterNodesBroadcaster.h)
+add_library(${BINARY}_lib STATIC ${SOURCES} replication/othernodes/ClusterNodesBroadcaster.h utils/datastructures/queue/BufferOneConsumer.h)
 
 # VCPKG Libraries
 include_directories(${CMAKE_PREFIX_PATH}/include)

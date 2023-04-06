@@ -9,8 +9,8 @@ RUN apt-get update && TZ=Europe && DEBIAN_FRONTEND=noninteractive && apt-get ins
     zip \
     git \
     make \
-    cmake \
     unzip \
+    wget \
     curl \
     libgrpc-dev \
     libboost-all-dev \
@@ -25,24 +25,36 @@ RUN git clone https://github.com/Microsoft/vcpkg.git \
     && cd /vcpkg \
     && ./bootstrap-vcpkg.sh \
     && ./vcpkg install nlohmann-json:x64-linux boost:x64-linux \
-    && cd ..
+
+RUN cd usr && cd local && cd include \
+    && mkdir etcd && mkdir pplx && mkdir cpprest
+
+#Install cmake 3.26
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.26.0/cmake-3.26.0.tar.gz \
+  && tar xvfz cmake-3.26.0.tar.gz \
+  && cd cmake-3.26.0 && ./bootstrap \
+  && cd cmake-3.26.0 && make && make install \
+  && cd /usr/bin && ln -s cmake-3.26.0/bin/cmake cmake && ln -s vcpkg/vcpkg vcpkg
 
 # Set up etcd-cpp-apiv3
 RUN git clone https://github.com/microsoft/cpprestsdk.git \
     && cd cpprestsdk \
     && mkdir build && cd build \
     && cmake .. -DCPPREST_EXCLUDE_WEBSOCKETS=ON \
-    && make -j$(nproc) && make install \
-    && cd .. \
+    && make -j$(nproc) && make install
 
 RUN git clone https://github.com/etcd-cpp-apiv3/etcd-cpp-apiv3 \
     && cd etcd-cpp-apiv3 \
     && mkdir build && cd build \
     && cmake .. \
-    && make -j$(nproc) && make install \
-    && cd ..
+    && make -j$(nproc) && make install
 
-# Copy file
-COPY src/build/src/memdb_run .
+# Copy project and compile
+WORKDIR /memdb
+COPY . /memdb
+RUN chmod +x /memdb/linux-build.sh && /memdb/linux-build.sh
 
-ENTRYPOINT ["./memdb_run"]
+# Update dynamic library cache
+RUN ldconfig
+
+ENTRYPOINT ["/memdb/src/build/src/memdb_run"]

@@ -14,21 +14,17 @@ public:
     std::vector<Node> otherNodes;
 private:
     configuration_t configuration;
-    std::map<int, boost::asio::ip::tcp::socket> sockets; //NodeId -> tcp socket
-    ResponseDeserializer responseDeserializer;
-    RequestSerializer requestSerializer;
-    boost::asio::io_context ioContext;
     FixedThreadPool requestPool;
 
 public:
     ClusterNodesConnections(configuration_t configuration, const std::vector<Node>& otherNodes): configuration(configuration),
-        requestPool(configuration->get<int>(ConfigurationKeys::SERVER_MAX_THREADS)), otherNodes(otherNodes) {
-    }
+        requestPool(configuration->get<int>(ConfigurationKeys::SERVER_MAX_THREADS)), otherNodes(otherNodes)
+        {}
 
     void replaceNode(const Node& node) {
         for(int i = 0; i < this->otherNodes.size(); i++){
             if(this->otherNodes.at(i).nodeId == node.nodeId){
-                this->otherNodes[i] = node;
+                this->otherNodes[i].state = node.state;
                 return;
             }
         }
@@ -36,7 +32,7 @@ public:
 
     void addNode(const Node& node) {
         this->otherNodes.push_back(node);
-        this->createSocket(node);
+        node.openConnection();
     }
 
     bool existsByNodeId(int nodeId) {
@@ -53,30 +49,25 @@ public:
         for(int i = 0; i < this->otherNodes.size(); i++){
             if(this->otherNodes.at(i).nodeId == nodeId){
                 this->otherNodes.erase(this->otherNodes.begin() + i);
-                this->sockets.erase(nodeId);
                 break;
             }
         }
     }
 
     void deleteAllConnections() {
-        for (const auto& node : this->otherNodes) {
-            if(this->sockets.contains(node.nodeId)) {
-                this->sockets.at(node.nodeId).close();
-                this->sockets.erase(node.nodeId);
-            }
-        }
+        for (const Node& node : this->otherNodes)
+            node.closeConnection();
     }
 
     void createConnections() {
         for (const auto& node : this->otherNodes)
-            this->createSocket(node);
+            node.openConnection();
     }
 
     auto sendRequestToRandomNode(const Request& request, const bool includeNodeId = false) -> Response {
-        auto nodeToSendRequest = this->selectRandomNodeToSendRequest();
+        Node nodeToSendRequest = this->selectRandomNodeToSendRequest();
 
-        return this->sendRequestToNode(nodeToSendRequest, request);
+        return nodeToSendRequest.sendRequest(request, includeNodeId);
     }
 
     auto broadcast(const Request& request, const bool includeNodeId = false) -> void {
@@ -85,7 +76,7 @@ public:
                 continue;
 
             this->requestPool.submit([node, request, includeNodeId, this](){
-                this->sendRequestToNode(node, request, includeNodeId);
+                node.sendRequest(request, includeNodeId);
             });
         }
     }
@@ -105,38 +96,6 @@ private:
         }
 
         throw std::runtime_error("No nodes available to sync data, try later");
-    }
-
-    Response sendRequestToNode(const Node& node, const Request& request, const bool includeNodeId = false) {
-        const_cast<Request&>(request).authentication.authKey = this->configuration->get(ConfigurationKeys::AUTH_CLUSTER_KEY);
-
-        auto socket = std::move(this->sockets.at(node.nodeId));
-        auto requestBytes = this->requestSerializer.serialize(request, includeNodeId);
-
-        socket.write_some(boost::asio::buffer(requestBytes));
-
-        std::vector<uint8_t> responseHeaderBuffer(21);
-        socket.read_some(boost::asio::buffer(responseHeaderBuffer));
-        auto responseBodyLenght = Utils::parseFromBuffer<uint32_t>(responseHeaderBuffer, 17);
-        std::vector<uint8_t> responseBodyBuffer(responseBodyLenght);
-        responseHeaderBuffer.insert(responseHeaderBuffer.end(), responseBodyBuffer.begin(), responseBodyBuffer.end());
-
-        return responseDeserializer.deserialize(responseHeaderBuffer);
-    }
-
-    void createSocket(const Node& node) {
-        if(!NodeStates::canAcceptRequest(node.state) || this->sockets.count(node.nodeId) == 1 || this->sockets.at(node.nodeId).is_open())
-            return;
-
-        auto splitedAddress = StringUtils::split(node.address, ':');
-        auto ip = splitedAddress[0];
-        auto port = splitedAddress[1];
-
-        boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(ip), std::atoi(port.data()));
-        boost::asio::ip::tcp::socket socket(this->ioContext);
-        socket.connect(endpoint);
-
-        this->sockets.insert({node.nodeId, std::move(socket)});
     }
 };
 

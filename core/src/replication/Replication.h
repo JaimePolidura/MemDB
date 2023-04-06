@@ -7,7 +7,6 @@
 #include "replication/othernodes/ClusterNodesConnections.h"
 #include "replication/clusterdb/ClusterDb.h"
 #include "replication/ClusterDbNodeChangeHandler.h"
-#include "replication/othernodes/ClusterNodesBroadcaster.h"
 
 #include "utils/clock/LamportClock.h"
 #include "utils/strings/StringUtils.h"
@@ -19,7 +18,6 @@ class Replication {
 private:
     configuration_t configuration;
     clusterNodesConnections_t clusterNodesConnections;
-    clusterNodesBroadcaster_t broadcaster;
     ClusterDbNodeChangeHandler clusterDbNodeChangeHandler;
     std::atomic_uint64_t lastTimestampBroadcasted;
     clusterManagerService_t clusterManager;
@@ -34,8 +32,7 @@ public:
     Replication(configuration_t configuration, clusterManagerService_t clusterManager, InfoNodeResponse infoNodeResponse) :
             configuration(configuration), selfNode(infoNodeResponse.self), clusterDb(std::make_shared<ClusterDb>(configuration)),
             clusterNodesConnections(std::make_shared<ClusterNodesConnections>(configuration, infoNodeResponse.otherNodes)),
-            clusterManager(clusterManager), clusterDbNodeChangeHandler(this->clusterNodesConnections),
-            broadcaster(std::make_shared<ClusterNodesBroadcaster>(this->clusterNodesConnections))
+            clusterManager(clusterManager), clusterDbNodeChangeHandler(this->clusterNodesConnections)
     {}
 
     auto setReloadUnsyncedOpsCallback(std::function<void(std::vector<OperationBody>)> callback) -> void {
@@ -80,7 +77,7 @@ public:
 
     virtual auto broadcast(const Request& request, const bool includeNodeId = true) -> void {
         this->lastTimestampBroadcasted = request.operation.timestamp;
-        this->broadcaster->broadcast(request);
+        this->clusterNodesConnections->broadcast(request, includeNodeId);
     }
 
     virtual auto getNodeState() -> NodeState {

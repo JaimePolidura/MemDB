@@ -60,7 +60,7 @@ private:
                 });
             });
 
-            connection->read(); //Start reading, IO async operation, not blocking
+            connection->readAsync(); //Start reading, IO async operation, not blocking
 
             this->acceptNewConnections();
         });
@@ -91,7 +91,7 @@ private:
     void sendResponse(std::shared_ptr<Connection> connection, const Response& response) {
         if(connection->isOpen()){
             std::vector<uint8_t> serialized = this->responseSerializer.serialize(response);
-            connection->write(serialized);
+            connection->writeAsync(serialized);
         }
     }
 

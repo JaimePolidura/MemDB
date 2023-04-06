@@ -8,6 +8,7 @@ RUN apt-get update && TZ=Europe && DEBIAN_FRONTEND=noninteractive && apt-get ins
     build-essential \
     zip \
     git \
+    tar \
     make \
     unzip \
     wget \
@@ -24,17 +25,17 @@ RUN apt-get update && TZ=Europe && DEBIAN_FRONTEND=noninteractive && apt-get ins
 RUN git clone https://github.com/Microsoft/vcpkg.git \
     && cd /vcpkg \
     && ./bootstrap-vcpkg.sh \
-    && ./vcpkg install nlohmann-json:x64-linux boost:x64-linux \
+    && ./vcpkg install nlohmann-json:x64-linux boost:x64-linux
 
 RUN cd usr && cd local && cd include \
     && mkdir etcd && mkdir pplx && mkdir cpprest
 
 #Install cmake 3.26
-RUN wget https://github.com/Kitware/CMake/releases/download/v3.26.0/cmake-3.26.0.tar.gz \
-  && tar xvfz cmake-3.26.0.tar.gz \
-  && cd cmake-3.26.0 && ./bootstrap \
-  && cd cmake-3.26.0 && make && make install \
-  && cd /usr/bin && ln -s cmake-3.26.0/bin/cmake cmake && ln -s vcpkg/vcpkg vcpkg
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.26.0/cmake-3.26.0.tar.gz
+RUN tar xvfz cmake-3.26.0.tar.gz
+RUN cd cmake-3.26.0 && ./bootstrap
+RUN cd cmake-3.26.0 && make && make install
+RUN cd /usr/bin && ln -s cmake-3.26.0/bin/cmake cmake && ln -s vcpkg/vcpkg vcpkg
 
 # Set up etcd-cpp-apiv3
 RUN git clone https://github.com/microsoft/cpprestsdk.git \

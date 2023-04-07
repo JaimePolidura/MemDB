@@ -3,6 +3,7 @@ package api
 import (
 	configuration "clustermanager/src/_shared/config"
 	configuration_keys "clustermanager/src/_shared/config/keys"
+	"clustermanager/src/_shared/logging"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 
 type LoginController struct {
 	Configuration *configuration.Configuartion
+	Logger        *logging.Logger
 }
 
 type LoginRequest struct {
@@ -29,13 +31,15 @@ func (controller *LoginController) Login(c echo.Context) error {
 	unsingedToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 5)),
 	})
-
+	
 	signedToken, err := unsingedToken.SignedString(
 		[]byte(controller.Configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_API_SECRET_KEY)))
 
 	if err != nil {
 		return err
 	}
+
+	controller.Logger.Log("Executed LoginController for authkey " + loginRequest.AuthKey)
 
 	return c.JSON(http.StatusOK, echo.Map{
 		"token": signedToken,

@@ -3,11 +3,14 @@ package healthchecks
 import (
 	"clustermanager/src/_shared/config"
 	"clustermanager/src/_shared/config/keys"
+	"clustermanager/src/_shared/logging"
 	"clustermanager/src/_shared/nodes"
 	"clustermanager/src/_shared/nodes/connection"
 	"clustermanager/src/_shared/nodes/connection/messages/request"
+	"clustermanager/src/_shared/nodes/connection/messages/response"
 	"clustermanager/src/_shared/nodes/states"
 	"fmt"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -16,6 +19,7 @@ type HealthCheckService struct {
 	NodesRespository nodes.NodeRepository
 	Configuration    *configuration.Configuartion
 	NodeConnections  *connection.NodeConnections
+	Logger           *logging.Logger
 
 	periodHealthCheck       int64 //both expressed in seconds
 	sendingHealthChecksLock sync.Mutex
@@ -43,6 +47,7 @@ func (healthCheckService *HealthCheckService) startAsyncHealthCheckPeriodicRouti
 }
 
 func (healthCheckService *HealthCheckService) runHealthChecks() {
+	healthCheckService.Logger.Log("Starting health check round")
 	nodesFromRepository, err := healthCheckService.NodesRespository.FindAll()
 
 	if err != nil {
@@ -77,6 +82,8 @@ func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.N
 	authKey := healthCheckService.Configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_AUTH_CLUSTER_KEY)
 	response, err := connectionToNode.Send(request.BuildHealthCheckRequest(authKey))
 
+	healthCheckService.logHealthCheckResult(response, node)
+
 	if err != nil || !response.Success {
 		healthCheckService.NodesRespository.Add(*node.WithState(states.SHUTDOWN))
 		healthCheckService.NodeConnections.Delete(node.NodeId)
@@ -86,4 +93,13 @@ func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.N
 	}
 
 	waitGroup.Done()
+}
+
+func (healthCheckService *HealthCheckService) logHealthCheckResult(response response.Response, node nodes.Node) {
+	if response.Success {
+		healthCheckService.Logger.Log("Recieved successful health check to " + strconv.Itoa(int(node.NodeId)))
+	} else {
+		healthCheckService.Logger.Log("Recieved failure health check to " + strconv.Itoa(int(node.NodeId)))
+	}
+
 }

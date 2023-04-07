@@ -14,3 +14,4 @@ Configuration keys are stored in environtment variables:
 - MEMDB_CLUSTERMANAGER_HEALTHCHECK_PERIOD. Time between healthchecks expresed in seconds. Default: 60
 - MEMDB_CLUSTERMANAGER_API_PORT. Port of HTTP API. Default: 8080
 - MEMDB_CLUSTERMANAGER_API_SECRET_KEY. Secret key used for authentication for the HTTP API. Default: def
+- MEMDB_CLUSTERMANAGER_DO_LOGGING. If set to true, it will log request, healthchecks etc. Default: false

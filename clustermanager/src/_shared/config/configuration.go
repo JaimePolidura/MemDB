@@ -9,24 +9,8 @@ type Configuartion struct {
 	cachedConfigurationKeys map[string]string
 }
 
-func (configuartion *Configuartion) Get(key string) string {
-	if cachedValue, inCache := configuartion.cachedConfigurationKeys[key]; inCache {
-		return cachedValue
-	}
-	if defaultValue, exist := DEFAULT_CONFIGURATION[key]; exist {
-		configuartion.cachedConfigurationKeys[key] = defaultValue
-		return defaultValue
-	}
-
-	envValue, envExists := os.LookupEnv(key)
-
-	if !envExists {
-		panic("Environtment variable " + key + " missing")
-	}
-
-	configuartion.cachedConfigurationKeys[key] = envValue
-
-	return envValue
+func (configuartion *Configuartion) GetBoolean(key string) bool {
+	return configuartion.Get(key) == "true"
 }
 
 func (configuartion *Configuartion) GetInt(key string) int64 {
@@ -38,6 +22,27 @@ func (configuartion *Configuartion) GetInt(key string) int64 {
 	}
 
 	return intValue
+}
+
+func (configuartion *Configuartion) Get(key string) string {
+	if cachedValue, inCache := configuartion.cachedConfigurationKeys[key]; inCache {
+		return cachedValue
+	}
+
+	envValue, envExists := os.LookupEnv(key)
+	defaultValue, defaultValueExists := DEFAULT_CONFIGURATION[key]
+	
+	if !envExists && !defaultValueExists {
+		panic("Environtment variable " + key + " missing")
+	}
+
+	if envExists {
+		configuartion.cachedConfigurationKeys[key] = envValue
+		return envValue
+	}
+
+	configuartion.cachedConfigurationKeys[key] = defaultValue
+	return defaultValue
 }
 
 func LoadConfiguration() *Configuartion {

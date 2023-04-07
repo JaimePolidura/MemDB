@@ -3,6 +3,7 @@ package main
 import (
 	"clustermanager/src/_shared/config"
 	configuration_keys "clustermanager/src/_shared/config/keys"
+	"clustermanager/src/_shared/logging"
 	"clustermanager/src/_shared/nodes/connection"
 	"clustermanager/src/healthchecks"
 	"fmt"
@@ -16,13 +17,13 @@ type ClusterManager struct {
 	configuration      *configuration.Configuartion
 	nodeConnections    *connection.NodeConnections
 	api                *echo.Echo
+	logger             *logging.Logger
 }
 
 func (clusterManager *ClusterManager) start() {
 	clusterManager.healthCheckService.Start()
-	clusterManager.api.Logger.Fatal(
-		clusterManager.api.Start(":" + clusterManager.configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_API_PORT)))
 
+	clusterManager.api.Logger.Fatal(clusterManager.api.Start(":" + clusterManager.configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_API_PORT)))
 	var input string //Block program
 	fmt.Scanln(&input)
 }

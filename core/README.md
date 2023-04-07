@@ -43,14 +43,14 @@ Configuration keys are stored in environtment variables:
 | SYNC_DATA   | 0x05                | Timestamp  | AUTH_CLUSTER_KEY           |
 
 ## Error codes
-| **Name**           | **Error code** | **Desc**                                                                                                      |
-|--------------------|---------------------|----------------------------------------------------------------------------------------------------------|
-| AUTH_ERROR         | 0x00                | Authenticaion is invalid                                                                                 |
-| UNKNOWN_KEY        | 0x01                | A key hasnt been found. Ex when you send delete request, and the key is not in the map                   |
-| UNKNOWN_OPERATOR   | 0x02                | Operator number not found                                                                                |
-| ALREADY_REPLICATED | 0x03                | Replication request has got rejected because of a conflict (only used in replication)                    |
-| NOT_AUTHORIZED     | 0x04                | Someone uses a different auth key to execute an operator, Ex client trying to execute SYNC_DATA          |
-| INVALID_NODE_STATE | 0x05                | Request is sended to a node that can't execute request due to its state, exmaple: when state is SHUTDOWN |
+| **Name**           | **Error code** | **Desc**                                                                                                 |
+|--------------------|----------------|----------------------------------------------------------------------------------------------------------|
+| AUTH_ERROR         | 0x00           | Authenticaion is invalid                                                                                 |
+| UNKNOWN_KEY        | 0x01           | A key hasnt been found. Ex when you send delete request, and the key is not in the map                   |
+| UNKNOWN_OPERATOR   | 0x02           | Operator number not found                                                                                |
+| ALREADY_REPLICATED | 0x03           | Replication request has got rejected because of a conflict (only used in replication)                    |
+| NOT_AUTHORIZED     | 0x04           | Someone uses a different auth key to execute an operator, Ex client trying to execute SYNC_DATA          |
+| INVALID_NODE_STATE | 0x05           | Request is sended to a node that can't execute request due to its state, exmaple: when state is SHUTDOWN |
 
 
 ## Request format

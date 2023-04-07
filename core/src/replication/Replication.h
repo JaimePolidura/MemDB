@@ -50,8 +50,8 @@ public:
     }
 
     auto initialize() -> void {
-        this->watchForChangesInClusterDb();
         this->initializeNodeConnections();
+        this->watchForChangesInClusterDb();
     }
 
     auto doesAddressBelongToReplicationNode(const std::string& address) -> bool {
@@ -63,16 +63,19 @@ public:
     }
 
     auto getUnsyncedOpLogs(uint64_t lastTimestampProcessedFromOpLog) -> std::vector<OperationBody> {
-        OperationLogDeserializer operationLogDeserializer{};
+        if(this->clusterNodesConnections->otherNodes.empty())
+            return std::vector<OperationBody>{};
 
-        auto responseFromSyncData = this->clusterNodesConnections->sendRequestToRandomNode(this->createSyncDataRequest(lastTimestampProcessedFromOpLog));
+        OperationLogDeserializer operationLogDeserializer{};
+        Response responseFromSyncData = this->clusterNodesConnections->sendRequestToRandomNode(createSyncDataRequest(lastTimestampProcessedFromOpLog));
+
+        if(responseFromSyncData.responseValue.hasData())
+            return std::vector<OperationBody>{};
+
         uint8_t * begin = responseFromSyncData.responseValue.data();
         auto bytes = std::vector<uint8_t>(begin, begin + responseFromSyncData.responseValue.size);
 
-        if(responseFromSyncData.isSuccessful)
-            return operationLogDeserializer.deserializeAll(bytes);
-        else
-            throw std::runtime_error("Unexpected error in syncing data");
+        return operationLogDeserializer.deserializeAll(bytes);
     }
 
     virtual auto broadcast(const Request& request, const bool includeNodeId = true) -> void {

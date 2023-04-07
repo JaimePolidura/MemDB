@@ -30,7 +30,7 @@ public:
         }
     }
 
-    void addNode(const Node& node) {
+    void addNode(Node& node) {
         this->otherNodes.push_back(node);
         node.openConnection();
     }
@@ -55,12 +55,12 @@ public:
     }
 
     void deleteAllConnections() {
-        for (const Node& node : this->otherNodes)
+        for (Node& node : this->otherNodes)
             node.closeConnection();
     }
 
     void createConnections() {
-        for (const auto& node : this->otherNodes)
+        for (auto& node : this->otherNodes)
             node.openConnection();
     }
 
@@ -71,7 +71,7 @@ public:
     }
 
     auto broadcast(const Request& request, const bool includeNodeId = false) -> void {
-        for(const auto& node : this->otherNodes){
+        for(auto& node : this->otherNodes){
             if(!NodeStates::canAcceptRequest(node.state))
                 continue;
 

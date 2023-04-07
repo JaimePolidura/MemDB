@@ -20,6 +20,10 @@ public:
         return this->value.get();
     }
 
+    bool hasData() const {
+        return this->size == 0 || this->value.get() == nullptr;
+    }
+
     uint8_t * operator[](int index) const {
         return this->value.get() + index;
     }

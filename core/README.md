@@ -43,7 +43,7 @@ Configuration keys are stored in environtment variables:
 | SYNC_DATA   | 0x05                | Timestamp  | AUTH_CLUSTER_KEY           |
 
 ## Error codes
-| **Name**           | **Operator number** | **Desc**                                                                                                 |
+| **Name**           | **Error code** | **Desc**                                                                                                      |
 |--------------------|---------------------|----------------------------------------------------------------------------------------------------------|
 | AUTH_ERROR         | 0x00                | Authenticaion is invalid                                                                                 |
 | UNKNOWN_KEY        | 0x01                | A key hasnt been found. Ex when you send delete request, and the key is not in the map                   |

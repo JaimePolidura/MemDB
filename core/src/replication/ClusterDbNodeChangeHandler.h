@@ -11,7 +11,7 @@ public:
 
     ClusterDbNodeChangeHandler() = default;
 
-    void handleChange(const Node& newNode, const ClusterDbChangeType changeType) {
+    void handleChange(Node& newNode, const ClusterDbChangeType changeType) {
         if(changeType == ClusterDbChangeType::PUT)
             this->updateNodes(newNode);
         else if (changeType == ClusterDbChangeType::DELETED)
@@ -19,7 +19,7 @@ public:
     }
 
 private:
-    void updateNodes(const Node &node) {
+    void updateNodes(Node &node) {
         auto existsByNodeId = this->clusterNodeConnections->existsByNodeId(node.nodeId);
 
         if(existsByNodeId)

@@ -14,6 +14,8 @@
 #include "config/Configuration.h"
 #include "config/keys/ConfigurationKeys.h"
 
+#include "logging/Logger.h"
+
 class Replication {
 private:
     configuration_t configuration;
@@ -23,16 +25,17 @@ private:
     clusterManagerService_t clusterManager;
     clusterdb_t clusterDb;
     Node selfNode;
+    logger_t logger;
 
     std::function<void(std::vector<OperationBody>)> reloadUnsyncedOpsCallback;
 
 public:
-    Replication(configuration_t configuration): configuration(configuration) {}
+    Replication(logger_t logger, configuration_t configuration): configuration(configuration), logger(logger) {}
 
-    Replication(configuration_t configuration, clusterManagerService_t clusterManager, InfoNodeResponse infoNodeResponse) :
+    Replication(logger_t logger, configuration_t configuration, clusterManagerService_t clusterManager, InfoNodeResponse infoNodeResponse) :
             configuration(configuration), selfNode(infoNodeResponse.self), clusterDb(std::make_shared<ClusterDb>(configuration)),
             clusterNodesConnections(std::make_shared<ClusterNodesConnections>(configuration, infoNodeResponse.otherNodes)),
-            clusterManager(clusterManager), clusterDbNodeChangeHandler(this->clusterNodesConnections)
+            clusterManager(clusterManager), clusterDbNodeChangeHandler(this->clusterNodesConnections), logger(logger)
     {}
 
     auto setReloadUnsyncedOpsCallback(std::function<void(std::vector<OperationBody>)> callback) -> void {

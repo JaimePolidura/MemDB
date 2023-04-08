@@ -11,6 +11,7 @@
 #include "utils/threads/pool/DynamicThreadPool.h"
 #include "server/Connection.h"
 #include "operators/OperatorDispatcher.h"
+#include "logging/Logger.h"
 
 using namespace boost::asio;
 
@@ -26,10 +27,12 @@ private:
     io_context ioContext;
     ip::tcp::acceptor acceptator;
     replication_t replication;
+    logger_t logger;
 
 public:
-    TCPServer(configuration_t configuration, replication_t replication, Authenticator authenicator, operatorDispatcher_t operatorDispatcher):
+    TCPServer(logger_t logger, configuration_t configuration, replication_t replication, Authenticator authenicator, operatorDispatcher_t operatorDispatcher):
             configuration(configuration),
+            logger(logger),
             replication(replication),
             port(configuration->get<uint16_t>(ConfigurationKeys::PORT)),
             authenicator(std::move(authenicator)),
@@ -38,14 +41,14 @@ public:
             acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}) {};
 
     void run() {
-        printf("[SERVER] Initialized. Waiting for conenctions...\n");
+        this->logger->info("TCP server initialized. Waiting for conenctions...");
 
         try{
             this->acceptNewConnections();
 
             this->ioContext.run();
         }catch (const std::exception& e) {
-            printf("[SERVER] fatal error %s\n", e.what());
+            this->logger->error("Fatal error in TCP Server {0}", e.what());
         }
     }
 

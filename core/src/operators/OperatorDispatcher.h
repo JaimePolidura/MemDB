@@ -19,17 +19,18 @@ private:
     replication_t replication;
     lamportClock_t clock;
     memDbDataStore_t db;
+    logger_t logger;
 
 public:
     OperatorDispatcher(memDbDataStore_t dbCons, lamportClock_t clock, operationLogBuffer_t operationLogBuffer,
-                       replication_t replication, configuration_t configuration):
-            db(dbCons), operationLogBuffer(operationLogBuffer), clock(clock), operatorRegistry(std::make_shared<OperatorRegistry>()),
+                       replication_t replication, configuration_t configuration, logger_t logger):
+            db(dbCons), operationLogBuffer(operationLogBuffer), clock(clock), operatorRegistry(std::make_shared<OperatorRegistry>()), logger(logger),
             replication(replication), configuration(configuration), replicationOperationBuffer(std::make_shared<PendingReplicationOperationBuffer>())
     {}
 
     OperatorDispatcher(memDbDataStore_t dbCons, lamportClock_t clock, operationLogBuffer_t operationLogBuffer,
-                       operatorRegistry_t operatorRegistry, replication_t replication, configuration_t configuration):
-            db(dbCons), operationLogBuffer(operationLogBuffer), clock(clock), operatorRegistry(operatorRegistry),
+                       operatorRegistry_t operatorRegistry, replication_t replication, configuration_t configuration, logger_t logger):
+            db(dbCons), operationLogBuffer(operationLogBuffer), clock(clock), operatorRegistry(operatorRegistry), logger(logger),
             replication(replication), configuration(configuration), replicationOperationBuffer(std::make_shared<PendingReplicationOperationBuffer>())
     {}
 

@@ -4,23 +4,25 @@
 #include "config/Configuration.h"
 #include "utils/http/HttpClient.h"
 #include "replication/Node.h"
+#include "logging/Logger.h"
 
 #include "shared.h"
 
 class ClusterManagerService {
-    std::shared_ptr<Configuration> configuartion;
+    logger_t logger;
+    HttpClient httpClusterManagerClient;
+    configuration_t configuartion;
     std::string token;
 
 public:
-    ClusterManagerService() = default;
-
-    ClusterManagerService(std::shared_ptr<Configuration> configuartion): configuartion(configuartion), token("") {}
+    ClusterManagerService(configuration_t configuartion, logger_t logger): configuartion(configuartion), logger(logger),
+        token(""), httpClusterManagerClient(logger) {}
 
     InfoNodeResponse getInfoNode() {
         this->token = this->authenticate();
 
         std::string url =  + "";
-        HttpResponse response = HttpClient::get(
+        HttpResponse response = this->httpClusterManagerClient.get(
                 this->configuartion->get(ConfigurationKeys::CLUSTER_MANAGER_ADDRESS),
                 "/api/nodes/selfinfo",
                 this->token);
@@ -33,13 +35,13 @@ public:
 
 private:
     std::string authenticate() {
-        auto response = HttpClient::post(
+        auto response = this->httpClusterManagerClient.post(
                 this->configuartion->get(ConfigurationKeys::CLUSTER_MANAGER_ADDRESS),
                 "/login",
                 {{"authKey", this->configuartion->get(ConfigurationKeys::AUTH_CLUSTER_KEY)}});
 
         if (response.code == 403) {
-            printf("[SERVER] Invalid auth key");
+            logger->error("Invalid cluster auth key while trying to authenticate to they clustermanager");
             exit(-1);
         }
 

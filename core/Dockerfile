@@ -25,7 +25,7 @@ RUN apt-get update && TZ=Europe && DEBIAN_FRONTEND=noninteractive && apt-get ins
 RUN git clone https://github.com/Microsoft/vcpkg.git \
     && cd /vcpkg \
     && ./bootstrap-vcpkg.sh \
-    && ./vcpkg install nlohmann-json:x64-linux boost:x64-linux
+    && ./vcpkg install nlohmann-json:x64-linux boost:x64-linux spdlog:x64-linux
 
 RUN cd usr && cd local && cd include \
     && mkdir etcd && mkdir pplx && mkdir cpprest

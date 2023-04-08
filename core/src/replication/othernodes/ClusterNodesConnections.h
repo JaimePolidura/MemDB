@@ -71,11 +71,11 @@ public:
     }
 
     auto broadcast(const Request& request, const bool includeNodeId = false) -> void {
-        for(auto& node : this->otherNodes){
+        for(Node& node : this->otherNodes){
             if(!NodeStates::canAcceptRequest(node.state))
                 continue;
 
-            this->requestPool.submit([node, request, includeNodeId, this](){
+            this->requestPool.submit([node, request, includeNodeId]() mutable -> void {
                 node.sendRequest(request, includeNodeId);
             });
         }

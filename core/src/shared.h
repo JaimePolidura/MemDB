@@ -22,6 +22,7 @@
 #include <fstream>
 #include <string>
 #include <iostream>
+#include <chrono>
 #include <cstdint>
 #include <stdint.h>
 #include <cstdlib>
@@ -41,6 +42,7 @@
 #include <nlohmann/json.hpp>
 #include <boost/asio.hpp>
 #include <etcd/Client.hpp>
+#include <spdlog/spdlog.h>
 
 //OS
 //#ifdef _WIN32

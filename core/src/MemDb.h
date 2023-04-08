@@ -6,23 +6,26 @@
 #include "persistence/OperationLogDiskLoader.h"
 #include "replication/Replication.h"
 #include "utils/clock/LamportClock.h"
-#include "memdbtypes.h"
 #include "replication/ReplicationCreator.h"
+#include "logging/Logger.h"
+
+#include "memdbtypes.h"
 
 class MemDb {
 private:
     operationLogBuffer_t operationLogBuffer;
     operatorDispatcher_t operatorDispatcher;
-    replication_t replication;
     configuration_t configuration;
+    replication_t replication;
+    memDbDataStore_t dbMap;
     lamportClock_t clock;
     tcpServer_t tcpServer;
-    memDbDataStore_t dbMap;
+    logger_t logger;
 
 public:
-    MemDb(memDbDataStore_t map, configuration_t configuration, operatorDispatcher_t operatorDispatcher, tcpServer_t tcpServer,
-          lamportClock_t clock) : dbMap(map), configuration(configuration), tcpServer(tcpServer), operatorDispatcher(operatorDispatcher), clock(clock)
-          {}
+    MemDb(logger_t logger, memDbDataStore_t map, configuration_t configuration, operatorDispatcher_t operatorDispatcher, tcpServer_t tcpServer,
+          lamportClock_t clock) : dbMap(map), configuration(configuration), tcpServer(tcpServer), operatorDispatcher(operatorDispatcher),
+          clock(clock), logger(logger) {}
 
     void run() {
         uint64_t lastTimestampStored = this->restoreDataFromOplog();
@@ -58,7 +61,7 @@ private:
         OperationLogDiskLoader loader{};
         auto opLogsFromDisk = loader.getAllAndSaveCompacted(this->dbMap);
 
-        printf("[SERVER] Applaying logs from disk...\n");
+        this->logger->info("Applaying logs from disk...");
         this->applyOperationLogs(opLogsFromDisk);
 
         return !opLogsFromDisk.empty() ? opLogsFromDisk[opLogsFromDisk.size() - 1].timestamp : 0;

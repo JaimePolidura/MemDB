@@ -18,7 +18,8 @@ public:
                 {ConfigurationKeys::AUTH_CLUSTER_KEY,                  "abc"},
                 {ConfigurationKeys::ETCD_ADDRESSES,                    "127.0.0.1:2379"},
                 {ConfigurationKeys::CLUSTER_MANAGER_ADDRESS,           "127.0.0.1:8080"},
-                {ConfigurationKeys::CLUSTER_MANAGER_ADDRESS_USING_DNS, "false"}
+                {ConfigurationKeys::CLUSTER_MANAGER_ADDRESS_USING_DNS, "false"},
+                {ConfigurationKeys::NODE_ID,                           "1"}
         };
     }
 };

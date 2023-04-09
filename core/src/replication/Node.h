@@ -34,7 +34,7 @@ public:
         this->connection->close();
     }
 
-    void openConnection() {
+    void openConnection() const {
         if(!NodeStates::canAcceptRequest(this->state) ||
            (this->connection.get() != nullptr && this->connection->isOpen()))
             return;

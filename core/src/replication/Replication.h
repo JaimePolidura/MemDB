@@ -32,11 +32,27 @@ private:
 public:
     Replication(logger_t logger, configuration_t configuration): configuration(configuration), logger(logger) {}
 
-    Replication(logger_t logger, configuration_t configuration, clusterManagerService_t clusterManager, InfoNodeResponse infoNodeResponse) :
-            configuration(configuration), selfNode(infoNodeResponse.self), clusterDb(std::make_shared<ClusterDb>(configuration)),
-            clusterNodesConnections(std::make_shared<ClusterNodesConnections>(configuration, infoNodeResponse.otherNodes)),
+    Replication(logger_t logger, configuration_t configuration, clusterManagerService_t clusterManager) :
+            configuration(configuration), clusterDb(std::make_shared<ClusterDb>(configuration)),
+            clusterNodesConnections(std::make_shared<ClusterNodesConnections>(configuration)),
             clusterManager(clusterManager), clusterDbNodeChangeHandler(this->clusterNodesConnections), logger(logger)
     {}
+
+    auto setClusterInformation(AllNodesResponse allNodesResponse) -> void {
+        int selfNodeId = this->configuration->get<int>(ConfigurationKeys::NODE_ID);
+        std::vector<Node> allNodes = allNodesResponse.nodes;
+
+        this->selfNode = *std::find_if(allNodes.begin(), allNodes.end(), [selfNodeId](Node node) -> bool{
+            return node.nodeId == selfNodeId;
+        });
+
+        std::vector<Node> otherNodes;
+        std::copy_if(allNodes.begin(), allNodes.end(), std::back_inserter(otherNodes), [selfNodeId](Node node) -> bool{
+            return node.nodeId == selfNodeId;
+        });
+        this->clusterNodesConnections->setOtherNodes(otherNodes);
+        this->clusterNodesConnections->createConnections();
+    }
 
     auto setReloadUnsyncedOpsCallback(std::function<void(std::vector<OperationBody>)> callback) -> void {
         this->reloadUnsyncedOpsCallback = callback;
@@ -98,21 +114,20 @@ private:
     auto watchForChangesInNodesInCluster() -> void {
         this->clusterDb->watch("/nodes", [this](ClusterDbValueChanged nodeChangedEvent){
             auto node = Node::fromJson(nodeChangedEvent.value);
-            auto sameNodeChanged = node.nodeId == this->selfNode.nodeId;
+            auto selfNodeChanged = node.nodeId == this->selfNode.nodeId;
 
-            if(!sameNodeChanged){
+            if(!selfNodeChanged){
                 this->clusterDbNodeChangeHandler.handleChange(node, nodeChangedEvent.changeType);
             }
-            if(sameNodeChanged && (node.state == NodeState::SHUTDOWN || node.state == NodeState::BOOTING)) {
+            if(selfNodeChanged && (node.state == NodeState::SHUTDOWN || node.state == NodeState::BOOTING)) {
                 this->reload();
             }
         });
     }
 
     auto reload() -> void {
-        auto infoNodeRepsonse = this->clusterManager->getInfoNode();
-        this->selfNode = infoNodeRepsonse.self;
-        this->clusterNodesConnections->otherNodes = infoNodeRepsonse.otherNodes;
+        this->setBooting();
+        this->setClusterInformation(this->clusterManager->getAllNodes());
         this->initialize();
 
         auto unsyncedOps = this->getUnsyncedOpLogs(this->lastTimestampBroadcasted);

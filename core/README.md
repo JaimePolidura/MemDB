@@ -31,6 +31,7 @@ Configuration keys are stored in environtment variables:
 - ETCD_ADDRESSES. Etcd addresses. Default: 127.0.0.1:2379. Exmaple <address1>,<address2> etc.
 - CLUSTER_MANAGER_ADDRESS. Default: 127.0.0.1:8080
 - CLUSTER_MANAGER_ADDRESS_USING_DNS. If set to true a DNS lookup will be executed when connecting to the cluster manager. Default: false.
+- NODE_ID. The actual node id for the node itself. Default: 1.
 
 ### Operations
 ## Available operators

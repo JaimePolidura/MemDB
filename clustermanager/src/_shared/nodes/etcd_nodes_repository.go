@@ -18,10 +18,10 @@ func (repository EtcdNodeRepository) FindAll() ([]Node, error) {
 func (repository EtcdNodeRepository) FindByAddress(address string) (Node, error) {
 	allNodes, err := repository.FindAll()
 
-	if err != nil {
+	if err != nil || len(allNodes) == 0 {
 		return Node{}, err
 	}
-
+	
 	for _, node := range allNodes {
 		if strings.Split(node.Address, ":")[0] == address {
 			return node, nil

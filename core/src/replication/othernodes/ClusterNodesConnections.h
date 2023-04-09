@@ -17,9 +17,11 @@ private:
     FixedThreadPool requestPool;
 
 public:
-    ClusterNodesConnections(configuration_t configuration, const std::vector<Node>& otherNodes): configuration(configuration),
-        requestPool(configuration->get<int>(ConfigurationKeys::SERVER_MAX_THREADS)), otherNodes(otherNodes)
-        {}
+    ClusterNodesConnections(configuration_t configuration): configuration(configuration), requestPool(configuration->get<int>(ConfigurationKeys::SERVER_MAX_THREADS)) {}
+
+    void setOtherNodes(const std::vector<Node>& otherNodesToSet) {
+        this->otherNodes = otherNodesToSet;
+    }
 
     void replaceNode(const Node& node) {
         for(int i = 0; i < this->otherNodes.size(); i++){

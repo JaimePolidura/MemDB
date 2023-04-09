@@ -1,6 +1,6 @@
 #pragma once
 
-#include "replication/clustermanager/requests/InfoNodeResponse.h"
+#include "replication/clustermanager/requests/AllNodesResponse.h"
 #include "config/Configuration.h"
 #include "utils/http/HttpClient.h"
 #include "replication/Node.h"
@@ -18,20 +18,19 @@ public:
     ClusterManagerService(configuration_t configuartion, logger_t logger): configuartion(configuartion), logger(logger),
         token(""), httpClusterManagerClient(logger) {}
 
-    InfoNodeResponse getInfoNode() {
+    AllNodesResponse getAllNodes() {
         this->token = this->authenticate();
 
-        std::string url =  + "";
         HttpResponse response = this->httpClusterManagerClient.get(
                 this->configuartion->get(ConfigurationKeys::CLUSTER_MANAGER_ADDRESS),
-                "/api/nodes/selfinfo",
+                "/api/nodes/all",
                 this->token,
                 this->configuartion->getBoolean(ConfigurationKeys::CLUSTER_MANAGER_ADDRESS_USING_DNS));
 
         if(!response.isSuccessful())
-            throw std::runtime_error("Cluster manager not found");
+            throw std::runtime_error("Unexpected error when trying to get all nodes from the cluster manager " + response.body.dump());
 
-        return InfoNodeResponse::fromJson(response.body);
+        return AllNodesResponse::fromJson(response.body);
     }
 
 private:

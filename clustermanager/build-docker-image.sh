@@ -1,0 +1,1 @@
+docker build -t memdb-clustermanager:1.0 .

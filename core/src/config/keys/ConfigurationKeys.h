@@ -16,4 +16,5 @@ public:
     static const std::string CLUSTER_MANAGER_ADDRESS_USING_DNS;
     static const std::string AUTH_CLUSTER_KEY;
     static const std::string ETCD_ADDRESSES;
+    static const std::string NODE_ID;
 };

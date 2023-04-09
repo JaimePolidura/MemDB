@@ -31,7 +31,7 @@ func (controller *LoginController) Login(c echo.Context) error {
 	unsingedToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 5)),
 	})
-	
+
 	signedToken, err := unsingedToken.SignedString(
 		[]byte(controller.Configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_API_SECRET_KEY)))
 
@@ -39,7 +39,7 @@ func (controller *LoginController) Login(c echo.Context) error {
 		return err
 	}
 
-	controller.Logger.Log("Executed LoginController for authkey " + loginRequest.AuthKey)
+	controller.Logger.Log("Executed LoginController for authkey")
 
 	return c.JSON(http.StatusOK, echo.Map{
 		"token": signedToken,

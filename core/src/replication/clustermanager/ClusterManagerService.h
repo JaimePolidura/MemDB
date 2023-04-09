@@ -25,7 +25,8 @@ public:
         HttpResponse response = this->httpClusterManagerClient.get(
                 this->configuartion->get(ConfigurationKeys::CLUSTER_MANAGER_ADDRESS),
                 "/api/nodes/selfinfo",
-                this->token);
+                this->token,
+                this->configuartion->getBoolean(ConfigurationKeys::CLUSTER_MANAGER_ADDRESS_USING_DNS));
 
         if(!response.isSuccessful())
             throw std::runtime_error("Cluster manager not found");
@@ -38,7 +39,9 @@ private:
         auto response = this->httpClusterManagerClient.post(
                 this->configuartion->get(ConfigurationKeys::CLUSTER_MANAGER_ADDRESS),
                 "/login",
-                {{"authKey", this->configuartion->get(ConfigurationKeys::AUTH_CLUSTER_KEY)}});
+                {{"authKey", this->configuartion->get(ConfigurationKeys::AUTH_CLUSTER_KEY)}},
+                "",
+                this->configuartion->getBoolean(ConfigurationKeys::CLUSTER_MANAGER_ADDRESS_USING_DNS));
 
         if (response.code == 403) {
             logger->error("Invalid cluster auth key while trying to authenticate to they clustermanager");

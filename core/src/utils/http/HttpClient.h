@@ -117,7 +117,7 @@ private:
                 throw std::runtime_error("Cannot connect to " + address );
             }
 
-            std::this_thread::sleep_for(std::chrono::microseconds(250));
+            std::this_thread::sleep_for(std::chrono::seconds(5));
         }
     }
 

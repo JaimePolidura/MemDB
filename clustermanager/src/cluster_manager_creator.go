@@ -73,7 +73,7 @@ func configureHttpApi(configuration *configuration.Configuartion, etcdNativeClie
 	echoApi := echo.New()
 	echoApi.HideBanner = true
 	echoApi.Use(middleware.Recover())
-	
+
 	apiGroup := echoApi.Group("/api")
 	apiGroup.Use(echojwt.WithConfig(echojwt.Config{
 		SigningKey: []byte(configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_API_SECRET_KEY)),
@@ -81,10 +81,10 @@ func configureHttpApi(configuration *configuration.Configuartion, etcdNativeClie
 
 	customEtcdClient := &etcd.EtcdClient[nodes.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}
 	nodesRepository := nodes.EtcdNodeRepository{Client: customEtcdClient}
-
+	
+	getAllNodesController := api.GetAllNodeController{NodesRepository: nodesRepository, Logger: logger}
 	loginController := &api.LoginController{Configuration: configuration, Logger: logger}
 	createNodeController := &api.CreateNodeController{NodesRepository: nodesRepository}
-	getAllNodesController := api.GetAllNodeController{NodesRepository: nodesRepository}
 
 	echoApi.POST("/login", loginController.Login)
 	apiGroup.POST("/nodes/create", createNodeController.CreateNode)

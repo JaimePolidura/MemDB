@@ -39,10 +39,10 @@ public:
     {}
 
     auto setClusterInformation(AllNodesResponse allNodesResponse) -> void {
-        int selfNodeId = this->configuration->get<int>(ConfigurationKeys::NODE_ID);
+        std::string selfNodeId = this->configuration->get(ConfigurationKeys::NODE_ID);
         std::vector<Node> allNodes = allNodesResponse.nodes;
 
-        this->selfNode = *std::find_if(allNodes.begin(), allNodes.end(), [selfNodeId](Node node) -> bool{
+        this->selfNode = *std::find_if(allNodes.begin(), allNodes.end(), [&selfNodeId](Node node) -> bool{
             return node.nodeId == selfNodeId;
         });
 
@@ -51,7 +51,6 @@ public:
             return node.nodeId == selfNodeId;
         });
         this->clusterNodesConnections->setOtherNodes(otherNodes);
-        this->clusterNodesConnections->createConnections();
     }
 
     auto setReloadUnsyncedOpsCallback(std::function<void(std::vector<OperationBody>)> callback) -> void {
@@ -61,16 +60,21 @@ public:
     auto setBooting() -> void {
         this->selfNode.state = NodeState::BOOTING;
         this->clusterDb->set(this->selfNode.nodeId, this->selfNode);
+        this->logger->info("Changed replication node state to BOOTING");
     }
 
     auto setRunning() -> void {
         this->selfNode.state = NodeState::RUNNING;
         this->clusterDb->set(this->selfNode.nodeId, this->selfNode);
+        this->logger->info("Changed replication node state to RUNNING");
     }
 
     auto initialize() -> void {
         this->initializeNodeConnections();
+        this->logger->info("Created connections to cluster nodes");
+
         this->watchForChangesInClusterDb();
+        this->logger->info("Started watching changes in the clusterdb");
     }
 
     auto doesAddressBelongToReplicationNode(const std::string& address) -> bool {
@@ -106,7 +110,7 @@ public:
         return this->selfNode.state;
     }
 
-    auto getNodeId() -> uint16_t {
+    auto getNodeId() -> std::string {
         return this->selfNode.nodeId;
     }
 

@@ -13,7 +13,7 @@ public:
     static std::shared_ptr<MemDb> create() {
         configuration_t configuration = ConfiguartionLoader::load();
 
-        logger_t logger = std::make_shared<Logger>("Initializing memdb");
+        logger_t logger = std::make_shared<Logger>("Starting memdb");
         replication_t replication = createReplicationObject(logger, configuration);
         lamportClock_t clock = std::make_shared<LamportClock>(1);
         operationLogBuffer_t operationLogBuffer = std::make_shared<OperationLogBuffer>(configuration);

@@ -13,7 +13,7 @@ public:
     connection_t connection;
     std::string address;
     NodeState state;
-    int nodeId;
+    std::string nodeId;
 
     ResponseDeserializer responseDeserializer;
     RequestSerializer requestSerializer;
@@ -60,14 +60,14 @@ public:
     }
 
     static std::string toJson(const Node& node) {
-        return "{\"nodeId\": \""+std::to_string(node.nodeId)+"\", \"address\": \""+node.address+"\", \"state\": \""+NodeStates::parseNodeStateToString(node.state)+"\"}";
+        return "{\"nodeId\": \""+node.nodeId+"\", \"address\": \""+node.address+"\", \"state\": \""+NodeStates::parseNodeStateToString(node.state)+"\"}";
     }
 
     static Node fromJson(const nlohmann::json& json) {
         return Node{
                 .address = json["address"].get<std::string>(),
                 .state = NodeStates::parseNodeStateFromString(json["state"].get<std::string>()),
-                .nodeId = json["nodeId"].get<int>(),
+                .nodeId = json["nodeId"].get<std::string>(),
         };
     }
 };

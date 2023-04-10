@@ -1,0 +1,1 @@
+docker build -t memdb-core:1.0 .

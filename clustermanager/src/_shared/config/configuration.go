@@ -3,10 +3,11 @@ package configuration
 import (
 	"os"
 	"strconv"
+	"sync"
 )
 
 type Configuartion struct {
-	cachedConfigurationKeys map[string]string
+	cachedConfigurationKeys sync.Map
 }
 
 func (configuartion *Configuartion) GetBoolean(key string) bool {
@@ -25,26 +26,26 @@ func (configuartion *Configuartion) GetInt(key string) int64 {
 }
 
 func (configuartion *Configuartion) Get(key string) string {
-	if cachedValue, inCache := configuartion.cachedConfigurationKeys[key]; inCache {
-		return cachedValue
+	if cachedValue, inCache := configuartion.cachedConfigurationKeys.Load(key); inCache {
+		return cachedValue.(string)
 	}
 
 	envValue, envExists := os.LookupEnv(key)
 	defaultValue, defaultValueExists := DEFAULT_CONFIGURATION[key]
-	
+
 	if !envExists && !defaultValueExists {
 		panic("Environtment variable " + key + " missing")
 	}
 
 	if envExists {
-		configuartion.cachedConfigurationKeys[key] = envValue
+		configuartion.cachedConfigurationKeys.Store(key, envValue)
 		return envValue
 	}
 
-	configuartion.cachedConfigurationKeys[key] = defaultValue
+	configuartion.cachedConfigurationKeys.Store(key, defaultValue)
 	return defaultValue
 }
 
 func LoadConfiguration() *Configuartion {
-	return &Configuartion{cachedConfigurationKeys: make(map[string]string)}
+	return &Configuartion{cachedConfigurationKeys: sync.Map{}}
 }

@@ -39,7 +39,7 @@ func (controller *LoginController) Login(c echo.Context) error {
 		return err
 	}
 
-	controller.Logger.Log("Executed LoginController for authkey")
+	controller.Logger.Info("Executed LoginController for authkey")
 
 	return c.JSON(http.StatusOK, echo.Map{
 		"token": signedToken,

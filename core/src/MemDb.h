@@ -33,7 +33,9 @@ public:
         this->tcpServer->run();
 
         if(this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION)){
-            this->setupReplicationNode(lastTimestampStored);
+            this->syncReplicationNode(lastTimestampStored);
+
+            this->logger->info("Replication node up to date");
         }
     }
 
@@ -42,11 +44,15 @@ public:
     }
 
 private:
-    void setupReplicationNode(uint64_t lastTimestampProcessedFromOpLog) {
-        this->clock->nodeId = this->replication->getNodeId();
+    void syncReplicationNode(uint64_t lastTimestampProcessedFromOpLog) {
+        this->logger->info("Synchronizing oplog with the cluster");
+
+        this->clock->nodeId = std::stoi(this->replication->getNodeId());
 
         auto unsyncedOpLogs = this->replication->getUnsyncedOpLogs(lastTimestampProcessedFromOpLog);
         this->applyOperationLogs(unsyncedOpLogs);
+
+        this->logger->info("Synchronized oplog with the cluster");
 
         this->operatorDispatcher->applyReplicatedOperationBuffer();
         this->replication->setRunning();

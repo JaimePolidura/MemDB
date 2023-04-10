@@ -41,7 +41,7 @@ public:
             acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}) {};
 
     void run() {
-        this->logger->info("TCP server initialized. Waiting for conenctions...");
+        this->logger->info("Listening for conenctions...");
 
         try{
             this->acceptNewConnections();

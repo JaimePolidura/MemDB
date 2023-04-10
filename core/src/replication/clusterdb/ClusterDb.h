@@ -22,7 +22,7 @@ public:
         });
     }
 
-    auto set(int nodeId, const Node& node) -> void {
+    auto set(const std::string& nodeId, const Node& node) -> void {
         this->client.put("/nodes/" + nodeId, Node::toJson(node)).get();
     }
 };

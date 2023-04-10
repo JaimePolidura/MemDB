@@ -10,7 +10,6 @@ import (
 	"clustermanager/src/_shared/nodes/connection/messages/response"
 	"clustermanager/src/_shared/nodes/states"
 	"fmt"
-	"strconv"
 	"sync"
 	"time"
 )
@@ -47,7 +46,7 @@ func (healthCheckService *HealthCheckService) startAsyncHealthCheckPeriodicRouti
 }
 
 func (healthCheckService *HealthCheckService) runHealthChecks() {
-	healthCheckService.Logger.Log("Starting health check round")
+	healthCheckService.Logger.Info("Starting health check round")
 	nodesFromRepository, err := healthCheckService.NodesRespository.FindAll()
 
 	if err != nil {
@@ -97,9 +96,9 @@ func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.N
 
 func (healthCheckService *HealthCheckService) logHealthCheckResult(response response.Response, node nodes.Node) {
 	if response.Success {
-		healthCheckService.Logger.Log("Recieved successful health check to " + strconv.Itoa(int(node.NodeId)))
+		healthCheckService.Logger.Info("Recieved successful health check to " + string(node.NodeId))
 	} else {
-		healthCheckService.Logger.Log("Recieved failure health check to " + strconv.Itoa(int(node.NodeId)))
+		healthCheckService.Logger.Info("Recieved failure health check to " + string(node.NodeId))
 	}
 
 }

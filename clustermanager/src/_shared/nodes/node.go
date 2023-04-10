@@ -4,7 +4,7 @@ import (
 	"clustermanager/src/_shared/nodes/states"
 )
 
-type NodeId_t int
+type NodeId_t string
 
 type Node struct {
 	NodeId  NodeId_t         `json:"nodeId"`

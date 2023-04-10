@@ -3,10 +3,11 @@ package connection
 import (
 	"clustermanager/src/_shared/nodes"
 	"net"
+	"sync"
 )
 
 type NodeConnections struct {
-	connections map[nodes.NodeId_t]NodeConnection
+	connections sync.Map
 }
 
 func (nodeConnections *NodeConnections) GetByIdOrCreate(node nodes.Node) (NodeConnection, error) {
@@ -20,7 +21,7 @@ func (nodeConnections *NodeConnections) GetByIdOrCreate(node nodes.Node) (NodeCo
 }
 
 func (nodeConnections *NodeConnections) Delete(nodeId nodes.NodeId_t) {
-	delete(nodeConnections.connections, nodeId)
+	nodeConnections.connections.Delete(nodeId)
 }
 
 func (nodeConnections *NodeConnections) Create(node nodes.Node) (NodeConnection, error) {
@@ -35,16 +36,17 @@ func (nodeConnections *NodeConnections) Create(node nodes.Node) (NodeConnection,
 	}
 
 	connection := NodeConnection{connection: tcpConnection, node: node}
-	nodeConnections.connections[node.NodeId] = connection
+
+	nodeConnections.connections.Store(node.NodeId, connection)
 
 	return connection, nil
 }
 
 func (nodeConnections *NodeConnections) GetByNodeId(nodeId nodes.NodeId_t) (NodeConnection, bool) {
-	value, exists := nodeConnections.connections[nodeId]
-	return value, exists
+	value, exists := nodeConnections.connections.Load(nodeId)
+	return value.(NodeConnection), exists
 }
 
 func CreateNodeConnectionsObject() *NodeConnections {
-	return &NodeConnections{connections: make(map[nodes.NodeId_t]NodeConnection)}
+	return &NodeConnections{connections: sync.Map{}}
 }

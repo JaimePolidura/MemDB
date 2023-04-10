@@ -17,7 +17,8 @@ private:
     FixedThreadPool requestPool;
 
 public:
-    ClusterNodesConnections(configuration_t configuration): configuration(configuration), requestPool(configuration->get<int>(ConfigurationKeys::SERVER_MAX_THREADS)) {}
+    ClusterNodesConnections(configuration_t configuration): configuration(configuration),
+        requestPool(configuration->get<int>(ConfigurationKeys::SERVER_MAX_THREADS)) {}
 
     void setOtherNodes(const std::vector<Node>& otherNodesToSet) {
         this->otherNodes = otherNodesToSet;
@@ -37,9 +38,9 @@ public:
         node.openConnection();
     }
 
-    bool existsByNodeId(int nodeId) {
+    bool existsByNodeId(const std::string& nodeId) {
         for(int i = 0; i < this->otherNodes.size(); i++){
-            if(this->otherNodes.at(i).nodeId == nodeId){
+            if(this->otherNodes.at(i).nodeId == nodeId == 0){
                 return true;
             }
         }
@@ -47,7 +48,7 @@ public:
         return false;
     }
 
-    void deleteNodeById(int nodeId) {
+    void deleteNodeById(const std::string& nodeId) {
         for(int i = 0; i < this->otherNodes.size(); i++){
             if(this->otherNodes.at(i).nodeId == nodeId){
                 this->otherNodes.erase(this->otherNodes.begin() + i);
@@ -85,7 +86,7 @@ public:
 
 private:
     Node selectRandomNodeToSendRequest() {
-        std::set<int> alreadyCheckedNodesId{};
+        std::set<std::string> alreadyCheckedNodesId{};
         std::srand(std::time(nullptr));
 
         while(alreadyCheckedNodesId.size() != otherNodes.size()) {

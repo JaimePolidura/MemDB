@@ -46,21 +46,17 @@ func (healthCheckService *HealthCheckService) startAsyncHealthCheckPeriodicRouti
 }
 
 func (healthCheckService *HealthCheckService) runHealthChecks() {
-	healthCheckService.Logger.Info("Starting health check round")
 	nodesFromRepository, err := healthCheckService.NodesRespository.FindAll()
 
 	if err != nil {
 		_ = fmt.Errorf("[ClusterManager] Error while retrieving all nodes from database: %v\n", err)
 		return
 	}
-
+	
 	var waitGroup sync.WaitGroup
 
+	healthCheckService.Logger.Info("Starting healthcheck round")
 	for _, node := range nodesFromRepository {
-		if node.State == states.BOOTING {
-			continue
-		}
-
 		go healthCheckService.sendHealthCheckToNode(node, &waitGroup)
 	}
 
@@ -86,9 +82,11 @@ func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.N
 	if err != nil || !response.Success {
 		healthCheckService.NodesRespository.Add(*node.WithState(states.SHUTDOWN))
 		healthCheckService.NodeConnections.Delete(node.NodeId)
+		healthCheckService.Logger.Info("Node" + string(node.NodeId) + " doest repond to health check. Marked as SHUTDOWN")
 	} else if node.State == states.SHUTDOWN && response.Success {
 		healthCheckService.NodesRespository.Add(*node.WithState(states.BOOTING))
 		healthCheckService.NodeConnections.Create(node)
+		healthCheckService.Logger.Info("Node" + string(node.NodeId) + " previously marked as SHUTDOWN, now it responds to health check. Marked as BOOTING")
 	}
 
 	waitGroup.Done()

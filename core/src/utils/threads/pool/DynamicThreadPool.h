@@ -8,7 +8,6 @@ private:
     std::vector<std::shared_ptr<Worker>> workers;
     std::uint64_t numberTaskEnqueued;
     std::mutex autoScaleLock;
-    std::string name;
     int inspectionPerTaskEnqueued;
     int maxThreads;
     int minThreads;
@@ -16,9 +15,9 @@ private:
     std::atomic_uint64_t nextWorker;
 
 public:
-    DynamicThreadPool(uint8_t loadFactor, int maxThreadsCons, int minThreadsCons, int inspectionPerTaskEnqueuedCons, const std::string& name = ""):
-            loadFactor(loadFactor), maxThreads(maxThreadsCons), minThreads(minThreadsCons), inspectionPerTaskEnqueued(inspectionPerTaskEnqueuedCons),
-            name(std::move(name)), nextWorker(0) {
+    DynamicThreadPool(uint8_t loadFactor, int maxThreadsCons, int minThreadsCons, int inspectionPerTaskEnqueuedCons):
+            loadFactor(loadFactor), maxThreads(maxThreadsCons), minThreads(minThreadsCons),
+            inspectionPerTaskEnqueued(inspectionPerTaskEnqueuedCons), nextWorker(0) {
 
         this->start();
     }
@@ -71,7 +70,6 @@ private:
                 0,
                 [](int total, const std::shared_ptr<Worker>& act){ return total + act->enqueuedTasks();});
 
-        float actualLoadFactor = totalTask / this->workers.size();
         int newNumberOfWorkersNotAdjusted = totalTask / this->loadFactor;
         int newNumberOfWorkersAdjusted = newNumberOfWorkersNotAdjusted < this->minThreads ? this->minThreads :
                                          (newNumberOfWorkersNotAdjusted > this->maxThreads ? this->maxThreads : newNumberOfWorkersNotAdjusted);
@@ -89,7 +87,7 @@ private:
 
     void createWorkers(int numberWorkers) {
         for (int i = 0; i < numberWorkers; ++i){
-            std::shared_ptr<Worker> newWorker = std::make_shared<Worker>(this->name);
+            std::shared_ptr<Worker> newWorker = std::make_shared<Worker>();
             this->workers.push_back(newWorker);
             newWorker->startThread();
         }

@@ -40,7 +40,7 @@ public:
 
     bool existsByNodeId(const std::string& nodeId) {
         for(int i = 0; i < this->otherNodes.size(); i++){
-            if(this->otherNodes.at(i).nodeId == nodeId == 0){
+            if(this->otherNodes.at(i).nodeId == nodeId){
                 return true;
             }
         }

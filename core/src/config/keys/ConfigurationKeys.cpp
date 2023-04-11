@@ -12,4 +12,5 @@ const std::string ConfigurationKeys::CLUSTER_MANAGER_ADDRESS_USING_DNS = "CLUSTE
 const std::string ConfigurationKeys::AUTH_CLUSTER_KEY = "AUTH_CLUSTER_KEY";
 const std::string ConfigurationKeys::USE_REPLICATION = "USE_REPLICATION";
 const std::string ConfigurationKeys::ETCD_ADDRESSES = "ETCD_ADDRESSES";
+const std::string ConfigurationKeys::ETCD_ADDRESSES_USING_DNS = "ETCD_ADDRESSES_USING_DNS";
 const std::string ConfigurationKeys::NODE_ID = "NODE_ID";

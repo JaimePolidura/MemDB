@@ -28,14 +28,14 @@ public:
           clock(clock), logger(logger) {}
 
     void run() {
-        uint64_t lastTimestampStored = this->restoreDataFromOplog();
+        uint64_t lastTimestampStored = this->restoreDataFromOplogFromDisk();
 
         this->tcpServer->run();
 
         if(this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION)){
-            this->syncReplicationNode(lastTimestampStored);
+            this->clock->nodeId = std::stoi(this->replication->getNodeId());
 
-            this->logger->info("Replication node up to date");
+            this->syncOplogFromCluster(lastTimestampStored);
         }
     }
 
@@ -44,38 +44,35 @@ public:
     }
 
 private:
-    void syncReplicationNode(uint64_t lastTimestampProcessedFromOpLog) {
+    void syncOplogFromCluster(uint64_t lastTimestampProcessedFromOpLog) {
         this->logger->info("Synchronizing oplog with the cluster");
 
-        this->clock->nodeId = std::stoi(this->replication->getNodeId());
-
-        auto unsyncedOpLogs = this->replication->getUnsyncedOpLogs(lastTimestampProcessedFromOpLog);
-        this->applyOperationLogs(unsyncedOpLogs);
-
+        auto unsyncedOpLogs = this->replication->getUnsyncedOplog(lastTimestampProcessedFromOpLog);
+        this->applyUnsyncedOplogFromCluster(unsyncedOpLogs);
         this->logger->info("Synchronized oplog with the cluster");
 
-        this->operatorDispatcher->applyReplicatedOperationBuffer();
         this->replication->setRunning();
 
         this->replication->setReloadUnsyncedOpsCallback([this](std::vector<OperationBody> unsyncedOperations){
-            this->applyOperationLogs(unsyncedOperations);
+            this->applyUnsyncedOplogFromCluster(unsyncedOperations);
             this->operatorDispatcher->applyReplicatedOperationBuffer();
         });
     }
 
-    uint64_t restoreDataFromOplog() {
+    uint64_t restoreDataFromOplogFromDisk() {
         OperationLogDiskLoader loader{};
         auto opLogsFromDisk = loader.getAllAndSaveCompacted(this->dbMap);
 
         this->logger->info("Applaying logs from disk...");
-        this->applyOperationLogs(opLogsFromDisk);
+        this->applyUnsyncedOplogFromCluster(opLogsFromDisk);
 
         return !opLogsFromDisk.empty() ? opLogsFromDisk[opLogsFromDisk.size() - 1].timestamp : 0;
     }
 
-    void applyOperationLogs(const std::vector<OperationBody>& opLogs) {
+    void applyUnsyncedOplogFromCluster(const std::vector<OperationBody>& opLogs) {
         for(const auto& operationLogInDisk : opLogs)
             this->operatorDispatcher->executeOperator(OperationOptions{.requestFromReplication = false},
                                                       operationLogInDisk);
+        this->operatorDispatcher->applyReplicatedOperationBuffer();
     }
 };

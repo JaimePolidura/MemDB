@@ -19,7 +19,8 @@ public:
                 {ConfigurationKeys::ETCD_ADDRESSES,                    "127.0.0.1:2379"},
                 {ConfigurationKeys::CLUSTER_MANAGER_ADDRESS,           "127.0.0.1:8080"},
                 {ConfigurationKeys::CLUSTER_MANAGER_ADDRESS_USING_DNS, "false"},
-                {ConfigurationKeys::NODE_ID,                           "1"}
+                {ConfigurationKeys::NODE_ID,                           "1"},
+                {ConfigurationKeys::ETCD_ADDRESSES_USING_DNS,          "false"}
         };
     }
 };

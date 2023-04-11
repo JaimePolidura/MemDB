@@ -10,11 +10,9 @@ class Worker {
 private:
     std::shared_ptr<BlockingQueue<Task>> pendingTasks;
     volatile bool isStoped;
-    std::string name;
     std::thread thread;
 public:
-    Worker(std::string name):
-        pendingTasks(std::make_shared<BlockingQueue<Task>>()), isStoped(false), name(name) {}
+    Worker(): pendingTasks(std::make_shared<BlockingQueue<Task>>()), isStoped(false) {}
 
     void startThread() {
         this->thread = std::thread([this]{this->run();});

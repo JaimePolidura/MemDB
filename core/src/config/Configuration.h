@@ -36,7 +36,15 @@ private:
 
         return containedInActual ?
             std::string(fromEnvVariable) :
-            this->defaultConfigurationValues.at(key);
+            this->getDefault(key);
+    }
+
+    std::string getDefault(const std::string& key) {
+        if(!this->defaultConfigurationValues.contains(key)) {
+            throw std::runtime_error("Env variable not declared: " + key);
+        }
+
+        return this->defaultConfigurationValues.at(key);
     }
 };
 

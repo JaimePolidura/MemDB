@@ -2,9 +2,10 @@ set(BINARY ${CMAKE_PROJECT_NAME})
 file(GLOB_RECURSE SOURCES LIST_DIRECTORIES true *.h *.cpp)
 add_executable(${BINARY}_run ${SOURCES})
 
-add_library(${BINARY}_lib STATIC ${SOURCES} utils/datastructures/queue/BufferOneConsumer.h logging/Logger.h replication/clustermanager/requests/AllNodesResponse.h)
+add_library(${BINARY}_lib STATIC ${SOURCES} utils/datastructures/queue/BufferOneConsumer.h logging/Logger.h replication/clustermanager/requests/AllNodesResponse.h utils/net/DNSUtils.h)
 
 # VCPKG Libraries
+# He cambiado el nombre de la carpeta de boost a xd. Con eso el programa no se bloquea
 include_directories(${CMAKE_PREFIX_PATH}/include)
 
 find_package(Boost REQUIRED)

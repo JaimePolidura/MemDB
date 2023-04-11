@@ -36,7 +36,7 @@ public:
             replication(replication),
             port(configuration->get<uint16_t>(ConfigurationKeys::PORT)),
             authenicator(std::move(authenicator)),
-            connectionThreadPool(5, configuration->get<int>(ConfigurationKeys::SERVER_MAX_THREADS), configuration->get<int>(ConfigurationKeys::SERVER_MIN_THREADS), 100, "TCPServer"),
+            connectionThreadPool(5, configuration->get<int>(ConfigurationKeys::SERVER_MAX_THREADS), configuration->get<int>(ConfigurationKeys::SERVER_MIN_THREADS), 100),
             operatorDispatcher(operatorDispatcher),
             acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}) {};
 

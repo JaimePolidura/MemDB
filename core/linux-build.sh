@@ -9,10 +9,7 @@ rm -r .idea
 
 cd src || exit
 
-# Delete build if exists
-if [ -f ./build ]; then
- rm -r build
-fi
+rm -r build
 
 # Calling cmkae
 cmake -S .. -O ./build -D BUILDING_LINUX_DEPLOYMENT=ON

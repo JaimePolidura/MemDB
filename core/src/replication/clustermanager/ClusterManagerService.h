@@ -2,7 +2,7 @@
 
 #include "replication/clustermanager/requests/AllNodesResponse.h"
 #include "config/Configuration.h"
-#include "utils/http/HttpClient.h"
+#include "utils/net/HttpClient.h"
 #include "replication/Node.h"
 #include "logging/Logger.h"
 

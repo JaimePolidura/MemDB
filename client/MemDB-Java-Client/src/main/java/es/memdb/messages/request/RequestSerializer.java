@@ -77,15 +77,15 @@ public final class RequestSerializer {
     }
 
     private List<Byte> getAuth(Request request) {
-        List<Byte> bytesAuth = new ArrayList<>(request.getAuthentication().getAuthClientKey().length() + 1);
+        List<Byte> bytesAuth = new ArrayList<>(request.getAuthentication().getAuthApiKey().length() + 1);
 
         AuthenticationRequest authenticationNotSerialized = request.getAuthentication();
-        byte authLength = (byte) (authenticationNotSerialized.getAuthClientKey().length() << 2);
+        byte authLength = (byte) (authenticationNotSerialized.getAuthApiKey().length() << 2);
         byte flag1 = (byte) (booleanToInt(authenticationNotSerialized.isFlag1()) << 1);
         byte flag2 = (byte) booleanToInt(request.getOperationRequest().isFlag2());
 
         bytesAuth.add((byte) (authLength | flag1 | flag2));
-        bytesAuth.addAll(this.stringToBytes(request.getAuthentication().getAuthClientKey()));
+        bytesAuth.addAll(this.stringToBytes(request.getAuthentication().getAuthApiKey()));
 
         return bytesAuth;
     }

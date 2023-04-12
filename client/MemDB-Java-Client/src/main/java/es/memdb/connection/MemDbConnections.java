@@ -10,8 +10,8 @@ public final class MemDbConnections {
         return new AsyncMemDbConnection(host, port);
     }
 
-    public static MemDbConnection cluster(String authClusterKey, String clusterManagerAddress) throws IOException {
-        return new ClusterMemDbSyncConnection(new ClusterManager(List.of(clusterManagerAddress), authClusterKey));
+    public static MemDbConnection cluster(String authApiKey, String... address) throws IOException {
+        return new ClusterMemDbSyncConnection(new ClusterManager(List.of(address), authApiKey));
     }
 
     public static MemDbConnection sync(String host, int port) throws IOException {

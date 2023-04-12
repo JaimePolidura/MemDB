@@ -5,7 +5,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class RequestSerializerTest {
@@ -21,7 +20,7 @@ public class RequestSerializerTest {
         Request request = Request.builder()
                 .requestNumber(1)
                 .authentication(AuthenticationRequest.builder()
-                        .authClientKey("123")
+                        .authApiKey("123")
                         .build())
                 .operationRequest(OperationRequest.builder()
                         .operator(Operator.SET)

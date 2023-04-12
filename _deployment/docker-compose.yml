@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  ubuntu:
-    image: ubuntu:latest
-    command: tail -f /dev/null
+  #ubuntu:
+  #  image: ubuntu:latest
+  #  command: tail -f /dev/null
 
   memdb-clusterdb:
     image: bitnami/etcd:latest
@@ -13,8 +13,8 @@ services:
     environment:
       - ALLOW_NONE_AUTHENTICATION=yes
       - ETCDCTL_API=3
-    volumes:
-      - etcd_data:/bitnami/etcd/data
+    logging:
+      driver: none
     restart: always
 
   memdb-clustermanager:
@@ -25,8 +25,8 @@ services:
     depends_on:
       - memdb-clusterdb
     environment:
-      - MEMDB_CLUSTERMANAGER_HEALTHCHECK_PERIOD=10
-      - MEMDB_CLUSTERMANAGER_DO_LOGGING=true
+      - MEMDB_CLUSTERMANAGER_HEALTHCHECK_PERIOD=30
+      - MEMDB_CLUSTERMANAGER_DO_LOGGING=false
       - MEMDB_CLUSTERMANAGER_ETCD_ENDPOINTS=memdb-clusterdb:2379
     restart: always
 
@@ -38,12 +38,13 @@ services:
     ports:
       - "10000:10000"
     environment:
-      - PORT=10000
-      - PERSISTANCE_WRITE_EVERY=1
-      - USE_REPLICATION=true
-      - CLUSTER_MANAGER_ADDRESS=memdb-clustermanager:8080
-      - CLUSTER_MANAGER_ADDRESS_USING_DNS=true
-      - ETCD_ADDRESSES=memdb-clusterdb:2379
+      - MEMDB_CORE_SHOW_DEBUG_LOG=true
+      - MEMDB_CORE_PORT=10000
+      - MEMDB_CORE_PERSISTANCE_WRITE_EVERY=1
+      - MEMDB_CORE_USE_REPLICATION=true
+      - MEMDB_CORE_CLUSTER_MANAGER_ADDRESS=memdb-clustermanager:8080
+      - MEMDB_CORE_ETCD_ADDRESSES=memdb-clusterdb:2379
+      - MEMDB_CORE_NODE_ID=1
 
   memdb-clusternode-2:
     image: memdb-core:1.0
@@ -53,12 +54,10 @@ services:
     ports:
       - "10001:10001"
     environment:
-      - PORT=10001
-      - PERSISTANCE_WRITE_EVERY=1
-      - USE_REPLICATION=true
-      - CLUSTER_MANAGER_ADDRESS=memdb-clustermanager:8080
-      - CLUSTER_MANAGER_ADDRESS_USING_DNS=true
-      - ETCD_ADDRESSES=memdb-clusterdb:2379
-
-volumes:
-  etcd_data:
+      - MEMDB_CORE_SHOW_DEBUG_LOG=true
+      - MEMDB_CORE_PORT=10001
+      - MEMDB_CORE_PERSISTANCE_WRITE_EVERY=1
+      - MEMDB_CORE_USE_REPLICATION=true
+      - MEMDB_CORE_CLUSTER_MANAGER_ADDRESS=memdb-clustermanager:8080
+      - MEMDB_CORE_ETCD_ADDRESSES=memdb-clusterdb:2379
+      - MEMDB_CORE_NODE_ID=2

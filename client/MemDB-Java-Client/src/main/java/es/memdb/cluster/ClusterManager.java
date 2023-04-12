@@ -16,12 +16,12 @@ public final class ClusterManager {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final List<String> addresses;
-    private final String authClusterKey;
+    private final String authApiKey;
     private String lastToken;
 
-    public ClusterManager(List<String> addresses, String authClusterKey) {
+    public ClusterManager(List<String> addresses, String authApiKey) {
         this.addresses = addresses;
-        this.authClusterKey = authClusterKey;
+        this.authApiKey = authApiKey;
         this.lastToken = authenticate();
     }
 
@@ -30,7 +30,7 @@ public final class ClusterManager {
         HttpRequest getAllNodesRequest = HttpRequest.newBuilder()
                 .uri(URI.create(getRandomClusterManagerAddress()))
                 .setHeader("Authentication", "Bearer " + this.lastToken)
-                .POST(HttpRequest.BodyPublishers.ofString("{\"authKey\": \""+this.authClusterKey+"\"}"))
+                .POST(HttpRequest.BodyPublishers.ofString("{\"authKey\": \""+this.authApiKey +"\"}"))
                 .build();
 
         HttpResponse<String> response = this.httpClient.send(getAllNodesRequest, HttpResponse.BodyHandlers.ofString());
@@ -47,7 +47,7 @@ public final class ClusterManager {
     private String authenticate() {
         HttpRequest loginRequest = HttpRequest.newBuilder()
                 .uri(URI.create(getRandomClusterManagerAddress()))
-                .POST(HttpRequest.BodyPublishers.ofString("{\"authKey\": \""+this.authClusterKey+"\"}"))
+                .POST(HttpRequest.BodyPublishers.ofString("{\"authKey\": \""+this.authApiKey +"\"}"))
                 .build();
 
         HttpResponse<String> response = this.httpClient.send(loginRequest, HttpResponse.BodyHandlers.ofString());

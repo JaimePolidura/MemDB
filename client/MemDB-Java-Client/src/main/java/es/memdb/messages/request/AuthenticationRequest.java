@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public final class AuthenticationRequest {
-    @Getter private final String authClientKey;
+    @Getter private final String authApiKey;
     @Getter private final boolean flag1;
     @Getter private final boolean flag2;
 }

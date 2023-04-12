@@ -65,13 +65,12 @@ func (healthCheckService *HealthCheckService) runHealthChecks() {
 func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.Node, waitGroup *sync.WaitGroup) {
 	waitGroup.Add(1)
 
-	connectionToNode, err := healthCheckService.NodeConnections.GetByIdOrCreate(node)
-	
+	connectionToNode, err := healthCheckService.getConnectionOrCreate(node)
+
 	if err != nil {
 		if node.State != states.SHUTDOWN {
 			healthCheckService.NodesRespository.Add(*node.WithState(states.SHUTDOWN))
 		}
-
 		waitGroup.Done()
 		return
 	}
@@ -90,6 +89,14 @@ func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.N
 		healthCheckService.NodeConnections.Create(node)
 		healthCheckService.Logger.Info("Node" + string(node.NodeId) + " previously marked as SHUTDOWN, now it responds to health check. Marked as BOOTING")
 	}
-
+	
 	waitGroup.Done()
+}
+
+func (healthCheckService *HealthCheckService) getConnectionOrCreate(node nodes.Node) (*connection.NodeConnection, error) {
+	if node.State == states.SHUTDOWN {
+		healthCheckService.NodeConnections.Delete(node.NodeId)
+	}
+
+	return healthCheckService.NodeConnections.GetByIdOrCreate(node)
 }

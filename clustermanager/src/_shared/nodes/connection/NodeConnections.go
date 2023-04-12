@@ -3,6 +3,7 @@ package connection
 import (
 	"clustermanager/src/_shared/logging"
 	"clustermanager/src/_shared/nodes"
+	"clustermanager/src/_shared/utils"
 	"net"
 	"sync"
 )
@@ -23,7 +24,12 @@ func (nodeConnections *NodeConnections) GetByIdOrCreate(node nodes.Node) (*NodeC
 }
 
 func (nodeConnections *NodeConnections) Delete(nodeId nodes.NodeId_t) {
-	nodeConnections.connections.Delete(nodeId)
+	connection, exist := nodeConnections.GetByNodeId(nodeId)
+
+	if exist {
+		connection.connection.Close()
+		nodeConnections.connections.Delete(nodeId)
+	}
 }
 
 func (nodeConnections *NodeConnections) Create(node nodes.Node) (*NodeConnection, error) {
@@ -32,12 +38,10 @@ func (nodeConnections *NodeConnections) Create(node nodes.Node) (*NodeConnection
 		nodeConnections.Delete(node.NodeId)
 	}
 
-	tcpConnection, err := net.DialTimeout("tcp", node.Address, 10)
+	connection, err := nodeConnections.createTCPConnection(node)
 	if err != nil {
-		return &NodeConnection{}, err
+		return nil, err
 	}
-
-	connection := &NodeConnection{connection: tcpConnection, node: node}
 
 	nodeConnections.connections.Store(node.NodeId, connection)
 
@@ -57,4 +61,15 @@ func (nodeConnections *NodeConnections) GetByNodeId(nodeId nodes.NodeId_t) (*Nod
 
 func CreateNodeConnectionsObject(logger *logging.Logger) *NodeConnections {
 	return &NodeConnections{connections: sync.Map{}, logger: logger}
+}
+
+func (nodeConnections *NodeConnections) createTCPConnection(node nodes.Node) (*NodeConnection, error) {
+	adr, err := utils.GetTCPAddress(node.Address)
+	tcpConnection, err := net.DialTCP("tcp", nil, adr)
+
+	if err != nil {
+		return nil, err
+	} else {
+		return &NodeConnection{connection: tcpConnection, node: node}, err
+	}
 }

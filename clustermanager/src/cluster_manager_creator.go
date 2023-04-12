@@ -77,7 +77,7 @@ func configureHttpApi(configuration *configuration.Configuartion, etcdNativeClie
 
 	apiGroup := echoApi.Group("/api")
 	apiGroup.Use(echojwt.WithConfig(echojwt.Config{
-		SigningKey: []byte(configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_API_SECRET_KEY)),
+		SigningKey: []byte(configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_API_JWT_SECRET_KEY)),
 	}))
 
 	customEtcdClient := &etcd.EtcdClient[nodes.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}

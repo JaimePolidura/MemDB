@@ -75,7 +75,7 @@ func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.N
 		return
 	}
 
-	authKey := healthCheckService.Configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_AUTH_CLUSTER_KEY)
+	authKey := healthCheckService.Configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_AUTH_MAINTENANCE_KEY)
 	response, err := connectionToNode.Send(request.BuildHealthCheckRequest(authKey))
 	didntRespondToHealthCheck := err != nil || !response.Success
 	respondedToHealthCheck := !didntRespondToHealthCheck
@@ -89,7 +89,7 @@ func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.N
 		healthCheckService.NodeConnections.Create(node)
 		healthCheckService.Logger.Info("Node" + string(node.NodeId) + " previously marked as SHUTDOWN, now it responds to health check. Marked as BOOTING")
 	}
-	
+
 	waitGroup.Done()
 }
 

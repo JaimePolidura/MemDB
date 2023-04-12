@@ -21,12 +21,12 @@ import (
 
 func CreateClusterManager() *ClusterManager {
 	loadedConfiguration := configuration.LoadConfiguration()
-	etcdNativeClient := createEtcdNativeClient(loadedConfiguration)
-	nodeConnections := connection.CreateNodeConnectionsObject()
 	logger := &logging.Logger{
 		NativeLogger:  log.New(os.Stdout, "[ClusterManager] ", log.Ldate|log.Ltime|log.Lmsgprefix),
 		Configuration: loadedConfiguration,
 	}
+	etcdNativeClient := createEtcdNativeClient(loadedConfiguration)
+	nodeConnections := connection.CreateNodeConnectionsObject(logger)
 	healthService := createHealthCheckService(loadedConfiguration, nodeConnections, etcdNativeClient, logger)
 	apiEcho := configureHttpApi(loadedConfiguration, etcdNativeClient, logger)
 
@@ -53,7 +53,8 @@ func createEtcdNativeClient(configuration *configuration.Configuartion) *clientv
 	return client
 }
 
-func createHealthCheckService(configuration *configuration.Configuartion,
+func createHealthCheckService(
+	configuration *configuration.Configuartion,
 	connections *connection.NodeConnections,
 	etcdNativeClient *clientv3.Client,
 	logger *logging.Logger) *healthchecks.HealthCheckService {
@@ -81,7 +82,7 @@ func configureHttpApi(configuration *configuration.Configuartion, etcdNativeClie
 
 	customEtcdClient := &etcd.EtcdClient[nodes.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}
 	nodesRepository := nodes.EtcdNodeRepository{Client: customEtcdClient}
-	
+
 	getAllNodesController := api.GetAllNodeController{NodesRepository: nodesRepository, Logger: logger}
 	loginController := &api.LoginController{Configuration: configuration, Logger: logger}
 	createNodeController := &api.CreateNodeController{NodesRepository: nodesRepository}

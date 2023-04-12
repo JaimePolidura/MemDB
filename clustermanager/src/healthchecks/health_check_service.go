@@ -7,7 +7,6 @@ import (
 	"clustermanager/src/_shared/nodes"
 	"clustermanager/src/_shared/nodes/connection"
 	"clustermanager/src/_shared/nodes/connection/messages/request"
-	"clustermanager/src/_shared/nodes/connection/messages/response"
 	"clustermanager/src/_shared/nodes/states"
 	"fmt"
 	"sync"
@@ -52,12 +51,12 @@ func (healthCheckService *HealthCheckService) runHealthChecks() {
 		_ = fmt.Errorf("[ClusterManager] Error while retrieving all nodes from database: %v\n", err)
 		return
 	}
-	
-	var waitGroup sync.WaitGroup
+
+	waitGroup := new(sync.WaitGroup)
 
 	healthCheckService.Logger.Info("Starting healthcheck round")
 	for _, node := range nodesFromRepository {
-		go healthCheckService.sendHealthCheckToNode(node, &waitGroup)
+		go healthCheckService.sendHealthCheckToNode(node, waitGroup)
 	}
 
 	waitGroup.Wait()
@@ -67,36 +66,30 @@ func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.N
 	waitGroup.Add(1)
 
 	connectionToNode, err := healthCheckService.NodeConnections.GetByIdOrCreate(node)
-
+	
 	if err != nil {
-		healthCheckService.NodesRespository.Add(*node.WithState(states.BOOTING))
+		if node.State != states.SHUTDOWN {
+			healthCheckService.NodesRespository.Add(*node.WithState(states.SHUTDOWN))
+		}
+
 		waitGroup.Done()
 		return
 	}
 
 	authKey := healthCheckService.Configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_AUTH_CLUSTER_KEY)
 	response, err := connectionToNode.Send(request.BuildHealthCheckRequest(authKey))
+	didntRespondToHealthCheck := err != nil || !response.Success
+	respondedToHealthCheck := !didntRespondToHealthCheck
 
-	healthCheckService.logHealthCheckResult(response, node)
-
-	if err != nil || !response.Success {
+	if didntRespondToHealthCheck && node.State != states.SHUTDOWN {
 		healthCheckService.NodesRespository.Add(*node.WithState(states.SHUTDOWN))
 		healthCheckService.NodeConnections.Delete(node.NodeId)
 		healthCheckService.Logger.Info("Node" + string(node.NodeId) + " doest repond to health check. Marked as SHUTDOWN")
-	} else if node.State == states.SHUTDOWN && response.Success {
+	} else if respondedToHealthCheck && node.State == states.SHUTDOWN {
 		healthCheckService.NodesRespository.Add(*node.WithState(states.BOOTING))
 		healthCheckService.NodeConnections.Create(node)
 		healthCheckService.Logger.Info("Node" + string(node.NodeId) + " previously marked as SHUTDOWN, now it responds to health check. Marked as BOOTING")
 	}
 
 	waitGroup.Done()
-}
-
-func (healthCheckService *HealthCheckService) logHealthCheckResult(response response.Response, node nodes.Node) {
-	if response.Success {
-		healthCheckService.Logger.Info("Recieved successful health check to " + string(node.NodeId))
-	} else {
-		healthCheckService.Logger.Info("Recieved failure health check to " + string(node.NodeId))
-	}
-
 }

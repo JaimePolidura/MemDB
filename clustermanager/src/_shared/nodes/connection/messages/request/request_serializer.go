@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 )
 
-func SerializeRequest(request *Request) []byte {
+func SerializeRequest(request Request) []byte {
 	serialized := make([]byte, 0)
 
 	var buf bytes.Buffer
@@ -13,12 +13,12 @@ func SerializeRequest(request *Request) []byte {
 
 	serialized = append(serialized, buf.Bytes()...)                                 //Request length
 	serialized = append(serialized, 0x00, 0x00, 0x00, 0x00)                         //Req number
-	serialized = append(serialized, byte(len(request.authKey)<<2))                  //Auth size
-	serialized = append(serialized, []byte(request.authKey)...)                     //Auth key
-	serialized = append(serialized, request.operatorNumber<<2)                      //Op number
+	serialized = append(serialized, byte(len(request.AuthKey)<<2))                  //Auth size
+	serialized = append(serialized, []byte(request.AuthKey)...)                     //Auth key
+	serialized = append(serialized, request.OperatorNumber<<2)                      //Op number
 	serialized = append(serialized, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00) //Timestamp
 
-	for _, arg := range request.args {
+	for _, arg := range request.Args {
 		var argSize = uint32(len(arg))
 		var buf bytes.Buffer
 		binary.Write(&buf, binary.BigEndian, argSize)

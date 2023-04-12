@@ -12,8 +12,8 @@ type NodeConnection struct {
 	node       nodes.Node
 }
 
-func (nodeConnection NodeConnection) Send(requestToSend request2.Request) (response2.Response, error) {
-	_, err := nodeConnection.connection.Write(request2.SerializeRequest(&requestToSend))
+func (nodeConnection *NodeConnection) Send(requestToSend request2.Request) (response2.Response, error) {
+	_, err := nodeConnection.connection.Write(request2.SerializeRequest(requestToSend))
 
 	if err != nil {
 		return response2.Response{}, err

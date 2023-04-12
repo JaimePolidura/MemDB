@@ -57,6 +57,8 @@ private:
         this->acceptator.async_accept([this](std::error_code ec, ip::tcp::socket socket) {
             std::shared_ptr<Connection> connection = std::make_shared<Connection>(std::move(socket));
 
+            this->logger->info("Accepted TCP Connection {0}", connection->getAddress());
+
             connection->onRequest([connection, this](const std::vector<uint8_t>& requestRawBuffer) {
                 this->connectionThreadPool.submit([connection, requestRawBuffer, this] {
                     this->onNewRequest(requestRawBuffer, connection);

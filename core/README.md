@@ -12,7 +12,7 @@ This is the main component. This stores the data and handles request & replicati
 #### Replication
 - When a write from a client is executed successfuly, the server will broadcast the write operation to every node in the cluster.
 - Conflict resolution in replication is handled by LWW (Last write wins) approach. Every replication request & data stored will have a Lamport clock. If a SET request comes in with a lower timestamp than the stored data, it will get rejected.
-- The cluster information is stored in etcd. Every node watch for changes in etcd nodes list, so that it can update its node list.
+- The cluster information is stored in etcd. Every node watchNodeChanges for changes in etcd nodes list, so that it can update its node list.
 - When a node fails and restarts. It will ask a random node to send him all the operations since the last timestamp that he processed (stored in the operation log).
 - When a new node joins the cluster. It will ask a random node to send him all operations.
 - To authenticate with the cluster manager adnd the nodes in the cluster, a specific auth key will be used (AUTH_CLUSTER_KEY)

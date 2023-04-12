@@ -50,6 +50,9 @@ RUN git clone https://github.com/etcd-cpp-apiv3/etcd-cpp-apiv3 \
     && cmake .. \
     && make -j$(nproc) && make install
 
+# Without this boost is included two times, for some reason io_context blocks for ever or crash with segfault
+RUN cd vcpkg/installed/x64-linux/include && mv boost xd
+
 # Copy project and compile
 WORKDIR /memdb
 COPY . /memdb

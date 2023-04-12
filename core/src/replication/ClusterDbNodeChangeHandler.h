@@ -1,14 +1,19 @@
+#pragma once
+
 #include "replication/clusterdb/ClusterDbValueChanged.h"
 #include "replication/Node.h"
 #include "replication/othernodes/ClusterNodesConnections.h"
+#include "logging/Logger.h"
 
 class ClusterDbNodeChangeHandler {
 private:
     clusterNodesConnections_t clusterNodeConnections;
+    logger_t logger;
 
 public:
-    ClusterDbNodeChangeHandler(clusterNodesConnections_t clusterNodeConnections): clusterNodeConnections(clusterNodeConnections) {}
-
+    ClusterDbNodeChangeHandler(clusterNodesConnections_t clusterNodeConnections, logger_t logger):
+        clusterNodeConnections(clusterNodeConnections), logger(logger) {}
+    
     ClusterDbNodeChangeHandler() = default;
 
     void handleChange(Node& newNode, const ClusterDbChangeType changeType) {
@@ -22,13 +27,17 @@ private:
     void updateNodes(Node &node) {
         auto existsByNodeId = this->clusterNodeConnections->existsByNodeId(node.nodeId);
 
-        if(existsByNodeId)
+        if(existsByNodeId){
+            this->logger->info("Detected change of node {0} with new state {1}", node.nodeId, NodeStates::parseNodeStateToString(node.state));
             this->clusterNodeConnections->replaceNode(node);
-        else
+        }else{
+            this->logger->info("Detected new node {0}", node.nodeId);
             this->clusterNodeConnections->addNode(node);
+        }
     }
 
     void deleteNode(const Node &node) {
+        this->logger->info("Detected deletion of node {0}", node.nodeId);
         this->clusterNodeConnections->deleteNodeById(node.nodeId);
     }
 };

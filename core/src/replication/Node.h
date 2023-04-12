@@ -5,6 +5,7 @@
 #include "server/Connection.h"
 #include "messages/request/RequestSerializer.h"
 #include "messages/response/ResponseDeserializer.h"
+#include "utils/net/DNSUtils.h"
 
 struct Node {
 public:
@@ -31,20 +32,27 @@ public:
     }
 
     void closeConnection() {
-        this->connection->close();
+        if(this->connection.get() != nullptr && this->connection->isOpen()){
+            this->connection->close();
+        }
     }
 
-    void openConnection() const {
+    bool openConnection() const {
         if(!NodeStates::canAcceptRequest(this->state) ||
            (this->connection.get() != nullptr && this->connection->isOpen()))
-            return;
+            return false;
 
         auto splitedAddress = StringUtils::split(this->address, ':');
         auto ip = splitedAddress[0];
         auto port = splitedAddress[1];
 
+        if(DNSUtils::isName(ip))
+            ip = DNSUtils::singleResolve(ip, port);
+
         boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(ip), std::atoi(port.data()));
         boost::asio::ip::tcp::socket socket(* this->ioContext);
+
+        return true;
     }
 
 private:

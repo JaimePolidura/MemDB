@@ -13,24 +13,19 @@
 class ClusterDb {
 private:
     configuration_t configuration;
+    etcd::Client client;
     logger_t logger;
 
 public:
-    ClusterDb(configuration_t configuration, logger_t logger) : configuration(configuration), logger(logger) {}
+    ClusterDb(configuration_t configuration, logger_t logger) : client(configuration->get(ConfigurationKeys::ETCD_ADDRESSES)), configuration(configuration), logger(logger) {}
 
-    auto watch(const std::string& directory, std::function<void(ClusterDbValueChanged)> onChange) -> void {
-        etcd::Client client{configuration->get(ConfigurationKeys::ETCD_ADDRESSES)};
-
-        client.watch(directory, true).then([this, directory, onChange](pplx::task<etcd::Response> responseTaskPplx){
-            onChange(ClusterDbValueChanged::fromEtcdResponse(responseTaskPplx.get()));
-
-            watch(directory, onChange);
-        });
+    auto watchNodeChanges(std::function<void(ClusterDbValueChanged)> onChange) -> void {
+        etcd::Watcher(client, "/nodes", [onChange](etcd::Response response){
+            onChange(ClusterDbValueChanged::fromEtcdResponse(response));
+        }, true);
     }
 
-    auto set(const std::string& nodeId, const Node& node) -> void {
-        etcd::Client client{configuration->get(ConfigurationKeys::ETCD_ADDRESSES)};
-
+    auto setNode(const std::string& nodeId, const Node& node) -> void {
         client.put("/nodes/" + nodeId, Node::toJson(node));
     }
 };

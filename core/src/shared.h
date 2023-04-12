@@ -34,6 +34,7 @@
 #include <optional>
 #include <filesystem>
 #include <math.h>
+#include <regex>
 
 //Deps
 #include <boost/beast.hpp>
@@ -42,6 +43,7 @@
 #include <nlohmann/json.hpp>
 #include <boost/asio.hpp>
 #include <etcd/Client.hpp>
+#include <etcd/Watcher.hpp>
 #include <spdlog/spdlog.h>
 
 //OS

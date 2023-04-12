@@ -62,9 +62,15 @@ public:
             node.closeConnection();
     }
 
-    void createConnections() {
-        for (auto& node : this->otherNodes)
-            node.openConnection();
+    int createConnections() {
+        int numberConnectionsOpened = 0;
+        for (auto& node : this->otherNodes) {
+            bool opened = node.openConnection();
+            if(opened)
+                numberConnectionsOpened++;
+        }
+
+        return numberConnectionsOpened;
     }
 
     auto sendRequestToRandomNode(const Request& request, const bool includeNodeId = false) -> Response {

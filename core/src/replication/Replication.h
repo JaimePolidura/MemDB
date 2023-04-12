@@ -34,35 +34,31 @@ public:
             configuration(configuration),clusterDb(std::make_shared<ClusterDb>(configuration, logger)),
             clusterNodesConnections(std::make_shared<ClusterNodesConnections>(configuration)),
             clusterManager(std::make_shared<ClusterManagerService>(configuration, logger)),
-            clusterDbNodeChangeHandler(this->clusterNodesConnections), logger(logger)
+            clusterDbNodeChangeHandler(this->clusterNodesConnections, logger), logger(logger)
     {}
 
     auto setup(bool firstTime = false) -> void {
         this->logger->info("Setting up node in the cluster");
 
         this->setClusterInformation(this->clusterManager->getAllNodes());
-        this->logger->info("Cluster information is set");
-
         this->setBooting();
-
         this->initializeNodeConnections();
-        this->logger->info("Created connections to the rest of the nodes in the cluster");
-
         this->watchForChangesInClusterDb();
-        this->logger->info("Started watching changes in the clusterdb");
 
         if(!firstTime){ //Network partitions?
             this->getUnsyncedOplog(this->lastTimestampBroadcasted);
-            this->setRunning();
         }
+
+        this->setRunning();
 
         this->logger->info("Replication node is now set up");
     }
 
     auto getUnsyncedOplog(uint64_t lastTimestamp) -> std::vector<OperationBody> {
-        this->logger->info("Synchronizing oplog with the cluster");
         auto unsyncedOps = this->getUnsyncedOpLogs(lastTimestamp);
         this->reloadUnsyncedOpsCallback(unsyncedOps);
+
+        this->logger->info("Synchronized {0} oplog entries with the cluster", unsyncedOps.size());
 
         return unsyncedOps;
     }
@@ -73,13 +69,13 @@ public:
 
     auto setBooting() -> void {
         this->selfNode.state = NodeState::BOOTING;
-        this->clusterDb->set(this->selfNode.nodeId, this->selfNode);
+        this->clusterDb->setNode(this->selfNode.nodeId, this->selfNode);
         this->logger->info("Changed replication node state to BOOTING");
     }
 
     auto setRunning() -> void {
         this->selfNode.state = NodeState::RUNNING;
-        this->clusterDb->set(this->selfNode.nodeId, this->selfNode);
+        this->clusterDb->setNode(this->selfNode.nodeId, this->selfNode);
         this->logger->info("Changed replication node state to RUNNING");
     }
 
@@ -114,12 +110,10 @@ public:
 
     virtual auto getNodeState() -> NodeState {
         return this->selfNode.state;
-//        return NodeState::BOOTING;
     }
 
     auto getNodeId() -> std::string {
         return this->selfNode.nodeId;
-//        return "ZD";
     }
 
 private:
@@ -137,21 +131,8 @@ private:
         });
 
         this->clusterNodesConnections->setOtherNodes(otherNodes);
-    }
 
-    auto watchForChangesInNodesInCluster() -> void {
-        this->clusterDb->watch("/nodes", [this](ClusterDbValueChanged nodeChangedEvent){
-            auto node = Node::fromJson(nodeChangedEvent.value);
-            auto selfNodeChanged = node.nodeId == this->selfNode.nodeId;
-
-            if(!selfNodeChanged){
-                this->clusterDbNodeChangeHandler.handleChange(node, nodeChangedEvent.changeType);
-            }
-            if(selfNodeChanged && (node.state == NodeState::SHUTDOWN || node.state == NodeState::BOOTING)) { //Reload
-                this->setup(false);
-                this->reloadUnsyncedOpsCallback(this->getUnsyncedOpLogs(this->lastTimestampBroadcasted));
-            }
-        });
+        this->logger->info("Cluster information is set. Total other nodes {0}", allNodesResponse.nodes.size());
     }
 
     auto createSyncDataRequest(uint64_t timestamp) -> Request {
@@ -172,12 +153,27 @@ private:
     }
 
     auto watchForChangesInClusterDb() -> void {
-        this->watchForChangesInNodesInCluster();
+        this->clusterDb->watchNodeChanges([this](ClusterDbValueChanged nodeChangedEvent) {
+            auto node = Node::fromJson(nodeChangedEvent.value);
+            auto selfNodeChanged = node.nodeId == this->selfNode.nodeId;
+
+            if (!selfNodeChanged) {
+                this->clusterDbNodeChangeHandler.handleChange(node, nodeChangedEvent.changeType);
+            }
+            if (selfNodeChanged &&
+                (node.state == NodeState::SHUTDOWN || node.state == NodeState::BOOTING)) { //Reload
+
+                this->logger->info("Reload detected node in the cluster");
+                this->setup(false);
+                this->reloadUnsyncedOpsCallback(this->getUnsyncedOpLogs(this->lastTimestampBroadcasted));
+            }
+        });
     }
 
     auto initializeNodeConnections() -> void {
         this->clusterNodesConnections->deleteAllConnections();
-        this->clusterNodesConnections->createConnections();
+        int numberConnectionOpened = this->clusterNodesConnections->createConnections();
+        this->logger->info("Opened {0} connections to the rest of the nodes in the cluster", numberConnectionOpened);
     }
 };
 

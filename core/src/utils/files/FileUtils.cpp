@@ -76,7 +76,11 @@ std::string FileUtils::getProgramBasePath(const std::string &programName) {
 }
 
 bool FileUtils::exists(const std::string &path) {
-    return std::filesystem::exists(path);
+    try{
+        return std::filesystem::exists(path);
+    }catch(const std::exception& e) {
+        return false;
+    }
 }
 
 std::string FileUtils::getSeparator() {

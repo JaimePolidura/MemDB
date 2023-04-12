@@ -8,6 +8,7 @@
 #include "messages/request/Request.h"
 #include "messages/request/RequestSerializer.h"
 #include "messages/response/ResponseDeserializer.h"
+#include "logging/Logger.h"
 
 class ClusterNodesConnections {
 public:
@@ -15,10 +16,13 @@ public:
 private:
     configuration_t configuration;
     FixedThreadPool requestPool;
+    logger_t logger;
 
 public:
-    ClusterNodesConnections(configuration_t configuration): configuration(configuration),
-        requestPool(configuration->get<int>(ConfigurationKeys::SERVER_MAX_THREADS)) {}
+    ClusterNodesConnections(configuration_t configuration, logger_t logger):
+        logger(logger),
+        configuration(configuration),
+        requestPool(configuration->get<int>(ConfigurationKeys::MEMDB_CORE_SERVER_MAX_THREADS)) {}
 
     void setOtherNodes(const std::vector<Node>& otherNodesToSet) {
         this->otherNodes = otherNodesToSet;
@@ -35,7 +39,7 @@ public:
 
     void addNode(Node& node) {
         this->otherNodes.push_back(node);
-        node.openConnection();
+        node.openConnection(this->logger);
     }
 
     bool existsByNodeId(const std::string& nodeId) {
@@ -65,7 +69,7 @@ public:
     int createConnections() {
         int numberConnectionsOpened = 0;
         for (auto& node : this->otherNodes) {
-            bool opened = node.openConnection();
+            bool opened = node.openConnection(this->logger);
             if(opened)
                 numberConnectionsOpened++;
         }
@@ -76,16 +80,18 @@ public:
     auto sendRequestToRandomNode(const Request& request, const bool includeNodeId = false) -> Response {
         Node nodeToSendRequest = this->selectRandomNodeToSendRequest();
 
-        return nodeToSendRequest.sendRequest(request, includeNodeId);
+        return nodeToSendRequest.sendRequest(request, this->logger, includeNodeId);
     }
 
     auto broadcast(const Request& request, const bool includeNodeId = false) -> void {
         for(Node& node : this->otherNodes){
-            if(!NodeStates::canAcceptRequest(node.state))
+            if(!NodeStates::canAcceptRequest(node.state)) {
+                this->logger->debugInfo("0 {0} {1}", NodeStates::parseNodeStateToString(node.state), node.nodeId);
                 continue;
+            }
 
-            this->requestPool.submit([node, request, includeNodeId]() mutable -> void {
-                node.sendRequest(request, includeNodeId);
+            this->requestPool.submit([node, request, includeNodeId, this]() mutable -> void {
+                node.sendRequest(request, this->logger, includeNodeId);
             });
         }
     }

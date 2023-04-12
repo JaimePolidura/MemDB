@@ -32,7 +32,7 @@ public:
 
         this->tcpServer->run();
 
-        if(this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION)){
+        if(this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION)){
             this->clock->nodeId = std::stoi(this->replication->getNodeId());
 
             this->syncOplogFromCluster(lastTimestampStored);
@@ -61,7 +61,7 @@ private:
 
     uint64_t restoreDataFromOplogFromDisk() {
         OperationLogDiskLoader loader{};
-        auto opLogsFromDisk = loader.getAllAndSaveCompacted(this->dbMap);
+        auto opLogsFromDisk = loader.getAllAndSaveCompacted();
 
         this->logger->info("Applaying logs from disk...");
         this->applyUnsyncedOplogFromCluster(opLogsFromDisk);
@@ -71,7 +71,7 @@ private:
 
     void applyUnsyncedOplogFromCluster(const std::vector<OperationBody>& opLogs) {
         for(const auto& operationLogInDisk : opLogs)
-            this->operatorDispatcher->executeOperator(OperationOptions{.requestFromReplication = false},
+            this->operatorDispatcher->executeOperator(OperationOptions{.requestOfNodeToReplicate = false},
                                                       operationLogInDisk);
         this->operatorDispatcher->applyReplicatedOperationBuffer();
     }

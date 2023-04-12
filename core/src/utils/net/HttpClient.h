@@ -3,8 +3,9 @@
 #include "shared.h"
 
 #include "utils/strings/StringUtils.h"
-
 #include "utils/net/DNSUtils.h"
+#include "utils/Utils.h"
+
 #include "logging/Logger.h"
 
 using tcp = boost::asio::ip::tcp;
@@ -33,10 +34,9 @@ public:
 
     HttpResponse get(const std::string& address,
                              const std::string& endpoint,
-                             const std::string& authToken = "",
-                             const bool usingDns = false) {
+                             const std::string& authToken = "") {
         tcp::socket socket(ioContext);
-        connect(socket, address, usingDns);
+        connect(socket, address);
 
         http::request<http::string_body> req{http::verb::get, endpoint, 11};
         req.set(http::field::host, address);
@@ -67,10 +67,9 @@ public:
     HttpResponse post(const std::string& address,
                              const std::string& endpoint,
                              const std::map<std::string, std::string>& body = {},
-                             const std::string& authToken = "",
-                             const bool usingDns = false) {
+                             const std::string& authToken = "") {
         tcp::socket socket(ioContext);
-        connect(socket, address, usingDns);
+        connect(socket, address);
 
         http::request<http::string_body> req{http::verb::post, endpoint, 11};
         req.set(http::field::host, address);
@@ -102,36 +101,24 @@ public:
     }
 
 private:
-    void connect(tcp::socket& socket, const std::string& address, const bool usingDns) {
+    void connect(tcp::socket& socket, const std::string& address) {
         auto urlValues = StringUtils::split(address, ':');
-        auto ipUrl = urlValues[0];
-        auto portUrl = urlValues[1];
+        std::string ipUrl = urlValues[0];
+        std::string portUrl = urlValues[1];
 
-        int remainingAttemptsToConnect = 10;
-        while(!tryConnect(socket, ipUrl, portUrl, usingDns)){
-            remainingAttemptsToConnect--;
-
-            this->logger->warn("Retrying to send net request to {0}", address.data());
-
-            if(remainingAttemptsToConnect == 0){
-                throw std::runtime_error("Cannot connect to " + address );
-            }
-
-            std::this_thread::sleep_for(std::chrono::seconds(5));
+        if(DNSUtils::isName(ipUrl)){
+            ipUrl = DNSUtils::singleResolve(ipUrl, portUrl);
         }
-    }
 
-    bool tryConnect(tcp::socket& socket, std::string& ip, const std::string& port, const bool usingDns) {
-        try{
-            if(usingDns)
-                ip = DNSUtils::singleResolve(ip, port);
+        bool succcess = Utils::retryUntil(10, std::chrono::seconds(5), [&socket, ipUrl, portUrl]() mutable{
+            if (DNSUtils::isName(ipUrl))
+                ipUrl = DNSUtils::singleResolve(ipUrl, portUrl);
 
-            tcp::endpoint endpoint(boost::asio::ip::address::from_string(ip), std::atoi(port.data()));
+            tcp::endpoint endpoint(boost::asio::ip::address::from_string(ipUrl), std::atoi(portUrl.data()));
             socket.connect(endpoint);
+        });
 
-            return true;
-        }catch(const std::exception& e) {
-            return false;
-        }
+        if(!succcess)
+            throw std::runtime_error("Cannot connect to " + address );
     }
 };

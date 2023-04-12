@@ -24,7 +24,7 @@ public:
         return logs;
     }
 
-    std::vector<OperationBody> getAllAndSaveCompacted(memDbDataStore_t db) {
+    std::vector<OperationBody> getAllAndSaveCompacted() {
         if(!FileUtils::exists(FileUtils::getFileInProgramBasePath("memdb", "oplog")))
             return std::vector<OperationBody>{};
 

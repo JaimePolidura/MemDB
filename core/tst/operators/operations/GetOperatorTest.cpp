@@ -23,7 +23,7 @@ TEST(GetOperator, KeyNotFound) {
 
     auto operation = createOperationGet(0x41, 1, 1); //A
 
-    Response response = getOperator.operate(operation, OperationOptions{.requestFromReplication=false}, db);
+    Response response = getOperator.operate(operation, OperationOptions{.requestOfNodeToReplicate=false}, db);
 
     ASSERT_FALSE(response.isSuccessful);
     ASSERT_EQ(response.errorCode, 0x01);
@@ -41,7 +41,7 @@ TEST(GetOperator, KeyFound) {
     GetOperator getOperator{};
     auto operation = createOperationGet(0x41, 1, 1); //A
 
-    Response response = getOperator.operate(operation, OperationOptions{.requestFromReplication=false}, db);
+    Response response = getOperator.operate(operation, OperationOptions{.requestOfNodeToReplicate=false}, db);
 
     ASSERT_TRUE(response.isSuccessful);
     ASSERT_EQ(response.errorCode, 0);

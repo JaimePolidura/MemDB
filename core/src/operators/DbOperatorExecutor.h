@@ -5,7 +5,7 @@
 #include "utils/datastructures/map/Map.h"
 #include "operators/OperationOptions.h"
 
-class DbOperator {
+class DbOperatorExecutor {
 public:
     virtual Response operate(const OperationBody& operation, const OperationOptions& operationOptions, memDbDataStore_t map) = 0;
 };

@@ -22,10 +22,9 @@ public:
         this->token = this->authenticate();
 
         HttpResponse response = this->httpClusterManagerClient.get(
-                this->configuartion->get(ConfigurationKeys::CLUSTER_MANAGER_ADDRESS),
+                this->configuartion->get(ConfigurationKeys::MEMDB_CORE_CLUSTER_MANAGER_ADDRESS),
                 "/api/nodes/all",
-                this->token,
-                this->configuartion->getBoolean(ConfigurationKeys::CLUSTER_MANAGER_ADDRESS_USING_DNS));
+                this->token);
 
         if(!response.isSuccessful())
             throw std::runtime_error("Unexpected error when trying to get all nodes from the cluster manager " + response.body.dump());
@@ -36,11 +35,9 @@ public:
 private:
     std::string authenticate() {
         auto response = this->httpClusterManagerClient.post(
-                this->configuartion->get(ConfigurationKeys::CLUSTER_MANAGER_ADDRESS),
+                this->configuartion->get(ConfigurationKeys::MEMDB_CORE_CLUSTER_MANAGER_ADDRESS),
                 "/login",
-                {{"authKey", this->configuartion->get(ConfigurationKeys::AUTH_CLUSTER_KEY)}},
-                "",
-                this->configuartion->getBoolean(ConfigurationKeys::CLUSTER_MANAGER_ADDRESS_USING_DNS));
+                {{"authKey", this->configuartion->get(ConfigurationKeys::MEMDB_CORE_AUTH_API_KEY)}});
 
         if (response.code == 403) {
             logger->error("Invalid cluster auth key while trying to authenticate to they clustermanager");

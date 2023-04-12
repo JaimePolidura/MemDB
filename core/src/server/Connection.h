@@ -12,7 +12,7 @@ private:
 public:
     AuthenticationType authenticationType;
 
-    explicit Connection(ip::tcp::socket socket) : socket{std::move(socket)} {}
+    Connection(ip::tcp::socket socket) : socket{std::move(socket)} {}
 
     void onRequest(std::function<void(const std::vector<uint8_t>&)> onRequestCallbackParam) {
         this->onRequestCallback = onRequestCallbackParam;
@@ -52,8 +52,8 @@ public:
         this->socket.async_write_some(boost::asio::buffer(toWrite), [&](const boost::system::error_code& error, std::size_t bytes_transferred){});
     }
 
-    void writeSync(const std::vector<uint8_t>& toWrite) {
-        this->socket.write_some(boost::asio::buffer(toWrite));
+    size_t writeSync(const std::vector<uint8_t>& toWrite) {
+        return this->socket.write_some(boost::asio::buffer(toWrite));
     }
 
     bool isOpen() {

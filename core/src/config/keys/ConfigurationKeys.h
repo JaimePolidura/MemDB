@@ -4,18 +4,19 @@
 
 class ConfigurationKeys {
 public:
-    static const std::string AUTH_USER_KEY;
-    static const std::string PORT;
-    static const std::string SERVER_MIN_THREADS;
-    static const std::string SERVER_MAX_THREADS;
-    static const std::string NUMBER_BUCKETS;
-    static const std::string PERSISTANCE_WRITE_EVERY;
+    static const std::string MEMDB_CORE_AUTH_NODE_KEY;
+    static const std::string MEMDB_CORE_AUTH_MAINTENANCE_KEY;
+    static const std::string MEMDB_CORE_AUTH_API_KEY;
 
-    static const std::string USE_REPLICATION;
-    static const std::string CLUSTER_MANAGER_ADDRESS;
-    static const std::string CLUSTER_MANAGER_ADDRESS_USING_DNS;
-    static const std::string AUTH_CLUSTER_KEY;
-    static const std::string ETCD_ADDRESSES;
-    static const std::string ETCD_ADDRESSES_USING_DNS;
-    static const std::string NODE_ID;
+    static const std::string MEMDB_CORE_PORT;
+    static const std::string MEMDB_CORE_SERVER_MIN_THREADS;
+    static const std::string MEMDB_CORE_SERVER_MAX_THREADS;
+    static const std::string MEMDB_CORE_NUMBER_BUCKETS;
+    static const std::string MEMDB_CORE_PERSISTANCE_WRITE_EVERY;
+
+    static const std::string MEMDB_CORE_SHOW_DEBUG_LOG;
+    static const std::string MEMDB_CORE_USE_REPLICATION;
+    static const std::string MEMDB_CORE_CLUSTER_MANAGER_ADDRESS;
+    static const std::string MEMDB_CORE_ETCD_ADDRESSES;
+    static const std::string MEMDB_CORE_NODE_ID;
 };

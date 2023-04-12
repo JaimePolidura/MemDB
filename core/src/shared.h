@@ -45,6 +45,7 @@
 #include <etcd/Client.hpp>
 #include <etcd/Watcher.hpp>
 #include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 //OS
 //#ifdef _WIN32

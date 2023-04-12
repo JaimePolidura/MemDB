@@ -6,6 +6,7 @@
 #include "messages/request/RequestSerializer.h"
 #include "messages/response/ResponseDeserializer.h"
 #include "utils/net/DNSUtils.h"
+#include "logging/Logger.h"
 
 struct Node {
 public:
@@ -19,13 +20,18 @@ public:
     ResponseDeserializer responseDeserializer;
     RequestSerializer requestSerializer;
 
-    Response sendRequest(const Request& request, const bool includesNodeId = false) {
-        this->openConnectionIfClosed();
+    Response sendRequest(const Request& request, logger_t logger, const bool includesNodeId = false) {
+        this->openConnectionIfClosed(logger);
 
         std::vector<uint8_t> serializedRequest = this->requestSerializer.serialize(request, includesNodeId);
-        this->connection->writeSync(serializedRequest);
+        logger->debugInfo("8 {0}", serializedRequest.size());
 
+        auto xd = this->connection->writeSync(serializedRequest);
+        logger->debugInfo("9 {0}", xd);
+
+        //TODO Handle missed write
         std::vector<uint8_t> serializedResponse = this->connection->readSync();
+        logger->debugInfo("10 {0}", serializedResponse.size());
         Response deserializedResponse = this->responseDeserializer.deserialize(serializedResponse);
 
         return deserializedResponse;
@@ -37,28 +43,34 @@ public:
         }
     }
 
-    bool openConnection() const {
+    bool openConnection(logger_t logger) {
         if(!NodeStates::canAcceptRequest(this->state) ||
-           (this->connection.get() != nullptr && this->connection->isOpen()))
+           (this->connection.get() != nullptr && this->connection->isOpen())){
+            logger->debugInfo("3.4 {0} {1}", NodeStates::parseNodeStateToString(this->state), this->nodeId);
             return false;
+        }
 
         auto splitedAddress = StringUtils::split(this->address, ':');
         auto ip = splitedAddress[0];
         auto port = splitedAddress[1];
 
-        if(DNSUtils::isName(ip))
-            ip = DNSUtils::singleResolve(ip, port);
-
-        boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(ip), std::atoi(port.data()));
         boost::asio::ip::tcp::socket socket(* this->ioContext);
 
-        return true;
+        return Utils::retryUntil(10, std::chrono::seconds(2), [ip, port, &socket, this]() mutable -> void{
+            if(DNSUtils::isName(ip))
+                ip = DNSUtils::singleResolve(ip, port);
+
+            boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(ip), std::atoi(port.data()));
+            socket.connect(endpoint);
+
+            this->connection = std::make_shared<Connection>(std::move(socket));
+        });;
     }
 
 private:
-    void openConnectionIfClosed() {
+    void openConnectionIfClosed(logger_t logger) {
         if(this->connection.get() == nullptr || !this->connection->isOpen()){
-            this->openConnection();
+            this->openConnection(logger);
         }
     }
 

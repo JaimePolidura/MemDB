@@ -24,7 +24,7 @@ TEST(DeleteOperator, ShouldntDeleteNewerKeyTimestamp){
     SimpleString value = SimpleString<defaultMemDbLength_t>::fromChar(0x01);
     db->put(key, value, NOT_IGNORE_TIMESTAMP, 2, 1);
 
-    auto response = deleteOperator.operate(createOperationDelete(0x41, 1, 1), OperationOptions{.requestFromReplication = true}, db);
+    auto response = deleteOperator.operate(createOperationDelete(0x41, 1, 1), OperationOptions{.requestOfNodeToReplicate = true}, db);
 
     ASSERT_FALSE(response.isSuccessful);
     ASSERT_TRUE(db->contains(key));
@@ -37,7 +37,7 @@ TEST(DeleteOperator, ShouldtDeleteEventNewerKeyTimestamp){
     SimpleString key = SimpleString<defaultMemDbLength_t>::fromChar(0x41);
     db->put(key, SimpleString<defaultMemDbLength_t>::fromChar(0x01), NOT_IGNORE_TIMESTAMP, 2, 1);
 
-    auto response = deleteOperator.operate(createOperationDelete(0x41, 1, 1), OperationOptions{.requestFromReplication = false}, db);
+    auto response = deleteOperator.operate(createOperationDelete(0x41, 1, 1), OperationOptions{.requestOfNodeToReplicate = false}, db);
 
     ASSERT_TRUE(response.isSuccessful);
     ASSERT_FALSE(db->contains(key));
@@ -49,7 +49,7 @@ TEST(DeleteOperator, ShouldDeleteOlderKeyTimestamp){
 
     db->put(SimpleString<defaultMemDbLength_t>::fromChar(0x41), SimpleString<defaultMemDbLength_t>::fromChar(0x01), NOT_IGNORE_TIMESTAMP, 1, 1);
 
-    auto response = deleteOperator.operate(createOperationDelete(0x41, 2, 1), OperationOptions{.requestFromReplication = true}, db);
+    auto response = deleteOperator.operate(createOperationDelete(0x41, 2, 1), OperationOptions{.requestOfNodeToReplicate = true}, db);
 
     ASSERT_TRUE(response.isSuccessful);
     ASSERT_FALSE(db->contains(SimpleString<defaultMemDbLength_t>::fromChar(0x41)));
@@ -59,7 +59,7 @@ TEST(DeleteOperator, KeyNotFound){
     DeleteOperator deleteOperator{};
     memDbDataStore_t db = std::make_shared<Map<defaultMemDbLength_t>>(64);
 
-    auto response = deleteOperator.operate(createOperationDelete(0x41, 1, 2), OperationOptions{.requestFromReplication = true}, db);
+    auto response = deleteOperator.operate(createOperationDelete(0x41, 1, 2), OperationOptions{.requestOfNodeToReplicate = true}, db);
 
     ASSERT_FALSE(response.isSuccessful);
     ASSERT_EQ(response.errorCode, ErrorCode::UNKNOWN_KEY);

@@ -4,10 +4,10 @@
 #include "messages/response/ErrorCode.h"
 #include "utils/Utils.h"
 #include "persistence/OperationLogDiskLoader.h"
-#include "operators/ControlOperator.h"
+#include "operators/MaintenanceOperatorExecutor.h"
 #include "persistence/compaction/OperationLogCompacter.h"
 
-class SyncDataOperator : public Operator, public ControlOperator {
+class SyncDataOperator : public Operator, public MaintenanceOperatorExecutor {
 private:
     OperationLogDiskLoader operationLogDiskLoader;
     OperationLogSerializer operationLogSerializer;
@@ -32,12 +32,16 @@ public:
         return Response::success(1);
     }
 
-    AuthenticationType authorizedToExecute() override {
-        return AuthenticationType::CLUSTER;
+    std::vector<AuthenticationType> authorizedToExecute() override {
+        return { AuthenticationType::NODE };
+    }
+
+    std::string name() override {
+        return "SYNC_OPLOG";
     }
 
     constexpr OperatorType type() override {
-        return OperatorType::CONTROL;
+        return OperatorType::READ;
     }
 
     constexpr uint8_t operatorNumber() override {

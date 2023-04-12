@@ -8,7 +8,6 @@
 
 class Authenticator {
 private:
-    std::map<std::string, AuthenticationType> cachedAuthenticationTypes;
     configuration_t configuartion;
 
 public:
@@ -17,35 +16,35 @@ public:
     Authenticator(configuration_t configuartion): configuartion(configuartion) {}
 
     bool authenticate(const std::string& authKey) {
-        return this->configuartion->get(ConfigurationKeys::AUTH_USER_KEY).compare(authKey) == 0 ||
-                this->configuartion->get(ConfigurationKeys::AUTH_CLUSTER_KEY).compare(authKey) == 0;
+        return this->configuartion->get(ConfigurationKeys::MEMDB_CORE_AUTH_API_KEY).compare(authKey) == 0 ||
+                this->configuartion->get(ConfigurationKeys::MEMDB_CORE_AUTH_MAINTENANCE_KEY).compare(authKey) == 0 ||
+                this->configuartion->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY).compare(authKey);
     }
 
     AuthenticationType getAuthenticationType(const std::string& authKey) {
-        bool containedInCache = this->cachedAuthenticationTypes.contains(authKey);
-        if(containedInCache)
-            return this->cachedAuthenticationTypes.at(authKey);
-
-        AuthenticationType authTypeFromConfig = this->getAuthenticationTypeFromConfiguration(authKey);
-        this->cachedAuthenticationTypes[authKey] = authTypeFromConfig;
-
-        return authTypeFromConfig;
+        return this->getAuthenticationTypeFromConfiguration(authKey);
     }
 
-    bool isAuthKeyFromCluster(const std::string& authKey) {
-        return this->configuartion->get(ConfigurationKeys::AUTH_CLUSTER_KEY).compare(authKey) == 0;
+    bool isKeyFromMaintenance(const std::string& authKey) {
+        return this->getAuthenticationTypeFromConfiguration(authKey) == AuthenticationType::MAINTENANCE;
     }
 
-    bool isAuthKeyFromUser(const std::string& authKey) {
-        return this->configuartion->get(ConfigurationKeys::AUTH_USER_KEY).compare(authKey) == 0;
+    bool isKeyFromNode(const std::string& authKey) {
+        return this->getAuthenticationTypeFromConfiguration(authKey) == AuthenticationType::NODE;
+    }
+
+    bool isKeyApi(const std::string& authKey) {
+        return this->getAuthenticationTypeFromConfiguration(authKey) == AuthenticationType::API;
     }
 
 private:
     AuthenticationType getAuthenticationTypeFromConfiguration(const std::string& authKey) {
-        if(this->configuartion->get(ConfigurationKeys::AUTH_USER_KEY).compare(authKey) == 0) {
-            return AuthenticationType::USER;
-        }else if (this->configuartion->get(ConfigurationKeys::AUTH_CLUSTER_KEY).compare(authKey) == 0) {
-            return AuthenticationType::CLUSTER;
+        if(this->configuartion->get(ConfigurationKeys::MEMDB_CORE_AUTH_API_KEY).compare(authKey) == 0) {
+            return AuthenticationType::API;
+        }else if (this->configuartion->get(ConfigurationKeys::MEMDB_CORE_AUTH_MAINTENANCE_KEY).compare(authKey) == 0) {
+            return AuthenticationType::MAINTENANCE;
+        }else if (this->configuartion->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY).compare(authKey) == 0) {
+            return AuthenticationType::NODE;
         }
 
         throw std::runtime_error("Invalid auth. Before calling this method, the auth key should be validated using authenticate() method");

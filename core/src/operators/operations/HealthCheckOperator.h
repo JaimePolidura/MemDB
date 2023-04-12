@@ -2,9 +2,9 @@
 
 #include "operators/Operator.h"
 #include "messages/response/ErrorCode.h"
-#include "operators/ControlOperator.h"
+#include "operators/MaintenanceOperatorExecutor.h"
 
-class HealthCheckOperator : public Operator, public ControlOperator {
+class HealthCheckOperator : public Operator, public MaintenanceOperatorExecutor {
 public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x04;
 
@@ -12,8 +12,8 @@ public:
         return Response::success();
     }
 
-    AuthenticationType authorizedToExecute() override {
-        return AuthenticationType::CLUSTER;
+    std::vector<AuthenticationType> authorizedToExecute() override {
+        return { AuthenticationType::MAINTENANCE };
     }
 
     constexpr OperatorType type() override {
@@ -22,5 +22,9 @@ public:
 
     constexpr uint8_t operatorNumber() override {
         return OPERATOR_NUMBER;
+    }
+
+    std::string name() override {
+        return "HEALTH_CHECK";
     }
 };

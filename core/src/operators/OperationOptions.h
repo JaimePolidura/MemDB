@@ -1,5 +1,5 @@
 #pragma once
 
 struct OperationOptions {
-    bool requestFromReplication;
+    bool requestOfNodeToReplicate;
 };

@@ -23,7 +23,7 @@ public:
         this->operationBuffer.push_back(std::move(operation));
         writeBufferLock.unlock();
 
-        if(this->operationBuffer.size() >= this->configuration->get<int>(ConfigurationKeys::PERSISTANCE_WRITE_EVERY)){
+        if(this->operationBuffer.size() >= this->configuration->get<int>(ConfigurationKeys::MEMDB_CORE_PERSISTANCE_WRITE_EVERY)){
             this->writeOperationsToDisk();
         }
     }

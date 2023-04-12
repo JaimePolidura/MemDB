@@ -4,6 +4,22 @@
 
 class Utils {
 public:
+    template<typename R, typename P>
+    static bool retryUntil(int numberAttempts, const std::chrono::duration<R, P> backoff, std::function<void(void)> toRetry) {
+        while(numberAttempts > 0) {
+            try{
+                toRetry();
+
+                return true;
+            }catch (const std::exception& e){
+                numberAttempts--;
+                std::this_thread::sleep_for(backoff);
+            }
+        }
+
+        return false;
+    }
+
     template<typename T>
     static T parse(const uint8_t * input) {
         T parsedValue = 0;

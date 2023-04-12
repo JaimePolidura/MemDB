@@ -32,7 +32,7 @@ private:
 public:
     Replication(logger_t logger, configuration_t configuration) :
             configuration(configuration),clusterDb(std::make_shared<ClusterDb>(configuration, logger)),
-            clusterNodesConnections(std::make_shared<ClusterNodesConnections>(configuration)),
+            clusterNodesConnections(std::make_shared<ClusterNodesConnections>(configuration, logger)),
             clusterManager(std::make_shared<ClusterManagerService>(configuration, logger)),
             clusterDbNodeChangeHandler(this->clusterNodesConnections, logger), logger(logger)
     {}
@@ -41,9 +41,8 @@ public:
         this->logger->info("Setting up node in the cluster");
 
         this->setClusterInformation(this->clusterManager->getAllNodes());
-        this->setBooting();
-        this->initializeNodeConnections();
         this->watchForChangesInClusterDb();
+        this->setBooting();
 
         if(!firstTime){ //Network partitions?
             this->getUnsyncedOplog(this->lastTimestampBroadcasted);
@@ -52,6 +51,10 @@ public:
         this->setRunning();
 
         this->logger->info("Replication node is now set up");
+    }
+
+    auto getClusterNodesConnections() -> clusterNodesConnections_t {
+        return this->clusterNodesConnections;
     }
 
     auto getUnsyncedOplog(uint64_t lastTimestamp) -> std::vector<OperationBody> {
@@ -104,6 +107,8 @@ public:
     }
 
     virtual auto broadcast(const Request& request, const bool includeNodeId = true) -> void {
+        const_cast<Request&>(request).authentication.authKey =
+                this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY);
         this->lastTimestampBroadcasted = request.operation.timestamp;
         this->clusterNodesConnections->broadcast(request, includeNodeId);
     }
@@ -118,10 +123,10 @@ public:
 
 private:
     auto setClusterInformation(AllNodesResponse allNodesResponse) -> void {
-        std::string selfNodeId = this->configuration->get(ConfigurationKeys::NODE_ID);
+        std::string selfNodeId = this->configuration->get(ConfigurationKeys::MEMDB_CORE_NODE_ID);
         std::vector<Node> allNodes = allNodesResponse.nodes;
 
-        this->selfNode = *std::find_if(allNodes.begin(), allNodes.end(), [&selfNodeId, this](Node node) -> bool{
+        this->selfNode = *std::find_if(allNodes.begin(), allNodes.end(), [&selfNodeId](Node node) -> bool{
             return node.nodeId == selfNodeId;
         });
 
@@ -136,7 +141,7 @@ private:
     }
 
     auto createSyncDataRequest(uint64_t timestamp) -> Request {
-        auto authenticationBody = AuthenticationBody{this->configuration->get(ConfigurationKeys::AUTH_CLUSTER_KEY), false, false};
+        auto authenticationBody = AuthenticationBody{this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY), false, false};
         auto argsVector = std::make_shared<std::vector<SimpleString<defaultMemDbLength_t>>>();
 
         argsVector->push_back(SimpleString<defaultMemDbLength_t>::fromString(StringUtils::toString(timestamp)));
@@ -155,14 +160,14 @@ private:
     auto watchForChangesInClusterDb() -> void {
         this->clusterDb->watchNodeChanges([this](ClusterDbValueChanged nodeChangedEvent) {
             auto node = Node::fromJson(nodeChangedEvent.value);
-            auto selfNodeChanged = node.nodeId == this->selfNode.nodeId;
+            auto selfNodeChanged = node.nodeId == this->configuration->get(ConfigurationKeys::MEMDB_CORE_NODE_ID);
+
+            this->logger->debugInfo("Detected change of type {0} on node {1}", ClusterDbChangeTypes::toString(nodeChangedEvent.changeType), node.nodeId);
 
             if (!selfNodeChanged) {
                 this->clusterDbNodeChangeHandler.handleChange(node, nodeChangedEvent.changeType);
             }
-            if (selfNodeChanged &&
-                (node.state == NodeState::SHUTDOWN || node.state == NodeState::BOOTING)) { //Reload
-
+            if (selfNodeChanged && node.state == NodeState::SHUTDOWN) { //Reload
                 this->logger->info("Reload detected node in the cluster");
                 this->setup(false);
                 this->reloadUnsyncedOpsCallback(this->getUnsyncedOpLogs(this->lastTimestampBroadcasted));

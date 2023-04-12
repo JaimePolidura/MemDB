@@ -43,7 +43,7 @@ public:
     MOCK_METHOD1(add, void(const OperationBody&));
 };
 
-class OperatorDbMockAdapter : public Operator, public DbOperator {
+class OperatorDbMockAdapter : public Operator, public DbOperatorExecutor {
 public:
     OperatorDbMockAdapter() = default;
 
@@ -92,7 +92,7 @@ TEST(OperatorDispatcher, SuccessfulWriteTypeReplication) {
     ON_CALL(* operatorMock, authorizedToExecute()).WillByDefault(testing::Return(AuthenticationType::CLUSTER));
     ON_CALL(* operatorMock, operate(_, _, _)).WillByDefault(testing::Return(Response::success()));
     ON_CALL(* lamportClockMock, tick(_)).WillByDefault(testing::Return(3));
-    ON_CALL(* configuration, getBoolean(testing::Eq(ConfigurationKeys::USE_REPLICATION))).WillByDefault(testing::Return(true));
+    ON_CALL(* configuration, getBoolean(testing::Eq(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION))).WillByDefault(testing::Return(true));
 
     OperatorDispatcher dispatcher{
             std::make_shared<Map<defaultMemDbLength_t>>(64),
@@ -124,7 +124,7 @@ TEST(OperatorDispatcher, SuccessfulWriteNotReplication) {
     ON_CALL(* operatorMock, type()).WillByDefault(testing::Return(OperatorType::WRITE));
     ON_CALL(* operatorMock, operate(_, _, _)).WillByDefault(testing::Return(Response::success()));
     ON_CALL(* lamportClockMock, tick(_)).WillByDefault(testing::Return(3));
-    ON_CALL(* configuration, getBoolean(testing::Eq(ConfigurationKeys::USE_REPLICATION))).WillByDefault(testing::Return(false));
+    ON_CALL(* configuration, getBoolean(testing::Eq(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION))).WillByDefault(testing::Return(false));
 
     OperatorDispatcher dispatcher{
             std::make_shared<Map<defaultMemDbLength_t>>(64),
@@ -154,7 +154,7 @@ TEST(OperatorDispatcher, UnsuccessfulOperationExecutor) {
 
     ON_CALL(* operatorRegistryMock, get(testing::Eq(1))).WillByDefault(testing::Return(operatorMock));
     ON_CALL(* operatorMock, operate(_, _, _)).WillByDefault(testing::Return(Response::error(ErrorCode::UNKNOWN_KEY)));
-    ON_CALL(* configuration, getBoolean(testing::Eq(ConfigurationKeys::USE_REPLICATION))).WillByDefault(testing::Return(false));
+    ON_CALL(* configuration, getBoolean(testing::Eq(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION))).WillByDefault(testing::Return(false));
 
     OperatorDispatcher dispatcher{
             std::make_shared<Map<defaultMemDbLength_t>>(64),

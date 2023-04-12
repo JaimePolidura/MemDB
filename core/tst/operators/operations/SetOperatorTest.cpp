@@ -23,7 +23,7 @@ TEST(SetOperator, ShouldtReplaceEvenNewerKeyTimestamp) {
     db->put(SimpleString<defaultMemDbLength_t>::fromChar(0x41), SimpleString<defaultMemDbLength_t>::fromChar(0x01), IGNORE_TIMESTAMP, 3, 1);
 
     auto operation = createOperationSet(0x41, 0x02, 2, 1); //A -> 1
-    auto result = setOperator.operate(operation, OperationOptions{.requestFromReplication=false}, db);
+    auto result = setOperator.operate(operation, OperationOptions{.requestOfNodeToReplicate=false}, db);
 
     ASSERT_TRUE(result.isSuccessful);
     ASSERT_EQ(* db->get(SimpleString<defaultMemDbLength_t>::fromChar('A')).value().value.data(), 0x02);
@@ -35,7 +35,7 @@ TEST(SetOperator, ShouldntReplaceNewerKeyTimestamp) { //fails
     db->put(SimpleString<defaultMemDbLength_t>::fromChar(0x41), SimpleString<defaultMemDbLength_t>::fromChar(0x01), IGNORE_TIMESTAMP, 3, 1);
 
     auto operation = createOperationSet(0x41, 0x02, 2, 1); //A -> 1
-    auto result = setOperator.operate(operation, OperationOptions{.requestFromReplication=true}, db);
+    auto result = setOperator.operate(operation, OperationOptions{.requestOfNodeToReplicate=true}, db);
 
     ASSERT_FALSE(result.isSuccessful);
     ASSERT_EQ(* db->get(SimpleString<defaultMemDbLength_t>::fromChar('A')).value().value.data(), 0x01);
@@ -48,7 +48,7 @@ TEST(SetOperator, ShouldReplaceOldKeyTimestamp) {
     db->put(SimpleString<defaultMemDbLength_t>::fromChar(0x41), SimpleString<defaultMemDbLength_t>::fromChar(0x01), NOT_IGNORE_TIMESTAMP, 1, 1);
 
     auto operation = createOperationSet(0x41, 0x02, 2, 1); //A -> 1
-    auto result = setOperator.operate(operation, OperationOptions{.requestFromReplication=true}, db);
+    auto result = setOperator.operate(operation, OperationOptions{.requestOfNodeToReplicate=true}, db);
 
     ASSERT_TRUE(result.isSuccessful);
     ASSERT_EQ(* db->get(SimpleString<defaultMemDbLength_t>::fromChar('A')).value().value.data(), 0x02);
@@ -59,7 +59,7 @@ TEST(SetOperator, ShouldSetNewKey) {
     SetOperator setOperator{};
     auto operation = createOperationSet(0x41, 0x01, 1, 1); //A -> 1
 
-    Response response = setOperator.operate(operation, OperationOptions{.requestFromReplication=true}, db);
+    Response response = setOperator.operate(operation, OperationOptions{.requestOfNodeToReplicate=true}, db);
 
     ASSERT_TRUE(response.isSuccessful);
     ASSERT_TRUE(db->contains(SimpleString<defaultMemDbLength_t>::fromChar('A')));

@@ -6,6 +6,12 @@ enum ClusterDbChangeType {
     DELETED, PUT
 };
 
+struct ClusterDbChangeTypes {
+    static std::string toString(ClusterDbChangeType clusterDbChangeType) {
+        return clusterDbChangeType == ClusterDbChangeType::DELETED ? "DELETED" : "PUT";
+    }
+};
+
 struct ClusterDbValueChanged {
     ClusterDbChangeType changeType;
     nlohmann::json value;

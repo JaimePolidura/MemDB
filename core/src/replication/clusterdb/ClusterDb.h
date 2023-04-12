@@ -9,7 +9,6 @@
 #include "utils/net/DNSUtils.h"
 #include "logging/Logger.h"
 
-//TOOD Improve, move etcd client to class level
 class ClusterDb {
 private:
     configuration_t configuration;
@@ -17,7 +16,8 @@ private:
     logger_t logger;
 
 public:
-    ClusterDb(configuration_t configuration, logger_t logger) : client(configuration->get(ConfigurationKeys::ETCD_ADDRESSES)), configuration(configuration), logger(logger) {}
+    ClusterDb(configuration_t configuration, logger_t logger) : client(configuration->get(ConfigurationKeys::MEMDB_CORE_ETCD_ADDRESSES)),
+        configuration(configuration), logger(logger) {}
 
     auto watchNodeChanges(std::function<void(ClusterDbValueChanged)> onChange) -> void {
         etcd::Watcher(client, "/nodes", [onChange](etcd::Response response){

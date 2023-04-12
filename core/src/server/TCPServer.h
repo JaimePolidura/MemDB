@@ -34,9 +34,9 @@ public:
             configuration(configuration),
             logger(logger),
             replication(replication),
-            port(configuration->get<uint16_t>(ConfigurationKeys::PORT)),
+            port(configuration->get<uint16_t>(ConfigurationKeys::MEMDB_CORE_PORT)),
             authenicator(std::move(authenicator)),
-            connectionThreadPool(5, configuration->get<int>(ConfigurationKeys::SERVER_MAX_THREADS), configuration->get<int>(ConfigurationKeys::SERVER_MIN_THREADS), 100),
+            connectionThreadPool(5, configuration->get<int>(ConfigurationKeys::MEMDB_CORE_SERVER_MAX_THREADS), configuration->get<int>(ConfigurationKeys::MEMDB_CORE_SERVER_MIN_THREADS), 100),
             operatorDispatcher(operatorDispatcher),
             acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}) {};
 
@@ -57,7 +57,7 @@ private:
         this->acceptator.async_accept([this](std::error_code ec, ip::tcp::socket socket) {
             std::shared_ptr<Connection> connection = std::make_shared<Connection>(std::move(socket));
 
-            this->logger->info("Accepted TCP Connection {0}", connection->getAddress());
+            this->logger->debugInfo("Accepted TCP Connection {0}", connection->getAddress());
 
             connection->onRequest([connection, this](const std::vector<uint8_t>& requestRawBuffer) {
                 this->connectionThreadPool.submit([connection, requestRawBuffer, this] {
@@ -101,8 +101,8 @@ private:
     }
 
     bool isConnectionFromReplicaNode(std::shared_ptr<Connection> connection) {
-        return this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION) &&
-                this->replication->doesAddressBelongToReplicationNode(connection->getAddress());
+        return this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION) &&
+               this->replication->doesAddressBelongToReplicationNode(connection->getAddress());
     }
 };
 

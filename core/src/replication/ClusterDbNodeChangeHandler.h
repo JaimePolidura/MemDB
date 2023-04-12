@@ -28,16 +28,16 @@ private:
         auto existsByNodeId = this->clusterNodeConnections->existsByNodeId(node.nodeId);
 
         if(existsByNodeId){
-            this->logger->info("Detected change of node {0} with new state {1}", node.nodeId, NodeStates::parseNodeStateToString(node.state));
+            this->logger->debugInfo("Detected change of node {0} with new state {1}", node.nodeId, NodeStates::parseNodeStateToString(node.state));
             this->clusterNodeConnections->replaceNode(node);
         }else{
-            this->logger->info("Detected new node {0}", node.nodeId);
+            this->logger->debugInfo("Detected new node {0}", node.nodeId);
             this->clusterNodeConnections->addNode(node);
         }
     }
 
     void deleteNode(const Node &node) {
-        this->logger->info("Detected deletion of node {0}", node.nodeId);
+        this->logger->debugInfo("Detected deletion of node {0}", node.nodeId);
         this->clusterNodeConnections->deleteNodeById(node.nodeId);
     }
 };

@@ -7,8 +7,9 @@
 
 class RequestSerializer {
 public:
-    std::vector<uint8_t> serialize(const Request& request, const bool includeNodeIdTimestamp = false) {
+    std::vector<uint8_t> serialize(const Request& request) {
         std::vector<uint8_t> bytes{};
+        bool includeNodeIdTimestamp = request.authentication.flag1;
 
         Utils::appendToBuffer(request.getTotalLength(includeNodeIdTimestamp), bytes);
         Utils::appendToBuffer(request.requestNumber, bytes);
@@ -20,7 +21,7 @@ public:
             Utils::appendToBuffer(request.operation.nodeId, bytes);
 
         for(auto i = request.operation.args->begin(); i < request.operation.args->end(); i++) {
-            SimpleString<defaultMemDbLength_t> arg = * i;
+            SimpleString<memDbDataLength_t> arg = * i;
 
             Utils::appendToBuffer(arg.size, bytes);
             Utils::appendToBuffer(arg.data(), arg.size, bytes);

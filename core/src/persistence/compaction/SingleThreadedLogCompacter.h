@@ -4,7 +4,7 @@
 
 #include "messages/request/Request.h"
 
-using alreadySennKeys_t = std::unordered_set<SimpleString<defaultMemDbLength_t>, SimpleStringHash<defaultMemDbLength_t>, SimpleStringEqual<defaultMemDbLength_t>>;
+using alreadySennKeys_t = std::unordered_set<SimpleString<memDbDataLength_t>, SimpleStringHash<memDbDataLength_t>, SimpleStringEqual<memDbDataLength_t>>;
 
 class SingleThreadedLogCompacter {
 public:

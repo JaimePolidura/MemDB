@@ -18,7 +18,7 @@ TEST(GetOperator, CorrectConfig) {
 }
 
 TEST(GetOperator, KeyNotFound) {
-    memDbDataStore_t db = std::make_shared<Map<defaultMemDbLength_t>>(64);
+    memDbDataStore_t db = std::make_shared<Map<memDbDataLength_t>>(64);
     GetOperator getOperator{};
 
     auto operation = createOperationGet(0x41, 1, 1); //A
@@ -32,9 +32,9 @@ TEST(GetOperator, KeyNotFound) {
 }
 
 TEST(GetOperator, KeyFound) {
-    memDbDataStore_t db = std::make_shared<Map<defaultMemDbLength_t>>(64);
-    SimpleString key = SimpleString<defaultMemDbLength_t>::fromChar('A');
-    SimpleString value = SimpleString<defaultMemDbLength_t>::fromArray({0x4C, 0x4F, 0x4C});
+    memDbDataStore_t db = std::make_shared<Map<memDbDataLength_t>>(64);
+    SimpleString key = SimpleString<memDbDataLength_t>::fromChar('A');
+    SimpleString value = SimpleString<memDbDataLength_t>::fromArray({0x4C, 0x4F, 0x4C});
 
     db->put(key, value, 1, 1, false);
 
@@ -54,7 +54,7 @@ TEST(GetOperator, KeyFound) {
 OperationBody createOperationGet(uint8_t keyValue, uint64_t timestamp, uint16_t nodeId) {
     uint8_t * keyRawPtr = new uint8_t();
     * keyRawPtr = keyValue;
-    std::shared_ptr<std::vector<SimpleString<defaultMemDbLength_t>>> args = std::make_shared<std::vector<SimpleString<defaultMemDbLength_t>>>();
+    std::shared_ptr<std::vector<SimpleString<memDbDataLength_t>>> args = std::make_shared<std::vector<SimpleString<memDbDataLength_t>>>();
     args->emplace_back(keyRawPtr, 1);
 
     return OperationBody(GetOperator::OPERATOR_NUMBER, false, false, timestamp, nodeId, args);

@@ -37,7 +37,7 @@ public:
         if(operatorToExecute.get() == nullptr){
             return Response::error(ErrorCode::UNKNOWN_OPERATOR);
         }
-        if(this->isAuthorizedToExecute(operatorToExecute, request.authenticationType)) {
+        if(!this->isAuthorizedToExecute(operatorToExecute, request.authenticationType)) {
             return Response::error(ErrorCode::NOT_AUTHORIZED);
         }
 

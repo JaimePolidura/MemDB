@@ -7,7 +7,7 @@
 class ResponseDeserializer {
 public:
     Response deserialize(const std::vector<uint8_t>& buffer) {
-        auto requestNumber = Utils::parseFromBuffer<defaultMemDbRequestNumberLength_t>(buffer);
+        auto requestNumber = Utils::parseFromBuffer<memdbRequestNumberLength_t>(buffer);
         auto timestamp = Utils::parseFromBuffer<uint64_t>(buffer, 4);
         auto success = ((uint8_t) (buffer[12] << 7)) != 0;
         auto errorCode = static_cast<uint8_t>(buffer[12] >> 1);

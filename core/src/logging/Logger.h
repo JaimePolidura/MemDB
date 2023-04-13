@@ -2,6 +2,7 @@
 
 #include "config/Configuration.h"
 #include "shared.h"
+#include "memdbtypes.h"
 
 class Logger {
 private:

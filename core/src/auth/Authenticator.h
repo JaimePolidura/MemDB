@@ -47,6 +47,6 @@ private:
             return AuthenticationType::NODE;
         }
 
-        throw std::runtime_error("Invalid auth. Before calling this method, the auth key should be validated using authenticate() method");
+        throw std::runtime_error("Invalid authentication");
     }
 };

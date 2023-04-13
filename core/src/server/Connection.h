@@ -1,17 +1,17 @@
 #pragma once
 
 #include "shared.h"
+#include "memdbtypes.h"
 
 using namespace boost::asio;
 
 class Connection : public std::enable_shared_from_this<Connection> {
 private:
-    uint8_t requestLengthBuffer[sizeof(defaultMemDbRequestLength_t)];
+    uint8_t requestLengthBuffer[sizeof(memDbDataLength_t)];
     std::function<void(const std::vector<uint8_t>&)> onRequestCallback;
     ip::tcp::socket socket;
-public:
-    AuthenticationType authenticationType;
 
+public:
     Connection(ip::tcp::socket socket) : socket{std::move(socket)} {}
 
     void onRequest(std::function<void(const std::vector<uint8_t>&)> onRequestCallbackParam) {
@@ -28,10 +28,10 @@ public:
     void readAsync() {
         std::shared_ptr<Connection> self = shared_from_this();
 
-        this->socket.async_read_some(boost::asio::buffer(requestLengthBuffer, sizeof(defaultMemDbRequestLength_t)), [this, self](boost::system::error_code ec, std::size_t lengthRead){
+        this->socket.async_read_some(boost::asio::buffer(requestLengthBuffer, sizeof(memDbDataLength_t)), [this, self](boost::system::error_code ec, std::size_t lengthRead){
             if(ec) return;
 
-            defaultMemDbRequestLength_t requestLength = Utils::parse<defaultMemDbRequestLength_t>(requestLengthBuffer);
+            memDbDataLength_t requestLength = Utils::parse<memDbDataLength_t>(requestLengthBuffer);
 
             std::vector<uint8_t> requestBuffer = this->readSocketBufferLenght(requestLength);
 
@@ -43,13 +43,19 @@ public:
 
     std::vector<uint8_t> readSync() {
         this->socket.read_some(boost::asio::buffer(requestLengthBuffer));
-        defaultMemDbRequestLength_t requestLength = Utils::parse<defaultMemDbRequestLength_t>(requestLengthBuffer);
+        memDbDataLength_t requestLength = Utils::parse<memDbDataLength_t>(requestLengthBuffer);
 
         return this->readSocketBufferLenght(requestLength);
     }
 
     void writeAsync(const std::vector<uint8_t>& toWrite) {
         this->socket.async_write_some(boost::asio::buffer(toWrite), [&](const boost::system::error_code& error, std::size_t bytes_transferred){});
+    }
+
+    void writeAsync(const std::vector<uint8_t>& toWrite, std::function<void(const boost::system::error_code& error, std::size_t bytes_transferred)> callback) {
+        this->socket.async_write_some(boost::asio::buffer(toWrite), [callback](const boost::system::error_code& error, std::size_t bytes_transferred){
+            callback(error, bytes_transferred);
+        });
     }
 
     size_t writeSync(const std::vector<uint8_t>& toWrite) {
@@ -65,7 +71,7 @@ public:
     }
 
 private:
-    std::vector<uint8_t> readSocketBufferLenght(defaultMemDbRequestLength_t length) {
+    std::vector<uint8_t> readSocketBufferLenght(memDbDataLength_t length) {
         std::vector<uint8_t> requestBuffer(length);
         this->socket.read_some(boost::asio::buffer(requestBuffer));
 

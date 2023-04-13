@@ -13,20 +13,21 @@ private:
 
 public:
     //In buffer we dont pass total request length
-    Request deserialize(const std::vector<uint8_t>& buffer, const bool includesNodeId = false) {
+    Request deserialize(const std::vector<uint8_t>& buffer) {
         Request request{};
-        request.requestNumber = Utils::parseFromBuffer<defaultMemDbRequestNumberLength_t>(buffer);
+        request.requestNumber = Utils::parseFromBuffer<memdbRequestNumberLength_t>(buffer);
         request.authentication = this->deserializeAuthenticacion(buffer);
-        request.operation = this->deserializeOperation(buffer, request.authentication.getTotalLength() + sizeof(defaultMemDbRequestNumberLength_t), includesNodeId);
+        request.operation = this->deserializeOperation(buffer, request.authentication.getTotalLength() + sizeof(memdbRequestNumberLength_t),
+                                                       request.authentication.flag1);
 
         return request;
     }
 
     AuthenticationBody deserializeAuthenticacion(const std::vector<uint8_t>& buffer) {
-        uint8_t authLength = this->getValueWithoutFlags(buffer, sizeof(defaultMemDbRequestNumberLength_t));
-        uint8_t * authKey = this->fill(buffer, sizeof(defaultMemDbRequestNumberLength_t) + 1, sizeof(defaultMemDbRequestNumberLength_t) + authLength + 1);
-        bool flagAuth1 = this->getFlag(buffer, sizeof(defaultMemDbRequestNumberLength_t), FLAG1_MASK);
-        bool flagAuth2 = this->getFlag(buffer, sizeof(defaultMemDbRequestNumberLength_t), FLAG2_MASK);
+        uint8_t authLength = this->getValueWithoutFlags(buffer, sizeof(memdbRequestNumberLength_t));
+        uint8_t * authKey = this->fill(buffer, sizeof(memdbRequestNumberLength_t) + 1, sizeof(memdbRequestNumberLength_t) + authLength + 1);
+        bool flagAuth1 = this->getFlag(buffer, sizeof(memdbRequestNumberLength_t), FLAG1_MASK);
+        bool flagAuth2 = this->getFlag(buffer, sizeof(memdbRequestNumberLength_t), FLAG2_MASK);
 
         return AuthenticationBody(std::string((char *) authKey, authLength), flagAuth1, flagAuth2);
     }
@@ -42,9 +43,9 @@ public:
         uint64_t timestamp = Utils::parseFromBuffer<uint64_t>(buffer, position);
         position += sizeof(uint64_t);
 
-        uint16_t nodeId = 1;
+        memdbNodeId_t nodeId = 1;
         if(includesNodeId) {
-            nodeId = Utils::parseFromBuffer<uint16_t>(buffer, position);
+            nodeId = Utils::parseFromBuffer<memdbNodeId_t>(buffer, position);
             position += sizeof(uint16_t);
         }
 
@@ -53,11 +54,11 @@ public:
         }
 
         int numerOfArguments = 0;
-        auto arguments = std::make_shared<std::vector<SimpleString<defaultMemDbLength_t>>>();
+        auto arguments = std::make_shared<std::vector<SimpleString<memDbDataLength_t>>>();
 
         while (position + 1 < buffer.size()) {
-            defaultMemDbLength_t argLength = Utils::parseFromBuffer<defaultMemDbLength_t>(buffer, position);
-            position += sizeof(defaultMemDbLength_t);
+            memDbDataLength_t argLength = Utils::parseFromBuffer<memDbDataLength_t>(buffer, position);
+            position += sizeof(memDbDataLength_t);
 
             if(argLength == 0)
                 break;

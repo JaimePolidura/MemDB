@@ -7,23 +7,24 @@
 #include "auth/AuthenticationType.h"
 
 struct OperationBody {
-    std::shared_ptr<std::vector<SimpleString<defaultMemDbLength_t>>> args;
+    std::shared_ptr<std::vector<SimpleString<memDbDataLength_t>>> args;
     uint64_t timestamp;
-    uint16_t nodeId;
+    memdbNodeId_t nodeId; //2 bytes
     uint8_t operatorNumber; //0 - 127
     bool flag1;
     bool flag2;
 
     OperationBody() = default;
 
-    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2, uint64_t timestamp, uint16_t nodeId):
+    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2, uint64_t timestamp, memdbNodeId_t nodeId):
         flag1(flag1),
         flag2(flag2),
         nodeId(nodeId),
         operatorNumber(operatorNumber),
         timestamp(timestamp) {}
 
-    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2, uint64_t timestamp, uint16_t nodeId, std::shared_ptr<std::vector<SimpleString<defaultMemDbLength_t>>> argsCons):
+    OperationBody(uint8_t operatorNumber, bool flag1, bool flag2, uint64_t timestamp, memdbNodeId_t nodeId,
+                  std::shared_ptr<std::vector<SimpleString<memDbDataLength_t>>> argsCons):
         flag1(flag1),
         flag2(flag2),
         nodeId(nodeId),
@@ -40,14 +41,14 @@ struct OperationBody {
             a.args.get() == this->args.get();
     }
 
-    defaultMemDbRequestLength_t getTotalLength(bool includesNodeId) const {
-        defaultMemDbRequestLength_t totalLength = 0;
+    memDbDataLength_t getTotalLength(bool includesNodeId) const {
+        memDbDataLength_t totalLength = 0;
         totalLength += 1; //Op number
         totalLength += 8; //Timestamp
         if(includesNodeId) totalLength += 2;
 
         for(auto arg = this->args->begin(); arg < this->args->end(); arg++) {
-            totalLength += sizeof(defaultMemDbLength_t); //Arg length
+            totalLength += sizeof(memDbDataLength_t); //Arg length
             totalLength += arg->size; //Arg length
         }
 
@@ -58,7 +59,7 @@ struct OperationBody {
 struct AuthenticationBody {
 public:
     std::string authKey;
-    bool flag1;
+    bool flag1; //Includes nodeid in request payload
     bool flag2;
 
     AuthenticationBody(std::string authKey, bool flag1, bool flag2): authKey(authKey), flag1(flag1), flag2(flag2) {}
@@ -86,7 +87,7 @@ public:
         return * this;
     }
 
-    defaultMemDbRequestLength_t getTotalLength() const {
+    memDbDataLength_t getTotalLength() const {
         return 1 + authKey.size();
     }
 };
@@ -94,7 +95,7 @@ public:
 struct Request {
     AuthenticationBody authentication;
     OperationBody operation;
-    defaultMemDbRequestNumberLength_t requestNumber;
+    memdbRequestNumberLength_t requestNumber;
     AuthenticationType authenticationType; //Not in serializetion
 
     Request(const Request& other) {
@@ -122,9 +123,9 @@ struct Request {
 
     Request() = default;
 
-    defaultMemDbRequestLength_t getTotalLength(bool includeNodeId = false) const {
-        defaultMemDbRequestLength_t length = 0;
-        length += sizeof(defaultMemDbRequestNumberLength_t);
+    memDbDataLength_t getTotalLength(bool includeNodeId = false) const {
+        memDbDataLength_t length = 0;
+        length += sizeof(memdbRequestNumberLength_t);
         length += this->authentication.getTotalLength();
         length += this->operation.getTotalLength(includeNodeId);
 

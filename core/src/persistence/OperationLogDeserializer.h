@@ -22,7 +22,7 @@ public:
             logs.push_back(operationDeserialized);
 
             uint8_t toIncrease = operationDeserialized.getTotalLength(false) +
-                    sizeof(defaultMemDbLength_t); //Padding
+                    sizeof(memDbDataLength_t); //Padding
             bytesPtr = bytesPtr + toIncrease;
         }
 

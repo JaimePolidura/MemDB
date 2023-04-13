@@ -70,27 +70,35 @@ private:
             this->acceptNewConnections();
         });
     }
-    
-    void onNewRequest(const std::vector<uint8_t>& requestRawBuffer, std::shared_ptr<Connection> connection) {
-        bool isConnectionFromReplicaNode = this->isConnectionFromReplicaNode(connection);
 
-        Request request = this->requestDeserializer.deserialize(requestRawBuffer, isConnectionFromReplicaNode);
+    void onNewRequest(const std::vector<uint8_t>& requestRawBuffer, connection_t connection) {
+        Request request = this->requestDeserializer.deserialize(requestRawBuffer);
         bool authenticationValid = this->authenicator.authenticate(request.authentication.authKey);
 
         if(!authenticationValid){
-            const Response errorAuthResponse = Response::error(ErrorCode::AUTH_ERROR, request.requestNumber, request.operation.timestamp);
-            this->sendResponse(connection, errorAuthResponse);
+            this->sendAuthError(connection, request);
             return;
         }
 
-        AuthenticationType authenticationType = this->authenicator.getAuthenticationType(request.authentication.authKey);
-        request.authenticationType = authenticationType;
-        connection->authenticationType = authenticationType;
+        request.authenticationType = this->authenicator.getAuthenticationType(request.authentication.authKey);
+        if(request.authenticationType != AuthenticationType::NODE && request.authentication.flag1){//Only node id can be present in request with node keys
+            this->sendAuthError(connection, request);
+            return;
+        }
+
+        if(request.authenticationType == AuthenticationType::NODE){
+            this->addClusterConnectionIfNotAdded(request, connection);
+        }
 
         Response response = this->operatorDispatcher->dispatch(request);
         response.requestNumber = request.requestNumber;
 
         this->sendResponse(connection, response);
+    }
+
+    void sendAuthError(connection_t connection, Request request) {
+        const Response errorAuthResponse = Response::error(ErrorCode::AUTH_ERROR, request.requestNumber, request.operation.timestamp);
+        this->sendResponse(connection, errorAuthResponse);
     }
 
     void sendResponse(std::shared_ptr<Connection> connection, const Response& response) {
@@ -100,9 +108,10 @@ private:
         }
     }
 
-    bool isConnectionFromReplicaNode(std::shared_ptr<Connection> connection) {
-        return this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION) &&
-               this->replication->doesAddressBelongToReplicationNode(connection->getAddress());
+    void addClusterConnectionIfNotAdded(Request request, connection_t connection) {
+        if(!this->replication->getClusterNodes()->isConnectionOpened(request.operation.nodeId)){
+            this->replication->getClusterNodes()->setConnectionOfNode(request.operation.nodeId, connection);
+        }
     }
 };
 

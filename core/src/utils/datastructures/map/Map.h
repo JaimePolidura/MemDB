@@ -90,7 +90,7 @@ private:
     }
 };
 
-using memDbDataStore_t = std::shared_ptr<Map<defaultMemDbLength_t>>;
+using memDbDataStore_t = std::shared_ptr<Map<memDbDataLength_t>>;
 
 template<typename SizeValue>
 Map<SizeValue>::Map(uint16_t numberBuckets): numberBuckets(numberBuckets) {

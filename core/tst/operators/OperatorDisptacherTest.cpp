@@ -95,7 +95,7 @@ TEST(OperatorDispatcher, SuccessfulWriteTypeReplication) {
     ON_CALL(* configuration, getBoolean(testing::Eq(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION))).WillByDefault(testing::Return(true));
 
     OperatorDispatcher dispatcher{
-            std::make_shared<Map<defaultMemDbLength_t>>(64),
+            std::make_shared<Map<memDbDataLength_t>>(64),
             lamportClockMock,
             operationLogBufferMock,
             operatorRegistryMock,
@@ -127,7 +127,7 @@ TEST(OperatorDispatcher, SuccessfulWriteNotReplication) {
     ON_CALL(* configuration, getBoolean(testing::Eq(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION))).WillByDefault(testing::Return(false));
 
     OperatorDispatcher dispatcher{
-            std::make_shared<Map<defaultMemDbLength_t>>(64),
+            std::make_shared<Map<memDbDataLength_t>>(64),
             lamportClockMock,
             operationLogBufferMock,
             operatorRegistryMock,
@@ -157,7 +157,7 @@ TEST(OperatorDispatcher, UnsuccessfulOperationExecutor) {
     ON_CALL(* configuration, getBoolean(testing::Eq(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION))).WillByDefault(testing::Return(false));
 
     OperatorDispatcher dispatcher{
-            std::make_shared<Map<defaultMemDbLength_t>>(64),
+            std::make_shared<Map<memDbDataLength_t>>(64),
             lamportClockMock,
             operationLogBufferMock,
             operatorRegistryMock,
@@ -180,7 +180,7 @@ TEST(OperatorDispatcher, NotAuthrozied) {
     std::shared_ptr<ReplicationMock> replicationMock = std::make_shared<ReplicationMock>(configuration);
 
     OperatorDispatcher dispatcher{
-            std::make_shared<Map<defaultMemDbLength_t>>(64),
+            std::make_shared<Map<memDbDataLength_t>>(64),
             std::make_shared<LamportClock>(1),
             operationLogBufferMock,
             operatorRegistryMock,
@@ -203,7 +203,7 @@ TEST(OperatorDispatcher, OperatorNotFound) {
     ON_CALL(* operatorRegistryMock, get(testing::Eq(1))).WillByDefault(testing::Return(nullptr));
 
     OperatorDispatcher dispatcher{
-        std::make_shared<Map<defaultMemDbLength_t>>(64),
+        std::make_shared<Map<memDbDataLength_t>>(64),
         std::make_shared<LamportClock>(1),
         operationLogBufferMock,
         operatorRegistryMock,

@@ -10,21 +10,44 @@
 
 struct Node {
 public:
-    std::shared_ptr<io_context> ioContext = std::make_shared<io_context>();
+    io_context ioContext;
 
-    connection_t connection;
+    mutable connection_t connection;
     std::string address;
     NodeState state;
-    std::string nodeId;
+    memdbNodeId_t nodeId;
 
     ResponseDeserializer responseDeserializer;
     RequestSerializer requestSerializer;
 
-    Response sendRequest(const Request& request, logger_t logger, const bool includesNodeId = false) {
+    Node() = default;
+
+    Node(const Node& other) {
+        this->connection = other.connection;
+        this->address = other.address;
+        this->state = other.state;
+        this->nodeId = other.nodeId;
+        this->responseDeserializer = other.responseDeserializer;
+        this->requestSerializer = other.requestSerializer;
+    }
+
+    Response sendRequest(const Request& request, logger_t logger) {
         this->openConnectionIfClosed(logger);
 
-        std::vector<uint8_t> serializedRequest = this->requestSerializer.serialize(request, includesNodeId);
-        logger->debugInfo("8 {0}", serializedRequest.size());
+        std::vector<uint8_t> serializedRequest = this->requestSerializer.serialize(request);
+        std::cout << this->connection->isOpen() << std::endl;
+        logger->debugInfo("8 {0} {1}", serializedRequest.size(), this->connection->isOpen());
+
+        this->connection->writeAsync(serializedRequest, [logger](const boost::system::error_code& error, std::size_t bytes_transferred) -> void{
+            logger->debugInfo("wtf");
+            if(error){
+                logger->debugInfo("Error");
+            }
+
+            logger->debugInfo("Info {0}", bytes_transferred);
+        });
+
+        std::this_thread::sleep_for(std::chrono::seconds(2));
 
         auto xd = this->connection->writeSync(serializedRequest);
         logger->debugInfo("9 {0}", xd);
@@ -38,9 +61,13 @@ public:
     }
 
     void closeConnection() {
-        if(this->connection.get() != nullptr && this->connection->isOpen()){
+        if(this->isConnectionOpened()){
             this->connection->close();
         }
+    }
+
+    bool isConnectionOpened() const {
+        return this->connection.get() != nullptr && this->connection->isOpen();
     }
 
     bool openConnection(logger_t logger) {
@@ -54,7 +81,7 @@ public:
         auto ip = splitedAddress[0];
         auto port = splitedAddress[1];
 
-        boost::asio::ip::tcp::socket socket(* this->ioContext);
+        boost::asio::ip::tcp::socket socket(this->ioContext);
 
         return Utils::retryUntil(10, std::chrono::seconds(2), [ip, port, &socket, this]() mutable -> void{
             if(DNSUtils::isName(ip))
@@ -69,25 +96,28 @@ public:
 
 private:
     void openConnectionIfClosed(logger_t logger) {
-        if(this->connection.get() == nullptr || !this->connection->isOpen()){
+        if(this->isConnectionOpened()){
             this->openConnection(logger);
         }
     }
 
 public:
-    static bool canSendRequestUnicast(const Node& node) {
-        return node.state == NodeState::RUNNING;
+    static bool canSendRequestUnicast(NodeState state) {
+        return state == NodeState::RUNNING;
     }
 
-    static std::string toJson(const Node& node) {
-        return "{\"nodeId\": \""+node.nodeId+"\", \"address\": \""+node.address+"\", \"state\": \""+NodeStates::parseNodeStateToString(node.state)+"\"}";
+    static std::string toJson(std::shared_ptr<Node> node) {
+        return "{\"nodeId\": \""+std::to_string(node->nodeId)+"\", \"address\": \""+node->address+"\", \"state\": \""+NodeStates::parseNodeStateToString(node->state)+"\"}";
     }
 
-    static Node fromJson(const nlohmann::json& json) {
-        return Node{
-                .address = json["address"].get<std::string>(),
-                .state = NodeStates::parseNodeStateFromString(json["state"].get<std::string>()),
-                .nodeId = json["nodeId"].get<std::string>(),
-        };
+    static std::shared_ptr<Node> fromJson(const nlohmann::json& json) {
+        std::shared_ptr<Node> node = std::make_shared<Node>();
+        node->address = json["address"].get<std::string>();
+        node->state = NodeStates::parseNodeStateFromString(json["state"].get<std::string>());
+        node->nodeId = (memdbNodeId_t) std::stoi(json["nodeId"].get<std::string>());
+
+        return node;
     }
 };
+
+using node_t = std::shared_ptr<Node>;

@@ -24,9 +24,9 @@ TEST(OperationLogSerializer, ShouldSerializeWithArgs) {
 TEST(OperationLogSerializer, ShouldSerializeNoArgs) {
     OperationLogSerializer operationLogSerializer{};
 
-    std::shared_ptr<std::vector<SimpleString<defaultMemDbLength_t>>> args = std::make_shared<std::vector<SimpleString<defaultMemDbLength_t>>>();
-    args->push_back(SimpleString<defaultMemDbLength_t>::fromChar('A'));
-    args->push_back(SimpleString<defaultMemDbLength_t>::fromChar('B'));
+    std::shared_ptr<std::vector<SimpleString<memDbDataLength_t>>> args = std::make_shared<std::vector<SimpleString<memDbDataLength_t>>>();
+    args->push_back(SimpleString<memDbDataLength_t>::fromChar('A'));
+    args->push_back(SimpleString<memDbDataLength_t>::fromChar('B'));
 
     std::vector<uint8_t> expected = {
             0x04, //Op desc

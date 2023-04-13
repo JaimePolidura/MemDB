@@ -33,7 +33,7 @@ public:
         this->tcpServer->run();
 
         if(this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION)){
-            this->clock->nodeId = std::stoi(this->replication->getNodeId());
+            this->clock->nodeId = this->replication->getNodeId();
 
             this->syncOplogFromCluster(lastTimestampStored);
         }

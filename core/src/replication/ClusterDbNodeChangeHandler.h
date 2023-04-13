@@ -2,21 +2,21 @@
 
 #include "replication/clusterdb/ClusterDbValueChanged.h"
 #include "replication/Node.h"
-#include "replication/othernodes/ClusterNodesConnections.h"
+#include "replication/othernodes/ClusterNodes.h"
 #include "logging/Logger.h"
 
 class ClusterDbNodeChangeHandler {
 private:
-    clusterNodesConnections_t clusterNodeConnections;
+    clusterNodes_t clusterNodes;
     logger_t logger;
 
 public:
-    ClusterDbNodeChangeHandler(clusterNodesConnections_t clusterNodeConnections, logger_t logger):
-        clusterNodeConnections(clusterNodeConnections), logger(logger) {}
+    ClusterDbNodeChangeHandler(clusterNodes_t clusterNodes, logger_t logger):
+            clusterNodes(clusterNodes), logger(logger) {}
     
     ClusterDbNodeChangeHandler() = default;
 
-    void handleChange(Node& newNode, const ClusterDbChangeType changeType) {
+    void handleChange(node_t newNode, const ClusterDbChangeType changeType) {
         if(changeType == ClusterDbChangeType::PUT)
             this->updateNodes(newNode);
         else if (changeType == ClusterDbChangeType::DELETED)
@@ -24,20 +24,20 @@ public:
     }
 
 private:
-    void updateNodes(Node &node) {
-        auto existsByNodeId = this->clusterNodeConnections->existsByNodeId(node.nodeId);
+    void updateNodes(node_t node) {
+        auto existsByNodeId = this->clusterNodes->existsByNodeId(node->nodeId);
 
         if(existsByNodeId){
-            this->logger->debugInfo("Detected change of node {0} with new state {1}", node.nodeId, NodeStates::parseNodeStateToString(node.state));
-            this->clusterNodeConnections->replaceNode(node);
+            this->logger->debugInfo("Detected change of node {0} with new state {1}", node->nodeId, NodeStates::parseNodeStateToString(node->state));
+            this->clusterNodes->setNodeState(node->nodeId, node->state);
         }else{
-            this->logger->debugInfo("Detected new node {0}", node.nodeId);
-            this->clusterNodeConnections->addNode(node);
+            this->logger->debugInfo("Detected new node {0}", node->nodeId);
+            this->clusterNodes->addNode(node);
         }
     }
 
-    void deleteNode(const Node &node) {
-        this->logger->debugInfo("Detected deletion of node {0}", node.nodeId);
-        this->clusterNodeConnections->deleteNodeById(node.nodeId);
+    void deleteNode(node_t &node) {
+        this->logger->debugInfo("Detected deletion of node {0}", node->nodeId);
+        this->clusterNodes->deleteNodeById(node->nodeId);
     }
 };

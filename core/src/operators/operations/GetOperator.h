@@ -9,7 +9,7 @@ public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x02;
 
     Response operate(const OperationBody& operation, const OperationOptions& operationOptions, memDbDataStore_t map) override {
-        std::optional<MapEntry<defaultMemDbLength_t>> result = map->get(operation.args->at(0));
+        std::optional<MapEntry<memDbDataLength_t>> result = map->get(operation.args->at(0));
 
         return result.has_value() ?
                Response::success(result.value().value) :

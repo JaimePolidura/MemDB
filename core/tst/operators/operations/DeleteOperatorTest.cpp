@@ -18,10 +18,10 @@ TEST(DeleteOperator, CorrectConfig) {
 
 TEST(DeleteOperator, ShouldntDeleteNewerKeyTimestamp){
     DeleteOperator deleteOperator{};
-    memDbDataStore_t db = std::make_shared<Map<defaultMemDbLength_t>>(64);
+    memDbDataStore_t db = std::make_shared<Map<memDbDataLength_t>>(64);
 
-    SimpleString key = SimpleString<defaultMemDbLength_t>::fromChar(0x41);
-    SimpleString value = SimpleString<defaultMemDbLength_t>::fromChar(0x01);
+    SimpleString key = SimpleString<memDbDataLength_t>::fromChar(0x41);
+    SimpleString value = SimpleString<memDbDataLength_t>::fromChar(0x01);
     db->put(key, value, NOT_IGNORE_TIMESTAMP, 2, 1);
 
     auto response = deleteOperator.operate(createOperationDelete(0x41, 1, 1), OperationOptions{.requestOfNodeToReplicate = true}, db);
@@ -32,10 +32,10 @@ TEST(DeleteOperator, ShouldntDeleteNewerKeyTimestamp){
 
 TEST(DeleteOperator, ShouldtDeleteEventNewerKeyTimestamp){
     DeleteOperator deleteOperator{};
-    memDbDataStore_t db = std::make_shared<Map<defaultMemDbLength_t>>(64);
+    memDbDataStore_t db = std::make_shared<Map<memDbDataLength_t>>(64);
 
-    SimpleString key = SimpleString<defaultMemDbLength_t>::fromChar(0x41);
-    db->put(key, SimpleString<defaultMemDbLength_t>::fromChar(0x01), NOT_IGNORE_TIMESTAMP, 2, 1);
+    SimpleString key = SimpleString<memDbDataLength_t>::fromChar(0x41);
+    db->put(key, SimpleString<memDbDataLength_t>::fromChar(0x01), NOT_IGNORE_TIMESTAMP, 2, 1);
 
     auto response = deleteOperator.operate(createOperationDelete(0x41, 1, 1), OperationOptions{.requestOfNodeToReplicate = false}, db);
 
@@ -45,19 +45,19 @@ TEST(DeleteOperator, ShouldtDeleteEventNewerKeyTimestamp){
 
 TEST(DeleteOperator, ShouldDeleteOlderKeyTimestamp){
     DeleteOperator deleteOperator{};
-    memDbDataStore_t db = std::make_shared<Map<defaultMemDbLength_t>>(64);
+    memDbDataStore_t db = std::make_shared<Map<memDbDataLength_t>>(64);
 
-    db->put(SimpleString<defaultMemDbLength_t>::fromChar(0x41), SimpleString<defaultMemDbLength_t>::fromChar(0x01), NOT_IGNORE_TIMESTAMP, 1, 1);
+    db->put(SimpleString<memDbDataLength_t>::fromChar(0x41), SimpleString<memDbDataLength_t>::fromChar(0x01), NOT_IGNORE_TIMESTAMP, 1, 1);
 
     auto response = deleteOperator.operate(createOperationDelete(0x41, 2, 1), OperationOptions{.requestOfNodeToReplicate = true}, db);
 
     ASSERT_TRUE(response.isSuccessful);
-    ASSERT_FALSE(db->contains(SimpleString<defaultMemDbLength_t>::fromChar(0x41)));
+    ASSERT_FALSE(db->contains(SimpleString<memDbDataLength_t>::fromChar(0x41)));
 }
 
 TEST(DeleteOperator, KeyNotFound){
     DeleteOperator deleteOperator{};
-    memDbDataStore_t db = std::make_shared<Map<defaultMemDbLength_t>>(64);
+    memDbDataStore_t db = std::make_shared<Map<memDbDataLength_t>>(64);
 
     auto response = deleteOperator.operate(createOperationDelete(0x41, 1, 2), OperationOptions{.requestOfNodeToReplicate = true}, db);
 
@@ -66,9 +66,9 @@ TEST(DeleteOperator, KeyNotFound){
 }
 
 OperationBody createOperationDelete(uint8_t keyValue, uint64_t timestamp, uint16_t nodeId){
-    SimpleString key = SimpleString<defaultMemDbLength_t>::fromChar(keyValue);
+    SimpleString key = SimpleString<memDbDataLength_t>::fromChar(keyValue);
 
-    std::shared_ptr<std::vector<SimpleString<defaultMemDbLength_t>>> vector = std::make_shared<std::vector<SimpleString<defaultMemDbLength_t>>>();
+    std::shared_ptr<std::vector<SimpleString<memDbDataLength_t>>> vector = std::make_shared<std::vector<SimpleString<memDbDataLength_t>>>();
     vector->push_back(key);
 
     return OperationBody(DeleteOperator::OPERATOR_NUMBER, false, false, timestamp, nodeId, vector);

@@ -25,8 +25,8 @@ public:
         }, true);
     }
 
-    auto setNode(const std::string& nodeId, const Node& node) -> void {
-        client.put("/nodes/" + nodeId, Node::toJson(node));
+    auto setNode(memdbNodeId_t nodeId, node_t node) -> void {
+        client.put("/nodes/" + std::to_string(nodeId), Node::toJson(node));
     }
 };
 

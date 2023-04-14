@@ -4,6 +4,26 @@
 
 class Utils {
 public:
+    static bool tryOnce(std::function<void(void)> toTry) {
+        try{
+            toTry();
+            return true;
+        }catch (const std::exception& e) {
+            return false;
+        }
+    }
+
+    static void printVector(const std::vector<uint8_t>& toPrint) {
+        std::cout << "[";
+
+        for (size_t i = 0; i < toPrint.size(); ++i) {
+            std::cout << static_cast<unsigned>(toPrint[i]);
+            if (i != toPrint.size() - 1)
+                std::cout << ", ";
+        }
+        std::cout << "]" << std::endl;
+    }
+
     template<typename R, typename P>
     static bool retryUntil(int numberAttempts, const std::chrono::duration<R, P> backoff, std::function<void(void)> toRetry) {
         while(numberAttempts > 0) {
@@ -12,6 +32,8 @@ public:
 
                 return true;
             }catch (const std::exception& e){
+                std::cout << "Retrying " << e.what() << std::endl;
+
                 numberAttempts--;
                 std::this_thread::sleep_for(backoff);
             }

@@ -84,9 +84,10 @@ public:
                 continue;
             }
 
-            this->requestPool.submit([node, request, this]() mutable -> void {
-                node->sendRequest(this->prepareRequest(request), this->logger);
-            });
+            node->sendRequest(this->prepareRequest(request), this->logger);
+
+//            this->requestPool.submit([node, request, this]() mutable -> void {
+//            });
         }
     }
 

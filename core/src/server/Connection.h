@@ -31,6 +31,8 @@ public:
         this->socket.async_read_some(boost::asio::buffer(requestLengthBuffer, sizeof(memDbDataLength_t)), [this, self](boost::system::error_code ec, std::size_t lengthRead){
             if(ec) return;
 
+            std::cout << "New request" << std::endl;
+
             memDbDataLength_t requestLength = Utils::parse<memDbDataLength_t>(requestLengthBuffer);
 
             std::vector<uint8_t> requestBuffer = this->readSocketBufferLenght(requestLength);

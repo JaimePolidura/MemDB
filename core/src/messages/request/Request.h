@@ -123,11 +123,11 @@ struct Request {
 
     Request() = default;
 
-    memDbDataLength_t getTotalLength(bool includeNodeId = false) const {
+    memDbDataLength_t getTotalLength() const {
         memDbDataLength_t length = 0;
         length += sizeof(memdbRequestNumberLength_t);
         length += this->authentication.getTotalLength();
-        length += this->operation.getTotalLength(includeNodeId);
+        length += this->operation.getTotalLength(authentication.flag1);
 
         return length;
     }

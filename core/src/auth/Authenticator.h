@@ -18,7 +18,7 @@ public:
     bool authenticate(const std::string& authKey) {
         return this->configuartion->get(ConfigurationKeys::MEMDB_CORE_AUTH_API_KEY).compare(authKey) == 0 ||
                 this->configuartion->get(ConfigurationKeys::MEMDB_CORE_AUTH_MAINTENANCE_KEY).compare(authKey) == 0 ||
-                this->configuartion->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY).compare(authKey);
+                this->configuartion->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY).compare(authKey) == 0;
     }
 
     AuthenticationType getAuthenticationType(const std::string& authKey) {

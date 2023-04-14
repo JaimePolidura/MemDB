@@ -24,6 +24,7 @@ func (controller *LoginController) Login(c echo.Context) error {
 	if err := c.Bind(loginRequest); err != nil {
 		return err
 	}
+
 	if loginRequest.AuthKey != controller.Configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_AUTH_API_KEY) {
 		return c.JSON(http.StatusForbidden, "Invalid auth key")
 	}

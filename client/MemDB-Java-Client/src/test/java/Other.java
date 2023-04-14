@@ -5,7 +5,7 @@ import lombok.SneakyThrows;
 public final class Other {
     @SneakyThrows
     public static void main(String[] args) {
-        MemDb memDb = new MemDb(MemDbConnections.sync("127.0.0.1", 10000), "123");
+        MemDb memDb = new MemDb(MemDbConnections.sync("127.0.0.1", 10000), "789");
 
         memDb.set("nombre", "jaime");
 //        System.out.println(memDb.get("nombre"));

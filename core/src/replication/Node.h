@@ -20,7 +20,7 @@ public:
     ResponseDeserializer responseDeserializer;
     RequestSerializer requestSerializer;
 
-    Node() = default;
+    Node(): connection(nullptr) {}
 
     Node(const Node& other) {
         this->connection = other.connection;
@@ -35,26 +35,8 @@ public:
         this->openConnectionIfClosed(logger);
 
         std::vector<uint8_t> serializedRequest = this->requestSerializer.serialize(request);
-        std::cout << this->connection->isOpen() << std::endl;
-        logger->debugInfo("8 {0} {1}", serializedRequest.size(), this->connection->isOpen());
-
-        this->connection->writeAsync(serializedRequest, [logger](const boost::system::error_code& error, std::size_t bytes_transferred) -> void{
-            logger->debugInfo("wtf");
-            if(error){
-                logger->debugInfo("Error");
-            }
-
-            logger->debugInfo("Info {0}", bytes_transferred);
-        });
-
-        std::this_thread::sleep_for(std::chrono::seconds(2));
-
-        auto xd = this->connection->writeSync(serializedRequest);
-        logger->debugInfo("9 {0}", xd);
-
-        //TODO Handle missed write
+        this->connection->writeSync(serializedRequest);
         std::vector<uint8_t> serializedResponse = this->connection->readSync();
-        logger->debugInfo("10 {0}", serializedResponse.size());
         Response deserializedResponse = this->responseDeserializer.deserialize(serializedResponse);
 
         return deserializedResponse;
@@ -71,9 +53,7 @@ public:
     }
 
     bool openConnection(logger_t logger) {
-        if(!NodeStates::canAcceptRequest(this->state) ||
-           (this->connection.get() != nullptr && this->connection->isOpen())){
-            logger->debugInfo("3.4 {0} {1}", NodeStates::parseNodeStateToString(this->state), this->nodeId);
+        if(!NodeStates::canAcceptRequest(this->state) || this->isConnectionOpened()){
             return false;
         }
 
@@ -83,20 +63,27 @@ public:
 
         boost::asio::ip::tcp::socket socket(this->ioContext);
 
-        return Utils::retryUntil(10, std::chrono::seconds(2), [ip, port, &socket, this]() mutable -> void{
+        bool success = Utils::tryOnce([ip, port, &socket]() mutable -> void{
             if(DNSUtils::isName(ip))
                 ip = DNSUtils::singleResolve(ip, port);
 
             boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(ip), std::atoi(port.data()));
             socket.connect(endpoint);
+        });
 
-            this->connection = std::make_shared<Connection>(std::move(socket));
-        });;
+        if(!success)
+            return false;
+
+        this->connection = std::make_shared<Connection>(std::move(socket));
+
+        return true;
     }
 
 private:
     void openConnectionIfClosed(logger_t logger) {
-        if(this->isConnectionOpened()){
+        std::cout << "-5" << std::endl;
+
+        if(!this->isConnectionOpened()){
             this->openConnection(logger);
         }
     }

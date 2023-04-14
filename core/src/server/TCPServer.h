@@ -61,7 +61,7 @@ private:
 
             connection->onRequest([connection, this](const std::vector<uint8_t>& requestRawBuffer) {
                 this->connectionThreadPool.submit([connection, requestRawBuffer, this] {
-                    this->onNewRequest(requestRawBuffer, connection);
+                this->onNewRequest(requestRawBuffer, connection);
                 });
             });
 

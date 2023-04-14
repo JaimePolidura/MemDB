@@ -7,7 +7,7 @@ using namespace boost::asio;
 
 class Connection : public std::enable_shared_from_this<Connection> {
 private:
-    uint8_t requestLengthBuffer[sizeof(memDbDataLength_t)];
+    uint8_t messageLengthBuffer[sizeof(memDbDataLength_t)];
     std::function<void(const std::vector<uint8_t>&)> onRequestCallback;
     ip::tcp::socket socket;
 
@@ -28,26 +28,24 @@ public:
     void readAsync() {
         std::shared_ptr<Connection> self = shared_from_this();
 
-        this->socket.async_read_some(boost::asio::buffer(requestLengthBuffer, sizeof(memDbDataLength_t)), [this, self](boost::system::error_code ec, std::size_t lengthRead){
+        this->socket.async_read_some(boost::asio::buffer(messageLengthBuffer, sizeof(memDbDataLength_t)), [this, self](boost::system::error_code ec, std::size_t lengthRead){
             if(ec) return;
 
-            std::cout << "New request" << std::endl;
+            memDbDataLength_t messageLength = Utils::parse<memDbDataLength_t>(messageLengthBuffer);
 
-            memDbDataLength_t requestLength = Utils::parse<memDbDataLength_t>(requestLengthBuffer);
+            std::vector<uint8_t> messageBuffer = this->readSocketBufferLenght(messageLength);
 
-            std::vector<uint8_t> requestBuffer = this->readSocketBufferLenght(requestLength);
-
-            this->onRequestCallback(requestBuffer);
+            this->onRequestCallback(messageBuffer);
 
             this->readAsync();
         });
     }
 
     std::vector<uint8_t> readSync() {
-        this->socket.read_some(boost::asio::buffer(requestLengthBuffer));
-        memDbDataLength_t requestLength = Utils::parse<memDbDataLength_t>(requestLengthBuffer);
+        boost::asio::read(this->socket, boost::asio::buffer(this->messageLengthBuffer));
+        memDbDataLength_t messageLength = Utils::parse<memDbDataLength_t>(messageLengthBuffer);
 
-        return this->readSocketBufferLenght(requestLength);
+        return this->readSocketBufferLenght(messageLength);
     }
 
     void writeAsync(const std::vector<uint8_t>& toWrite) {
@@ -74,10 +72,11 @@ public:
 
 private:
     std::vector<uint8_t> readSocketBufferLenght(memDbDataLength_t length) {
-        std::vector<uint8_t> requestBuffer(length);
-        this->socket.read_some(boost::asio::buffer(requestBuffer));
+        std::vector<uint8_t> messageBuffer(length);
+        //TODO Replace with boost::asio::read
+        this->socket.read_some(boost::asio::buffer(messageBuffer));
 
-        return requestBuffer;
+        return messageBuffer;
     }
 };
 

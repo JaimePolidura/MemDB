@@ -20,7 +20,14 @@ public:
             timestamp(timestamp),
             errorCode(errorCode)
     {}
-    
+
+    memDbDataLength_t getTotalLength() const {
+        return sizeof(memdbRequestNumberLength_t) +
+            sizeof(timestamp) +
+            1  + //Error code
+            responseValue.size > 0 ? (sizeof(memDbDataLength_t) + sizeof(responseValue.size)) : 0; //Responde body
+    }
+
     static Response success(const SimpleString<memDbDataLength_t> &response, uint64_t timestamp = 0) {
         return Response(true, 0x00, timestamp, 0, response);
     }

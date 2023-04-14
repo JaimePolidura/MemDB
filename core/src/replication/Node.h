@@ -81,8 +81,6 @@ public:
 
 private:
     void openConnectionIfClosed(logger_t logger) {
-        std::cout << "-5" << std::endl;
-
         if(!this->isConnectionOpened()){
             this->openConnection(logger);
         }

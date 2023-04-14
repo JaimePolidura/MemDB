@@ -17,7 +17,7 @@ func SerializeRequest(request Request) []byte {
 	serialized = append(serialized, []byte(request.AuthKey)...)                     //Auth key
 	serialized = append(serialized, request.OperatorNumber<<2)                      //Op number
 	serialized = append(serialized, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00) //Timestamp
-
+	
 	for _, arg := range request.Args {
 		var argSize = uint32(len(arg))
 		var buf bytes.Buffer

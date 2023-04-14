@@ -88,6 +88,8 @@ Configuration keys are stored in environtment variables:
 ````
                  1 byte
 +-------------------------------------+
+| Total response length...  (4 bytes) |                 
++-------------------------------------+
 | Request number...         (4 bytes) | 
 +-------------------------------------+
 | Timestamp ...             (8 bytes) |

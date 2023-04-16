@@ -32,8 +32,6 @@ public:
 
                 return true;
             }catch (const std::exception& e){
-                std::cout << "Retrying " << e.what() << std::endl;
-
                 numberAttempts--;
                 std::this_thread::sleep_for(backoff);
             }

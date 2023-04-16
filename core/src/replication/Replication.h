@@ -48,8 +48,6 @@ public:
             this->getUnsyncedOplog(this->lastTimestampBroadcasted);
         }
 
-        this->setRunning();
-
         this->logger->info("Replication node is now set up");
     }
 

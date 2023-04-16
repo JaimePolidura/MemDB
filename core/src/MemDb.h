@@ -30,13 +30,15 @@ public:
     void run() {
         uint64_t lastTimestampStored = this->restoreDataFromOplogFromDisk();
 
-        this->tcpServer->run();
-
         if(this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION)){
             this->clock->nodeId = this->replication->getNodeId();
 
-            this->syncOplogFromCluster(lastTimestampStored);
+            std::async(std::launch::async, [this, lastTimestampStored] -> void{
+                this->syncOplogFromCluster(lastTimestampStored);
+            });
         }
+
+        this->tcpServer->run();
     }
 
     uint64_t tick(uint64_t other) {

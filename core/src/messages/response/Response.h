@@ -22,10 +22,7 @@ public:
     {}
 
     memDbDataLength_t getTotalLength() const {
-        return sizeof(memdbRequestNumberLength_t) +
-            sizeof(timestamp) +
-            1  + //Error code
-            responseValue.size > 0 ? (sizeof(memDbDataLength_t) + sizeof(responseValue.size)) : 0; //Responde body
+        return sizeof(memdbRequestNumberLength_t) + sizeof(uint64_t) + 1 + (responseValue.size > 0 ? (sizeof(memDbDataLength_t) + responseValue.size) : sizeof(memDbDataLength_t));
     }
 
     static Response success(const SimpleString<memDbDataLength_t> &response, uint64_t timestamp = 0) {

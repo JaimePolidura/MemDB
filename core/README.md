@@ -41,7 +41,7 @@ Configuration keys are stored in environtment variables:
 | GET         | 0x02                | Key        | AUTH_API_KEY                    |
 | DELETE      | 0x03                | Key        | AUTH_NODE_KEY, AUTH_API_KEY     |
 | HEATH_CHECK | 0x04                |            | MEMDB_CORE_AUTH_MAINTENANCE_KEY |
-| SYNC_DATA   | 0x05                | Timestamp  | MEMDB_CORE_AUTH_NODE_KEY        |
+| SYNC_OPLOG  | 0x05                | Timestamp  | MEMDB_CORE_AUTH_NODE_KEY        |
 
 ## Error codes
 | **Name**           | **Error code** | **Desc**                                                                                                 |

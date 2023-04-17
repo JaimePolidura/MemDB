@@ -72,10 +72,14 @@ public:
         }
     }
 
-    auto sendRequestToRandomNode(const Request& request) -> Response {
-        node_t nodeToSendRequest = this->selectRandomNodeToSendRequest();
+    auto sendRequestToRandomNode(const Request& request) -> std::optional<Response> {
+        std::set<memdbNodeId_t> alreadyCheckedNodesId = {};
 
-        return nodeToSendRequest->sendRequest(this->prepareRequest(request), this->logger);
+        return Utils::retryUntilAndGet<Response, std::milli>(10, std::chrono::milliseconds(100), [this, &request, &alreadyCheckedNodesId]() -> Response {
+            node_t nodeToSendRequest = this->selectRandomNodeToSendRequest(alreadyCheckedNodesId);
+
+            return nodeToSendRequest->sendRequest(this->prepareRequest(request), this->logger);
+        });
     }
 
     auto broadcast(const Request& request) -> void {
@@ -84,16 +88,14 @@ public:
                 continue;
             }
 
-            node->sendRequest(this->prepareRequest(request), this->logger);
-
-//            this->requestPool.submit([node, request, this]() mutable -> void {
-//            });
+            this->requestPool.submit([node, request, this]() mutable -> void {
+                node->sendRequest(this->prepareRequest(request), this->logger);
+            });
         }
     }
 
 private:
-    node_t selectRandomNodeToSendRequest() {
-        std::set<memdbNodeId_t> alreadyCheckedNodesId{};
+    node_t selectRandomNodeToSendRequest(std::set<memdbNodeId_t> alreadyCheckedNodesId = {}) {
         std::srand(std::time(nullptr));
 
         while(alreadyCheckedNodesId.size() != otherNodes.size()) {
@@ -105,7 +107,7 @@ private:
             alreadyCheckedNodesId.insert(randomNode->nodeId);
         }
 
-        throw std::runtime_error("No nodes available to sync data, try later");
+        throw std::runtime_error("No node available for selecting");
     }
 
     node_t getNodeById(memdbNodeId_t nodeId) const {

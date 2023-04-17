@@ -27,7 +27,7 @@ private:
     node_t selfNode;
     logger_t logger;
 
-    std::function<void(std::vector<OperationBody>)> reloadUnsyncedOpsCallback;
+    std::function<void(std::vector<OperationBody>)> reloadUnsyncedOplogCallback;
 
 public:
     Replication(logger_t logger, configuration_t configuration) :
@@ -45,7 +45,9 @@ public:
         this->setBooting();
 
         if(!firstTime){ //Network partitions?
-            this->getUnsyncedOplog(this->lastTimestampBroadcasted);
+            auto unsyncedOplog = this->getUnsyncedOplog(this->lastTimestampBroadcasted);
+            this->reloadUnsyncedOplogCallback(unsyncedOplog);
+            this->logger->info("Synchronized {0} oplog entries with the cluster", unsyncedOplog.size());
         }
 
         this->logger->info("Replication node is now set up");
@@ -55,17 +57,8 @@ public:
         return this->clusterNodes;
     }
 
-    auto getUnsyncedOplog(uint64_t lastTimestamp) -> std::vector<OperationBody> {
-        auto unsyncedOps = this->getUnsyncedOpLogs(lastTimestamp);
-        this->reloadUnsyncedOpsCallback(unsyncedOps);
-
-        this->logger->info("Synchronized {0} oplog entries with the cluster", unsyncedOps.size());
-
-        return unsyncedOps;
-    }
-
-    auto setReloadUnsyncedOpsCallback(std::function<void(std::vector<OperationBody>)> callback) -> void {
-        this->reloadUnsyncedOpsCallback = callback;
+    auto setReloadUnsyncedOplogCallback(std::function<void(std::vector<OperationBody>)> callback) -> void {
+        this->reloadUnsyncedOplogCallback = callback;
     }
 
     auto setBooting() -> void {
@@ -88,16 +81,18 @@ public:
         return false;
     }
 
-    auto getUnsyncedOpLogs(uint64_t lastTimestampProcessedFromOpLog) -> std::vector<OperationBody> {
+    auto getUnsyncedOplog(uint64_t lastTimestampProcessedFromOpLog) -> std::vector<OperationBody> {
         if(this->clusterNodes->otherNodes.empty())
             return std::vector<OperationBody>{};
 
         OperationLogDeserializer operationLogDeserializer{};
-        Response responseFromSyncData = this->clusterNodes->sendRequestToRandomNode(createSyncDataRequest(lastTimestampProcessedFromOpLog));
+        std::optional<Response> responseFromSyncDataOpt = this->clusterNodes->sendRequestToRandomNode(createSyncDataRequest(lastTimestampProcessedFromOpLog));
 
-        if(responseFromSyncData.responseValue.hasData())
+        if(!responseFromSyncDataOpt.has_value() || !responseFromSyncDataOpt.value().responseValue.hasData()) {
             return std::vector<OperationBody>{};
+        }
 
+        Response responseFromSyncData = responseFromSyncDataOpt.value();
         uint8_t * begin = responseFromSyncData.responseValue.data();
         auto bytes = std::vector<uint8_t>(begin, begin + responseFromSyncData.responseValue.size);
 
@@ -112,9 +107,9 @@ public:
     virtual auto getNodeState() -> NodeState {
         return this->selfNode->state;
     }
-
+    
     auto getNodeId() -> memdbNodeId_t {
-        return this->selfNode->nodeId;
+        return this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
     }
 
 private:
@@ -122,7 +117,7 @@ private:
         memdbNodeId_t selfNodeId = this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
         std::vector<node_t> allNodes = allNodesResponse.nodes;
 
-        this->selfNode = *std::find_if(allNodes.begin(), allNodes.end(), [&selfNodeId](node_t node) -> bool{
+        this->selfNode = *std::find_if(allNodes.begin(), allNodes.end(), [selfNodeId](node_t node) -> bool{
             return node->nodeId == selfNodeId;
         });
 
@@ -133,7 +128,7 @@ private:
 
         this->clusterNodes->setOtherNodes(otherNodes);
 
-        this->logger->info("Cluster information is set. Total other nodes {0}", allNodesResponse.nodes.size());
+        this->logger->info("Cluster information is set. Total all nodes {0}", allNodesResponse.nodes.size());
     }
 
     auto createSyncDataRequest(uint64_t timestamp) -> Request {
@@ -166,7 +161,6 @@ private:
             if (selfNodeChanged && node->state == NodeState::SHUTDOWN) { //Reload
                 this->logger->info("Reload detected node in the cluster");
                 this->setup(false);
-                this->reloadUnsyncedOpsCallback(this->getUnsyncedOpLogs(this->lastTimestampBroadcasted));
             }
         });
     }

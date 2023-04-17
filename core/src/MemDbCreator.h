@@ -20,7 +20,7 @@ public:
         operatorDispatcher_t operatorDispatcher = std::make_shared<OperatorDispatcher>(map, clock, operationLogBuffer, replication, configuration, logger);
         tcpServer_t tcpServer = std::make_shared<TCPServer>(logger, configuration, replication, Authenticator{configuration}, operatorDispatcher);
 
-        return std::make_shared<MemDb>(logger, map, configuration, operatorDispatcher, tcpServer, clock);
+        return std::make_shared<MemDb>(logger, map, configuration, operatorDispatcher, tcpServer, clock, replication);
     }
 
 private:

@@ -24,6 +24,22 @@ public:
         std::cout << "]" << std::endl;
     }
 
+    template<typename T, typename B>
+    static std::optional<T> retryUntilAndGet(int numberAttempts, const std::chrono::duration<int64_t, B> backoffMillis, std::function<T(void)> toRetry) {
+        while(numberAttempts > 0) {
+            try{
+                return toRetry();
+            }catch (const std::exception& e){
+                numberAttempts--;
+
+                if(backoffMillis.count() > 0)
+                    std::this_thread::sleep_for(backoffMillis);
+            }
+        }
+
+        return std::nullopt;
+    }
+
     template<typename R, typename P>
     static bool retryUntil(int numberAttempts, const std::chrono::duration<R, P> backoff, std::function<void(void)> toRetry) {
         while(numberAttempts > 0) {
@@ -33,7 +49,9 @@ public:
                 return true;
             }catch (const std::exception& e){
                 numberAttempts--;
-                std::this_thread::sleep_for(backoff);
+
+                if(backoff.count() > 0)
+                    std::this_thread::sleep_for(backoff);
             }
         }
 

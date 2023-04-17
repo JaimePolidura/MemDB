@@ -24,8 +24,8 @@ private:
 
 public:
     MemDb(logger_t logger, memDbDataStore_t map, configuration_t configuration, operatorDispatcher_t operatorDispatcher, tcpServer_t tcpServer,
-          lamportClock_t clock) : dbMap(map), configuration(configuration), tcpServer(tcpServer), operatorDispatcher(operatorDispatcher),
-          clock(clock), logger(logger) {}
+          lamportClock_t clock, replication_t replication) : dbMap(map), configuration(configuration), tcpServer(tcpServer), operatorDispatcher(operatorDispatcher),
+          clock(clock), logger(logger), replication(replication) {}
 
     void run() {
         uint64_t lastTimestampStored = this->restoreDataFromOplogFromDisk();
@@ -33,7 +33,7 @@ public:
         if(this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION)){
             this->clock->nodeId = this->replication->getNodeId();
 
-            std::async(std::launch::async, [this, lastTimestampStored] -> void{
+            std::async(std::launch::async, [this, lastTimestampStored] -> void {
                 this->syncOplogFromCluster(lastTimestampStored);
             });
         }
@@ -49,13 +49,13 @@ private:
     void syncOplogFromCluster(uint64_t lastTimestampProcessedFromOpLog) {
         this->logger->info("Synchronizing oplog with the cluster");
 
-        auto unsyncedOpLogs = this->replication->getUnsyncedOplog(lastTimestampProcessedFromOpLog);
-        this->applyUnsyncedOplogFromCluster(unsyncedOpLogs);
-        this->logger->info("Synchronized oplog with the cluster");
+        std::vector<OperationBody> unsyncedOplog = this->replication->getUnsyncedOplog(lastTimestampProcessedFromOpLog);
+        this->applyUnsyncedOplogFromCluster(unsyncedOplog);
+        this->logger->info("Synchronized {0} oplog entries with the cluster", unsyncedOplog.size());
 
         this->replication->setRunning();
 
-        this->replication->setReloadUnsyncedOpsCallback([this](std::vector<OperationBody> unsyncedOperations){
+        this->replication->setReloadUnsyncedOplogCallback([this](std::vector<OperationBody> unsyncedOperations) {
             this->applyUnsyncedOplogFromCluster(unsyncedOperations);
             this->operatorDispatcher->applyReplicatedOperationBuffer();
         });

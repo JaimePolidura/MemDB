@@ -28,7 +28,7 @@ public:
     static Response success(const SimpleString<memDbDataLength_t> &response, uint64_t timestamp = 0) {
         return Response(true, 0x00, timestamp, 0, response);
     }
-
+    
     static Response success(uint64_t timestamp = 0) {
         return Response(true, 0x00, timestamp, 0, SimpleString<memDbDataLength_t>::empty());
     }

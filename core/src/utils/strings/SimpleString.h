@@ -52,6 +52,10 @@ public:
         return SimpleString<StringLengthType>{valuePtr, static_cast<StringLengthType>(string.size())};
     }
 
+    static SimpleString<StringLengthType> fromVector(const std::vector<uint8_t>& values) {
+
+    }
+
     static SimpleString<StringLengthType> fromArray(std::initializer_list<uint8_t> values) {
         uint8_t * valuePtr = new uint8_t[values.size()];
         for (int i = 0; i < values.size(); ++i)

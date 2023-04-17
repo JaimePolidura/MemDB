@@ -86,7 +86,7 @@ public:
             return std::vector<OperationBody>{};
 
         OperationLogDeserializer operationLogDeserializer{};
-        std::optional<Response> responseFromSyncDataOpt = this->clusterNodes->sendRequestToRandomNode(createSyncDataRequest(lastTimestampProcessedFromOpLog));
+        std::optional<Response> responseFromSyncDataOpt = this->clusterNodes->sendRequestToRandomNode(createSyncOplogRequest(lastTimestampProcessedFromOpLog));
 
         if(!responseFromSyncDataOpt.has_value() || !responseFromSyncDataOpt.value().responseValue.hasData()) {
             return std::vector<OperationBody>{};
@@ -131,7 +131,7 @@ private:
         this->logger->info("Cluster information is set. Total all nodes {0}", allNodesResponse.nodes.size());
     }
 
-    auto createSyncDataRequest(uint64_t timestamp) -> Request {
+    auto createSyncOplogRequest(uint64_t timestamp) -> Request {
         auto authenticationBody = AuthenticationBody{this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY), false, false};
         auto argsVector = std::make_shared<std::vector<SimpleString<memDbDataLength_t>>>();
 
@@ -139,7 +139,7 @@ private:
 
         OperationBody operationBody{};
         operationBody.args = argsVector;
-        operationBody.operatorNumber = 0x05; //SyncDataOperator operator number
+        operationBody.operatorNumber = 0x05; //SyncOplogOperator operator number
 
         Request request{};
         request.operation = operationBody;

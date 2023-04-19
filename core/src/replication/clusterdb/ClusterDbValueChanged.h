@@ -17,8 +17,10 @@ struct ClusterDbValueChanged {
     nlohmann::json value;
 
     static auto fromEtcdResponse(const etcd::Response& response) -> ClusterDbValueChanged {
-        auto actionType = response.action() == "PUT" ? ClusterDbChangeType::PUT : ClusterDbChangeType::DELETED;
-        auto value = nlohmann::json::parse(response.value().as_string());
+        auto actionType = response.action() == "set" ? ClusterDbChangeType::PUT : ClusterDbChangeType::DELETED;
+        auto value = response.value().as_string() == "" ?
+                nlohmann::json::parse(response.prev_value().as_string()) :
+                nlohmann::json::parse(response.value().as_string());
 
         return ClusterDbValueChanged{.changeType = actionType, .value = value};
     };

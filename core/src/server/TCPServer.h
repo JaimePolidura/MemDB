@@ -86,10 +86,6 @@ private:
             return;
         }
 
-        if(request.authenticationType == AuthenticationType::NODE){
-            this->addClusterConnectionIfNotAdded(request, connection);
-        }
-
         Response response = this->operatorDispatcher->dispatch(request);
         response.requestNumber = request.requestNumber;
 
@@ -105,12 +101,6 @@ private:
         if(connection->isOpen()){
             std::vector<uint8_t> serialized = this->responseSerializer.serialize(response);
             connection->writeAsync(serialized);
-        }
-    }
-
-    void addClusterConnectionIfNotAdded(Request request, connection_t connection) {
-        if(!this->replication->getClusterNodes()->isConnectionOpened(request.operation.nodeId)){
-            this->replication->getClusterNodes()->setConnectionOfNode(request.operation.nodeId, connection);
         }
     }
 };

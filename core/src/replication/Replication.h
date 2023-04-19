@@ -156,8 +156,6 @@ private:
             auto node = Node::fromJson(nodeChangedEvent.value);
             auto selfNodeChanged = node->nodeId == this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
 
-            this->logger->debugInfo("Detected change of type {0} on node {1}", ClusterDbChangeTypes::toString(nodeChangedEvent.changeType), node->nodeId);
-
             if (!selfNodeChanged) {
                 this->clusterDbNodeChangeHandler.handleChange(node, nodeChangedEvent.changeType);
             }

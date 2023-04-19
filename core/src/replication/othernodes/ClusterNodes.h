@@ -78,7 +78,7 @@ public:
         return Utils::retryUntilAndGet<Response, std::milli>(10, std::chrono::milliseconds(100), [this, &request, &alreadyCheckedNodesId]() -> Response {
             node_t nodeToSendRequest = this->selectRandomNodeToSendRequest(alreadyCheckedNodesId);
 
-            return nodeToSendRequest->sendRequest(this->prepareRequest(request));
+            return nodeToSendRequest->sendRequest(this->prepareRequest(request), true).value();
         });
     }
 
@@ -90,7 +90,7 @@ public:
 
             this->requestPool.submit([node, request, this]() mutable -> void { //TODO Handle  replication misses
                 Utils::retryUntil(10, std::chrono::milliseconds(100), [this, &node, &request]() -> void{
-                    node->sendRequest(this->prepareRequest(request));
+                    node->sendRequest(this->prepareRequest(request), false);
                 });
             });
         }

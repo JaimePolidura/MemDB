@@ -11,6 +11,7 @@
 
 class ClusterDb {
 private:
+    std::unique_ptr<etcd::Watcher> nodeChangesWatcher;
     configuration_t configuration;
     etcd::Client client;
     logger_t logger;
@@ -20,7 +21,7 @@ public:
         configuration(configuration), logger(logger) {}
 
     auto watchNodeChanges(std::function<void(ClusterDbValueChanged)> onChange) -> void {
-        etcd::Watcher(client, "/nodes", [onChange](etcd::Response response){
+        this->nodeChangesWatcher = std::make_unique<etcd::Watcher>(client, "/nodes", [onChange](etcd::Response response){
             onChange(ClusterDbValueChanged::fromEtcdResponse(response));
         }, true);
     }

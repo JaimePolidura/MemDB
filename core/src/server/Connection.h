@@ -52,12 +52,6 @@ public:
         this->socket.async_write_some(boost::asio::buffer(toWrite), [&](const boost::system::error_code& error, std::size_t bytes_transferred){});
     }
 
-    void writeAsync(const std::vector<uint8_t>& toWrite, std::function<void(const boost::system::error_code& error, std::size_t bytes_transferred)> callback) {
-        this->socket.async_write_some(boost::asio::buffer(toWrite), [callback](const boost::system::error_code& error, std::size_t bytes_transferred){
-            callback(error, bytes_transferred);
-        });
-    }
-
     size_t writeSync(const std::vector<uint8_t>& toWrite) {
         return this->socket.write_some(boost::asio::buffer(toWrite));
     }
@@ -73,7 +67,6 @@ public:
 private:
     std::vector<uint8_t> readSocketBufferLenght(memDbDataLength_t length) {
         std::vector<uint8_t> messageBuffer(length);
-        //TODO Replace with boost::asio::read
         this->socket.read_some(boost::asio::buffer(messageBuffer));
 
         return messageBuffer;

@@ -7,6 +7,7 @@
 #include "messages/response/ResponseDeserializer.h"
 #include "utils/net/DNSUtils.h"
 #include "logging/Logger.h"
+#include "utils/Utils.h"
 
 struct Node {
 public:
@@ -31,13 +32,14 @@ public:
         this->requestSerializer = other.requestSerializer;
     }
 
-    Response sendRequest(const Request& request, logger_t logger) {
-        this->openConnectionIfClosed(logger);
+    Response sendRequest(const Request& request) {
+        this->openConnectionIfClosedOrThrow();
 
         std::vector<uint8_t> serializedRequest = this->requestSerializer.serialize(request);
         this->connection->writeSync(serializedRequest);
         std::vector<uint8_t> serializedResponse = this->connection->readSync();
         Response deserializedResponse = this->responseDeserializer.deserialize(serializedResponse);
+
 
         return deserializedResponse;
     }
@@ -52,7 +54,7 @@ public:
         return this->connection.get() != nullptr && this->connection->isOpen();
     }
 
-    bool openConnection(logger_t logger) {
+    bool openConnection() {
         if(!NodeStates::canAcceptRequest(this->state) || this->isConnectionOpened()){
             return false;
         }
@@ -80,9 +82,13 @@ public:
     }
 
 private:
-    void openConnectionIfClosed(logger_t logger) {
+    void openConnectionIfClosedOrThrow() {
         if(!this->isConnectionOpened()){
-            this->openConnection(logger);
+            bool success = this->openConnection();
+
+            if(!success){
+                throw std::runtime_error("Cannot open connection");
+            }
         }
     }
 

@@ -88,9 +88,8 @@ public:
         OperationLogDeserializer operationLogDeserializer{};
         std::optional<Response> responseFromSyncDataOpt = this->clusterNodes->sendRequestToRandomNode(createSyncOplogRequest(lastTimestampProcessedFromOpLog));
 
-        if(!responseFromSyncDataOpt.has_value() || !responseFromSyncDataOpt.value().responseValue.hasData()) {
+        if(!responseFromSyncDataOpt.has_value() || !responseFromSyncDataOpt.value().responseValue.hasData())
             return std::vector<OperationBody>{};
-        }
 
         Response responseFromSyncData = responseFromSyncDataOpt.value();
         uint8_t * begin = responseFromSyncData.responseValue.data();
@@ -107,7 +106,7 @@ public:
     virtual auto getNodeState() -> NodeState {
         return this->selfNode->state;
     }
-    
+
     auto getNodeId() -> memdbNodeId_t {
         return this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
     }
@@ -117,7 +116,7 @@ private:
         memdbNodeId_t selfNodeId = this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
         std::vector<node_t> allNodes = allNodesResponse.nodes;
 
-        this->selfNode = *std::find_if(allNodes.begin(), allNodes.end(), [selfNodeId](node_t node) -> bool{
+        this->selfNode = *std::find_if(allNodes.begin(), allNodes.end(), [selfNodeId](node_t node) -> bool {
             return node->nodeId == selfNodeId;
         });
 
@@ -135,7 +134,11 @@ private:
         auto authenticationBody = AuthenticationBody{this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY), false, false};
         auto argsVector = std::make_shared<std::vector<SimpleString<memDbDataLength_t>>>();
 
-        argsVector->push_back(SimpleString<memDbDataLength_t>::fromString(StringUtils::toString(timestamp)));
+        uint32_t part1 = timestamp >> 32;
+        uint32_t part2 = (uint32_t) timestamp & 0xFFFFFFFF;
+
+        argsVector->push_back(SimpleString<memDbDataLength_t>::fromNumber(part1));
+        argsVector->push_back(SimpleString<memDbDataLength_t>::fromNumber(part2));
 
         OperationBody operationBody{};
         operationBody.args = argsVector;

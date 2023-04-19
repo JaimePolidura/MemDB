@@ -2,6 +2,8 @@
 
 #include "utils/files/FileUtils.h"
 #include "utils/datastructures/map/Map.h"
+#include "utils/Utils.h"
+
 #include "persistence/OperationLogDeserializer.h"
 #include "operators/operations/SetOperator.h"
 #include "persistence/OperationLogSerializer.h"
@@ -15,18 +17,20 @@ private:
 
 public:
     std::vector<OperationBody> getAll() {
-        if(!FileUtils::exists(FileUtils::getFileInProgramBasePath("memdb", "oplog")))
+        if(!FileUtils::exists(FileUtils::getFileInProgramBasePath("memdb", "oplog"))) {
             return std::vector<OperationBody>{};
+        }
 
-        std::vector<uint8_t> bytesFromOpLog = FileUtils::readBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog"));
+        std::vector<uint8_t> bytesFromOpLog = FileUtils::readBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog")); //bytesFromOpLog devuelve bien los bytes, se deserializa mal
         std::vector<OperationBody> logs = this->operationLogDeserializer.deserializeAll(bytesFromOpLog);
 
         return logs;
     }
 
     std::vector<OperationBody> getAllAndSaveCompacted() {
-        if(!FileUtils::exists(FileUtils::getFileInProgramBasePath("memdb", "oplog")))
+        if(!FileUtils::exists(FileUtils::getFileInProgramBasePath("memdb", "oplog"))) {
             return std::vector<OperationBody>{};
+        }
 
         std::vector<uint8_t> bytesFromOpLog = FileUtils::readBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog"));
         std::vector<OperationBody> unCompactedLogs = this->operationLogDeserializer.deserializeAll(bytesFromOpLog);

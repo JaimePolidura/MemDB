@@ -21,7 +21,7 @@ public:
     }
 
     bool hasData() const {
-        return this->size == 0 || this->value.get() == nullptr;
+        return this->size != 0 || this->value.get() != nullptr;
     }
 
     uint8_t * operator[](int index) const {
@@ -44,6 +44,18 @@ public:
         return SimpleString{nullptr, 0};
     }
 
+    template<typename T>
+    static SimpleString<StringLengthType> fromNumber(const T& from) {
+        static_assert(std::is_arithmetic<T>::value, "T must be a number type");
+
+        uint8_t * valuePtr = new uint8_t[sizeof(T)];
+        for(int i = 0; i < sizeof(T); i++){
+            * valuePtr = from >> (i * 8);
+        }
+
+        return SimpleString<StringLengthType>{valuePtr, static_cast<StringLengthType>(sizeof(T))};
+    }
+
     static SimpleString<StringLengthType> fromString(std::string&& string) {
         uint8_t * valuePtr = new uint8_t[string.size()];
         for (int i = 0; i < string.size(); ++i)
@@ -52,11 +64,11 @@ public:
         return SimpleString<StringLengthType>{valuePtr, static_cast<StringLengthType>(string.size())};
     }
 
-    static SimpleString<StringLengthType> fromVector(const std::vector<uint8_t>& values) {
-
+    static SimpleString<StringLengthType> fromArray(std::initializer_list<uint8_t> values) {
+        return fromVector(values);
     }
 
-    static SimpleString<StringLengthType> fromArray(std::initializer_list<uint8_t> values) {
+    static SimpleString<StringLengthType> fromVector(const std::vector<uint8_t>& values) {
         uint8_t * valuePtr = new uint8_t[values.size()];
         for (int i = 0; i < values.size(); ++i)
             * (valuePtr + i) = * (values.begin() + i);

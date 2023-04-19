@@ -53,7 +53,7 @@ public:
 
     void addNode(node_t node) {
         this->otherNodes.push_back(node);
-        node->openConnection(this->logger);
+        node->openConnection();
     }
 
     bool existsByNodeId(memdbNodeId_t nodeId) {
@@ -78,7 +78,7 @@ public:
         return Utils::retryUntilAndGet<Response, std::milli>(10, std::chrono::milliseconds(100), [this, &request, &alreadyCheckedNodesId]() -> Response {
             node_t nodeToSendRequest = this->selectRandomNodeToSendRequest(alreadyCheckedNodesId);
 
-            return nodeToSendRequest->sendRequest(this->prepareRequest(request), this->logger);
+            return nodeToSendRequest->sendRequest(this->prepareRequest(request));
         });
     }
 
@@ -88,8 +88,10 @@ public:
                 continue;
             }
 
-            this->requestPool.submit([node, request, this]() mutable -> void {
-                node->sendRequest(this->prepareRequest(request), this->logger);
+            this->requestPool.submit([node, request, this]() mutable -> void { //TODO Handle  replication misses
+                Utils::retryUntil(10, std::chrono::milliseconds(100), [this, &node, &request]() -> void{
+                    node->sendRequest(this->prepareRequest(request));
+                });
             });
         }
     }

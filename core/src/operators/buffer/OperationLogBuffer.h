@@ -13,6 +13,9 @@ private:
     std::mutex writeBufferLock;
     std::mutex writeDiskLock;
 
+    uint64_t oldestTimestampAdded;
+    uint64_t latestTimestampAdded;
+
 public:
     OperationLogBuffer(configuration_t configuration): configuration(configuration) {}
 
@@ -20,7 +23,14 @@ public:
 
     virtual void add(const OperationBody& operation) {
         writeBufferLock.lock();
+
         this->operationBuffer.push_back(std::move(operation));
+
+        this->latestTimestampAdded = operation.timestamp;
+        if(this->operationBuffer.size() == 1){
+            this->oldestTimestampAdded = operation.timestamp;
+        }
+
         writeBufferLock.unlock();
 
         if(this->operationBuffer.size() >= this->configuration->get<int>(ConfigurationKeys::MEMDB_CORE_PERSISTANCE_WRITE_EVERY)){
@@ -32,8 +42,12 @@ public:
         return std::vector<OperationBody>(this->operationBuffer);
     }
 
-    uint64_t getFirstTimestampWritten() {
-        return this->operationBuffer.size() > 0 ? this->operationBuffer[0].timestamp : 0;
+    uint64_t getLatestTimestampAdded() {
+        return this->latestTimestampAdded;
+    }
+
+    uint64_t getOldestTimestampAdded() {
+        return this->oldestTimestampAdded;
     }
 
     void lockWritesToDisk() {
@@ -52,7 +66,11 @@ private:
         std::vector<OperationBody> copyBuffer;
 
         writeBufferLock.lock();
+
+        this->latestTimestampAdded = 0;
+        this->oldestTimestampAdded = 0;
         this->operationBuffer.swap(copyBuffer);
+
         writeBufferLock.unlock();
 
         this->diskWriter.write(copyBuffer);

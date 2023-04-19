@@ -12,7 +12,7 @@ private:
 
 public:
     void write(const std::vector<OperationBody>& toWrite) {
-        this->createFileIfNotExistd();
+        this->createFileIfNotExists();
 
         std::vector<uint8_t> serialized = this->serializeAll(toWrite);
 
@@ -28,10 +28,14 @@ private:
         writeFileLock.unlock();
     }
 
-    void createFileIfNotExistd() {
+    void createFileIfNotExists() {
         bool exists = FileUtils::exists(FileUtils::getFileInProgramBasePath("memdb", "oplog"));
-        if(!exists)
+        if(!exists) {
+            if(!FileUtils::exists(FileUtils::getProgramsPath() + "/memdb"))
+                FileUtils::createDirectory(FileUtils::getProgramsPath(), "memdb");
+
             FileUtils::createFile(FileUtils::getProgramBasePath("memdb"), "oplog");
+        }
     }
 
     std::vector<uint8_t> serializeAll(const std::vector<OperationBody>& toSerialize) {

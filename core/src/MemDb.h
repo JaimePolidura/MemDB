@@ -15,6 +15,7 @@ class MemDb {
 private:
     operationLogBuffer_t operationLogBuffer;
     operatorDispatcher_t operatorDispatcher;
+    operatorRegistry_t operatorRegistry;
     configuration_t configuration;
     replication_t replication;
     memDbDataStore_t dbMap;
@@ -25,7 +26,7 @@ private:
 public:
     MemDb(logger_t logger, memDbDataStore_t map, configuration_t configuration, operatorDispatcher_t operatorDispatcher, tcpServer_t tcpServer,
           lamportClock_t clock, replication_t replication) : dbMap(map), configuration(configuration), tcpServer(tcpServer), operatorDispatcher(operatorDispatcher),
-          clock(clock), logger(logger), replication(replication) {}
+          clock(clock), logger(logger), replication(replication), operatorRegistry(std::make_shared<OperatorRegistry>()) {}
 
     void run() {
         uint64_t lastTimestampStored = this->restoreDataFromOplogFromDisk();
@@ -73,8 +74,11 @@ private:
 
     void applyUnsyncedOplogFromCluster(const std::vector<OperationBody>& opLogs) {
         for(const auto& operationLogInDisk : opLogs)
-            this->operatorDispatcher->executeOperator(OperationOptions{.requestOfNodeToReplicate = false},
-                                                      operationLogInDisk);
+            this->operatorDispatcher->executeOperator(
+                    this->operatorRegistry->get(operationLogInDisk.operatorNumber),
+                    operationLogInDisk,
+                    OperationOptions{.requestOfNodeToReplicate = false});
+
         this->operatorDispatcher->applyReplicatedOperationBuffer();
     }
 };

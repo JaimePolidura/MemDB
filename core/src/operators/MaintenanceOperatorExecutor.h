@@ -3,7 +3,7 @@
 #include "messages/request/Request.h"
 #include "messages/response/Response.h"
 #include "operators/OperationOptions.h"
-#include "operators/buffer/OperationLogBuffer.h"
+#include "persistence/OperationLogBuffer.h"
 
 class MaintenanceOperatorExecutor {
 public:

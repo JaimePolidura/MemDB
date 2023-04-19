@@ -4,6 +4,16 @@
 
 class Utils {
 public:
+    template<typename T>
+    static std::vector<T> concat(const std::vector<T>& a, const std::vector<T>& b) {
+        std::vector<T> concatenated;
+        concatenated.reserve(a.size() + b.size());
+        concatenated.insert(concatenated.end(), a.begin(), b.end());
+        concatenated.insert(concatenated.end(), a.begin(), b.end());
+
+        return concatenated;
+    }
+
     static bool tryOnce(std::function<void(void)> toTry) {
         try{
             toTry();

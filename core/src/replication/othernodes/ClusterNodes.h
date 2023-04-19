@@ -78,19 +78,19 @@ public:
         return Utils::retryUntilAndGet<Response, std::milli>(10, std::chrono::milliseconds(100), [this, &request, &alreadyCheckedNodesId]() -> Response {
             node_t nodeToSendRequest = this->selectRandomNodeToSendRequest(alreadyCheckedNodesId);
 
-            return nodeToSendRequest->sendRequest(this->prepareRequest(request), true).value();
+            return nodeToSendRequest->sendRequest(this->prepareRequest(request.operation), true).value();
         });
     }
 
-    auto broadcast(const Request& request) -> void {
+    auto broadcast(const OperationBody& operation) -> void {
         for(node_t node : this->otherNodes){
             if(!NodeStates::canAcceptRequest(node->state)) {
                 continue;
             }
 
-            this->requestPool.submit([node, request, this]() mutable -> void { //TODO Handle  replication misses
-                Utils::retryUntil(10, std::chrono::milliseconds(100), [this, &node, &request]() -> void{
-                    node->sendRequest(this->prepareRequest(request), false);
+            this->requestPool.submit([node, operation, this]() mutable -> void {
+                Utils::retryUntil(10, std::chrono::milliseconds(100), [this, &node, &operation]() -> void{
+                    node->sendRequest(this->prepareRequest(operation), false);
                 });
             });
         }
@@ -123,10 +123,17 @@ private:
         return nullptr;
     }
 
-    Request prepareRequest(const Request& request) {
-        const_cast<Request&>(request).authentication.authKey = this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY);
-        const_cast<Request&>(request).operation.nodeId = this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
-        const_cast<Request&>(request).authentication.flag1 = true;
+    Request prepareRequest(const OperationBody& operation) {
+        Request request{};
+
+        AuthenticationBody authenticationBody{};
+        authenticationBody.authKey = this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY);
+        authenticationBody.flag1 = true;
+
+        const_cast<OperationBody&>(operation).nodeId = this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
+
+        request.operation = operation;
+        request.authentication = authenticationBody;
 
         return request;
     }

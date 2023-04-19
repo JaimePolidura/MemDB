@@ -17,7 +17,7 @@ public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x05;
 
     Response operate(const OperationBody& operation, const OperationOptions& operationOptions, operationLogBuffer_t operationLogBuffer) override {
-        operationLogBuffer->lockWritesToDisk();
+        operationLogBuffer->lockFlushToDisk();
 
         uint64_t lastTimestampUnsync = parseUnsyncTimestampFromRequest(operation);
         uint64_t oldestTimestampInBuffer = operationLogBuffer->getOldestTimestampAdded();
@@ -58,8 +58,8 @@ private:
                                                      std::vector<uint8_t>& operationsToSendToTheClient,
                                                      operationLogBuffer_t operationLogBuffer) {
         std::vector<OperationBody> operationLogsInDisk = operationLogDiskLoader.getAll();
-        std::vector<OperationBody> operationLogsInBuffer =  operationLogBuffer->get();
-        operationLogBuffer->unlockWritesToDisk();
+        std::vector<OperationBody> operationLogsInBuffer = operationLogBuffer->get();
+        operationLogBuffer->unlockFlushToDisk();
 
         auto compactedFromDisk = this->operationLogCompacter.compact(operationLogsInDisk);
         auto compactedFromBuffer = this->operationLogCompacter.compact(operationLogsInBuffer);
@@ -73,7 +73,7 @@ private:
     void takeOperationsFromBufferAndSerialize(uint64_t lastTimestampInClient,
                                               std::vector<uint8_t>& operationsToSendToTheClient,
                                               operationLogBuffer_t operationLogBuffer) {
-        operationLogBuffer->unlockWritesToDisk();
+        operationLogBuffer->unlockFlushToDisk();
         std::vector<OperationBody> operationLogsInBuffer = operationLogBuffer->get();
 
         for(auto it = operationLogsInBuffer.begin(); it < operationLogsInBuffer.end() && it->timestamp > lastTimestampInClient; it++)

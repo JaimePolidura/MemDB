@@ -98,9 +98,9 @@ public:
         return operationLogDeserializer.deserializeAll(bytes);
     }
 
-    virtual auto broadcast(const Request& request) -> void {
-        this->lastTimestampBroadcasted = request.operation.timestamp;
-        this->clusterNodes->broadcast(request);
+    virtual auto broadcast(const OperationBody& operation) -> void {
+        this->lastTimestampBroadcasted = operation.timestamp;
+        this->clusterNodes->broadcast(operation);
     }
 
     virtual auto getNodeState() -> NodeState {

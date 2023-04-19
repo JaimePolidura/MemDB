@@ -5,7 +5,7 @@
 #include "operators/DbOperatorExecutor.h"
 #include "operators/MaintenanceOperatorExecutor.h"
 #include "messages/response/ErrorCode.h"
-#include "operators/buffer/OperationLogBuffer.h"
+#include "persistence/OperationLogBuffer.h"
 #include "utils/clock/LamportClock.h"
 #include "replication/Replication.h"
 #include "replication/PendingReplicationOperationBuffer.h"
@@ -44,7 +44,7 @@ public:
         OperationOptions options = {.requestOfNodeToReplicate = request.authenticationType == AuthenticationType::NODE &&
                                     operatorToExecute->type() == OperatorType::WRITE};
 
-        this->logger->debugInfo("Recieved request {0} for operator {1} from {2}", request.requestNumber, operatorToExecute->name(),
+        this->logger->debugInfo("Recieved request for operator {0} from {1}", request.requestNumber, operatorToExecute->name(),
                                 options.requestOfNodeToReplicate ? "node" : "user");
 
         if(this->isInReplicationMode() &&
@@ -58,23 +58,31 @@ public:
             return Response::success();
         }
 
-        Response result = this->execute(operatorToExecute, request.operation, options);
+        Response result = this->executeOperator(operatorToExecute, request.operation, options);
 
-        this->logger->debugInfo("Executed {0} write request {1} for operator {2} from {3}",
+        return result;
+    }
+
+    Response executeOperator(std::shared_ptr<Operator> operatorToExecute,
+                    const OperationBody& operation,
+                    const OperationOptions& options) {
+        Response result = this->execute(operatorToExecute, operation, options);
+
+        this->logger->debugInfo("Executed {0} write request for operator {1} from {2}",
                                 result.isSuccessful ? "successfuly" : "unsuccessfuly",
-                                request.requestNumber,
                                 operatorToExecute->name(), options.requestOfNodeToReplicate ? "node" : "user");
 
         if(operatorToExecute->type() == WRITE && result.isSuccessful) {
-            this->operationLogBuffer->add(request.operation);
+            this->operationLogBuffer->add(operation);
 
             if(!options.requestOfNodeToReplicate) {
-                result.timestamp = this->clock->tick(request.operation.timestamp);
+                result.timestamp = this->clock->tick(operation.timestamp);
             }
-            if(this->isInReplicationMode() && !options.requestOfNodeToReplicate){
-                this->replication->broadcast(request);
 
-                this->logger->debugInfo("Broadcasted request {0} for operator {1} from {2}", request.requestNumber,
+            if(this->isInReplicationMode() && !options.requestOfNodeToReplicate){
+                this->replication->broadcast(operation);
+
+                this->logger->debugInfo("Broadcasted request for operator {0} from {1}",
                                         operatorToExecute->name(), options.requestOfNodeToReplicate ? "node" : "user");
             }
         }
@@ -89,11 +97,6 @@ public:
         }
     }
 
-    Response executeOperator(const OperationOptions &options, const OperationBody &operationBody) {
-        std::shared_ptr<Operator> operatorToExecute = this->operatorRegistry->get(operationBody.operatorNumber);
-
-        return this->execute(operatorToExecute, operationBody, options);
-    }
 private:
     void applyReplicatedOperationBufferIfNotEmpty() {
         if(!this->replicationOperationBuffer->isEmpty()){

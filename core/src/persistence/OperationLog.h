@@ -44,7 +44,7 @@ public:
             return std::vector<OperationBody>{};
         }
 
-        if(!bufferEmtpy && since >= oldestTimestampInBuffer && since <= oldestTimestampInBuffer) {
+        if(!bufferEmtpy && since >= oldestTimestampInBuffer && since <= lastestTimestampInBuffer) {
             std::vector<OperationBody> compactedFromBuffer = this->compacter.compact(this->operationLogBuffer->get());
             this->unlockWritesToDisk();
 
@@ -54,7 +54,7 @@ public:
             std::vector<OperationBody> compactedFromDisk = this->operationLogDiskLoader.getAll();
             this->unlockWritesToDisk();
 
-            std::vector<OperationBody> compacted = this->compacter.compact(Utils::concat(compactedFromBuffer, compactedFromDisk));
+            std::vector<OperationBody> compacted = this->compacter.compact(Utils::concat(compactedFromDisk, compactedFromBuffer));
 
             return this->fiterIfTimestampAfterThan(compacted, since);
         }
@@ -70,13 +70,13 @@ public:
 
 private:
     std::vector<OperationBody> fiterIfTimestampAfterThan(const std::vector<OperationBody>& operations, uint64_t timestampSince) {
+        std::vector<OperationBody> filtered{};
+
         for(auto i = operations.end() - 1; i >= operations.begin(); i--){
             auto actualTimestamp = (* i).timestamp;
 
-            if(actualTimestamp <= timestampSince) {
-                return operations.size() > 1 ?
-                    std::vector<OperationBody>{i + 1, operations.end()} :
-                    std::vector<OperationBody>{};
+            if(actualTimestamp > timestampSince) {
+                filtered.push_back(* i);
             }
         }
 

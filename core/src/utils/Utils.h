@@ -8,8 +8,8 @@ public:
     static std::vector<T> concat(const std::vector<T>& a, const std::vector<T>& b) {
         std::vector<T> concatenated;
         concatenated.reserve(a.size() + b.size());
-        concatenated.insert(concatenated.end(), a.begin(), b.end());
-        concatenated.insert(concatenated.end(), a.begin(), b.end());
+        concatenated.insert(concatenated.end(), a.begin(), a.end());
+        concatenated.insert(concatenated.end(), b.begin(), b.end());
 
         return concatenated;
     }

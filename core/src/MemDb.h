@@ -77,7 +77,7 @@ private:
             this->operatorDispatcher->executeOperator(
                     this->operatorRegistry->get(operationLogInDisk.operatorNumber),
                     operationLogInDisk,
-                    OperationOptions{.requestOfNodeToReplicate = false});
+                    OperationOptions{.requestOfNodeToReplicate = true});
 
         this->operatorDispatcher->applyReplicatedOperationBuffer();
     }

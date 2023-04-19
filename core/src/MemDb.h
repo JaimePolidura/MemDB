@@ -3,30 +3,31 @@
 #include "server/TCPServer.h"
 #include "config/Configuration.h"
 #include "config/keys/ConfigurationKeys.h"
-#include "persistence/OperationLogDiskLoader.h"
 #include "replication/Replication.h"
 #include "utils/clock/LamportClock.h"
 #include "replication/ReplicationCreator.h"
 #include "logging/Logger.h"
+#include "persistence/OperationLog.h"
 
 #include "memdbtypes.h"
 
 class MemDb {
 private:
-    operationLogBuffer_t operationLogBuffer;
     operatorDispatcher_t operatorDispatcher;
     operatorRegistry_t operatorRegistry;
     configuration_t configuration;
+    operationLog_t operationLog;
     replication_t replication;
     memDbDataStore_t dbMap;
-    lamportClock_t clock;
     tcpServer_t tcpServer;
+    lamportClock_t clock;
     logger_t logger;
 
 public:
     MemDb(logger_t logger, memDbDataStore_t map, configuration_t configuration, operatorDispatcher_t operatorDispatcher, tcpServer_t tcpServer,
-          lamportClock_t clock, replication_t replication) : dbMap(map), configuration(configuration), tcpServer(tcpServer), operatorDispatcher(operatorDispatcher),
-          clock(clock), logger(logger), replication(replication), operatorRegistry(std::make_shared<OperatorRegistry>()) {}
+          lamportClock_t clock, replication_t replication, operationLog_t operationLog) : dbMap(map), configuration(configuration), tcpServer(tcpServer),
+          operatorDispatcher(operatorDispatcher), clock(clock), logger(logger), replication(replication), operationLog(operationLog),
+          operatorRegistry(std::make_shared<OperatorRegistry>()) {}
 
     void run() {
         uint64_t lastTimestampStored = this->restoreDataFromOplogFromDisk();
@@ -63,8 +64,7 @@ private:
     }
 
     uint64_t restoreDataFromOplogFromDisk() {
-        OperationLogDiskLoader loader{};
-        auto opLogsFromDisk = loader.getAllAndSaveCompacted();
+        std::vector<OperationBody> opLogsFromDisk = this->operationLog->getFromDisk();
 
         this->logger->info("Applaying logs from disk...");
         this->applyUnsyncedOplogFromCluster(opLogsFromDisk);

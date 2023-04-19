@@ -5,7 +5,7 @@
 #include "operators/DbOperatorExecutor.h"
 #include "operators/MaintenanceOperatorExecutor.h"
 #include "messages/response/ErrorCode.h"
-#include "persistence/OperationLogBuffer.h"
+#include "persistence/OperationLog.h"
 #include "utils/clock/LamportClock.h"
 #include "replication/Replication.h"
 #include "replication/PendingReplicationOperationBuffer.h"
@@ -15,7 +15,7 @@ public: //Need it for mocking it
     operatorRegistry_t operatorRegistry;
 private:
     replicationOperationBuffer_t replicationOperationBuffer;
-    operationLogBuffer_t operationLogBuffer;
+    operationLog_t operationLog;
     configuration_t configuration;
     replication_t replication;
     lamportClock_t clock;
@@ -23,10 +23,10 @@ private:
     logger_t logger;
 
 public:
-    OperatorDispatcher(memDbDataStore_t dbCons, lamportClock_t clock, operationLogBuffer_t operationLogBuffer,
-                       replication_t replication, configuration_t configuration, logger_t logger):
-            db(dbCons), operationLogBuffer(operationLogBuffer), clock(clock), operatorRegistry(std::make_shared<OperatorRegistry>()), logger(logger),
-            replication(replication), configuration(configuration), replicationOperationBuffer(std::make_shared<PendingReplicationOperationBuffer>())
+    OperatorDispatcher(memDbDataStore_t dbCons, lamportClock_t clock, replication_t replication, configuration_t configuration,
+                       logger_t logger, operationLog_t operationLog): db(dbCons), operationLog(operationLog), clock(clock),
+                       operatorRegistry(std::make_shared<OperatorRegistry>()), logger(logger), replication(replication),
+                       configuration(configuration), replicationOperationBuffer(std::make_shared<PendingReplicationOperationBuffer>())
     {}
 
     Response dispatch(const Request& request) {
@@ -73,7 +73,7 @@ public:
                                 operatorToExecute->name(), options.requestOfNodeToReplicate ? "node" : "user");
 
         if(operatorToExecute->type() == WRITE && result.isSuccessful) {
-            this->operationLogBuffer->add(operation);
+            this->operationLog->add(operation);
 
             if(!options.requestOfNodeToReplicate) {
                 result.timestamp = this->clock->tick(operation.timestamp);
@@ -120,7 +120,7 @@ private:
 
     Response execute(std::shared_ptr<Operator> operatorToExecute, const OperationBody& operation, const OperationOptions& options) {
         return operatorToExecute->type() == OperatorType::CONTROL ?
-               dynamic_cast<MaintenanceOperatorExecutor *>(operatorToExecute.get())->operate(operation, options, this->operationLogBuffer) :
+               dynamic_cast<MaintenanceOperatorExecutor *>(operatorToExecute.get())->operate(operation, options, this->operationLog) :
                dynamic_cast<DbOperatorExecutor *>(operatorToExecute.get())->operate(operation, options, this->db);
     }
 };

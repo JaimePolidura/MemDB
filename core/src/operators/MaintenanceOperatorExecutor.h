@@ -3,9 +3,9 @@
 #include "messages/request/Request.h"
 #include "messages/response/Response.h"
 #include "operators/OperationOptions.h"
-#include "persistence/OperationLogBuffer.h"
+#include "persistence/OperationLog.h"
 
 class MaintenanceOperatorExecutor {
 public:
-    virtual Response operate(const OperationBody& operation, const OperationOptions& operationOptions, operationLogBuffer_t operationLogBuffer) = 0;
+    virtual Response operate(const OperationBody& operation, const OperationOptions& operationOptions, operationLog_t operationLog) = 0;
 };

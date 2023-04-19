@@ -16,25 +16,13 @@ private:
 public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x05;
 
-    Response operate(const OperationBody& operation, const OperationOptions& operationOptions, operationLogBuffer_t operationLogBuffer) override {
-        operationLogBuffer->lockFlushToDisk();
-
+    Response operate(const OperationBody& operation, const OperationOptions& operationOptions, operationLog_t operationLog) override {
         uint64_t lastTimestampUnsync = parseUnsyncTimestampFromRequest(operation);
-        uint64_t oldestTimestampInBuffer = operationLogBuffer->getOldestTimestampAdded();
-        uint64_t lastestTimestampInBuffer = operationLogBuffer->getLatestTimestampAdded();
-        bool bufferEmtpy = lastestTimestampInBuffer == 0 || oldestTimestampInBuffer == 0;
 
-        if(!bufferEmtpy && lastestTimestampInBuffer <= lastTimestampUnsync){ //Already in sync
-            return Response::success();
-        }
+        std::vector<OperationBody> unsyncedOplog = operationLog->getAllAfterTimestamp(lastTimestampUnsync);
+        std::vector<uint8_t> serializedUnsyncedOpLog = this->serializeOperations(unsyncedOplog);
 
-        std::vector<uint8_t> operationsToSendToTheClient;
-        if(!bufferEmtpy && oldestTimestampInBuffer <= lastTimestampUnsync)
-            this->takeOperationsFromBufferAndSerialize(lastTimestampUnsync, operationsToSendToTheClient, operationLogBuffer);
-        else
-            this->takeOperationsFromDiskAndBufferAndSerialize(lastTimestampUnsync, operationsToSendToTheClient, operationLogBuffer);
-
-        return Response::success(SimpleString<memDbDataLength_t>::fromVector(operationsToSendToTheClient));
+        return Response::success(SimpleString<memDbDataLength_t>::fromVector(serializedUnsyncedOpLog));
     }
 
     std::vector<AuthenticationType> authorizedToExecute() override {
@@ -54,30 +42,12 @@ public:
     }
 
 private:
-    void takeOperationsFromDiskAndBufferAndSerialize(uint64_t lastTimestampInClient,
-                                                     std::vector<uint8_t>& operationsToSendToTheClient,
-                                                     operationLogBuffer_t operationLogBuffer) {
-        std::vector<OperationBody> operationLogsInDisk = operationLogDiskLoader.getAll();
-        std::vector<OperationBody> operationLogsInBuffer = operationLogBuffer->get();
-        operationLogBuffer->unlockFlushToDisk();
+    std::vector<uint8_t> serializeOperations(const std::vector<OperationBody>& operations) {
+        std::vector<uint8_t> serialized{};
+        for(auto it = operations.begin(); it < operations.end(); it++)
+            this->operationLogSerializer.serialize(serialized, * it);
 
-        auto compactedFromDisk = this->operationLogCompacter.compact(operationLogsInDisk);
-        auto compactedFromBuffer = this->operationLogCompacter.compact(operationLogsInBuffer);
-
-        for(auto it = compactedFromDisk.begin(); it < compactedFromDisk.end() && it->timestamp > lastTimestampInClient; it++)  //Very long log may collapse RAM TODO fix
-            this->operationLogSerializer.serialize(operationsToSendToTheClient, * it);
-        for(auto it = compactedFromBuffer.begin(); it < compactedFromBuffer.end(); it++)
-            this->operationLogSerializer.serialize(operationsToSendToTheClient, * it);
-    }
-
-    void takeOperationsFromBufferAndSerialize(uint64_t lastTimestampInClient,
-                                              std::vector<uint8_t>& operationsToSendToTheClient,
-                                              operationLogBuffer_t operationLogBuffer) {
-        operationLogBuffer->unlockFlushToDisk();
-        std::vector<OperationBody> operationLogsInBuffer = operationLogBuffer->get();
-
-        for(auto it = operationLogsInBuffer.begin(); it < operationLogsInBuffer.end() && it->timestamp > lastTimestampInClient; it++)
-            this->operationLogSerializer.serialize(operationsToSendToTheClient, * it);
+        return serialized;
     }
 
     //Timestamp is 64 bits Axtual memdb data size is 32 bits. Doest fit, we pass two args that consist of the two parts
@@ -85,11 +55,6 @@ private:
         uint32_t part1 = Utils::parse<uint32_t>(operation.args->at(0).data());
         uint32_t part2 = Utils::parse<uint32_t>(operation.args->at(1).data());
 
-        return ((uint32_t) part1) << 32 | part2;
-    }
-
-    uint64_t getLatestTimestampFromOplog() {
-        std::vector<OperationBody> operationLogsInDisk = operationLogDiskLoader.getAll();
-        return !operationLogsInDisk.empty() ? operationLogsInDisk.at(operationLogsInDisk.size() - 1).timestamp : 0;
+        return part1 << 32 | part2;
     }
 };

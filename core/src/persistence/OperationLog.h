@@ -68,10 +68,6 @@ public:
         return compacted;
     }
 
-    std::vector<OperationBody> getFromBuffer() {
-        return this->operationLogBuffer->get();
-    }
-
 private:
     std::vector<OperationBody> fiterIfTimestampAfterThan(const std::vector<OperationBody>& operations, uint64_t timestampSince) {
         for(auto i = operations.end() - 1; i >= operations.begin(); i--){

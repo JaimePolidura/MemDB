@@ -11,8 +11,9 @@ public:
     auto compact(const std::vector<OperationBody>& uncompacted,
                  const std::vector<OperationBody>& compacted = {},
                  const alreadySennKeys_t& seenOperationKeys = {}) -> std::vector<OperationBody> {
-        if(uncompacted.empty())
+        if(uncompacted.empty()) {
             return uncompacted;
+        }
 
         for(int i = uncompacted.size() - 1; i >= 0; i--) {
             auto actualOperation = uncompacted[i];

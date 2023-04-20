@@ -8,15 +8,9 @@ public:
 
     static void createDirectory(const std::string& path, const std::string& name);
 
-    static void writeLines(const std::string& path, const std::vector<std::string>& lines);
-
     static void appendBytes(const std::string& path, const std::vector<uint8_t>& bytes);
 
-    static void appendLines(const std::string& path, const std::vector<std::string>& lines);
-
     static void clear(const std::string& path);
-
-    static std::vector<std::string> readLines(const std::string& path);
 
     static std::vector<uint8_t> readBytes(const std::string& path);
 

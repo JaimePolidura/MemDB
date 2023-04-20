@@ -72,6 +72,9 @@ private:
     std::vector<OperationBody> fiterIfTimestampAfterThan(const std::vector<OperationBody>& operations, uint64_t timestampSince) {
         std::vector<OperationBody> filtered{};
 
+        if(operations.empty())
+            return filtered;
+
         for(auto i = operations.end() - 1; i >= operations.begin(); i--){
             auto actualTimestamp = (* i).timestamp;
 

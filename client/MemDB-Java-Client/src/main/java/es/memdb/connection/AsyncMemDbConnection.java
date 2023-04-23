@@ -74,10 +74,8 @@ public final class AsyncMemDbConnection implements MemDbConnection {
     }
 
     @Override
-    public void write(byte[] value) {
+    public void write(byte[] value, int requestNumber) {
         try {
-            int requestNumber = Utils.toInt(value);
-
             Lock lock = new ReentrantLock();
             Condition condition = lock.newCondition();
             this.readMutex.put(requestNumber, new WaitReadResponseCondition(lock, condition));
@@ -89,10 +87,8 @@ public final class AsyncMemDbConnection implements MemDbConnection {
     }
 
     @Override
-    public void write(byte[] value, Consumer<Byte[]> onResponseCallback) {
+    public void write(byte[] value, int requestNumber, Consumer<Byte[]> onResponseCallback) {
         try {
-            int requestNumber = Utils.toInt(value);
-
             this.writeToStream(value);
 
             this.requestWithCallbacks.put(requestNumber, onResponseCallback);

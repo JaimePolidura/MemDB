@@ -1,34 +1,46 @@
 package es.memdb.connection;
 
-import es.memdb.Utils;
 import es.memdb.cluster.ClusterManager;
 import es.memdb.cluster.ClusterNodeConnection;
 import es.memdb.cluster.Node;
+import es.memdb.utils.clock.CircularLockFreeMapIterator;
+import io.vavr.control.Try;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class ClusterMemDbSyncConnection implements MemDbConnection {
-    private Map<Integer, AtomicBoolean> nodesToSendRequestLocksByNodeId = new ConcurrentHashMap<>();
     private Map<Integer, ClusterNodeConnection> clusterNodeConnections = new ConcurrentHashMap<>();
     private Map<Integer, Integer> onGoingClusterNodeIdByReqNumber = new ConcurrentHashMap<>();
+    private Iterator<Map.Entry<Integer, ClusterNodeConnection>> nextNodeToSendRequestIterator;
 
     private final ClusterManager clusterManager;
 
     private final NodesChangeUpdaterTask nodesChangeUpdaterTask;
 
+
     public ClusterMemDbSyncConnection(ClusterManager clusterManager) {
+        this.nodesChangeUpdaterTask = new NodesChangeUpdaterTask(clusterNodeConnections, clusterManager, this::onNodeUpdated,
+                this::onNodeDeleted);
         this.clusterManager = clusterManager;
-        this.nodesChangeUpdaterTask = new NodesChangeUpdaterTask(clusterNodeConnections, clusterManager,
-                this::onNodeUpdated, this::onNodeDeleted);
+
+        this.setupOtherNodesList();
+
+        this.nextNodeToSendRequestIterator = new CircularLockFreeMapIterator<>(this.clusterNodeConnections);
+    }
+
+    private void setupOtherNodesList() {
+        this.clusterManager.getAllNodes().forEach(node -> Try.run(() -> {
+            this.clusterNodeConnections.put(node.getNodeId(), ClusterNodeConnection.of(node));
+        }));
     }
 
     @SneakyThrows
@@ -48,41 +60,33 @@ public class ClusterMemDbSyncConnection implements MemDbConnection {
     }
 
     @Override
-    public void write(byte[] requestBytes) {
+    public void write(byte[] requestBytes, int requestNumber) {
         ClusterNodeConnection clusterNodeConnection = selectClusterNodeConnectionToSendRequest();
-        boolean successWrite = writeToClusterNode(clusterNodeConnection, requestBytes);
+        boolean successWrite = writeToClusterNode(clusterNodeConnection, requestBytes, requestNumber);
 
         while (!successWrite) {
             removeNodeConnectionById(clusterNodeConnection);
 
             clusterNodeConnection = selectClusterNodeConnectionToSendRequest();
-            successWrite = writeToClusterNode(clusterNodeConnection, requestBytes);
+            successWrite = writeToClusterNode(clusterNodeConnection, requestBytes, requestNumber);
         }
 
-        int requestNumber = Utils.toInt(requestBytes);
         onGoingClusterNodeIdByReqNumber.put(requestNumber, clusterNodeConnection.getNode().getNodeId());
     }
 
-    private boolean writeToClusterNode(ClusterNodeConnection clusterNodeConnection, byte[] bytes) {
-        try {
-            clusterNodeConnection.write(bytes);
-            return true;
-        }catch (Exception e) {
-            return false;
-        }
+    private boolean writeToClusterNode(ClusterNodeConnection clusterNodeConnection, byte[] bytes, int requestNumber) {
+        return Try.run(() -> clusterNodeConnection.write(bytes, requestNumber)).isSuccess();
     }
 
     private ClusterNodeConnection selectClusterNodeConnectionToSendRequest() {
-        int positionToTakeNode = (int) (Math.random() * this.clusterNodeConnections.size());
+        if(this.clusterNodeConnections.isEmpty())
+            throw new RuntimeException("No node available to send request");
 
         while (true) {
-            ClusterNodeConnection clusterNodeConnection = this.clusterNodeConnections.get(positionToTakeNode);
-            int nodeId = clusterNodeConnection.getNode().getNodeId();
+            //Iterator is lockfree, no race conditions
+            Map.Entry<Integer, ClusterNodeConnection> nextNodeEntry = this.nextNodeToSendRequestIterator.next();
 
-            if(this.nodesToSendRequestLocksByNodeId.get(nodeId).compareAndExchange(false, true))
-                return clusterNodeConnection;
-
-            positionToTakeNode = positionToTakeNode + 1 != this.clusterNodeConnections.size() ? positionToTakeNode + 1 :  0;
+            return nextNodeEntry.getValue();
         }
     }
 
@@ -91,15 +95,11 @@ public class ClusterMemDbSyncConnection implements MemDbConnection {
         int nodeIdRequest = this.onGoingClusterNodeIdByReqNumber.get(requestNumber);
         ClusterNodeConnection clusterNodeRequest = this.clusterNodeConnections.get(nodeIdRequest);
 
-        byte[] response = clusterNodeRequest.read(requestNumber);
-
-        this.nodesToSendRequestLocksByNodeId.get(nodeIdRequest).set(false);
-
-        return response;
+        return clusterNodeRequest.read(requestNumber);
     }
 
     @Override
-    public void write(byte[] value, Consumer<Byte[]> onResponseCallback) {
+    public void write(byte[] value, int requestNumber, Consumer<Byte[]> onResponseCallback) {
         throw new UnsupportedOperationException();
     }
 

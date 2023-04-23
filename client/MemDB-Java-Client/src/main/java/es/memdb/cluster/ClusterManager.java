@@ -1,7 +1,6 @@
 package es.memdb.cluster;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import es.memdb.cluster.messages.GetAllNodesResponse;
 import es.memdb.cluster.messages.LoginResponse;
 import lombok.SneakyThrows;
 
@@ -27,26 +26,32 @@ public final class ClusterManager {
 
     @SneakyThrows
     public List<Node> getAllNodes() {
-        HttpRequest getAllNodesRequest = HttpRequest.newBuilder()
-                .uri(URI.create(getRandomClusterManagerAddress()))
-                .setHeader("Authentication", "Bearer " + this.lastToken)
-                .POST(HttpRequest.BodyPublishers.ofString("{\"authKey\": \""+this.authApiKey +"\"}"))
-                .build();
+//        HttpRequest getAllNodesRequest = HttpRequest.newBuilder()
+//                .uri(URI.create(getRandomClusterManagerAddress() + "/api/nodes/all"))
+//                .setHeader("Authorization", "Bearer " + this.lastToken)
+//                .GET()
+//                .build();
+//
+//        HttpResponse<String> response = this.httpClient.send(getAllNodesRequest, HttpResponse.BodyHandlers.ofString());
+//
+//        if(response.statusCode() == 401 || response.statusCode() == 403) {
+//            this.lastToken = authenticate();
+//            return this.getAllNodes();
+//        }else{
+//            return this.objectMapper.readValue(response.body(), GetAllNodesResponse.class).getNodes();
+//        }
 
-        HttpResponse<String> response = this.httpClient.send(getAllNodesRequest, HttpResponse.BodyHandlers.ofString());
-
-        if(response.statusCode() == 403) {
-            this.lastToken = authenticate();
-            return this.getAllNodes();
-        }else{
-            return this.objectMapper.readValue(response.body(), GetAllNodesResponse.class).getNodes();
-        }
+        return List.of(
+                new Node(1, NodeState.RUNNING, "127.0.0.1:10000"),
+                new Node(2, NodeState.RUNNING, "127.0.0.1:10001")
+        );
     }
 
     @SneakyThrows
     private String authenticate() {
         HttpRequest loginRequest = HttpRequest.newBuilder()
-                .uri(URI.create(getRandomClusterManagerAddress()))
+                .uri(URI.create(getRandomClusterManagerAddress() + "/login"))
+                .setHeader("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString("{\"authKey\": \""+this.authApiKey +"\"}"))
                 .build();
 

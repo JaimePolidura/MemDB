@@ -20,7 +20,7 @@ public final class MemDb {
     private ResponseDeserializer responseDeserializer = new ResponseDeserializer();
     private RequestSerializer requestSerializer = new RequestSerializer();
 
-    private final LamportClock clock = new LamportClock();
+    private final LamportClock clock = new LamportClock(1L);
     private final MemDbConnection memDbConnection;
     private final String authApiKey;
 
@@ -64,7 +64,7 @@ public final class MemDb {
         Request request = this.createRequestObject(operation);
         byte[] rawRequest = this.requestSerializer.serialize(request, this.clock.get());
 
-        this.memDbConnection.write(rawRequest);
+        this.memDbConnection.write(rawRequest, request.getRequestNumber());
 
         byte[] rawResponse = this.memDbConnection.read(request.getRequestNumber());
         Response response = this.responseDeserializer.deserialize(rawResponse);
@@ -80,7 +80,7 @@ public final class MemDb {
         Request request = this.createRequestObject(operation);
         byte[] rawRequest = this.requestSerializer.serialize(request, this.clock.get());
 
-        this.memDbConnection.write(rawRequest, rawResponse -> {
+        this.memDbConnection.write(rawRequest, request.getRequestNumber(), rawResponse -> {
             Response response = this.responseDeserializer.deserialize(Utils.wrapperToPrimitive(rawResponse));
 
             result.accept(response.isFailed() ?

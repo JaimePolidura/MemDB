@@ -9,7 +9,7 @@ public class LamportClockTest  {
 
     @Before
     public void setup() {
-        this.lamportClockToTest = new LamportClock();
+        this.lamportClockToTest = new LamportClock(0L);
     }
 
     @Test

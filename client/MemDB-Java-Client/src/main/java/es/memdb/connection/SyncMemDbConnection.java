@@ -39,7 +39,7 @@ public final class SyncMemDbConnection implements MemDbConnection {
     }
 
     @Override
-    public void write(byte[] value) {
+    public void write(byte[] value, int requestNumber) {
         try {
             this.operationLock.lock();
 
@@ -51,12 +51,10 @@ public final class SyncMemDbConnection implements MemDbConnection {
     }
 
     @Override
-    public void write(byte[] value, Consumer<Byte[]> onResponseCallback) {
+    public void write(byte[] value, int requestNumber, Consumer<Byte[]> onResponseCallback) {
         try {
             this.operationLock.lock();
-
-            int requestNumber = Utils.toInt(value);
-
+            
             this.output.write(value);
 
             onResponseCallback.accept(Utils.primitiveToWrapper(this.read(requestNumber)));

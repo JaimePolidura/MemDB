@@ -1,10 +1,12 @@
 package es.memdb.cluster;
 
 import es.memdb.connection.MemDbConnection;
+import es.memdb.connection.SyncMemDbConnection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
+import java.io.IOException;
 import java.util.Objects;
 
 @AllArgsConstructor
@@ -20,13 +22,17 @@ public final class ClusterNodeConnection {
         return Objects.equals(node, that.node);
     }
 
+    public static ClusterNodeConnection of(Node node) throws IOException {
+        return new ClusterNodeConnection(new SyncMemDbConnection(node.getIP(), node.getPort()), node);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(node);
     }
 
-    public void write(byte[] bytes) {
-        this.memDbConnection.write(bytes);
+    public void write(byte[] bytes, int requestNumber) {
+        this.memDbConnection.write(bytes, requestNumber);
     }
 
     public byte[] read(int requestNumber) {

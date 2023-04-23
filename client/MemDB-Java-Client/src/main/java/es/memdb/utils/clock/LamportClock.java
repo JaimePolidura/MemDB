@@ -5,8 +5,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public final class LamportClock {
     private final AtomicLong count;
 
-    public LamportClock() {
-        this.count = new AtomicLong(0L);
+    public LamportClock(long initialValue) {
+        this.count = new AtomicLong(initialValue);
     }
 
     public long update(long other) {

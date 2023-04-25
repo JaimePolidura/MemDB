@@ -34,7 +34,7 @@ public:
 
     auto sendRequest(const Request& request, const bool waitForResponse) -> std::optional<Response> {
         this->openConnectionIfClosedOrThrow();
-
+        
         std::vector<uint8_t> serializedRequest = this->requestSerializer.serialize(request);
         this->connection->writeSync(serializedRequest);
 

@@ -6,8 +6,6 @@
 #include "utils/net/DNSUtils.h"
 #include "utils/Utils.h"
 
-#include "logging/Logger.h"
-
 using tcp = boost::asio::ip::tcp;
 namespace http = boost::beast::http;
 
@@ -26,12 +24,9 @@ struct HttpResponse {
 
 class HttpClient {
 private:
-    logger_t logger;
     boost::asio::io_context ioContext;
 
 public:
-    HttpClient(logger_t logger): logger(logger) {}
-
     HttpResponse get(const std::string& address,
                              const std::string& endpoint,
                              const std::string& authToken = "") {

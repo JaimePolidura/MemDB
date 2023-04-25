@@ -16,7 +16,7 @@ class ClusterManagerService {
 
 public:
     ClusterManagerService(configuration_t configuartion, logger_t logger): configuartion(configuartion), logger(logger),
-        token(""), httpClusterManagerClient(logger) {}
+        token(""), httpClusterManagerClient() {}
 
     AllNodesResponse getAllNodes() {
         this->token = this->authenticate();

@@ -1,7 +1,7 @@
-package shared
+package nodes
 
 import (
-	"clustermanager/src/nodes/shared/states"
+	"clustermanager/src/nodes/nodes/states"
 )
 
 type NodeId_t string

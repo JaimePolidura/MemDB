@@ -5,7 +5,7 @@ import (
 	configuration_keys "clustermanager/src/_shared/config/keys"
 	"clustermanager/src/_shared/logging"
 	"clustermanager/src/healthchecks"
-	"clustermanager/src/nodes/shared/connection"
+	"clustermanager/src/nodes/nodes/connection"
 	"fmt"
 	"github.com/labstack/echo/v4"
 	clientv3 "go.etcd.io/etcd/client/v3"

@@ -1,8 +1,8 @@
 package nodes
 
 import (
-	"clustermanager/src/nodes/shared"
-	"clustermanager/src/nodes/shared/states"
+	"clustermanager/src/nodes/nodes"
+	"clustermanager/src/nodes/nodes/states"
 	"errors"
 	"fmt"
 	"github.com/labstack/echo/v4"
@@ -10,12 +10,12 @@ import (
 )
 
 type CreateNodeController struct {
-	NodesRepository shared.NodeRepository
+	NodesRepository nodes.NodeRepository
 }
 
 type CreateNodeRequest struct {
-	NodeId  shared.NodeId_t `json:"nodeId"`
-	Address string          `json:"address"`
+	NodeId  nodes.NodeId_t `json:"nodeId"`
+	Address string         `json:"address"`
 }
 
 func (controller *CreateNodeController) CreateNode(context echo.Context) error {
@@ -28,17 +28,17 @@ func (controller *CreateNodeController) CreateNode(context echo.Context) error {
 	err = controller.ensureNodeAddressNotTaken(request)
 
 	if err != nil {
-		context.JSON(http.StatusBadRequest, err.Error())
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	err = controller.NodesRepository.Add(shared.Node{
+	err = controller.NodesRepository.Add(nodes.Node{
 		NodeId:  request.NodeId,
 		Address: request.Address,
 		State:   states.BOOTING,
 	})
 
 	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err.Error())
+		return context.JSON(http.StatusInternalServerError, err)
 	}
 
 	return context.JSON(http.StatusCreated, "Node created")

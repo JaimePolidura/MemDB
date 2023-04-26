@@ -1,4 +1,4 @@
-package shared
+package partitions
 
 type PartitionRepository interface {
 	GetPartitionByKey() (int, error)

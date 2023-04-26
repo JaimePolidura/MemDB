@@ -1,15 +1,15 @@
 package connection
 
 import (
-	"clustermanager/src/nodes/shared"
-	"clustermanager/src/nodes/shared/connection/messages/request"
-	"clustermanager/src/nodes/shared/connection/messages/response"
+	"clustermanager/src/nodes/nodes"
+	"clustermanager/src/nodes/nodes/connection/messages/request"
+	"clustermanager/src/nodes/nodes/connection/messages/response"
 	"net"
 )
 
 type NodeConnection struct {
 	connection net.Conn
-	node       shared.Node
+	node       nodes.Node
 }
 
 func (nodeConnection *NodeConnection) Send(requestToSend request.Request) (response.Response, error) {

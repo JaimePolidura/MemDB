@@ -4,17 +4,17 @@ import (
 	"clustermanager/src/_shared/config"
 	"clustermanager/src/_shared/config/keys"
 	"clustermanager/src/_shared/logging"
-	"clustermanager/src/nodes/shared"
-	connection2 "clustermanager/src/nodes/shared/connection"
-	"clustermanager/src/nodes/shared/connection/messages/request"
-	"clustermanager/src/nodes/shared/states"
+	"clustermanager/src/nodes/nodes"
+	connection2 "clustermanager/src/nodes/nodes/connection"
+	"clustermanager/src/nodes/nodes/connection/messages/request"
+	"clustermanager/src/nodes/nodes/states"
 	"fmt"
 	"sync"
 	"time"
 )
 
 type HealthCheckService struct {
-	NodesRespository shared.NodeRepository
+	NodesRespository nodes.NodeRepository
 	Configuration    *configuration.Configuartion
 	NodeConnections  *connection2.NodeConnections
 	Logger           *logging.Logger
@@ -62,7 +62,7 @@ func (healthCheckService *HealthCheckService) runHealthChecks() {
 	waitGroup.Wait()
 }
 
-func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node shared.Node, waitGroup *sync.WaitGroup) {
+func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.Node, waitGroup *sync.WaitGroup) {
 	waitGroup.Add(1)
 
 	connectionToNode, err := healthCheckService.getConnectionOrCreate(node)
@@ -93,7 +93,7 @@ func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node shared.
 	waitGroup.Done()
 }
 
-func (healthCheckService *HealthCheckService) getConnectionOrCreate(node shared.Node) (*connection2.NodeConnection, error) {
+func (healthCheckService *HealthCheckService) getConnectionOrCreate(node nodes.Node) (*connection2.NodeConnection, error) {
 	if node.State == states.SHUTDOWN {
 		healthCheckService.NodeConnections.Delete(node.NodeId)
 	}

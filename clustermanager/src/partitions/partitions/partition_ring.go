@@ -1,4 +1,4 @@
-package shared
+package partitions
 
 type PartitionRing struct {
 	entries []PartitionRingEntry

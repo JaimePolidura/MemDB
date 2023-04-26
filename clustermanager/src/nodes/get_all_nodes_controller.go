@@ -2,18 +2,18 @@ package nodes
 
 import (
 	"clustermanager/src/_shared/logging"
-	"clustermanager/src/nodes/shared"
+	"clustermanager/src/nodes/nodes"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
 )
 
 type GetAllNodesResponse struct {
-	Nodes []shared.Node `json:"nodes"`
+	Nodes []nodes.Node `json:"nodes"`
 }
 
 type GetAllNodeController struct {
-	NodesRepository shared.NodeRepository
+	NodesRepository nodes.NodeRepository
 	Logger          *logging.Logger
 }
 

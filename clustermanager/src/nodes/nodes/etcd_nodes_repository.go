@@ -1,4 +1,4 @@
-package shared
+package nodes
 
 import (
 	"clustermanager/src/_shared/etcd"

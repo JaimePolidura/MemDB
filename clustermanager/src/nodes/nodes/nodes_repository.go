@@ -1,4 +1,4 @@
-package shared
+package nodes
 
 type NodeRepository interface {
 	FindAll() (nodes []Node, err error)

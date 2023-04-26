@@ -1,4 +1,4 @@
-package nodes
+package shared
 
 import (
 	"clustermanager/src/_shared/etcd"
@@ -12,7 +12,7 @@ type EtcdNodeRepository struct {
 }
 
 func (repository EtcdNodeRepository) FindAll() ([]Node, error) {
-	return repository.Client.GetAll("/nodes")
+	return repository.Client.GetAll("/nodes", etcd.JSON)
 }
 
 func (repository EtcdNodeRepository) FindByAddress(address string) (Node, error) {
@@ -21,7 +21,7 @@ func (repository EtcdNodeRepository) FindByAddress(address string) (Node, error)
 	if err != nil || len(allNodes) == 0 {
 		return Node{}, err
 	}
-	
+
 	for _, node := range allNodes {
 		if strings.Split(node.Address, ":")[0] == address {
 			return node, nil
@@ -32,9 +32,9 @@ func (repository EtcdNodeRepository) FindByAddress(address string) (Node, error)
 }
 
 func (repository EtcdNodeRepository) FindById(nodeId NodeId_t) (Node, error) {
-	return repository.Client.Get("/nodes/" + fmt.Sprint(nodeId))
+	return repository.Client.Get("/nodes/"+fmt.Sprint(nodeId), etcd.JSON)
 }
 
 func (repository EtcdNodeRepository) Add(node Node) error {
-	return repository.Client.Put("/nodes/"+fmt.Sprint(node.NodeId), node)
+	return repository.Client.Put("/nodes/"+fmt.Sprint(node.NodeId), node, etcd.JSON)
 }

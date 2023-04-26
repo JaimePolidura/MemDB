@@ -1,8 +1,8 @@
-package api
+package nodes
 
 import (
-	"clustermanager/src/_shared/nodes"
-	"clustermanager/src/_shared/nodes/states"
+	"clustermanager/src/nodes/shared"
+	"clustermanager/src/nodes/shared/states"
 	"errors"
 	"fmt"
 	"github.com/labstack/echo/v4"
@@ -10,12 +10,12 @@ import (
 )
 
 type CreateNodeController struct {
-	NodesRepository nodes.NodeRepository
+	NodesRepository shared.NodeRepository
 }
 
 type CreateNodeRequest struct {
-	NodeId  nodes.NodeId_t `json:"nodeId"`
-	Address string         `json:"address"`
+	NodeId  shared.NodeId_t `json:"nodeId"`
+	Address string          `json:"address"`
 }
 
 func (controller *CreateNodeController) CreateNode(context echo.Context) error {
@@ -31,7 +31,7 @@ func (controller *CreateNodeController) CreateNode(context echo.Context) error {
 		context.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	err = controller.NodesRepository.Add(nodes.Node{
+	err = controller.NodesRepository.Add(shared.Node{
 		NodeId:  request.NodeId,
 		Address: request.Address,
 		State:   states.BOOTING,

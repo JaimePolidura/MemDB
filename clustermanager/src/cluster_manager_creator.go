@@ -5,10 +5,10 @@ import (
 	"clustermanager/src/_shared/config/keys"
 	"clustermanager/src/_shared/etcd"
 	"clustermanager/src/_shared/logging"
-	"clustermanager/src/_shared/nodes"
-	"clustermanager/src/_shared/nodes/connection"
-	"clustermanager/src/api"
 	"clustermanager/src/healthchecks"
+	nodes2 "clustermanager/src/nodes"
+	"clustermanager/src/nodes/shared"
+	"clustermanager/src/nodes/shared/connection"
 	echojwt "github.com/labstack/echo-jwt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -59,8 +59,8 @@ func createHealthCheckService(
 	etcdNativeClient *clientv3.Client,
 	logger *logging.Logger) *healthchecks.HealthCheckService {
 
-	customEtcdClient := &etcd.EtcdClient[nodes.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}
-	nodesRepository := nodes.EtcdNodeRepository{Client: customEtcdClient}
+	customEtcdClient := &etcd.EtcdClient[shared.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}
+	nodesRepository := shared.EtcdNodeRepository{Client: customEtcdClient}
 
 	return &healthchecks.HealthCheckService{
 		NodesRespository: nodesRepository,
@@ -80,12 +80,12 @@ func configureHttpApi(configuration *configuration.Configuartion, etcdNativeClie
 		SigningKey: []byte(configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_API_JWT_SECRET_KEY)),
 	}))
 
-	customEtcdClient := &etcd.EtcdClient[nodes.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}
-	nodesRepository := nodes.EtcdNodeRepository{Client: customEtcdClient}
+	customEtcdClient := &etcd.EtcdClient[shared.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}
+	nodesRepository := shared.EtcdNodeRepository{Client: customEtcdClient}
 
-	getAllNodesController := api.GetAllNodeController{NodesRepository: nodesRepository, Logger: logger}
-	loginController := &api.LoginController{Configuration: configuration, Logger: logger}
-	createNodeController := &api.CreateNodeController{NodesRepository: nodesRepository}
+	getAllNodesController := nodes2.GetAllNodeController{NodesRepository: nodesRepository, Logger: logger}
+	loginController := &nodes2.LoginController{Configuration: configuration, Logger: logger}
+	createNodeController := &nodes2.CreateNodeController{NodesRepository: nodesRepository}
 
 	echoApi.POST("/login", loginController.Login)
 	apiGroup.POST("/nodes/create", createNodeController.CreateNode)

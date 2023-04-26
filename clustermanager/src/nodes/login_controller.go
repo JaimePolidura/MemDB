@@ -1,4 +1,4 @@
-package api
+package nodes
 
 import (
 	configuration "clustermanager/src/_shared/config"

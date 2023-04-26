@@ -1,19 +1,19 @@
-package api
+package nodes
 
 import (
 	"clustermanager/src/_shared/logging"
-	"clustermanager/src/_shared/nodes"
+	"clustermanager/src/nodes/shared"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
 )
 
 type GetAllNodesResponse struct {
-	Nodes []nodes.Node `json:"nodes"`
+	Nodes []shared.Node `json:"nodes"`
 }
 
 type GetAllNodeController struct {
-	NodesRepository nodes.NodeRepository
+	NodesRepository shared.NodeRepository
 	Logger          *logging.Logger
 }
 

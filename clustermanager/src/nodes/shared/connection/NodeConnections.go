@@ -2,8 +2,8 @@ package connection
 
 import (
 	"clustermanager/src/_shared/logging"
-	"clustermanager/src/_shared/nodes"
 	"clustermanager/src/_shared/utils"
+	"clustermanager/src/nodes/shared"
 	"net"
 	"sync"
 )
@@ -13,7 +13,7 @@ type NodeConnections struct {
 	logger      *logging.Logger
 }
 
-func (nodeConnections *NodeConnections) GetByIdOrCreate(node nodes.Node) (*NodeConnection, error) {
+func (nodeConnections *NodeConnections) GetByIdOrCreate(node shared.Node) (*NodeConnection, error) {
 	connection, exists := nodeConnections.GetByNodeId(node.NodeId)
 
 	if exists {
@@ -23,7 +23,7 @@ func (nodeConnections *NodeConnections) GetByIdOrCreate(node nodes.Node) (*NodeC
 	}
 }
 
-func (nodeConnections *NodeConnections) Delete(nodeId nodes.NodeId_t) {
+func (nodeConnections *NodeConnections) Delete(nodeId shared.NodeId_t) {
 	connection, exist := nodeConnections.GetByNodeId(nodeId)
 
 	if exist {
@@ -32,7 +32,7 @@ func (nodeConnections *NodeConnections) Delete(nodeId nodes.NodeId_t) {
 	}
 }
 
-func (nodeConnections *NodeConnections) Create(node nodes.Node) (*NodeConnection, error) {
+func (nodeConnections *NodeConnections) Create(node shared.Node) (*NodeConnection, error) {
 	if conn, exists := nodeConnections.GetByNodeId(node.NodeId); exists {
 		conn.connection.Close()
 		nodeConnections.Delete(node.NodeId)
@@ -48,7 +48,7 @@ func (nodeConnections *NodeConnections) Create(node nodes.Node) (*NodeConnection
 	return connection, nil
 }
 
-func (nodeConnections *NodeConnections) GetByNodeId(nodeId nodes.NodeId_t) (*NodeConnection, bool) {
+func (nodeConnections *NodeConnections) GetByNodeId(nodeId shared.NodeId_t) (*NodeConnection, bool) {
 	value, exists := nodeConnections.connections.Load(nodeId)
 
 	if exists {
@@ -63,7 +63,7 @@ func CreateNodeConnectionsObject(logger *logging.Logger) *NodeConnections {
 	return &NodeConnections{connections: sync.Map{}, logger: logger}
 }
 
-func (nodeConnections *NodeConnections) createTCPConnection(node nodes.Node) (*NodeConnection, error) {
+func (nodeConnections *NodeConnections) createTCPConnection(node shared.Node) (*NodeConnection, error) {
 	adr, err := utils.GetTCPAddress(node.Address)
 	tcpConnection, err := net.DialTCP("tcp", nil, adr)
 

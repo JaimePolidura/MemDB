@@ -3,6 +3,7 @@ package partitions
 import (
 	"clustermanager/src/_shared/etcd"
 	"encoding/json"
+	"sort"
 	"strconv"
 )
 
@@ -41,15 +42,19 @@ func (repository EtcdPartitionRepository) GetPartitionsByKey() (uint32, error) {
 	return uint32(valueInt), nil
 }
 
-func (repository EtcdPartitionRepository) GetRingEntries() ([]PartitionRingEntry, error) {
+func (repository EtcdPartitionRepository) GetRingEntries() (PartitionRingEntries, error) {
 	valueStrJson, err := repository.Client.Get("/partitions/ring", etcd.STRING)
 
 	if err != nil {
-		return []PartitionRingEntry{}, err
+		return PartitionRingEntries{}, err
 	}
 
 	var partitionRing []PartitionRingEntry
 	err = json.Unmarshal([]byte(valueStrJson), &partitionRing)
 
-	return partitionRing, err
+	sort.Slice(partitionRing, func(i, j int) bool {
+		return partitionRing[i].RingPosition < partitionRing[j].RingPosition
+	})
+
+	return PartitionRingEntries{Entries: partitionRing}, err
 }

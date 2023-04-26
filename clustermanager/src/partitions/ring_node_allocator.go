@@ -4,12 +4,14 @@ import (
 	"clustermanager/src/_shared/utils"
 	"clustermanager/src/nodes/nodes"
 	"clustermanager/src/partitions/partitions"
+	"errors"
 	"math/rand"
 )
 
 type RingNodeAllocator struct {
 	HashCalculator       utils.HashCalculator
 	PartitionsRepository partitions.PartitionRepository
+	nodeRepository       nodes.NodeRepository
 }
 
 func (ringNodeAllocator *RingNodeAllocator) Allocate(nodeId nodes.NodeId_t) (partitions.PartitionRingEntry, error) {
@@ -33,16 +35,33 @@ func (ringNodeAllocator *RingNodeAllocator) getPositionRingOfNode(nodeId nodes.N
 	if err != nil {
 		return 0, err
 	}
+	attempts := 100
 
 	for {
-		if positionAlreadyOccupied(ringEntries, positionInRing) {
+		if attempts == 0 {
+			return 0, errors.New("cannot select node")
+		}
+
+		if positionAlreadyOccupied(ringEntries.Entries, positionInRing) || ringNodeAllocator.nodeNotAvailable(ringEntries, positionInRing) {
 			positionInRing = ringNodeAllocator.getRandomNumber(positionInRing)
+			attempts--
 		} else {
 			break
 		}
 	}
 
 	return positionInRing, nil
+}
+
+func (ringNodeAllocator *RingNodeAllocator) nodeNotAvailable(ringEntries partitions.PartitionRingEntries, position uint32) bool {
+	_, counterClockWiseNeighbor, _ := ringEntries.GetNeighborByRingPosition(position)
+	nodeClockwise, err := ringNodeAllocator.nodeRepository.FindById(counterClockWiseNeighbor.NodeId)
+
+	if err != nil {
+		return true
+	}
+
+	return nodeClockwise.State != nodes.RUNNING
 }
 
 func positionAlreadyOccupied(ringEntries []partitions.PartitionRingEntry, position uint32) bool {

@@ -1,8 +1,10 @@
 package nodes
 
 import (
+	configuration "clustermanager/src/_shared/config"
+	configuration_keys "clustermanager/src/_shared/config/keys"
 	"clustermanager/src/nodes/nodes"
-	"clustermanager/src/nodes/nodes/states"
+	"clustermanager/src/partitions"
 	"errors"
 	"fmt"
 	"github.com/labstack/echo/v4"
@@ -10,7 +12,9 @@ import (
 )
 
 type CreateNodeController struct {
-	NodesRepository nodes.NodeRepository
+	NodesRepository   nodes.NodeRepository
+	RingNodeAllocator *partitions.RingNodeAllocator
+	Configuration     *configuration.Configuartion
 }
 
 type CreateNodeRequest struct {
@@ -31,11 +35,15 @@ func (controller *CreateNodeController) CreateNode(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, err)
 	}
 
+	//TODO Add transactions to etcdclient
 	err = controller.NodesRepository.Add(nodes.Node{
 		NodeId:  request.NodeId,
 		Address: request.Address,
-		State:   states.BOOTING,
+		State:   nodes.BOOTING,
 	})
+	if controller.Configuration.GetBoolean(configuration_keys.MEMDB_CLUSTERMANAGER_USE_PARTITIONS) {
+		_, err = controller.RingNodeAllocator.Allocate(request.NodeId)
+	}
 
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)

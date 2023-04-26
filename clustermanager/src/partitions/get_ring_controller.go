@@ -19,7 +19,7 @@ func (controller *GetRingController) GetRing(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, errors.New("cannot create partition when MEMDB_CLUSTERMANAGER_USE_PARTITIONS is set to false"))
 	}
 
-	ring, err := controller.PartitionsRepository.GetRing()
+	ring, err := controller.PartitionsRepository.GetRingEntries()
 
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)

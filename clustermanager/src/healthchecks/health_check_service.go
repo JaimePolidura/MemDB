@@ -7,7 +7,6 @@ import (
 	"clustermanager/src/nodes/nodes"
 	connection2 "clustermanager/src/nodes/nodes/connection"
 	"clustermanager/src/nodes/nodes/connection/messages/request"
-	"clustermanager/src/nodes/nodes/states"
 	"fmt"
 	"sync"
 	"time"
@@ -68,8 +67,8 @@ func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.N
 	connectionToNode, err := healthCheckService.getConnectionOrCreate(node)
 
 	if err != nil {
-		if node.State != states.SHUTDOWN {
-			healthCheckService.NodesRespository.Add(*node.WithState(states.SHUTDOWN))
+		if node.State != nodes.SHUTDOWN {
+			healthCheckService.NodesRespository.Add(*node.WithState(nodes.SHUTDOWN))
 		}
 		waitGroup.Done()
 		return
@@ -80,12 +79,12 @@ func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.N
 	didntRespondToHealthCheck := err != nil || !response.Success
 	respondedToHealthCheck := !didntRespondToHealthCheck
 
-	if didntRespondToHealthCheck && node.State != states.SHUTDOWN {
-		healthCheckService.NodesRespository.Add(*node.WithState(states.SHUTDOWN))
+	if didntRespondToHealthCheck && node.State != nodes.SHUTDOWN {
+		healthCheckService.NodesRespository.Add(*node.WithState(nodes.SHUTDOWN))
 		healthCheckService.NodeConnections.Delete(node.NodeId)
 		healthCheckService.Logger.Info("Node" + string(node.NodeId) + " doest repond to health check. Marked as SHUTDOWN")
-	} else if respondedToHealthCheck && node.State == states.SHUTDOWN {
-		healthCheckService.NodesRespository.Add(*node.WithState(states.BOOTING))
+	} else if respondedToHealthCheck && node.State == nodes.SHUTDOWN {
+		healthCheckService.NodesRespository.Add(*node.WithState(nodes.BOOTING))
 		healthCheckService.NodeConnections.Create(node)
 		healthCheckService.Logger.Info("Node" + string(node.NodeId) + " previously marked as SHUTDOWN, now it responds to health check. Marked as BOOTING")
 	}
@@ -94,7 +93,7 @@ func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.N
 }
 
 func (healthCheckService *HealthCheckService) getConnectionOrCreate(node nodes.Node) (*connection2.NodeConnection, error) {
-	if node.State == states.SHUTDOWN {
+	if node.State == nodes.SHUTDOWN {
 		healthCheckService.NodeConnections.Delete(node.NodeId)
 	}
 

@@ -1,4 +1,4 @@
-package states
+package nodes
 
 type NodeState string
 

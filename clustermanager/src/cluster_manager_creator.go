@@ -5,12 +5,14 @@ import (
 	"clustermanager/src/_shared/config/keys"
 	"clustermanager/src/_shared/etcd"
 	"clustermanager/src/_shared/logging"
+	"clustermanager/src/_shared/utils"
 	"clustermanager/src/healthchecks"
 	nodes2 "clustermanager/src/nodes"
 	"clustermanager/src/nodes/nodes"
 	"clustermanager/src/nodes/nodes/connection"
 	"clustermanager/src/partitions"
 	partitions2 "clustermanager/src/partitions/partitions"
+	"crypto/md5"
 	echojwt "github.com/labstack/echo-jwt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -85,9 +87,11 @@ func configureHttpApi(configuration *configuration.Configuartion, etcdNativeClie
 	partitionsRepository := partitions2.EtcdPartitionRepository{Client: &etcd.EtcdClient[string]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}}
 	nodesRepository := nodes.EtcdNodeRepository{Client: &etcd.EtcdClient[nodes.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}}
 
+	ringNodeAllocator := &partitions.RingNodeAllocator{HashCalculator: utils.HashCalculator{HashAlgorithm: md5.New()}, PartitionsRepository: partitionsRepository}
+
+	createNodeController := &nodes2.CreateNodeController{NodesRepository: nodesRepository, RingNodeAllocator: ringNodeAllocator, Configuration: configuration}
 	getAllNodesController := nodes2.GetAllNodeController{NodesRepository: nodesRepository, Logger: logger}
 	loginController := &nodes2.LoginController{Configuration: configuration, Logger: logger}
-	createNodeController := &nodes2.CreateNodeController{NodesRepository: nodesRepository}
 	getRingController := partitions.GetRingController{PartitionsRepository: partitionsRepository, Configuration: configuration}
 
 	echoApi.POST("/login", loginController.Login)

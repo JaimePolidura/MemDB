@@ -10,24 +10,45 @@ type EtcdPartitionRepository struct {
 	Client *etcd.EtcdClient[string]
 }
 
-func (repository EtcdPartitionRepository) GetPartitionByKey() (int, error) {
-	valueStr, err := repository.Client.Get("/partitions/config/partitionsPerKey", etcd.STRING)
-
+func (repository EtcdPartitionRepository) SaveRingEntries(newEntries []PartitionRingEntry) error {
+	entriesByte, err := json.Marshal(newEntries)
 	if err != nil {
-		return -1, err
+		return err
 	}
 
-	return strconv.Atoi(valueStr)
+	return repository.Client.Put("/partitions/ring", string(entriesByte), etcd.STRING)
 }
 
-func (repository EtcdPartitionRepository) GetRing() (PartitionRing, error) {
-	valueStrJson, err := repository.Client.Get("/partitions/config/ring", etcd.STRING)
+func (repository EtcdPartitionRepository) GetRingMaxSize() (uint32, error) {
+	valueStr, err := repository.Client.Get("/partitions/config/ringSize", etcd.STRING)
+	valueInt, err := strconv.Atoi(valueStr)
 
 	if err != nil {
-		return PartitionRing{}, err
+		return 0, err
 	}
 
-	var partitionRing PartitionRing
+	return uint32(valueInt), nil
+}
+
+func (repository EtcdPartitionRepository) GetPartitionsByKey() (uint32, error) {
+	valueStr, err := repository.Client.Get("/partitions/config/partitionsPerKey", etcd.STRING)
+	valueInt, err := strconv.Atoi(valueStr)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return uint32(valueInt), nil
+}
+
+func (repository EtcdPartitionRepository) GetRingEntries() ([]PartitionRingEntry, error) {
+	valueStrJson, err := repository.Client.Get("/partitions/ring", etcd.STRING)
+
+	if err != nil {
+		return []PartitionRingEntry{}, err
+	}
+
+	var partitionRing []PartitionRingEntry
 	err = json.Unmarshal([]byte(valueStrJson), &partitionRing)
 
 	return partitionRing, err

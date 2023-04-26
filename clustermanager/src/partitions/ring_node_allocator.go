@@ -13,21 +13,19 @@ type RingNodeAllocator struct {
 }
 
 func (ringNodeAllocator *RingNodeAllocator) Allocate(nodeId nodes.NodeId_t) (partitions.PartitionRingEntry, error) {
-	ringEntries, err := ringNodeAllocator.PartitionsRepository.GetRingEntries()
-	positionInRing, err := ringNodeAllocator.getPositionRingOfNode(nodeId, ringEntries)
+	positionInRing, err := ringNodeAllocator.getPositionRingOfNode(nodeId)
 	if err != nil {
 		return partitions.PartitionRingEntry{}, err
 	}
 
 	newEntry := partitions.PartitionRingEntry{NodeId: nodeId, RingPosition: positionInRing}
-	ringEntries = append(ringEntries, newEntry)
-
-	ringNodeAllocator.PartitionsRepository.SaveRingEntries(ringEntries)
+	ringNodeAllocator.PartitionsRepository.Add(newEntry)
 
 	return newEntry, nil
 }
 
-func (ringNodeAllocator *RingNodeAllocator) getPositionRingOfNode(nodeId nodes.NodeId_t, ringEntries []partitions.PartitionRingEntry) (uint32, error) {
+func (ringNodeAllocator *RingNodeAllocator) getPositionRingOfNode(nodeId nodes.NodeId_t) (uint32, error) {
+	ringEntries, err := ringNodeAllocator.PartitionsRepository.GetRingEntries()
 	hashValue := ringNodeAllocator.HashCalculator.Calculate(string(nodeId))
 
 	ringSize, err := ringNodeAllocator.PartitionsRepository.GetRingMaxSize()

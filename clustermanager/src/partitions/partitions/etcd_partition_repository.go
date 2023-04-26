@@ -10,13 +10,13 @@ type EtcdPartitionRepository struct {
 	Client *etcd.EtcdClient[string]
 }
 
-func (repository EtcdPartitionRepository) SaveRingEntries(newEntries []PartitionRingEntry) error {
-	entriesByte, err := json.Marshal(newEntries)
+func (repository EtcdPartitionRepository) Add(newEntriy PartitionRingEntry) error {
+	entriesByte, err := json.Marshal(newEntriy)
 	if err != nil {
 		return err
 	}
 
-	return repository.Client.Put("/partitions/ring", string(entriesByte), etcd.STRING)
+	return repository.Client.Put("/partitions/ring/"+strconv.Itoa(int(newEntriy.RingPosition)), string(entriesByte), etcd.STRING)
 }
 
 func (repository EtcdPartitionRepository) GetRingMaxSize() (uint32, error) {

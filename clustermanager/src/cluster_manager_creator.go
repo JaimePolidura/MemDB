@@ -92,13 +92,15 @@ func configureHttpApi(configuration *configuration.Configuartion, etcdNativeClie
 	createNodeController := &nodes2.CreateNodeController{NodesRepository: nodesRepository, RingNodeAllocator: ringNodeAllocator, Configuration: configuration}
 	getAllNodesController := nodes2.GetAllNodeController{NodesRepository: nodesRepository, Logger: logger}
 	loginController := &nodes2.LoginController{Configuration: configuration, Logger: logger}
-	getRingController := partitions.GetRingController{PartitionsRepository: partitionsRepository, Configuration: configuration}
+	getRingController := &partitions.GetRingInfoController{PartitionsRepository: partitionsRepository, Configuration: configuration}
+	getRingNeighborsController := &partitions.GetRingNeighborsController{PartitionsRepository: partitionsRepository, Configuration: configuration}
 
 	echoApi.POST("/login", loginController.Login)
 
 	apiGroup.POST("/nodes/create", createNodeController.CreateNode)
 	apiGroup.GET("/nodes/all", getAllNodesController.GetAllNodes)
-	apiGroup.GET("/partitions/ring", getRingController.GetRing)
+	apiGroup.GET("/partitions/ring/info", getRingController.GetRingInfo)
+	apiGroup.GET("/partitions/ring/neighbors", getRingNeighborsController.GetRingNeighbors)
 
 	return echoApi
 }

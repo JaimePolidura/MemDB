@@ -15,15 +15,27 @@ type PartitionRingEntry struct {
 }
 
 func (entries PartitionRingEntries) GetNeighborByRingPosition(ringPosition uint32) (PartitionRingEntry, PartitionRingEntry, bool) { //Clock wise, counter clock wise, found
-	clockWise, counterClockWise, found := entries.GetNeighborsByRingPosition(ringPosition, 1)
+	clockWise, counterClockWise, found := entries.getNeighborsByRingPosition(ringPosition, 1)
 	if !found {
 		return PartitionRingEntry{}, PartitionRingEntry{}, found
 	}
-	
+
 	return clockWise[0], counterClockWise[0], true
 }
 
-func (entries PartitionRingEntries) GetNeighborsByRingPosition(ringPosition uint32, numberNeighbors int) ([]PartitionRingEntry, []PartitionRingEntry, bool) { //Clock wise, counter clock wise, found
+func (entries PartitionRingEntries) GetNeighborsByNodeId(nodeId nodes.NodeId_t, numberNeighbors uint32) ([]PartitionRingEntry, bool) { //Clock wise, counter clock wise, found
+	entry, found := entries.getRingEntryByNodeId(nodeId)
+	if !found {
+		return []PartitionRingEntry{}, false
+	}
+	
+	clockWise, counterClockWise, found := entries.getNeighborsByRingPosition(entry.RingPosition, numberNeighbors)
+	neighbors := append(clockWise, counterClockWise...)
+
+	return neighbors, found
+}
+
+func (entries PartitionRingEntries) getNeighborsByRingPosition(ringPosition uint32, numberNeighbors uint32) ([]PartitionRingEntry, []PartitionRingEntry, bool) { //Clock wise, counter clock wise, found
 	indexOfRingEntry, found := entries.getIndexByRingPosition(ringPosition)
 	if !found {
 		return []PartitionRingEntry{}, []PartitionRingEntry{}, false
@@ -34,7 +46,7 @@ func (entries PartitionRingEntries) GetNeighborsByRingPosition(ringPosition uint
 	var counterClockWise []PartitionRingEntry
 	var clockWise []PartitionRingEntry
 
-	for i := 0; i < numberNeighbors; i++ {
+	for i := 0; uint32(i) < numberNeighbors; i++ {
 		counterClockWise = append(counterClockWise, ringIterator.Back())
 		clockWise = append(clockWise, ringIterator.Next())
 	}
@@ -56,6 +68,16 @@ func (entries PartitionRingEntries) getCounterClockWiseInRing(index int) Partiti
 	} else {
 		return entries.Entries[index-1]
 	}
+}
+
+func (entries PartitionRingEntries) getRingEntryByNodeId(nodeId nodes.NodeId_t) (PartitionRingEntry, bool) {
+	for _, entry := range entries.Entries {
+		if entry.NodeId == nodeId {
+			return entry, true
+		}
+	}
+
+	return PartitionRingEntry{}, false
 }
 
 func (entries PartitionRingEntries) getIndexByRingPosition(ringPositionToLook uint32) (int, bool) {

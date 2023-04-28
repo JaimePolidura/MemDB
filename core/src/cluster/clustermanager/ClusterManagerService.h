@@ -1,6 +1,8 @@
 #pragma once
 
-#include "replication/clustermanager/requests/AllNodesResponse.h"
+#include "replication/clustermanager/responses/AllNodesResponse.h"
+#include "replication/clustermanager/responses/RingEntriesResponse.h"
+
 #include "config/Configuration.h"
 #include "utils/net/HttpClient.h"
 #include "replication/Node.h"
@@ -17,6 +19,20 @@ class ClusterManagerService {
 public:
     ClusterManagerService(configuration_t configuartion, logger_t logger): configuartion(configuartion), logger(logger),
         token(""), httpClusterManagerClient() {}
+
+    RingEntriesResponse getRingEntries() {
+        this->token = this->authenticate();
+
+        HttpResponse response = this->httpClusterManagerClient.get(
+                this->configuartion->get(ConfigurationKeys::MEMDB_CORE_CLUSTER_MANAGER_ADDRESS),
+                "/api/partitions/ring",
+                this->token);
+
+        if(!response.isSuccessful())
+            throw std::runtime_error("Unexpected error when trying to get the ring from the cluster manager " + response.body.dump());
+
+        return RingEntriesResponse::fromJson(response.body);
+    }
 
     AllNodesResponse getAllNodes() {
         this->token = this->authenticate();

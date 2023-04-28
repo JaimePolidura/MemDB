@@ -1,7 +1,7 @@
 #pragma once
 
 #include "shared.h"
-#include "replication/clustermanager/requests/AllNodesResponse.h"
+#include "replication/clustermanager/responses/AllNodesResponse.h"
 #include "replication/Replication.h"
 #include "logging/Logger.h"
 

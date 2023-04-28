@@ -19,7 +19,7 @@ type GetAllNodeController struct {
 
 func (controller *GetAllNodeController) GetAllNodes(context echo.Context) error {
 	nodes, err := controller.NodesRepository.FindAll()
-
+	
 	if err != nil {
 		controller.Logger.Info("Error while executing GetAllNodesController: " + err.Error())
 		return err

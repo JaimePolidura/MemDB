@@ -31,8 +31,8 @@ func (repository EtcdPartitionRepository) GetRingMaxSize() (uint32, error) {
 	return uint32(valueInt), nil
 }
 
-func (repository EtcdPartitionRepository) GetPartitionsByKey() (uint32, error) {
-	valueStr, err := repository.Client.Get("/partitions/config/partitionsPerKey", etcd.STRING)
+func (repository EtcdPartitionRepository) GetNodesPerPartition() (uint32, error) {
+	valueStr, err := repository.Client.Get("/partitions/config/nodesPerPartition", etcd.STRING)
 	valueInt, err := strconv.Atoi(valueStr)
 
 	if err != nil {
@@ -42,7 +42,7 @@ func (repository EtcdPartitionRepository) GetPartitionsByKey() (uint32, error) {
 	return uint32(valueInt), nil
 }
 
-func (repository EtcdPartitionRepository) GetRingEntries() (PartitionRingEntries, error) {
+func (repository EtcdPartitionRepository) GetRingEntriesSorted() (PartitionRingEntries, error) {
 	valueStrJson, err := repository.Client.Get("/partitions/ring", etcd.STRING)
 
 	if err != nil {

@@ -27,7 +27,7 @@ func (ringNodeAllocator *RingNodeAllocator) Allocate(nodeId nodes.NodeId_t) (par
 }
 
 func (ringNodeAllocator *RingNodeAllocator) getPositionRingOfNode(nodeId nodes.NodeId_t) (uint32, error) {
-	ringEntries, err := ringNodeAllocator.PartitionsRepository.GetRingEntries()
+	ringEntries, err := ringNodeAllocator.PartitionsRepository.GetRingEntriesSorted()
 	hashValue := ringNodeAllocator.HashCalculator.Calculate(string(nodeId))
 
 	ringSize, err := ringNodeAllocator.PartitionsRepository.GetRingMaxSize()

@@ -44,7 +44,7 @@ public:
         OperationOptions options = {.requestOfNodeToReplicate = request.authenticationType == AuthenticationType::NODE &&
                                     operatorToExecute->type() == OperatorType::WRITE};
 
-        this->logger->debugInfo("Recieved request for operator {0} from {1}", request.requestNumber, operatorToExecute->name(),
+        this->logger->debugInfo("Recieved request for operator {0} from {1}", operatorToExecute->name(),
                                 options.requestOfNodeToReplicate ? "node" : "user");
 
         if(this->isInReplicationMode() &&

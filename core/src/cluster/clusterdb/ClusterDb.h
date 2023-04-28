@@ -4,7 +4,7 @@
 
 #include "config/Configuration.h"
 #include "config/keys/ConfigurationKeys.h"
-#include "replication/clusterdb/ClusterDbValueChanged.h"
+#include "cluster/clusterdb/ClusterDbValueChanged.h"
 #include "utils/strings/StringUtils.h"
 #include "utils/net/DNSUtils.h"
 #include "logging/Logger.h"

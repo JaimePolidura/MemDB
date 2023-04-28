@@ -19,4 +19,5 @@ public:
     static const std::string MEMDB_CORE_CLUSTER_MANAGER_ADDRESS;
     static const std::string MEMDB_CORE_ETCD_ADDRESSES;
     static const std::string MEMDB_CORE_NODE_ID;
+    static const std::string MEMDB_CORE_USE_PARTITIONS;
 };

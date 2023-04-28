@@ -26,14 +26,12 @@ private:
     Authenticator authenicator;
     io_context ioContext;
     ip::tcp::acceptor acceptator;
-    replication_t replication;
     logger_t logger;
 
 public:
-    TCPServer(logger_t logger, configuration_t configuration, replication_t replication, Authenticator authenicator, operatorDispatcher_t operatorDispatcher):
+    TCPServer(logger_t logger, configuration_t configuration, Authenticator authenicator, operatorDispatcher_t operatorDispatcher):
             configuration(configuration),
             logger(logger),
-            replication(replication),
             port(configuration->get<uint16_t>(ConfigurationKeys::MEMDB_CORE_PORT)),
             authenicator(std::move(authenicator)),
             connectionThreadPool(5, configuration->get<int>(ConfigurationKeys::MEMDB_CORE_SERVER_MAX_THREADS), configuration->get<int>(ConfigurationKeys::MEMDB_CORE_SERVER_MIN_THREADS), 100),

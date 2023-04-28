@@ -1,8 +1,5 @@
-//
-// Created by jaime on 28/04/2023.
-//
+#pragma once
 
-#ifndef MEMDB_CLUSTER_H
-#define MEMDB_CLUSTER_H
+class Cluster {
 
-#endif //MEMDB_CLUSTER_H
+};

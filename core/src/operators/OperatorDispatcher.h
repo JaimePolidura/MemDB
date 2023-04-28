@@ -7,8 +7,8 @@
 #include "messages/response/ErrorCode.h"
 #include "persistence/OperationLog.h"
 #include "utils/clock/LamportClock.h"
-#include "replication/Replication.h"
-#include "replication/PendingReplicationOperationBuffer.h"
+#include "cluster/Cluster.h"
+#include "cluster/PendingReplicationOperationBuffer.h"
 
 class OperatorDispatcher {
 public: //Need it for mocking it
@@ -17,15 +17,15 @@ private:
     replicationOperationBuffer_t replicationOperationBuffer;
     operationLog_t operationLog;
     configuration_t configuration;
-    replication_t replication;
+    cluster_t cluster;
     lamportClock_t clock;
     memDbDataStore_t db;
     logger_t logger;
 
 public:
-    OperatorDispatcher(memDbDataStore_t dbCons, lamportClock_t clock, replication_t replication, configuration_t configuration,
+    OperatorDispatcher(memDbDataStore_t dbCons, lamportClock_t clock, cluster_t cluster, configuration_t configuration,
                        logger_t logger, operationLog_t operationLog): db(dbCons), operationLog(operationLog), clock(clock),
-                       operatorRegistry(std::make_shared<OperatorRegistry>()), logger(logger), replication(replication),
+                       operatorRegistry(std::make_shared<OperatorRegistry>()), logger(logger), cluster(cluster),
                        configuration(configuration), replicationOperationBuffer(std::make_shared<PendingReplicationOperationBuffer>())
     {}
 
@@ -48,12 +48,12 @@ public:
                                 options.requestOfNodeToReplicate ? "node" : "user");
 
         if(this->isInReplicationMode() &&
-            (!NodeStates::canAcceptRequest(this->replication->getNodeState()) ||
-            (!options.requestOfNodeToReplicate && !NodeStates::cantExecuteRequest(this->replication->getNodeState())))) {
+            (!NodeStates::canAcceptRequest(this->cluster->getNodeState()) ||
+            (!options.requestOfNodeToReplicate && !NodeStates::cantExecuteRequest(this->cluster->getNodeState())))) {
             return Response::error(ErrorCode::INVALID_NODE_STATE);
         }
         if(this->isInReplicationMode() && options.requestOfNodeToReplicate &&
-           !NodeStates::cantExecuteRequest(this->replication->getNodeState())){
+           !NodeStates::cantExecuteRequest(this->cluster->getNodeState())){
             this->replicationOperationBuffer->add(request);
             return Response::success();
         }
@@ -80,7 +80,7 @@ public:
             }
 
             if(this->isInReplicationMode() && !options.requestOfNodeToReplicate){
-                this->replication->broadcast(operation);
+                this->cluster->broadcast(operation);
 
                 this->logger->debugInfo("Broadcasted request for operator {0} from {1}",
                                         operatorToExecute->name(), options.requestOfNodeToReplicate ? "node" : "user");

@@ -2,7 +2,7 @@
 
 #include "shared.h"
 
-#include "replication/Node.h"
+#include "cluster/Node.h"
 #include "utils/strings/StringUtils.h"
 #include "utils/threads/pool/FixedThreadPool.h"
 #include "messages/request/Request.h"

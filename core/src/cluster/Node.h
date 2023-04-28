@@ -1,7 +1,7 @@
 #pragma once
 
 #include "shared.h"
-#include "replication/NodeState.h"
+#include "cluster/NodeState.h"
 #include "server/Connection.h"
 #include "messages/request/RequestSerializer.h"
 #include "messages/response/ResponseDeserializer.h"

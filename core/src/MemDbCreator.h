@@ -4,7 +4,7 @@
 
 #include "MemDb.h"
 #include "config/keys/ConfigurationKeys.h"
-#include "replication/Replication.h"
+#include "cluster/Cluster.h"
 #include "auth/Authenticator.h"
 #include "config/ConfigurationLoader.h"
 #include "persistence/OperationLog.h"
@@ -16,21 +16,21 @@ public:
 
         operationLog_t operationLog = std::make_shared<OperationLog>(configuration);
         logger_t logger = std::make_shared<Logger>(configuration, "Starting memdb");
-        replication_t replication = createReplicationObject(logger, configuration);
+        cluster_t cluster = createClusterObject(logger, configuration);
         lamportClock_t clock = std::make_shared<LamportClock>(1);
         memDbDataStore_t map = std::make_shared<Map<memDbDataLength_t>>(configuration->get<uint16_t>(ConfigurationKeys::MEMDB_CORE_NUMBER_BUCKETS));
-        operatorDispatcher_t operatorDispatcher = std::make_shared<OperatorDispatcher>(map, clock, replication, configuration, logger, operationLog);
-        tcpServer_t tcpServer = std::make_shared<TCPServer>(logger, configuration, replication, Authenticator{configuration}, operatorDispatcher);
+        operatorDispatcher_t operatorDispatcher = std::make_shared<OperatorDispatcher>(map, clock, cluster, configuration, logger, operationLog);
+        tcpServer_t tcpServer = std::make_shared<TCPServer>(logger, configuration, Authenticator{configuration}, operatorDispatcher);
 
-        return std::make_shared<MemDb>(logger, map, configuration, operatorDispatcher, tcpServer, clock, replication, operationLog);
+        return std::make_shared<MemDb>(logger, map, configuration, operatorDispatcher, tcpServer, clock, cluster, operationLog);
     }
 
 private:
-    static replication_t createReplicationObject(logger_t logger, configuration_t configuration) {
+    static cluster_t createClusterObject(logger_t logger, configuration_t configuration) {
         if(configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION)){
-            return ReplicationCreator::setup(configuration, logger);
+            return ClusterCreator::setup(configuration, logger);
         }else{
-            return std::make_shared<Replication>(logger, configuration);
+            return std::make_shared<Cluster>(logger, configuration);
         }
     }
 };

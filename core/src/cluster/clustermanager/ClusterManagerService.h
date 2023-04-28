@@ -1,11 +1,11 @@
 #pragma once
 
-#include "replication/clustermanager/responses/AllNodesResponse.h"
-#include "replication/clustermanager/responses/RingEntriesResponse.h"
+#include "cluster/clustermanager/responses/AllNodesResponse.h"
+#include "cluster/clustermanager/responses/RingEntriesResponse.h"
 
 #include "config/Configuration.h"
 #include "utils/net/HttpClient.h"
-#include "replication/Node.h"
+#include "cluster/Node.h"
 #include "logging/Logger.h"
 
 #include "shared.h"

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "replication/clusterdb/ClusterDbValueChanged.h"
-#include "replication/Node.h"
-#include "replication/othernodes/ClusterNodes.h"
+#include "cluster/clusterdb/ClusterDbValueChanged.h"
+#include "cluster/Node.h"
+#include "cluster/othernodes/ClusterNodes.h"
 #include "logging/Logger.h"
 
 class ClusterDbNodeChangeHandler {

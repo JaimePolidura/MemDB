@@ -2,11 +2,11 @@
 
 #include "shared.h"
 
-#include "replication/clustermanager/ClusterManagerService.h"
-#include "replication/NodeState.h"
-#include "replication/othernodes/ClusterNodes.h"
-#include "replication/clusterdb/ClusterDb.h"
-#include "replication/ClusterDbNodeChangeHandler.h"
+#include "cluster/clustermanager/ClusterManagerService.h"
+#include "cluster/NodeState.h"
+#include "cluster/othernodes/ClusterNodes.h"
+#include "cluster/clusterdb/ClusterDb.h"
+#include "cluster/ClusterDbNodeChangeHandler.h"
 
 #include "utils/clock/LamportClock.h"
 #include "utils/strings/StringUtils.h"
@@ -16,7 +16,7 @@
 
 #include "logging/Logger.h"
 
-class Replication {
+class Cluster {
 private:
     configuration_t configuration;
     clusterNodes_t clusterNodes;
@@ -30,7 +30,7 @@ private:
     std::function<void(std::vector<OperationBody>)> reloadUnsyncedOplogCallback;
 
 public:
-    Replication(logger_t logger, configuration_t configuration) :
+    Cluster(logger_t logger, configuration_t configuration) :
             configuration(configuration), clusterDb(std::make_shared<ClusterDb>(configuration, logger)),
             clusterNodes(std::make_shared<ClusterNodes>(configuration, logger)),
             clusterManager(std::make_shared<ClusterManagerService>(configuration, logger)),
@@ -50,7 +50,7 @@ public:
             this->logger->info("Synchronized {0} oplog entries with the cluster", unsyncedOplog.size());
         }
 
-        this->logger->info("Replication node is now set up");
+        this->logger->info("Cluster node is now set up");
     }
 
     auto getClusterNodes() -> clusterNodes_t {
@@ -64,21 +64,13 @@ public:
     auto setBooting() -> void {
         this->selfNode->state = NodeState::BOOTING;
         this->clusterDb->setNode(this->selfNode->nodeId, this->selfNode);
-        this->logger->info("Changed replication node state to BOOTING");
+        this->logger->info("Changed cluster node state to BOOTING");
     }
 
     auto setRunning() -> void {
         this->selfNode->state = NodeState::RUNNING;
         this->clusterDb->setNode(this->selfNode->nodeId, this->selfNode);
-        this->logger->info("Changed replication node state to RUNNING");
-    }
-
-    auto doesAddressBelongToReplicationNode(const std::string& address) -> bool {
-        for(const auto& node : this->clusterNodes->otherNodes)
-            if(node->address.compare(address) == 0)
-                return true;
-
-        return false;
+        this->logger->info("Changed cluster node state to RUNNING");
     }
 
     auto getUnsyncedOplog(uint64_t lastTimestampProcessedFromOpLog) -> std::vector<OperationBody> {
@@ -167,4 +159,4 @@ private:
     }
 };
 
-using  replication_t = std::shared_ptr<Replication>;
+using cluster_t = std::shared_ptr<Cluster>;

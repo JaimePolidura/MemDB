@@ -2,7 +2,7 @@
 
 #include "shared.h"
 
-#include "replication/Node.h"
+#include "cluster/Node.h"
 
 struct AllNodesResponse {
     std::vector<node_t> nodes;

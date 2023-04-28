@@ -26,7 +26,6 @@ public class ClusterMemDbSyncConnection implements MemDbConnection {
 
     private final NodesChangeUpdaterTask nodesChangeUpdaterTask;
 
-
     public ClusterMemDbSyncConnection(ClusterManager clusterManager) {
         this.nodesChangeUpdaterTask = new NodesChangeUpdaterTask(clusterNodeConnections, clusterManager, this::onNodeUpdated,
                 this::onNodeDeleted);

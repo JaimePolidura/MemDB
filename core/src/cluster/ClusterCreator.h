@@ -1,16 +1,16 @@
 #pragma once
 
 #include "shared.h"
-#include "replication/clustermanager/responses/AllNodesResponse.h"
-#include "replication/Replication.h"
+#include "cluster/clustermanager/responses/AllNodesResponse.h"
+#include "cluster/Cluster.h"
 #include "logging/Logger.h"
 
-class ReplicationCreator {
+class ClusterCreator {
 public:
-    static auto setup(configuration_t configuration, logger_t logger) -> replication_t {
-        replication_t replication = std::make_shared<Replication>(logger, configuration);
-        replication->setup(true);
+    static auto setup(configuration_t configuration, logger_t logger) -> cluster_t {
+        cluster_t cluster = std::make_shared<Cluster>(logger, configuration);
+        cluster->setup(true);
 
-        return replication;
+        return cluster;
     }
 };

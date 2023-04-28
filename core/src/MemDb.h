@@ -3,9 +3,9 @@
 #include "server/TCPServer.h"
 #include "config/Configuration.h"
 #include "config/keys/ConfigurationKeys.h"
-#include "replication/Replication.h"
+#include "cluster/Cluster.h"
 #include "utils/clock/LamportClock.h"
-#include "replication/ReplicationCreator.h"
+#include "cluster/ClusterCreator.h"
 #include "logging/Logger.h"
 #include "persistence/OperationLog.h"
 
@@ -17,7 +17,7 @@ private:
     operatorRegistry_t operatorRegistry;
     configuration_t configuration;
     operationLog_t operationLog;
-    replication_t replication;
+    cluster_t cluster;
     memDbDataStore_t dbMap;
     tcpServer_t tcpServer;
     lamportClock_t clock;
@@ -25,15 +25,15 @@ private:
 
 public:
     MemDb(logger_t logger, memDbDataStore_t map, configuration_t configuration, operatorDispatcher_t operatorDispatcher, tcpServer_t tcpServer,
-          lamportClock_t clock, replication_t replication, operationLog_t operationLog) : dbMap(map), configuration(configuration), tcpServer(tcpServer),
-          operatorDispatcher(operatorDispatcher), clock(clock), logger(logger), replication(replication), operationLog(operationLog),
-          operatorRegistry(std::make_shared<OperatorRegistry>()) {}
+          lamportClock_t clock, cluster_t cluster, operationLog_t operationLog) : dbMap(map), configuration(configuration), tcpServer(tcpServer),
+                                                                                      operatorDispatcher(operatorDispatcher), clock(clock), logger(logger), cluster(cluster), operationLog(operationLog),
+                                                                                      operatorRegistry(std::make_shared<OperatorRegistry>()) {}
 
     void run() {
         uint64_t lastTimestampStored = this->restoreDataFromOplogFromDisk();
 
         if(this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION)){
-            this->clock->nodeId = this->replication->getNodeId();
+            this->clock->nodeId = this->cluster->getNodeId();
 
             std::async(std::launch::async, [this, lastTimestampStored] -> void {
                 this->syncOplogFromCluster(lastTimestampStored);
@@ -51,13 +51,13 @@ private:
     void syncOplogFromCluster(uint64_t lastTimestampProcessedFromOpLog) {
         this->logger->info("Synchronizing oplog with the cluster");
 
-        std::vector<OperationBody> unsyncedOplog = this->replication->getUnsyncedOplog(lastTimestampProcessedFromOpLog);
+        std::vector<OperationBody> unsyncedOplog = this->cluster->getUnsyncedOplog(lastTimestampProcessedFromOpLog);
         this->applyUnsyncedOplogFromCluster(unsyncedOplog);
         this->logger->info("Synchronized {0} oplog entries with the cluster", unsyncedOplog.size());
 
-        this->replication->setRunning();
+        this->cluster->setRunning();
 
-        this->replication->setReloadUnsyncedOplogCallback([this](std::vector<OperationBody> unsyncedOperations) {
+        this->cluster->setReloadUnsyncedOplogCallback([this](std::vector<OperationBody> unsyncedOperations) {
             this->applyUnsyncedOplogFromCluster(unsyncedOperations);
             this->operatorDispatcher->applyReplicatedOperationBuffer();
         });

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "replication/partitions/RingEntry.h"
+#include "cluster/partitions/RingEntry.h"
 #include "shared.h"
 
 struct RingEntriesResponse {

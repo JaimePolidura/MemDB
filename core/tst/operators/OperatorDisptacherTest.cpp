@@ -11,10 +11,10 @@ public:
     MOCK_METHOD1(getBoolean, bool(const std::string&));
 };
 
-class ReplicationMock : public Replication {
+class ReplicationMock : public Cluster {
 public:
     ReplicationMock(configuration_t configuration, clusterManagerService_t clusterManager, InfoNodeResponse infoNodeResponse) :
-            Replication(configuration, clusterManager, infoNodeResponse)
+            Cluster(configuration, clusterManager, infoNodeResponse)
     {}
 
     ReplicationMock(configuration_t configuration): Replication(configuration) {}

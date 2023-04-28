@@ -13,10 +13,11 @@ import (
 type GetRingNeighborsController struct {
 	PartitionsRepository partitions.PartitionRepository
 	Configuration        *configuration.Configuartion
+	NodeRepository       nodes.NodeRepository
 }
 
 type GetRingNeighborsResponse struct {
-	Neighbors []partitions.PartitionRingEntry `json:"neighbors"`
+	Neighbors []nodes.Node `json:"neighbors"`
 }
 
 func (controller *GetRingNeighborsController) GetRingNeighbors(context echo.Context) error {
@@ -32,12 +33,21 @@ func (controller *GetRingNeighborsController) GetRingNeighbors(context echo.Cont
 		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	neighbors, found := ringEntries.GetNeighborsByNodeId(nodeId, nodesPerPartition)
+	neighborsRingEntries, found := ringEntries.GetNeighborsByNodeId(nodeId, nodesPerPartition)
 	if !found {
 		return context.JSON(http.StatusBadRequest, "node not found")
 	}
 
+	nodesEntries := make([]nodes.Node, len(neighborsRingEntries)+1)
+	for i, ringEntry := range neighborsRingEntries {
+		node, _ := controller.NodeRepository.FindById(ringEntry.NodeId)
+		nodesEntries[i] = node
+	}
+
+	selfNode, _ := controller.NodeRepository.FindById(nodeId)
+	nodesEntries[len(nodesEntries)-1] = selfNode
+
 	return context.JSON(http.StatusOK, GetRingNeighborsResponse{
-		Neighbors: neighbors,
+		Neighbors: nodesEntries,
 	})
 }

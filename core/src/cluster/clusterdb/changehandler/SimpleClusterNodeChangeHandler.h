@@ -1,26 +1,18 @@
 #pragma once
 
-#include "cluster/clusterdb/ClusterDbValueChanged.h"
-#include "cluster/Node.h"
-#include "cluster/othernodes/ClusterNodes.h"
-#include "logging/Logger.h"
+#include "ClusterDbNodeChangeHandler.h"
+#include "cluster/Cluster.h"
 
-class ClusterDbNodeChangeHandler {
-private:
-    clusterNodes_t clusterNodes;
-    logger_t logger;
-
+class SimpleClusterChangeNodeHandler : public ClusterDbNodeChangeHandler {
 public:
-    ClusterDbNodeChangeHandler(clusterNodes_t clusterNodes, logger_t logger):
-            clusterNodes(clusterNodes), logger(logger) {}
-    
-    ClusterDbNodeChangeHandler() = default;
+    SimpleClusterChangeNodeHandler(clusterNodes_t clusterNodes, logger_t logger):
+            ClusterDbNodeChangeHandler(clusterNodes, logger) {}
 
-    void handleChange(node_t newNode, const ClusterDbChangeType changeType) {
+    void handleChange(node_t nodeChanged, const ClusterDbChangeType changeType) override {
         if(changeType == ClusterDbChangeType::PUT)
-            this->updateNodes(newNode);
+            this->updateNodes(nodeChanged);
         else if (changeType == ClusterDbChangeType::DELETED)
-            this->deleteNode(newNode);
+            this->deleteNode(nodeChanged);
     }
 
 private:

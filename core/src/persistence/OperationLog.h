@@ -21,7 +21,7 @@ private:
     configuration_t configuration;
 
 public:
-    OperationLog(configuration_t configuration): configuration(configuration),
+    OperationLog(configuration_t configuration): configuration(configuration), operationsLogDiskWriter("oplog"), operationLogDiskLoader("oplog"),
         operationLogBuffer(std::make_shared<OperationLogBuffer>(configuration->get<int>(ConfigurationKeys::MEMDB_CORE_PERSISTANCE_WRITE_EVERY))) {
 
         this->operationLogBuffer->setFlushCallback([this](auto& operations){

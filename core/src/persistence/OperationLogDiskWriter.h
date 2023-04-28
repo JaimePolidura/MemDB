@@ -10,8 +10,11 @@ private:
     OperationLogSerializer operationLogSerializer;
     std::mutex writeFileLock;
     bool fileCreated = false;
+    std::string oplogFileName;
 
 public:
+    OperationsLogDiskWriter(const std::string& oplogFileName): oplogFileName(oplogFileName) {}
+
     void write(const std::vector<OperationBody>& toWrite) {
         this->createFileIfNotExists();
 
@@ -24,12 +27,12 @@ private:
         if(this->fileCreated)
             return;
 
-        bool exists = FileUtils::exists(FileUtils::getFileInProgramBasePath("memdb", "oplog"));
+        bool exists = FileUtils::exists(FileUtils::getFileInProgramBasePath("memdb", this->oplogFileName));
         if(!exists) {
             if(!FileUtils::exists(FileUtils::getProgramsPath() + "/memdb"))
                 FileUtils::createDirectory(FileUtils::getProgramsPath(), "memdb");
 
-            FileUtils::createFile(FileUtils::getProgramBasePath("memdb"), "oplog");
+            FileUtils::createFile(FileUtils::getProgramBasePath("memdb"), this->oplogFileName);
         }
 
         this->fileCreated = true;
@@ -38,7 +41,7 @@ private:
     void writeAppendModeSerialized(const std::vector<uint8_t>& serialized) {
         writeFileLock.lock();
 
-        FileUtils::appendBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog"), serialized);
+        FileUtils::appendBytes(FileUtils::getFileInProgramBasePath("memdb", this->oplogFileName), serialized);
 
         writeFileLock.unlock();
     }

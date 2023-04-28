@@ -3,9 +3,9 @@
 #include "ClusterDbNodeChangeHandler.h"
 #include "cluster/Cluster.h"
 
-class SimpleClusterChangeNodeHandler : public ClusterDbNodeChangeHandler {
+class SimpleClusterNodeChangeHandler : public ClusterDbNodeChangeHandler {
 public:
-    SimpleClusterChangeNodeHandler(clusterNodes_t clusterNodes, logger_t logger):
+    SimpleClusterNodeChangeHandler(clusterNodes_t clusterNodes, logger_t logger):
             ClusterDbNodeChangeHandler(clusterNodes, logger) {}
 
     void handleChange(node_t nodeChanged, const ClusterDbChangeType changeType) override {

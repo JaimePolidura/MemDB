@@ -2,7 +2,7 @@ set(BINARY ${CMAKE_PROJECT_NAME})
 file(GLOB_RECURSE SOURCES LIST_DIRECTORIES true *.h *.cpp)
 add_executable(${BINARY}_run ${SOURCES})
 
-add_library(${BINARY}_lib STATIC ${SOURCES} utils/datastructures/queue/BufferOneConsumer.h logging/Logger.h cluster/clustermanager/responses/AllNodesResponse.h utils/net/DNSUtils.h persistence/OperationLog.h cluster/partitions/RingEntry.h cluster/clustermanager/responses/RingEntriesResponse.h cluster2/Cluster.h)
+add_library(${BINARY}_lib STATIC ${SOURCES} cluster/setup/SimpleClusterNodeSetup.h cluster/clusterdb/changehandler/ClusterDbNodeChangeHandler.h cluster/clusterdb/changehandler/SimpleClusterNodeChangeHandler.h cluster/clustermanager/responses/GetRingNeighborsResponse.h cluster/setup/PartitionsClusterNodeSetup.h cluster/clusterdb/changehandler/PartitionClusterNodeChangeHandler.h cluster/partitions/Partitions.h)
 
 # VCPKG Libraries
 # He cambiado el nombre de la carpeta de boost a xd. Con eso el programa no se bloquea
@@ -11,7 +11,7 @@ include_directories(${CMAKE_PREFIX_PATH}/include)
 find_package(Boost REQUIRED)
 target_link_libraries(${BINARY}_lib PRIVATE Boost::boost)
 
-find_package(spdlog CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED 1.11.0)
 target_link_libraries(${BINARY}_lib PRIVATE spdlog::spdlog spdlog::spdlog_header_only)
 
 find_package(nlohmann_json CONFIG REQUIRED)

@@ -30,7 +30,7 @@ private:
         if(configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION)){
             return ClusterCreator::setup(configuration, logger);
         }else{
-            return std::make_shared<Cluster>(logger, configuration);
+            return std::make_shared<Cluster>();
         }
     }
 };

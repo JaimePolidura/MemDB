@@ -1,7 +1,7 @@
 #pragma once
 
 #include "cluster/Cluster.h"
-#include "cluster2/ClusterDbNodeChangeHandler.h"
+#include "cluster/clusterdb/changehandler/ClusterDbNodeChangeHandler.h"
 
 class ClusterNodeSetup {
 protected:
@@ -10,10 +10,11 @@ protected:
 
 public:
     ClusterNodeSetup(logger_t logger, configuration_t configuration): logger(logger), configuration(configuration) {}
-    
-    void setup(cluster_t cluster) {
+
+    void initializeNodeInCluster(cluster_t cluster) {
         this->logger->info("Setting up node in the cluster");
 
+        cluster->clusterDbNodeChangeHandler = this->getClusterDbChangeNodeHandler(cluster);
         this->setClusterInformation(cluster);
         cluster->watchForChangesInNodesClusterDb();
         cluster->setBooting();
@@ -22,12 +23,12 @@ public:
     }
 
     std::shared_ptr<Cluster> create() {
-        return std::make_shared<Cluster>(this->logger, this->configuration, this->getClusterDbChangeNodeHandler());
+        return std::make_shared<Cluster>(this->logger, this->configuration);
     }
 
     virtual void setClusterInformation(cluster_t cluster) = 0;
 
-    virtual clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler() = 0;
+    virtual clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler(cluster_t cluster) = 0;
 
 protected:
     void setOtherNodes(cluster_t cluster, const std::vector<node_t>& allNodes) {
@@ -47,3 +48,5 @@ protected:
         this->logger->info("Other nodes information is set. Total nodes: {0}", otherNodes.size());
     }
 };
+
+using clusterNodeSetup_t = std::shared_ptr<ClusterNodeSetup>;

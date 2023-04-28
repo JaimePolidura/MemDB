@@ -1,7 +1,8 @@
 #pragma once
 
 #include "cluster/clustermanager/responses/AllNodesResponse.h"
-#include "cluster/clustermanager/responses/RingEntriesResponse.h"
+#include "cluster/clustermanager/responses/GetRingInfoResponse.h"
+#include "cluster/clustermanager/responses/GetRingNeighborsResponse.h"
 
 #include "config/Configuration.h"
 #include "utils/net/HttpClient.h"
@@ -20,18 +21,32 @@ public:
     ClusterManagerService(configuration_t configuartion, logger_t logger): configuartion(configuartion), logger(logger),
         token(""), httpClusterManagerClient() {}
 
-    RingEntriesResponse getRingEntries() {
+    GetRingInfoResponse getRingInfo() {
         this->token = this->authenticate();
 
         HttpResponse response = this->httpClusterManagerClient.get(
                 this->configuartion->get(ConfigurationKeys::MEMDB_CORE_CLUSTER_MANAGER_ADDRESS),
-                "/api/partitions/ring",
+                "/api/partitions/ring/info",
                 this->token);
 
         if(!response.isSuccessful())
             throw std::runtime_error("Unexpected error when trying to get the ring from the cluster manager " + response.body.dump());
 
-        return RingEntriesResponse::fromJson(response.body);
+        return GetRingInfoResponse::fromJson(response.body);
+    }
+
+    GetRingNeighborsResponse getRingNeighbors(const std::string& nodeId) {
+        this->token = this->authenticate();
+
+        HttpResponse response = this->httpClusterManagerClient.get(
+                this->configuartion->get(ConfigurationKeys::MEMDB_CORE_CLUSTER_MANAGER_ADDRESS),
+                "/api/partitions/ring/neighbors?nodeId" + nodeId,
+                this->token);
+
+        if(!response.isSuccessful())
+            throw std::runtime_error("Unexpected error when trying to get all nodes from the cluster manager " + response.body.dump());
+
+        return GetRingNeighborsResponse::fromJson(response.body);
     }
 
     AllNodesResponse getAllNodes() {

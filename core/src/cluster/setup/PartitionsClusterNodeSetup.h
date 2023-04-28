@@ -1,8 +1,20 @@
-//
-// Created by jaime on 28/04/2023.
-//
+#pragma once
 
-#ifndef MEMDB_PARTITIONSCLUSTERNODESETUP_H
-#define MEMDB_PARTITIONSCLUSTERNODESETUP_H
+#include "cluster/clusterdb/changehandler/PartitionClusterNodeChangeHandler.h"
+#include "cluster/setup/ClusterNodeSetup.h"
 
-#endif //MEMDB_PARTITIONSCLUSTERNODESETUP_H
+class PartitionsClusterNodeSetup : public ClusterNodeSetup {
+public:
+    void setClusterInformation(cluster_t cluster) override {
+        GetRingNeighborsResponse neighborsNodes = cluster->clusterManager->getRingNeighbors(configuration->get(ConfigurationKeys::MEMDB_CORE_NODE_ID));
+        GetRingInfoResponse ringInfo = cluster->clusterManager->getRingInfo();
+
+        setOtherNodes(cluster, neighborsNodes.neighbors); //Includes self
+
+        cluster->partitions = std::make_shared<Partitions>(ringInfo.entries, ringInfo.nodesPerPartition, ringInfo.maxSize);
+    }
+
+    clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler(cluster_t cluster) override {
+        return std::make_shared<PartitionClusterNodeChangeHandler>(cluster->clusterNodes, cluster->logger);
+    }
+};

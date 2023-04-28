@@ -3,10 +3,11 @@
 #include "shared.h"
 
 #include "cluster/clustermanager/ClusterManagerService.h"
+#include "cluster/partitions/Partitions.h"
 #include "cluster/NodeState.h"
 #include "cluster/othernodes/ClusterNodes.h"
 #include "cluster/clusterdb/ClusterDb.h"
-#include "cluster/ClusterDbNodeChangeHandler.h"
+#include "cluster/clusterdb/changehandler/ClusterDbNodeChangeHandler.h"
 
 #include "utils/clock/LamportClock.h"
 #include "utils/strings/StringUtils.h"
@@ -20,46 +21,25 @@ class Cluster {
 private:
     configuration_t configuration;
     clusterNodes_t clusterNodes;
-    ClusterDbNodeChangeHandler clusterDbNodeChangeHandler;
-    std::atomic_uint64_t lastTimestampBroadcasted;
+    clusterDbNodeChangeHandler_t clusterDbNodeChangeHandler;
     clusterManagerService_t clusterManager;
+    partitions_t partitions;
     clusterdb_t clusterDb;
     node_t selfNode;
     logger_t logger;
 
-    std::function<void(std::vector<OperationBody>)> reloadUnsyncedOplogCallback;
+    friend class ClusterNodeSetup;
+    friend class SimpleClusterNodeSetup;
+    friend class PartitionsClusterNodeSetup;
 
 public:
+    Cluster() = default;
+
     Cluster(logger_t logger, configuration_t configuration) :
             configuration(configuration), clusterDb(std::make_shared<ClusterDb>(configuration, logger)),
             clusterNodes(std::make_shared<ClusterNodes>(configuration, logger)),
-            clusterManager(std::make_shared<ClusterManagerService>(configuration, logger)),
-            clusterDbNodeChangeHandler(this->clusterNodes, logger), logger(logger)
+            clusterManager(std::make_shared<ClusterManagerService>(configuration, logger)), logger(logger)
     {}
-
-    auto setup(bool firstTime = false) -> void {
-        this->logger->info("Setting up node in the cluster");
-
-        this->setClusterInformation(this->clusterManager->getAllNodes());
-        this->watchForChangesInClusterDb();
-        this->setBooting();
-
-        if(!firstTime){ //Network partitions?
-            auto unsyncedOplog = this->getUnsyncedOplog(this->lastTimestampBroadcasted);
-            this->reloadUnsyncedOplogCallback(unsyncedOplog);
-            this->logger->info("Synchronized {0} oplog entries with the cluster", unsyncedOplog.size());
-        }
-
-        this->logger->info("Cluster node is now set up");
-    }
-
-    auto getClusterNodes() -> clusterNodes_t {
-        return this->clusterNodes;
-    }
-
-    auto setReloadUnsyncedOplogCallback(std::function<void(std::vector<OperationBody>)> callback) -> void {
-        this->reloadUnsyncedOplogCallback = callback;
-    }
 
     auto setBooting() -> void {
         this->selfNode->state = NodeState::BOOTING;
@@ -91,7 +71,6 @@ public:
     }
 
     virtual auto broadcast(const OperationBody& operation) -> void {
-        this->lastTimestampBroadcasted = operation.timestamp;
         this->clusterNodes->broadcast(operation);
     }
 
@@ -104,22 +83,18 @@ public:
     }
 
 private:
-    auto setClusterInformation(AllNodesResponse allNodesResponse) -> void {
-        memdbNodeId_t selfNodeId = this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
-        std::vector<node_t> allNodes = allNodesResponse.nodes;
+    auto watchForChangesInNodesClusterDb() -> void {
+        this->clusterDb->watchNodeChanges([this](ClusterDbValueChanged nodeChangedEvent) {
+            auto node = Node::fromJson(nodeChangedEvent.value);
+            auto selfNodeChanged = node->nodeId == this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
 
-        this->selfNode = *std::find_if(allNodes.begin(), allNodes.end(), [selfNodeId](node_t node) -> bool {
-            return node->nodeId == selfNodeId;
+            if (!selfNodeChanged) {
+                this->clusterDbNodeChangeHandler->handleChange(node, nodeChangedEvent.changeType);
+            }
+            if (selfNodeChanged && node->state == NodeState::SHUTDOWN) { //Reload
+                this->setRunning();
+            }
         });
-
-        std::vector<node_t> otherNodes;
-        std::copy_if(allNodes.begin(), allNodes.end(), std::back_inserter(otherNodes), [selfNodeId](node_t node) -> bool{
-            return node->nodeId != selfNodeId;
-        });
-
-        this->clusterNodes->setOtherNodes(otherNodes);
-
-        this->logger->info("Cluster information is set. Total all nodes {0}", allNodesResponse.nodes.size());
     }
 
     auto createSyncOplogRequest(uint64_t timestamp) -> Request {
@@ -141,21 +116,6 @@ private:
         request.authentication = authenticationBody;
 
         return request;
-    }
-
-    auto watchForChangesInClusterDb() -> void {
-        this->clusterDb->watchNodeChanges([this](ClusterDbValueChanged nodeChangedEvent) {
-            auto node = Node::fromJson(nodeChangedEvent.value);
-            auto selfNodeChanged = node->nodeId == this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
-
-            if (!selfNodeChanged) {
-                this->clusterDbNodeChangeHandler.handleChange(node, nodeChangedEvent.changeType);
-            }
-            if (selfNodeChanged && node->state == NodeState::SHUTDOWN) { //Reload
-                this->logger->info("Reload detected node in the cluster");
-                this->setup(false);
-            }
-        });
     }
 };
 

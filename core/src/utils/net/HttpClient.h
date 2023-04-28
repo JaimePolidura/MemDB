@@ -105,10 +105,7 @@ private:
             ipUrl = DNSUtils::singleResolve(ipUrl, portUrl);
         }
 
-        bool succcess = Utils::retryUntil(10, std::chrono::seconds(5), [&socket, ipUrl, portUrl]() mutable{
-            if (DNSUtils::isName(ipUrl))
-                ipUrl = DNSUtils::singleResolve(ipUrl, portUrl);
-
+        bool succcess = Utils::retryUntil(10, std::chrono::seconds(5), [&socket, ipUrl, portUrl](){
             tcp::endpoint endpoint(boost::asio::ip::address::from_string(ipUrl), std::atoi(portUrl.data()));
             socket.connect(endpoint);
         });

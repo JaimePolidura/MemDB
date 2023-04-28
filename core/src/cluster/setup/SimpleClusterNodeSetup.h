@@ -1,11 +1,9 @@
 #pragma once
 
 #include "cluster/setup/ClusterNodeSetup.h"
+#include "cluster/clusterdb/changehandler/SimpleClusterNodeChangeHandler.h"
 
 class SimpleClusterNodeSetup : public ClusterNodeSetup {
-private:
-    ClusterDbNodeChangeHandler clusterDbNodeChangeHandler;
-
 public:
     SimpleClusterNodeSetup(logger_t logger, configuration_t configuration): ClusterNodeSetup(logger, configuration) {}
 
@@ -13,5 +11,9 @@ public:
         std::vector<node_t> otherNodes = cluster->clusterManager->getAllNodes().nodes;
 
         setOtherNodes(cluster, otherNodes);
+    }
+
+    clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler(cluster_t cluster) override {
+        return std::make_shared<SimpleClusterNodeChangeHandler>(cluster->clusterNodes, cluster->logger);
     }
 };

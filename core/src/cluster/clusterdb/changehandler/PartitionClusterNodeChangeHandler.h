@@ -1,8 +1,12 @@
-//
-// Created by jaime on 28/04/2023.
-//
+#pragma once
 
-#ifndef MEMDB_PARTITIONCLUSTERNODECHANGEHANDLER_H
-#define MEMDB_PARTITIONCLUSTERNODECHANGEHANDLER_H
+#include "cluster/clusterdb/changehandler/ClusterDbNodeChangeHandler.h"
 
-#endif //MEMDB_PARTITIONCLUSTERNODECHANGEHANDLER_H
+class PartitionClusterNodeChangeHandler : public ClusterDbNodeChangeHandler {
+public:
+    PartitionClusterNodeChangeHandler(clusterNodes_t clusterNodes, logger_t logger): ClusterDbNodeChangeHandler(clusterNodes, logger) {}
+
+    void handleChange(node_t nodeChanged, const ClusterDbChangeType changeType) override {
+        //TODO
+    }
+};

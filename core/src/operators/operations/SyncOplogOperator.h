@@ -19,7 +19,7 @@ public:
     Response operate(const OperationBody& operation, const OperationOptions& operationOptions, operationLog_t operationLog) override {
         uint64_t lastTimestampUnsync = parseUnsyncTimestampFromRequest(operation);
 
-        std::vector<OperationBody> unsyncedOplog = operationLog->getAllAfterTimestamp(lastTimestampUnsync);
+        std::vector<OperationBody> unsyncedOplog = operationLog->getAfterTimestamp(lastTimestampUnsync);
         std::vector<uint8_t> serializedUnsyncedOpLog = this->serializeOperations(unsyncedOplog);
 
         return Response::success(SimpleString<memDbDataLength_t>::fromVector(serializedUnsyncedOpLog));

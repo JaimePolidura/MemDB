@@ -7,7 +7,7 @@
 #include "utils/clock/LamportClock.h"
 #include "cluster/setup/ClusterCreator.h"
 #include "logging/Logger.h"
-#include "persistence/OperationLog.h"
+#include "persistence/oplog/SingleOperationLog.h"
 
 #include "memdbtypes.h"
 
@@ -56,15 +56,10 @@ private:
         this->logger->info("Synchronized {0} oplog entries with the cluster", unsyncedOplog.size());
 
         this->cluster->setRunning();
-
-        this->cluster->setReloadUnsyncedOplogCallback([this](std::vector<OperationBody> unsyncedOperations) {
-            this->applyUnsyncedOplogFromCluster(unsyncedOperations);
-            this->operatorDispatcher->applyReplicatedOperationBuffer();
-        });
     }
 
     uint64_t restoreDataFromOplogFromDisk() {
-        std::vector<OperationBody> opLogsFromDisk = this->operationLog->getFromDisk();
+        std::vector<OperationBody> opLogsFromDisk = this->operationLog->getAllFromDisk();
 
         this->logger->info("Applaying logs from disk...");
         this->applyUnsyncedOplogFromCluster(opLogsFromDisk);

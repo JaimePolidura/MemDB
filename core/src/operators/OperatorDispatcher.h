@@ -5,7 +5,7 @@
 #include "operators/DbOperatorExecutor.h"
 #include "operators/MaintenanceOperatorExecutor.h"
 #include "messages/response/ErrorCode.h"
-#include "persistence/OperationLog.h"
+#include "persistence/oplog/SingleOperationLog.h"
 #include "utils/clock/LamportClock.h"
 #include "cluster/Cluster.h"
 #include "cluster/PendingReplicationOperationBuffer.h"

@@ -3,25 +3,27 @@
 #include "shared.h"
 
 #include "messages/request/Request.h"
+
 #include "persistence/compaction/OperationLogCompacter.h"
 #include "persistence/OperationLogDiskLoader.h"
 #include "persistence/OperationLogBuffer.h"
+#include "persistence/OperationLogDiskWriter.h"
+#include "persistence/oplog/OperationLog.h"
 
 #include "config/Configuration.h"
 #include "utils/Utils.h"
-#include "OperationLogDiskWriter.h"
 
-class OperationLog {
+class SingleOperationLog : public OperationLog {
 private:
     OperationsLogDiskWriter operationsLogDiskWriter;
     OperationLogDiskLoader operationLogDiskLoader;
     OperationLogCompacter compacter;
 
     operationLogBuffer_t operationLogBuffer;
-    configuration_t configuration;
 
 public:
-    OperationLog(configuration_t configuration): configuration(configuration), operationsLogDiskWriter("oplog"), operationLogDiskLoader("oplog"),
+    SingleOperationLog(configuration_t configuration, const std::string& fileName):
+        OperationLog(configuration), operationsLogDiskWriter(fileName), operationLogDiskLoader(fileName),
         operationLogBuffer(std::make_shared<OperationLogBuffer>(configuration->get<int>(ConfigurationKeys::MEMDB_CORE_PERSISTANCE_WRITE_EVERY))) {
 
         this->operationLogBuffer->setFlushCallback([this](auto& operations){
@@ -29,11 +31,11 @@ public:
         });
     }
 
-    void add(const OperationBody& operation) {
+    void add(const OperationBody& operation) override {
         this->operationLogBuffer->add(operation);
     }
 
-    std::vector<OperationBody> getAllAfterTimestamp(uint64_t since) {
+    std::vector<OperationBody> getAfterTimestamp(uint64_t since, const OperationLogQueryOptions options = {}) override {
         this->lockWritesToDisk();
 
         uint64_t oldestTimestampInBuffer = operationLogBuffer->getOldestTimestampAdded();
@@ -44,7 +46,7 @@ public:
             return std::vector<OperationBody>{};
         }
 
-        if(!bufferEmtpy && since >= oldestTimestampInBuffer && since <= lastestTimestampInBuffer) {
+        if(!bufferEmtpy && since >= oldestTimestampInBuffer && since <= lastestTimestampInBuffer = {}) {
             std::vector<OperationBody> compactedFromBuffer = this->compacter.compact(this->operationLogBuffer->get());
             this->unlockWritesToDisk();
 
@@ -60,7 +62,7 @@ public:
         }
     }
 
-    std::vector<OperationBody> getFromDisk() {
+    std::vector<OperationBody> getAllFromDisk(const OperationLogQueryOptions options = {}) override {
         std::vector<OperationBody> fromDisk = this->operationLogDiskLoader.getAll();
         std::vector<OperationBody> compacted = this->compacter.compact(fromDisk);
         this->operationsLogDiskWriter.write(compacted);
@@ -101,4 +103,4 @@ private:
     }
 };
 
-using operationLog_t = std::shared_ptr<OperationLog>;
+using singleOperationLog_t = std::shared_ptr<SingleOperationLog>;

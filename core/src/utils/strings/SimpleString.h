@@ -24,6 +24,10 @@ public:
         return this->size != 0 || this->value.get() != nullptr;
     }
 
+    std::string toString() {
+        return std::string((char *) this->value.get(), this->size);
+    }
+
     uint8_t * operator[](int index) const {
         return this->value.get() + index;
     }

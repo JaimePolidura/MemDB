@@ -35,6 +35,7 @@
 #include <filesystem>
 #include <math.h>
 #include <regex>
+#include <cstring>
 
 //Deps
 #include <boost/beast.hpp>
@@ -46,6 +47,7 @@
 #include <etcd/Watcher.hpp>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
+#include <openssl/md5.h>
 
 //OS
 //#ifdef _WIN32

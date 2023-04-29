@@ -2,7 +2,7 @@ set(BINARY ${CMAKE_PROJECT_NAME})
 file(GLOB_RECURSE SOURCES LIST_DIRECTORIES true *.h *.cpp)
 add_executable(${BINARY}_run ${SOURCES})
 
-add_library(${BINARY}_lib STATIC ${SOURCES} cluster/setup/SimpleClusterNodeSetup.h cluster/clusterdb/changehandler/ClusterDbNodeChangeHandler.h cluster/clusterdb/changehandler/SimpleClusterNodeChangeHandler.h cluster/clustermanager/responses/GetRingNeighborsResponse.h cluster/setup/PartitionsClusterNodeSetup.h cluster/clusterdb/changehandler/PartitionClusterNodeChangeHandler.h cluster/partitions/Partitions.h persistence/oplog/OperationLog.h persistence/oplog/MultipleOperationLog.h)
+add_library(${BINARY}_lib STATIC ${SOURCES} cluster/setup/SimpleClusterNodeSetup.h cluster/clusterdb/changehandler/ClusterDbNodeChangeHandler.h cluster/clusterdb/changehandler/SimpleClusterNodeChangeHandler.h cluster/clustermanager/responses/GetRingNeighborsResponse.h cluster/setup/PartitionsClusterNodeSetup.h cluster/clusterdb/changehandler/PartitionClusterNodeChangeHandler.h cluster/partitions/Partitions.h persistence/oplog/OperationLog.h persistence/oplog/MultipleOperationLog.h cluster/partitions/RingEntries.h utils/crypto/HashCalculator.h)
 
 # VCPKG Libraries
 # He cambiado el nombre de la carpeta de boost a xd. Con eso el programa no se bloquea

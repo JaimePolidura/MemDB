@@ -70,16 +70,16 @@ public:
         return operationLogDeserializer.deserializeAll(bytes);
     }
 
+    auto getPartitionObject() -> partitions_t {
+        return this->partitions;
+    }
+
     virtual auto broadcast(const OperationBody& operation) -> void {
         this->clusterNodes->broadcast(operation);
     }
 
     virtual auto getNodeState() -> NodeState {
         return this->selfNode->state;
-    }
-
-    auto getNodeId() -> memdbNodeId_t {
-        return this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
     }
 
 private:

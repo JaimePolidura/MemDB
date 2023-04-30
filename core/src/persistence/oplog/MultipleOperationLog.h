@@ -11,7 +11,7 @@ private:
 
 public:
     MultipleOperationLog(configuration_t configuration, std::function<int(const OperationBody&)> oplogResolver,
-                         std::function<std::string(int)> oplogFileNameResolver, int numberOplogs):
+                         std::function<std::string(int)> oplogFileNameResolver, uint32_t numberOplogs):
         OperationLog(configuration), oplogResolver(oplogResolver) {
         this->initializeOplogs(numberOplogs, oplogFileNameResolver);
     }

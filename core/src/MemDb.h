@@ -33,7 +33,7 @@ public:
         uint64_t lastTimestampStored = this->restoreDataFromOplogFromDisk();
 
         if(this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION)){
-            this->clock->nodeId = this->cluster->getNodeId();
+            this->clock->nodeId = this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
 
             std::async(std::launch::async, [this, lastTimestampStored] -> void {
                 this->syncOplogFromCluster(lastTimestampStored);

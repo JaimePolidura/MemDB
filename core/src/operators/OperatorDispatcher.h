@@ -52,6 +52,10 @@ public:
             (!options.requestOfNodeToReplicate && !NodeStates::cantExecuteRequest(this->cluster->getNodeState())))) {
             return Response::error(ErrorCode::INVALID_NODE_STATE);
         }
+        if(this->isInReplicationMode() && this->isInReplicationMode() && options.requestOfNodeToReplicate &&
+            !this->cluster->getPartitionObject()->canHoldKey(request.operation.args->at(0))){
+            return Response::error(ErrorCode::INVALID_PARTITION);
+        }
         if(this->isInReplicationMode() && options.requestOfNodeToReplicate &&
            !NodeStates::cantExecuteRequest(this->cluster->getNodeState())){
             this->replicationOperationBuffer->add(request);
@@ -116,6 +120,10 @@ private:
 
     bool isInReplicationMode() {
         return this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION);
+    }
+
+    bool isInPartitionMode() {
+        return this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS);
     }
 
     Response execute(std::shared_ptr<Operator> operatorToExecute, const OperationBody& operation, const OperationOptions& options) {

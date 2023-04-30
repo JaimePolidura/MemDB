@@ -7,6 +7,8 @@
 #include "cluster/Cluster.h"
 #include "auth/Authenticator.h"
 #include "config/ConfigurationLoader.h"
+
+#include "persistence/oplog/MultipleOperationLog.h"
 #include "persistence/oplog/SingleOperationLog.h"
 
 class MemDbCreator {
@@ -29,7 +31,7 @@ public:
 private:
     static operationLog_t createOperationLogObject(configuration_t configuration, cluster_t cluster) {
         if(configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS)){
-            //TODO
+            return setupMultipleOplogConfiguration(configuration, cluster);
         }else{
             return std::make_shared<SingleOperationLog>(configuration, "oplog-0");
         }
@@ -41,5 +43,17 @@ private:
         }else{
             return std::make_shared<Cluster>();
         }
+    }
+
+    static operationLog_t setupMultipleOplogConfiguration(configuration_t configuration, cluster_t cluster) {
+        auto fileNameResolver = [](int iterations) -> std::string{
+            return "oplog-" + iterations;
+        };
+        auto oplogResolver = [cluster](const OperationBody& operationBody) -> int{
+            return cluster->getPartitionObject()->getDistanceOfKey(operationBody.args->at(0));
+        };
+
+        return std::make_shared<MultipleOperationLog>(configuration, oplogResolver, fileNameResolver,
+                                                      cluster->getPartitionObject()->getNodesPerPartition());
     }
 };

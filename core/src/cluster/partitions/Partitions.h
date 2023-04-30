@@ -46,6 +46,10 @@ public:
         return this->ringEntries.getDistance(this->selfEntry.nodeId, otherNode) <= this->nodesPerPartition;
     }
 
+    uint32_t getNodesPerPartition() {
+        return this->nodesPerPartition;
+    }
+
 private:
     uint32_t getRingPosition(SimpleString<memDbDataLength_t> key) {
         return HashCalculator::calculate(key.toString()) % this->maxSize;

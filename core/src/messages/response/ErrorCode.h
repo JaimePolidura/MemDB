@@ -10,4 +10,5 @@ public:
     static const constexpr uint8_t ALREADY_REPLICATED = 0x03;
     static const constexpr uint8_t NOT_AUTHORIZED = 0x04;
     static const constexpr uint8_t INVALID_NODE_STATE = 0x05;
+    static const constexpr uint8_t INVALID_PARTITION = 0x06;
 };

@@ -32,7 +32,7 @@ public:
         while(size >= iterations){
             auto nextToActualPointer = actualPointer->next;
 
-            if(actualPointer->entry.ringPosition >= ringPosition && nextToActualPointer->entry.ringPosition <= ringPosition){
+            if(actualPointer->entry.ringPosition >= ringPosition && nextToActualPointer->entry.ringPosition < ringPosition){
                 return actualPointer->entry;
             }
             if(nextToActualPointer == this->head){

@@ -11,7 +11,7 @@ public:
 
         setOtherNodes(cluster, neighborsNodes.neighbors); //Includes self
 
-        cluster->partitions = std::make_shared<Partitions>(ringInfo.entries, ringInfo.nodesPerPartition, ringInfo.maxSize);
+        cluster->partitions = std::make_shared<Partitions>(ringInfo.entries, ringInfo.nodesPerPartition, ringInfo.maxSize, configuration);
     }
 
     clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler(cluster_t cluster) override {

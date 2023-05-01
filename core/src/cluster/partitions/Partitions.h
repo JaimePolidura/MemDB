@@ -27,6 +27,16 @@ public:
 
     Partitions() = default;
 
+    // self --> (clockwise) nodeB
+    bool isClockwiseNeighbor(memdbNodeId_t nodeB) {
+        return this->ringEntries.getDistanceClockwise(this->selfEntry.nodeId, nodeB) <= this->nodesPerPartition;
+    }
+
+    // self --> (clockwise) nodeB
+    bool isCounterClockwiseNeighbor(memdbNodeId_t nodeB) {
+        return this->ringEntries.getDistanceCounterClockwise(this->selfEntry.nodeId, nodeB) <= this->nodesPerPartition;
+    }
+
     uint32_t getDistanceOfKey(SimpleString<memDbDataLength_t> key) {
         uint32_t ringPosition = this->getRingPosition(key);
         uint32_t nodeThatWouldHoldThatKey = this->ringEntries.getRingEntryBelongsToPosition(ringPosition).nodeId;
@@ -36,6 +46,16 @@ public:
 
     bool canHoldKey(SimpleString<memDbDataLength_t> key) {
         return this->getDistanceOfKey(key) <= this->nodesPerPartition;
+    }
+
+    // self <-- (counter clockwise) nodeB
+    uint32_t getDistanceCounterClockwise(memdbNodeId_t nodeB) {
+        return this->ringEntries.getDistanceCounterClockwise(this->selfEntry.nodeId, nodeB);
+    }
+
+    // self --> (clockwise) nodeB
+    uint32_t getDistanceClockwise(memdbNodeId_t nodeB) {
+        return this->ringEntries.getDistanceClockwise(this->selfEntry.nodeId, nodeB);
     }
 
     uint32_t getDistance(memdbNodeId_t otherNode) {
@@ -48,6 +68,10 @@ public:
 
     uint32_t getNodesPerPartition() {
         return this->nodesPerPartition;
+    }
+
+    void add(RingEntry ringEntry){
+        this->ringEntries.add(ringEntry);
     }
 
 private:

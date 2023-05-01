@@ -29,6 +29,14 @@ public:
     auto setNode(memdbNodeId_t nodeId, node_t node) -> void {
         client.put("/nodes/" + std::to_string(nodeId), Node::toJson(node));
     }
+
+    auto getRingEntryByNodeId(memdbNodeId_t nodeId) -> RingEntry {
+        etcd::Response response = this->client.get("/partitions/ring/" + nodeId).get();
+        nlohmann::json responseAsJson = nlohmann::json::parse(response.value().as_string());
+
+        return RingEntry::fromJson(responseAsJson);
+    }
+
 };
 
 using clusterdb_t = std::shared_ptr<ClusterDb>;

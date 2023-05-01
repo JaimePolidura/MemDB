@@ -19,6 +19,7 @@ public:
 
         cluster_t cluster = createClusterObject(logger, configuration);
         operationLog_t operationLog = createOperationLogObject(configuration, cluster);
+        setupClusterChangeWatcher(cluster, operationLog, configuration, logger);
 
         lamportClock_t clock = std::make_shared<LamportClock>(1);
         memDbDataStore_t map = std::make_shared<Map<memDbDataLength_t>>(configuration->get<uint16_t>(ConfigurationKeys::MEMDB_CORE_NUMBER_BUCKETS));
@@ -55,5 +56,18 @@ private:
 
         return std::make_shared<MultipleOperationLog>(configuration, oplogResolver, fileNameResolver,
                                                       cluster->getPartitionObject()->getNodesPerPartition());
+    }
+
+    static void setupClusterChangeWatcher(cluster_t cluster, operationLog_t operationLog, configuration_t configuration, logger_t logger) {
+        if(!configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION)){
+            return;
+        }
+
+        auto setupObject = ClusterCreator::getClusterNodeSetupObject(configuration, logger);
+        auto clusterChangeHandler = setupObject->getClusterDbChangeNodeHandler(cluster, operationLog);
+
+        cluster->watchForChangesInNodesClusterDb([clusterChangeHandler, cluster](node_t changedNode, ClusterDbChangeType type) -> void {
+            clusterChangeHandler->handleChange(cluster, changedNode, type);
+        });
     }
 };

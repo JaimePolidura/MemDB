@@ -9,6 +9,10 @@ struct RingEntryNode {
     RingEntryNode * next;
     RingEntryNode * back;
 
+    RingEntryNode() = default;
+
+    RingEntryNode(RingEntry entry): entry(entry) {}
+
     memdbNodeId_t getNodeId() {
         return this->entry.nodeId;
     }
@@ -23,6 +27,51 @@ public:
     RingEntries(RingEntryNode * head, const std::map<memdbNodeId_t, RingEntryNode *>& indexByNodeId): head(head), indexByNodeId(std::move(indexByNodeId)) {}
 
     RingEntries() = default;
+
+    void add(RingEntry ringEntryToAdd) {
+        uint32_t size = this->indexByNodeId.size();
+        RingEntryNode * newRignEntry = new RingEntryNode(ringEntryToAdd);
+        this->indexByNodeId[ringEntryToAdd.nodeId] = newRignEntry;
+
+        if(size == 0){
+            this->head = newRignEntry;
+            return;
+        }
+        if(size == 1) {
+            if(this->head->entry.ringPosition > ringEntryToAdd.ringPosition){
+                newRignEntry = this->head;
+                this->head = newRignEntry;
+            }
+
+            this->head->next = newRignEntry;
+            this->head->back = newRignEntry;
+            newRignEntry->next = this->head;
+            newRignEntry->back = this->head;
+
+            return;
+        }
+
+        uint32_t iterations = 0;
+        auto actual = this->head;
+        auto prevToActual = this->head->back;
+        while(size >= iterations) {
+            if(actual->entry.ringPosition > ringEntryToAdd.ringPosition &&
+                prevToActual->entry.ringPosition < ringEntryToAdd.ringPosition){
+
+                prevToActual->next = newRignEntry;
+                newRignEntry->back = prevToActual;
+                actual->back = newRignEntry;
+                newRignEntry->next = actual;
+
+                return;
+            }
+
+            prevToActual = actual;
+            actual = actual->next;
+
+            iterations++;
+        }
+    }
 
     RingEntry getRingEntryBelongsToPosition(uint32_t ringPosition) {
         auto actualPointer = this->head;
@@ -45,12 +94,52 @@ public:
         return this->head->entry;
     }
 
+    // nodeA <-- (counter clockwise) nodeB
+    uint32_t getDistanceCounterClockwise(memdbNodeId_t nodeA, memdbNodeId_t nodeB) {
+        uint32_t size = this->indexByNodeId.size();
+        uint32_t iterations = 0;
+
+        auto pointerNodeB = this->indexByNodeId.at(nodeB);
+        auto actualPointerB = pointerNodeB;
+
+        while(size >= iterations) {
+            if(actualPointerB->getNodeId() == nodeA){
+                return iterations;
+            }
+
+            pointerNodeB = pointerNodeB->next;
+            iterations++;
+        }
+
+        return iterations;
+    }
+
+    // nodeA --> (clockwise) nodeB
+    uint32_t getDistanceClockwise(memdbNodeId_t nodeA, memdbNodeId_t nodeB) {
+        uint32_t size = this->indexByNodeId.size();
+        uint32_t iterations = 0;
+
+        auto pointerNodeA = this->indexByNodeId.at(nodeA);
+        auto actualPointerA = pointerNodeA;
+
+        while(size >= iterations) {
+            if(actualPointerA->getNodeId() == nodeB){
+                return iterations;
+            }
+
+            pointerNodeA = pointerNodeA->next;
+            iterations++;
+        }
+
+        return iterations;
+    }
+
     uint32_t getDistance(memdbNodeId_t nodeA, memdbNodeId_t nodeB) {
         uint32_t size = this->indexByNodeId.size();
+        uint32_t iterations = 0;
 
         auto pointerNodeA = this->indexByNodeId.at(nodeA);
         auto pointerNodeB = this->indexByNodeId.at(nodeB);
-        uint32_t iterations = 0;
 
         auto actualPointerA = pointerNodeA;
         auto actualPointerB = pointerNodeB;
@@ -81,8 +170,7 @@ public:
         RingEntryNode * prev = nullptr;
 
         for(int i = 0; i < entries.size(); i++){
-            RingEntryNode * ringEntryNode = new RingEntryNode();
-            ringEntryNode->entry = entries[i];
+            RingEntryNode * ringEntryNode = new RingEntryNode(entries[i]);
 
             if(i == 0){ //First iteration
                 head = ringEntryNode;

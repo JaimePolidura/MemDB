@@ -5,6 +5,8 @@
 
 class PartitionsClusterNodeSetup : public ClusterNodeSetup {
 public:
+    PartitionsClusterNodeSetup(logger_t logger, configuration_t configuration): ClusterNodeSetup(logger, configuration) {}
+
     void setClusterInformation(cluster_t cluster) override {
         GetRingNeighborsResponse neighborsNodes = cluster->clusterManager->getRingNeighbors(configuration->get(ConfigurationKeys::MEMDB_CORE_NODE_ID));
         GetRingInfoResponse ringInfo = cluster->clusterManager->getRingInfo();
@@ -14,7 +16,7 @@ public:
         cluster->partitions = std::make_shared<Partitions>(ringInfo.entries, ringInfo.nodesPerPartition, ringInfo.maxSize, configuration);
     }
 
-    clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler(cluster_t cluster) override {
-        return std::make_shared<PartitionClusterNodeChangeHandler>(cluster->clusterNodes, cluster->logger);
+    clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler(cluster_t cluster, operationLog_t operationLog) override {
+        return std::make_shared<PartitionClusterNodeChangeHandler>(cluster->logger);
     }
 };

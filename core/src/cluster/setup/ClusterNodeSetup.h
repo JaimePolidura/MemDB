@@ -3,6 +3,8 @@
 #include "cluster/Cluster.h"
 #include "cluster/clusterdb/changehandler/ClusterDbNodeChangeHandler.h"
 
+#include "persistence/oplog/OperationLog.h"
+
 class ClusterNodeSetup {
 protected:
     configuration_t configuration;
@@ -14,9 +16,7 @@ public:
     void initializeNodeInCluster(cluster_t cluster) {
         this->logger->info("Setting up node in the cluster");
 
-        cluster->clusterDbNodeChangeHandler = this->getClusterDbChangeNodeHandler(cluster);
         this->setClusterInformation(cluster);
-        cluster->watchForChangesInNodesClusterDb();
         cluster->setBooting();
 
         this->logger->info("Cluster node is now set up");
@@ -28,7 +28,7 @@ public:
 
     virtual void setClusterInformation(cluster_t cluster) = 0;
 
-    virtual clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler(cluster_t cluster) = 0;
+    virtual clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler(cluster_t cluster, operationLog_t operationLog) = 0;
 
 protected:
     void setOtherNodes(cluster_t cluster, const std::vector<node_t>& allNodes) {

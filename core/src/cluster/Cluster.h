@@ -7,7 +7,6 @@
 #include "cluster/NodeState.h"
 #include "cluster/othernodes/ClusterNodes.h"
 #include "cluster/clusterdb/ClusterDb.h"
-#include "cluster/clusterdb/changehandler/ClusterDbNodeChangeHandler.h"
 
 #include "utils/clock/LamportClock.h"
 #include "utils/strings/StringUtils.h"
@@ -21,7 +20,6 @@ class Cluster {
 private:
     configuration_t configuration;
     clusterNodes_t clusterNodes;
-    clusterDbNodeChangeHandler_t clusterDbNodeChangeHandler;
     clusterManagerService_t clusterManager;
     partitions_t partitions;
     clusterdb_t clusterDb;
@@ -31,6 +29,8 @@ private:
     friend class ClusterNodeSetup;
     friend class SimpleClusterNodeSetup;
     friend class PartitionsClusterNodeSetup;
+    friend class SimpleClusterNodeChangeHandler;
+    friend class PartitionClusterNodeChangeHandler;
 
 public:
     Cluster() = default;
@@ -82,14 +82,13 @@ public:
         return this->selfNode->state;
     }
 
-private:
-    auto watchForChangesInNodesClusterDb() -> void {
-        this->clusterDb->watchNodeChanges([this](ClusterDbValueChanged nodeChangedEvent) {
+    auto watchForChangesInNodesClusterDb(std::function<void(node_t nodeChanged, ClusterDbChangeType changeType)> onChangeCallback) -> void {
+        this->clusterDb->watchNodeChanges([this, onChangeCallback](ClusterDbValueChanged nodeChangedEvent) {
             auto node = Node::fromJson(nodeChangedEvent.value);
             auto selfNodeChanged = node->nodeId == this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
 
             if (!selfNodeChanged) {
-                this->clusterDbNodeChangeHandler->handleChange(node, nodeChangedEvent.changeType);
+                onChangeCallback(node, nodeChangedEvent.changeType);
             }
             if (selfNodeChanged && node->state == NodeState::SHUTDOWN) { //Reload
                 this->setRunning();
@@ -97,6 +96,7 @@ private:
         });
     }
 
+private:
     auto createSyncOplogRequest(uint64_t timestamp) -> Request {
         auto authenticationBody = AuthenticationBody{this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY), false, false};
         auto argsVector = std::make_shared<std::vector<SimpleString<memDbDataLength_t>>>();

@@ -5,31 +5,30 @@
 
 class SimpleClusterNodeChangeHandler : public ClusterDbNodeChangeHandler {
 public:
-    SimpleClusterNodeChangeHandler(clusterNodes_t clusterNodes, logger_t logger):
-            ClusterDbNodeChangeHandler(clusterNodes, logger) {}
+    SimpleClusterNodeChangeHandler(logger_t logger): ClusterDbNodeChangeHandler(logger) {}
 
-    void handleChange(node_t nodeChanged, const ClusterDbChangeType changeType) override {
+    void handleChange(cluster_t cluster, node_t nodeChanged, const ClusterDbChangeType changeType) override {
         if(changeType == ClusterDbChangeType::PUT)
-            this->updateNodes(nodeChanged);
+            this->updateNodes(nodeChanged, cluster);
         else if (changeType == ClusterDbChangeType::DELETED)
-            this->deleteNode(nodeChanged);
+            this->deleteNode(nodeChanged, cluster);
     }
 
 private:
-    void updateNodes(node_t node) {
-        auto existsByNodeId = this->clusterNodes->existsByNodeId(node->nodeId);
+    void updateNodes(node_t node, cluster_t cluster) {
+        auto existsByNodeId = cluster->clusterNodes->existsByNodeId(node->nodeId);
 
         if(existsByNodeId){
             this->logger->debugInfo("Detected change of node {0} with new state {1}", node->nodeId, NodeStates::parseNodeStateToString(node->state));
-            this->clusterNodes->setNodeState(node->nodeId, node->state);
+            cluster->clusterNodes->setNodeState(node->nodeId, node->state);
         }else{
             this->logger->debugInfo("Detected new node {0}", node->nodeId);
-            this->clusterNodes->addNode(node);
+            cluster->clusterNodes->addNode(node);
         }
     }
 
-    void deleteNode(node_t &node) {
+    void deleteNode(node_t node, cluster_t cluster) {
         this->logger->debugInfo("Detected deletion of node {0}", node->nodeId);
-        this->clusterNodes->deleteNodeById(node->nodeId);
+        cluster->clusterNodes->deleteNodeById(node->nodeId);
     }
 };

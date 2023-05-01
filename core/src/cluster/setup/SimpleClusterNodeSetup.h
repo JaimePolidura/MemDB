@@ -13,7 +13,7 @@ public:
         setOtherNodes(cluster, otherNodes);
     }
 
-    clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler(cluster_t cluster) override {
-        return std::make_shared<SimpleClusterNodeChangeHandler>(cluster->clusterNodes, cluster->logger);
+    clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler(cluster_t cluster, operationLog_t operationLog) override {
+        return std::make_shared<SimpleClusterNodeChangeHandler>(cluster->logger);
     }
 };

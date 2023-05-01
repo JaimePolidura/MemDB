@@ -4,16 +4,16 @@
 #include "messages/response/ErrorCode.h"
 #include "operators/DbOperatorExecutor.h"
 
-class SetOperator : public Operator, public DbOperatorExecutor {
+class SetOperator : public Operator {
 public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x01;
 
-    Response operate(const OperationBody& operation, const OperationOptions& options, memDbDataStore_t map) override {
+    Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies dependencies) override {
         SimpleString key = operation.args->at(0);
         SimpleString value = operation.args->at(1);
 
         bool ignoreTimestmaps = !options.requestOfNodeToReplicate;
-        bool updated = map->put(key, value, ignoreTimestmaps, operation.timestamp, operation.nodeId);
+        bool updated = dependencies.dbStore->put(key, value, ignoreTimestmaps, operation.timestamp, operation.nodeId);
 
         return updated ?
             Response::success() :
@@ -22,6 +22,10 @@ public:
 
     std::vector<AuthenticationType> authorizedToExecute() override {
         return { AuthenticationType::NODE, AuthenticationType::API };
+    }
+
+    std::vector<OperatorDependency> dependencies() override {
+        return { OperatorDependency::DB_STORE };
     }
 
     constexpr OperatorType type() override {

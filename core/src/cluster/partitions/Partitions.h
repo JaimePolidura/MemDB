@@ -27,6 +27,10 @@ public:
 
     Partitions() = default;
 
+    uint32_t getRingPositionByKey(SimpleString<memDbDataLength_t> key) {
+        return HashCalculator::calculate(key.toString()) % this->maxSize;
+    }
+
     // self --> (clockwise) nodeB
     bool isClockwiseNeighbor(memdbNodeId_t nodeB) {
         return this->ringEntries.getDistanceClockwise(this->selfEntry.nodeId, nodeB) <= this->nodesPerPartition;
@@ -38,7 +42,7 @@ public:
     }
 
     uint32_t getDistanceOfKey(SimpleString<memDbDataLength_t> key) {
-        uint32_t ringPosition = this->getRingPosition(key);
+        uint32_t ringPosition = this->getRingPositionByKey(key);
         uint32_t nodeThatWouldHoldThatKey = this->ringEntries.getRingEntryBelongsToPosition(ringPosition).nodeId;
 
         return this->ringEntries.getDistance(this->selfEntry.nodeId, nodeThatWouldHoldThatKey);
@@ -72,11 +76,6 @@ public:
 
     void add(RingEntry ringEntry){
         this->ringEntries.add(ringEntry);
-    }
-
-private:
-    uint32_t getRingPosition(SimpleString<memDbDataLength_t> key) {
-        return HashCalculator::calculate(key.toString()) % this->maxSize;
     }
 };
 

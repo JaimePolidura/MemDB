@@ -4,6 +4,9 @@
 #include "operators/OperatorRegistry.h"
 #include "operators/DbOperatorExecutor.h"
 #include "operators/MaintenanceOperatorExecutor.h"
+#include "operators/dependencies/OperatorDependencies.h"
+#include "operators/dependencies/OperatorDependency.h"
+
 #include "messages/response/ErrorCode.h"
 #include "persistence/oplog/SingleOperationLog.h"
 #include "utils/clock/LamportClock.h"
@@ -70,9 +73,11 @@ public:
     Response executeOperator(std::shared_ptr<Operator> operatorToExecute,
                     const OperationBody& operation,
                     const OperationOptions& options) {
-        Response result = this->execute(operatorToExecute, operation, options);
 
-        this->logger->debugInfo("Executed {0} write request for operator {1} from {2}",
+        OperatorDependencies dependencies = this->getDependencies(operatorToExecute);
+        Response result = operatorToExecute->operate(operation, options, dependencies);
+
+        this->logger->debugInfo("Executed {0} append request for operator {1} from {2}",
                                 result.isSuccessful ? "successfuly" : "unsuccessfuly",
                                 operatorToExecute->name(), options.requestOfNodeToReplicate ? "node" : "user");
 
@@ -102,6 +107,30 @@ public:
     }
 
 private:
+    OperatorDependencies getDependencies(std::shared_ptr<Operator> operatorToGetDependecies) {
+        OperatorDependencies dependencies;
+        
+        for(auto dependency : operatorToGetDependecies->dependencies()){
+            this->getDependecy(dependency, &dependencies);
+        }
+
+        return dependencies;
+    }
+
+    void getDependecy(OperatorDependency dependency, OperatorDependencies * operatorDependencies){
+        switch (dependency) {
+            case OPERATION_LOG:
+                operatorDependencies->operationLog = this->operationLog;
+                break;
+            case DB_STORE:
+                operatorDependencies->dbStore = this->db;
+                break;
+            case CLUSTER:
+                operatorDependencies->cluster = this->cluster;
+                break;
+        }
+    }
+    
     void applyReplicatedOperationBufferIfNotEmpty() {
         if(!this->replicationOperationBuffer->isEmpty()){
             this->applyReplicatedOperationBuffer();
@@ -124,12 +153,6 @@ private:
 
     bool isInPartitionMode() {
         return this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS);
-    }
-
-    Response execute(std::shared_ptr<Operator> operatorToExecute, const OperationBody& operation, const OperationOptions& options) {
-        return operatorToExecute->type() == OperatorType::CONTROL ?
-               dynamic_cast<MaintenanceOperatorExecutor *>(operatorToExecute.get())->operate(operation, options, this->operationLog) :
-               dynamic_cast<DbOperatorExecutor *>(operatorToExecute.get())->operate(operation, options, this->db);
     }
 };
 

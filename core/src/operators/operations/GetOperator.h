@@ -4,20 +4,20 @@
 #include "messages/response/ErrorCode.h"
 #include "operators/DbOperatorExecutor.h"
 
-class GetOperator : public Operator, public DbOperatorExecutor {
+class GetOperator : public Operator {
 public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x02;
 
-    Response operate(const OperationBody& operation, const OperationOptions& operationOptions, memDbDataStore_t map) override {
-        std::optional<MapEntry<memDbDataLength_t>> result = map->get(operation.args->at(0));
+    Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies dependencies) override {
+        std::optional<MapEntry<memDbDataLength_t>> result = dependencies.dbStore->get(operation.args->at(0));
 
         return result.has_value() ?
                Response::success(result.value().value) :
                Response::error(ErrorCode::UNKNOWN_KEY); //No successful
     }
 
-    std::string name() override {
-        return "GET";
+    std::vector<OperatorDependency> dependencies() override {
+        return { OperatorDependency::DB_STORE };
     }
 
     std::vector<AuthenticationType> authorizedToExecute() override {
@@ -30,5 +30,9 @@ public:
 
     constexpr uint8_t operatorNumber() override {
         return OPERATOR_NUMBER;
+    }
+
+    std::string name() override {
+        return "GET";
     }
 };

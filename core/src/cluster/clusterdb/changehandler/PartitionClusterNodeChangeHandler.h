@@ -4,38 +4,32 @@
 
 class PartitionClusterNodeChangeHandler : public ClusterDbNodeChangeHandler {
 public:
-    PartitionClusterNodeChangeHandler(logger_t logger): ClusterDbNodeChangeHandler(logger) {}
+    PartitionClusterNodeChangeHandler(logger_t logger, cluster_t cluster, operationLog_t operationLog): ClusterDbNodeChangeHandler(logger, cluster, operationLog) {}
 
-    void handleChange(cluster_t cluster, node_t nodeChanged, const ClusterDbChangeType changeType) override {
+    void handleChange(node_t nodeChanged, const ClusterDbChangeType changeType) override {
         if(changeType == ClusterDbChangeType::DELETED) {
-            this->handleDeletionOfNode(cluster, nodeChanged);
+            this->handleDeletionOfNode(nodeChanged);
         }else if(cluster->clusterNodes->existsByNodeId(nodeChanged->nodeId)) {
             this->handleChangeStateOfNode(cluster, nodeChanged);
         }else {
-            this->handleNewNode(cluster, nodeChanged);
+            this->handleNewNode(nodeChanged);
         }
     }
 
 private:
-    void handleNewNode(cluster_t cluster, node_t newNode) {
+    void handleNewNode(node_t newNode) {
         RingEntry ringEntryAdded = cluster->clusterDb->getRingEntryByNodeId(newNode->nodeId);
-        if(cluster->selfNode->nodeId == newNode->nodeId)
-            return;
-
         cluster->partitions->add(ringEntryAdded);
 
-        if(!cluster->partitions->isNeighbor(newNode->nodeId))
+        if(cluster->selfNode->nodeId == newNode->nodeId || !cluster->partitions->isNeighbor(newNode->nodeId))
             return;
 
         cluster->setBooting();
 
-        auto selfNodeId = cluster->configuration->get(ConfigurationKeys::MEMDB_CORE_NODE_ID);
-        auto neighbors = cluster->clusterManager->getRingNeighbors(selfNodeId).neighbors;
-        cluster->clusterNodes->setOtherNodes(neighbors);
+        updateNeighbors();
 
-        //Recompute hash keys of oplog-0 and send to new node
         if(cluster->partitions->getDistanceClockwise(newNode->nodeId) == 1){
-            recomputeOplog0(cluster);
+            recomputeSelfOplogAndSendNextNode(ringEntryAdded);
         }
         if(cluster->partitions->isCounterClockwiseNeighbor(newNode->nodeId)){
             //-1 oplog of all keys prev to newNode in nodesPerPartition
@@ -44,10 +38,33 @@ private:
         cluster->setRunning();
     }
 
-    void recomputeOplog0(cluster_t cluster) {
+    void updateNeighbors() {
+        auto selfNodeId = cluster->configuration->get(ConfigurationKeys::MEMDB_CORE_NODE_ID);
+        auto neighbors = cluster->clusterManager->getRingNeighbors(selfNodeId).neighbors;
+        cluster->clusterNodes->setOtherNodes(neighbors);
     }
 
-    void handleDeletionOfNode(cluster_t cluster, node_t changedNode) {
+    void recomputeSelfOplogAndSendNextNode(RingEntry newRingEntryAdded) {
+        std::vector<OperationBody> allActualOplogs = this->operationLog->getAllFromDisk(OperationLogQueryOptions{.operationLogId = 0});
+        std::vector<OperationBody> oplogSelfNode;
+        std::vector<OperationBody> oplogNextNode;
+        oplogSelfNode.reserve(allActualOplogs.size() / 2);
+        oplogNextNode.reserve(allActualOplogs.size() / 2);
+
+        for(const OperationBody oplog : allActualOplogs){
+            SimpleString<memDbDataLength_t> key = oplog.args->at(0);
+            bool keyBelongsToNextNode = this->cluster->partitions->getRingPositionByKey(key) >= newRingEntryAdded.ringPosition;
+
+            if(keyBelongsToNextNode)
+                oplogNextNode.push_back(oplog);
+            else
+                oplogSelfNode.push_back(oplog);
+        }
+
+
+    }
+
+    void handleDeletionOfNode(node_t changedNode) {
         //TODO
     }
 

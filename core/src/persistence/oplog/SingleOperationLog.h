@@ -35,8 +35,12 @@ public:
         this->operationLogBuffer->add(operation);
     }
 
+    void replaceAll(std::vector<OperationBody> toReplace, const OperationLogQueryOptions options = {}) override {
+        this->operationsLogDiskWriter.write(toReplace);
+    }
+
     std::vector<OperationBody> getAfterTimestamp(uint64_t since, const OperationLogQueryOptions options = {}) override {
-        this->lockWritesToDisk();
+        this->operationLogBuffer->lockFlushToDisk();
 
         uint64_t oldestTimestampInBuffer = operationLogBuffer->getOldestTimestampAdded();
         uint64_t lastestTimestampInBuffer = operationLogBuffer->getLatestTimestampAdded();
@@ -46,15 +50,15 @@ public:
             return std::vector<OperationBody>{};
         }
 
-        if(!bufferEmtpy && since >= oldestTimestampInBuffer && since <= lastestTimestampInBuffer = {}) {
+        if(!bufferEmtpy && since >= oldestTimestampInBuffer && since <= lastestTimestampInBuffer) {
             std::vector<OperationBody> compactedFromBuffer = this->compacter.compact(this->operationLogBuffer->get());
-            this->unlockWritesToDisk();
+            this->operationLogBuffer->unlockFlushToDisk();
 
             return this->fiterIfTimestampAfterThan(compactedFromBuffer, since);
         }else{
             std::vector<OperationBody> compactedFromBuffer = this->operationLogBuffer->get();
             std::vector<OperationBody> compactedFromDisk = this->operationLogDiskLoader.getAll();
-            this->unlockWritesToDisk();
+            this->operationLogBuffer->unlockFlushToDisk();
 
             std::vector<OperationBody> compacted = this->compacter.compact(Utils::concat(compactedFromDisk, compactedFromBuffer));
 
@@ -65,7 +69,6 @@ public:
     std::vector<OperationBody> getAllFromDisk(const OperationLogQueryOptions options = {}) override {
         std::vector<OperationBody> fromDisk = this->operationLogDiskLoader.getAll();
         std::vector<OperationBody> compacted = this->compacter.compact(fromDisk);
-        this->operationsLogDiskWriter.write(compacted);
 
         return compacted;
     }
@@ -88,18 +91,10 @@ private:
         return operations;
     }
 
-    void lockWritesToDisk() {
-        return this->operationLogBuffer->lockFlushToDisk();
-    }
-
-    void unlockWritesToDisk() {
-        return this->operationLogBuffer->unlockFlushToDisk();
-    }
-
     void flushToDisk(const std::vector<OperationBody>& operationsInBuffer) {
         std::vector<OperationBody> compacted = this->compacter.compact(operationsInBuffer);
 
-        this->operationsLogDiskWriter.write(compacted);
+        this->operationsLogDiskWriter.append(compacted);
     }
 };
 

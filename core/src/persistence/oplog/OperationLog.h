@@ -16,6 +16,8 @@ public:
 
     virtual void add(const OperationBody& operation) = 0;
 
+    virtual void replaceAll(std::vector<OperationBody> toReplace, const OperationLogQueryOptions options = {}) = 0;
+
     virtual std::vector<OperationBody> getAfterTimestamp(uint64_t timestamp, const OperationLogQueryOptions options = {}) = 0;
 
     virtual std::vector<OperationBody> getAllFromDisk(const OperationLogQueryOptions options = {}) = 0;

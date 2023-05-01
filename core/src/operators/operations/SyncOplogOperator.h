@@ -16,21 +16,21 @@ private:
 public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x05;
 
-    Response operate(const OperationBody& operation, const OperationOptions& operationOptions, operationLog_t operationLog) override {
+    Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies dependencies) override {
         uint64_t lastTimestampUnsync = parseUnsyncTimestampFromRequest(operation);
 
-        std::vector<OperationBody> unsyncedOplog = operationLog->getAfterTimestamp(lastTimestampUnsync);
+        std::vector<OperationBody> unsyncedOplog = dependencies.operationLog->getAfterTimestamp(lastTimestampUnsync);
         std::vector<uint8_t> serializedUnsyncedOpLog = this->serializeOperations(unsyncedOplog);
 
         return Response::success(SimpleString<memDbDataLength_t>::fromVector(serializedUnsyncedOpLog));
     }
 
-    std::vector<AuthenticationType> authorizedToExecute() override {
-        return { AuthenticationType::NODE };
+    std::vector<OperatorDependency> dependencies() override {
+        return { OperatorDependency::OPERATION_LOG };
     }
 
-    std::string name() override {
-        return "SYNC_OPLOG";
+    std::vector<AuthenticationType> authorizedToExecute() override {
+        return { AuthenticationType::NODE };
     }
 
     constexpr OperatorType type() override {
@@ -39,6 +39,10 @@ public:
 
     constexpr uint8_t operatorNumber() override {
         return OPERATOR_NUMBER;
+    }
+
+    std::string name() override {
+        return "SYNC_OPLOG";
     }
 
 private:

@@ -17,6 +17,6 @@ public:
     }
 
     clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler(cluster_t cluster, operationLog_t operationLog) override {
-        return std::make_shared<PartitionClusterNodeChangeHandler>(cluster->logger);
+        return std::make_shared<PartitionClusterNodeChangeHandler>(cluster->logger, cluster, operationLog);
     }
 };

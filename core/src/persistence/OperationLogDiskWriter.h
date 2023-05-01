@@ -8,7 +8,7 @@
 class OperationsLogDiskWriter {
 private:
     OperationLogSerializer operationLogSerializer;
-    std::mutex writeFileLock;
+    std::recursive_mutex writeFileLock;
     bool fileCreated = false;
     std::string oplogFileName;
 
@@ -17,9 +17,28 @@ public:
 
     void write(const std::vector<OperationBody>& toWrite) {
         this->createFileIfNotExists();
+        std::vector<uint8_t> serialized = this->serializeAll(toWrite);
+
+        writeFileLock.lock();
+        FileUtils::writeBytes(FileUtils::getFileInProgramBasePath("memdb", this->oplogFileName), serialized);
+        writeFileLock.unlock();
+    }
+
+    void append(const std::vector<OperationBody>& toWrite) {
+        this->createFileIfNotExists();
 
         std::vector<uint8_t> serialized = this->serializeAll(toWrite);
-        this->writeAppendModeSerialized(serialized);
+        writeFileLock.lock();
+        FileUtils::appendBytes(FileUtils::getFileInProgramBasePath("memdb", this->oplogFileName), serialized);
+        writeFileLock.unlock();
+    }
+
+    void lockWrites() {
+        this->writeFileLock.lock();
+    }
+
+    void unlockWrites() {
+        this->writeFileLock.unlock();
     }
 
 private:
@@ -36,14 +55,6 @@ private:
         }
 
         this->fileCreated = true;
-    }
-
-    void writeAppendModeSerialized(const std::vector<uint8_t>& serialized) {
-        writeFileLock.lock();
-
-        FileUtils::appendBytes(FileUtils::getFileInProgramBasePath("memdb", this->oplogFileName), serialized);
-
-        writeFileLock.unlock();
     }
 
     std::vector<uint8_t> serializeAll(const std::vector<OperationBody>& toSerialize) {

@@ -66,8 +66,8 @@ private:
         auto setupObject = ClusterCreator::getClusterNodeSetupObject(configuration, logger);
         auto clusterChangeHandler = setupObject->getClusterDbChangeNodeHandler(cluster, operationLog);
 
-        cluster->watchForChangesInNodesClusterDb([clusterChangeHandler, cluster](node_t changedNode, ClusterDbChangeType type) -> void {
-            clusterChangeHandler->handleChange(cluster, changedNode, type);
+        cluster->watchForChangesInNodesClusterDb([clusterChangeHandler](node_t changedNode, ClusterDbChangeType type) -> void {
+            clusterChangeHandler->handleChange(changedNode, type);
         });
     }
 };

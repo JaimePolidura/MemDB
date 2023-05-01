@@ -5,9 +5,9 @@
 
 class SimpleClusterNodeChangeHandler : public ClusterDbNodeChangeHandler {
 public:
-    SimpleClusterNodeChangeHandler(logger_t logger): ClusterDbNodeChangeHandler(logger) {}
+    SimpleClusterNodeChangeHandler(logger_t logger, cluster_t cluster, operationLog_t operationLog): ClusterDbNodeChangeHandler(logger, cluster, operationLog) {}
 
-    void handleChange(cluster_t cluster, node_t nodeChanged, const ClusterDbChangeType changeType) override {
+    void handleChange(node_t nodeChanged, const ClusterDbChangeType changeType) override {
         if(changeType == ClusterDbChangeType::PUT)
             this->updateNodes(nodeChanged, cluster);
         else if (changeType == ClusterDbChangeType::DELETED)

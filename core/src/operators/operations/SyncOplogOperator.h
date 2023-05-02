@@ -20,7 +20,7 @@ public:
         uint64_t lastTimestampUnsync = parseUnsyncTimestampFromRequest(operation);
 
         std::vector<OperationBody> unsyncedOplog = dependencies.operationLog->getAfterTimestamp(lastTimestampUnsync);
-        std::vector<uint8_t> serializedUnsyncedOpLog = this->serializeOperations(unsyncedOplog);
+        std::vector<uint8_t> serializedUnsyncedOpLog = this->operationLogSerializer.serializeAll(unsyncedOplog);
 
         return Response::success(SimpleString<memDbDataLength_t>::fromVector(serializedUnsyncedOpLog));
     }
@@ -46,14 +46,6 @@ public:
     }
 
 private:
-    std::vector<uint8_t> serializeOperations(const std::vector<OperationBody>& operations) {
-        std::vector<uint8_t> serialized{};
-        for(auto it = operations.begin(); it < operations.end(); it++)
-            this->operationLogSerializer.serialize(serialized, * it);
-
-        return serialized;
-    }
-
     //Timestamp is 64 bits Axtual memdb data size is 32 bits. Doest fit, we pass two args that consist of the two parts
     uint64_t parseUnsyncTimestampFromRequest(const OperationBody &operation) const {
         uint32_t part1 = Utils::parse<uint32_t>(operation.args->at(0).data());

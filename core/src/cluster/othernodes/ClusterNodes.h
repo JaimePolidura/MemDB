@@ -72,6 +72,14 @@ public:
         }
     }
 
+    auto sendRequest(memdbNodeId_t nodeId, const Request& request) -> Response {
+        node_t node = this->getNodeById(nodeId);
+
+        return Utils::retryUntilSuccessAndGet<Response, std::milli>(std::chrono::milliseconds(100), [node, &request]() -> Response {
+            return node->sendRequest(request, true).value();
+        });
+    }
+
     auto sendRequestToRandomNode(const Request& request) -> std::optional<Response> {
         std::set<memdbNodeId_t> alreadyCheckedNodesId = {};
 

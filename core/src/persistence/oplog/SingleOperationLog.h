@@ -35,11 +35,11 @@ public:
         this->operationLogBuffer->add(operation);
     }
 
-    void replaceAll(std::vector<OperationBody> toReplace, const OperationLogQueryOptions options = {}) override {
+    void replaceAll(const std::vector<OperationBody>& toReplace, const OperationLogOptions options = {}) override {
         this->operationsLogDiskWriter.write(toReplace);
     }
 
-    std::vector<OperationBody> getAfterTimestamp(uint64_t since, const OperationLogQueryOptions options = {}) override {
+    std::vector<OperationBody> getAfterTimestamp(uint64_t since, const OperationLogOptions options = {}) override {
         this->operationLogBuffer->lockFlushToDisk();
 
         uint64_t oldestTimestampInBuffer = operationLogBuffer->getOldestTimestampAdded();
@@ -66,7 +66,7 @@ public:
         }
     }
 
-    std::vector<OperationBody> getAllFromDisk(const OperationLogQueryOptions options = {}) override {
+    std::vector<OperationBody> getAllFromDisk(const OperationLogOptions options = {}) override {
         std::vector<OperationBody> fromDisk = this->operationLogDiskLoader.getAll();
         std::vector<OperationBody> compacted = this->compacter.compact(fromDisk);
 

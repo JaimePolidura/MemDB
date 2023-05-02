@@ -24,8 +24,13 @@ public:
         return this->size != 0 || this->value.get() != nullptr;
     }
 
-    std::string toString() {
+    std::string toString() const {
         return std::string((char *) this->value.get(), this->size);
+    }
+
+    //TODO Avoid copy. See std::span
+    std::vector<uint8_t> toVector() const {
+        return std::vector<uint8_t>(this->value.get(), this->value.get() + this->size);
     }
 
     uint8_t * operator[](int index) const {

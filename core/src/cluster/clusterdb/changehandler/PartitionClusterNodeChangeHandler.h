@@ -19,6 +19,7 @@ public:
 private:
     void handleNewNode(node_t newNode) {
         RingEntry ringEntryAdded = cluster->clusterDb->getRingEntryByNodeId(newNode->nodeId);
+        uint32_t nodesPerPartition = cluster->partitions->getNodesPerPartition();
         cluster->partitions->add(ringEntryAdded);
 
         if(cluster->selfNode->nodeId == newNode->nodeId || !cluster->partitions->isNeighbor(newNode->nodeId))
@@ -38,12 +39,6 @@ private:
         cluster->setRunning();
     }
 
-    void updateNeighbors() {
-        auto selfNodeId = cluster->configuration->get(ConfigurationKeys::MEMDB_CORE_NODE_ID);
-        auto neighbors = cluster->clusterManager->getRingNeighbors(selfNodeId).neighbors;
-        cluster->clusterNodes->setOtherNodes(neighbors);
-    }
-
     void recomputeSelfOplogAndSendNextNode(RingEntry newRingEntryAdded) {
         std::vector<OperationBody> allActualOplogs = this->operationLog->getAllFromDisk(OperationLogQueryOptions{.operationLogId = 0});
         std::vector<OperationBody> oplogSelfNode;
@@ -61,7 +56,35 @@ private:
                 oplogSelfNode.push_back(oplog);
         }
 
+        //Send oplogNextNode to next node
+        if(!oplogNextNode.empty()){
+            cluster->clusterNodes->sendRequest(newRingEntryAdded.nodeId, createSetPartitionOplogRequest(oplogNextNode));
+        }
+        if(!oplogSelfNode.empty()){
 
+        }
+
+    }
+
+    Request createSetPartitionOplogRequest(const std::vector<OperationBody>& oplog) {
+        OperationLogSerializer operationLogSerializer{};
+        auto serialized = operationLogSerializer.serializeAllShared(oplog);
+
+        OperationBody operationBody{};
+        operationBody.operatorNumber = 0x06; //SetNewPartitionOplogOperator
+        args_t args = OperationBody::createOperationBodyArg();
+        args->push_back(SimpleString<memDbDataLength_t>::fromVector(*serialized));
+
+        Request request{};
+        request.operation = operationBody;
+
+        return request;
+    }
+
+    void updateNeighbors() {
+        auto selfNodeId = cluster->configuration->get(ConfigurationKeys::MEMDB_CORE_NODE_ID);
+        auto neighbors = cluster->clusterManager->getRingNeighbors(selfNodeId).neighbors;
+        cluster->clusterNodes->setOtherNodes(neighbors);
     }
 
     void handleDeletionOfNode(node_t changedNode) {

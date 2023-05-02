@@ -3,7 +3,7 @@
 #include "messages/request/Request.h"
 #include "config/Configuration.h"
 
-struct OperationLogQueryOptions {
+struct OperationLogOptions {
     int operationLogId;
 };
 
@@ -16,11 +16,11 @@ public:
 
     virtual void add(const OperationBody& operation) = 0;
 
-    virtual void replaceAll(std::vector<OperationBody> toReplace, const OperationLogQueryOptions options = {}) = 0;
+    virtual void replaceAll(const std::vector<OperationBody>& toReplace, const OperationLogOptions options = {}) = 0;
 
-    virtual std::vector<OperationBody> getAfterTimestamp(uint64_t timestamp, const OperationLogQueryOptions options = {}) = 0;
+    virtual std::vector<OperationBody> getAfterTimestamp(uint64_t timestamp, const OperationLogOptions options = {}) = 0;
 
-    virtual std::vector<OperationBody> getAllFromDisk(const OperationLogQueryOptions options = {}) = 0;
+    virtual std::vector<OperationBody> getAllFromDisk(const OperationLogOptions options = {}) = 0;
 };
 
 using operationLog_t = std::shared_ptr<OperationLog>;

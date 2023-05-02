@@ -23,14 +23,19 @@ public:
         oplog->add(operation);
     }
 
-    std::vector<OperationBody> getAfterTimestamp(uint64_t timestamp, OperationLogQueryOptions options) override {
+    void replaceAll(const std::vector<OperationBody>& toReplace, const OperationLogOptions options = {}) override {
+        singleOperationLog_t opLogToReplace = operationLogs.at(options.operationLogId);
+        opLogToReplace->replaceAll(toReplace);
+    }
+
+    std::vector<OperationBody> getAfterTimestamp(uint64_t timestamp, OperationLogOptions options) override {
         int oplogId = options.operationLogId;
         singleOperationLog_t oplog = this->operationLogs[oplogId];
 
         return oplog->getAfterTimestamp(timestamp, options);
     }
 
-    std::vector<OperationBody> getAllFromDisk(OperationLogQueryOptions options = {}) override {
+    std::vector<OperationBody> getAllFromDisk(OperationLogOptions options = {}) override {
         std::vector<OperationBody> totalFromDisk{};
 
         for(singleOperationLog_t singleOperationLog : this->operationLogs) {

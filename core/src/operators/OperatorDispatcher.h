@@ -81,7 +81,7 @@ public:
                                 result.isSuccessful ? "successfuly" : "unsuccessfuly",
                                 operatorToExecute->name(), options.requestOfNodeToReplicate ? "node" : "user");
 
-        if(operatorToExecute->type() == WRITE && result.isSuccessful) {
+        if(operatorToExecute->type() == WRITE && result.isSuccessful && !options.onlyExecute) {
             this->operationLog->add(operation);
 
             if(!options.requestOfNodeToReplicate) {
@@ -127,6 +127,11 @@ private:
                 break;
             case CLUSTER:
                 operatorDependencies->cluster = this->cluster;
+                break;
+            case OPERATOR_DISPATCHER:
+                operatorDependencies->operatorDispatcher = [this](const OperationBody& op, const OperationOptions& options) -> Response {
+                    return this->executeOperator(this->operatorRegistry->get(op.operatorNumber), op, options);
+                };
                 break;
         }
     }

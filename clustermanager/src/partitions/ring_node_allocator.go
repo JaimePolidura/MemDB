@@ -11,7 +11,26 @@ import (
 type RingNodeAllocator struct {
 	HashCalculator       utils.HashCalculator
 	PartitionsRepository partitions.PartitionRepository
-	nodeRepository       nodes.NodeRepository
+	NodeRepository       nodes.NodeRepository
+}
+
+func (ringNodeAllocator *RingNodeAllocator) CanAllocateNode(nodeId nodes.NodeId_t) bool {
+	ringEntriesSorted, err := ringNodeAllocator.PartitionsRepository.GetRingEntriesSorted()
+	nodesPerPartition, err := ringNodeAllocator.PartitionsRepository.GetNodesPerPartition()
+	if err != nil {
+		return false
+	}
+
+	neighbors, _ := ringEntriesSorted.GetNeighborsByNodeId(nodeId, nodesPerPartition)
+
+	for _, neighbor := range neighbors {
+		node, err := ringNodeAllocator.NodeRepository.FindById(neighbor.NodeId)
+		if err != nil && node.State != nodes.RUNNING {
+			return false
+		}
+	}
+
+	return true
 }
 
 func (ringNodeAllocator *RingNodeAllocator) Allocate(nodeId nodes.NodeId_t) (partitions.PartitionRingEntry, error) {
@@ -55,7 +74,7 @@ func (ringNodeAllocator *RingNodeAllocator) getPositionRingOfNode(nodeId nodes.N
 
 func (ringNodeAllocator *RingNodeAllocator) nodeNotAvailable(ringEntries partitions.PartitionRingEntries, position uint32) bool {
 	_, counterClockWiseNeighbor, _ := ringEntries.GetNeighborByRingPosition(position)
-	nodeClockwise, err := ringNodeAllocator.nodeRepository.FindById(counterClockWiseNeighbor.NodeId)
+	nodeClockwise, err := ringNodeAllocator.NodeRepository.FindById(counterClockWiseNeighbor.NodeId)
 
 	if err != nil {
 		return true

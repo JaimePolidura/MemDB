@@ -14,13 +14,14 @@ type EtcdClient[T any] struct {
 	Timeout      time.Duration
 }
 
-func (client EtcdClient[T]) Put(key string, value T, mediaType EtcdMediaType) error {
+func (client EtcdClient[T]) Put(key string, value T, mediaType EtcdMediaType, txn clientv3.Txn) error {
 	valueToWriteEtcd, err := client.convertFromMediaType(value, mediaType)
 	if err != nil {
 		return err
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	
 	_, err = client.NativeClient.Put(ctx, key, string(valueToWriteEtcd))
 	cancel()
 

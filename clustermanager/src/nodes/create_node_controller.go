@@ -36,14 +36,18 @@ func (controller *CreateNodeController) CreateNode(context echo.Context) error {
 	}
 
 	//TODO Add transactions to etcdclient
+	if controller.Configuration.GetBoolean(configuration_keys.MEMDB_CLUSTERMANAGER_USE_PARTITIONS) {
+		if !controller.RingNodeAllocator.CanAllocateNode(request.NodeId) {
+			return context.JSON(http.StatusBadRequest, "All neighbor nodes have to be in RUNNING state")
+		}
+
+		_, err = controller.RingNodeAllocator.Allocate(request.NodeId)
+	}
 	err = controller.NodesRepository.Add(nodes.Node{
 		NodeId:  request.NodeId,
 		Address: request.Address,
 		State:   nodes.BOOTING,
 	})
-	if controller.Configuration.GetBoolean(configuration_keys.MEMDB_CLUSTERMANAGER_USE_PARTITIONS) {
-		_, err = controller.RingNodeAllocator.Allocate(request.NodeId)
-	}
 
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)

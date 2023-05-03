@@ -3,6 +3,7 @@
 #include "persistence/oplog/OperationLog.h"
 #include "persistence/oplog/SingleOperationLog.h"
 
+//TODO Race conditions
 class MultipleOperationLog : public OperationLog {
 private:
     std::vector<singleOperationLog_t> operationLogs;
@@ -16,11 +17,17 @@ public:
         this->initializeOplogs(numberOplogs, oplogFileNameResolver);
     }
 
-    void add(const OperationBody& operation) override {
+    void addAll(const std::vector<OperationBody>& operations, const OperationLogOptions options = {}) {
+        for (const OperationBody& operation: operations) {
+            this->add(operation, options);
+        }
+    }
+
+    void add(const OperationBody& operation, const OperationLogOptions options = {}) override {
         int oplogId = this->oplogResolver(operation);
         singleOperationLog_t oplog = this->operationLogs[oplogId];
 
-        oplog->add(operation);
+        oplog->add(operation, options);
     }
 
     void replaceAll(const std::vector<OperationBody>& toReplace, const OperationLogOptions options = {}) override {
@@ -28,9 +35,17 @@ public:
         opLogToReplace->replaceAll(toReplace);
     }
 
+    std::vector<OperationBody> clear(const OperationLogOptions options = {}) {
+        singleOperationLog_t operationLogToClear = this->operationLogs.at(options.operationLogId);
+        auto operationsCleared = operationLogToClear->clear(options);
+
+        this->operationLogs.erase(this->operationLogs.begin() + options.operationLogId);
+
+        return operationsCleared;
+    }
+
     std::vector<OperationBody> getAfterTimestamp(uint64_t timestamp, OperationLogOptions options) override {
-        int oplogId = options.operationLogId;
-        singleOperationLog_t oplog = this->operationLogs[oplogId];
+        singleOperationLog_t oplog = this->operationLogs[options.operationLogId];
 
         return oplog->getAfterTimestamp(timestamp, options);
     }

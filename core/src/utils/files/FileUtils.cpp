@@ -93,6 +93,7 @@ void FileUtils::clear(const std::string &path) {
     std::ofstream myfile;
     myfile.open(path, std::ios::trunc);
     myfile.close();
+    std::remove(path.data());
 }
 
 std::vector<uint8_t> FileUtils::readBytes(const std::string &path) {

@@ -44,22 +44,22 @@ public:
             return Response::error(ErrorCode::NOT_AUTHORIZED);
         }
 
-        OperationOptions options = {.requestOfNodeToReplicate = request.authenticationType == AuthenticationType::NODE &&
+        OperationOptions options = {.checkTimestamps = request.authenticationType == AuthenticationType::NODE &&
                                     operatorToExecute->type() == OperatorType::WRITE};
 
         this->logger->debugInfo("Recieved request for operator {0} from {1}", request.requestNumber, operatorToExecute->name(),
-                                options.requestOfNodeToReplicate ? "node" : "user");
+                                options.checkTimestamps ? "node" : "user");
 
         if(this->isInReplicationMode() &&
             (!NodeStates::canAcceptRequest(this->cluster->getNodeState()) ||
-            (!options.requestOfNodeToReplicate && !NodeStates::cantExecuteRequest(this->cluster->getNodeState())))) {
+            (!options.checkTimestamps && !NodeStates::cantExecuteRequest(this->cluster->getNodeState())))) {
             return Response::error(ErrorCode::INVALID_NODE_STATE);
         }
-        if(this->isInReplicationMode() && this->isInReplicationMode() && options.requestOfNodeToReplicate &&
-            !this->cluster->getPartitionObject()->canHoldKey(request.operation.args->at(0))){
+        if(this->isInReplicationMode() && this->isInReplicationMode() && options.checkTimestamps &&
+           !this->cluster->getPartitionObject()->canHoldKey(request.operation.args->at(0))){
             return Response::error(ErrorCode::INVALID_PARTITION);
         }
-        if(this->isInReplicationMode() && options.requestOfNodeToReplicate &&
+        if(this->isInReplicationMode() && options.checkTimestamps &&
            !NodeStates::cantExecuteRequest(this->cluster->getNodeState())){
             this->replicationOperationBuffer->add(request);
             return Response::success();
@@ -79,20 +79,20 @@ public:
 
         this->logger->debugInfo("Executed {0} append request for operator {1} from {2}",
                                 result.isSuccessful ? "successfuly" : "unsuccessfuly",
-                                operatorToExecute->name(), options.requestOfNodeToReplicate ? "node" : "user");
+                                operatorToExecute->name(), options.checkTimestamps ? "node" : "user");
 
         if(operatorToExecute->type() == WRITE && result.isSuccessful && !options.onlyExecute) {
             this->operationLog->add(operation);
 
-            if(!options.requestOfNodeToReplicate) {
+            if(!options.checkTimestamps) {
                 result.timestamp = this->clock->tick(operation.timestamp);
             }
 
-            if(this->isInReplicationMode() && !options.requestOfNodeToReplicate){
+            if(this->isInReplicationMode() && !options.checkTimestamps){
                 this->cluster->broadcast(operation);
 
                 this->logger->debugInfo("Broadcasted request for operator {0} from {1}",
-                                        operatorToExecute->name(), options.requestOfNodeToReplicate ? "node" : "user");
+                                        operatorToExecute->name(), options.checkTimestamps ? "node" : "user");
             }
         }
 

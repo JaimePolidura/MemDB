@@ -19,12 +19,13 @@ public:
 
         cluster_t cluster = createClusterObject(logger, configuration);
         operationLog_t operationLog = createOperationLogObject(configuration, cluster);
-        setupClusterChangeWatcher(cluster, operationLog, configuration, logger);
 
         lamportClock_t clock = std::make_shared<LamportClock>(1);
         memDbDataStore_t map = std::make_shared<Map<memDbDataLength_t>>(configuration->get<uint16_t>(ConfigurationKeys::MEMDB_CORE_NUMBER_BUCKETS));
         operatorDispatcher_t operatorDispatcher = std::make_shared<OperatorDispatcher>(map, clock, cluster, configuration, logger, operationLog);
         tcpServer_t tcpServer = std::make_shared<TCPServer>(logger, configuration, Authenticator{configuration}, operatorDispatcher);
+
+        setupClusterChangeWatcher(cluster, operationLog, configuration, logger, operatorDispatcher);
 
         return std::make_shared<MemDb>(logger, map, configuration, operatorDispatcher, tcpServer, clock, cluster, operationLog);
     }
@@ -58,13 +59,13 @@ private:
                                                       cluster->getPartitionObject()->getNodesPerPartition());
     }
 
-    static void setupClusterChangeWatcher(cluster_t cluster, operationLog_t operationLog, configuration_t configuration, logger_t logger) {
+    static void setupClusterChangeWatcher(cluster_t cluster, operationLog_t operationLog, configuration_t configuration, logger_t logger, operatorDispatcher_t operatorDispatcher) {
         if(!configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION)){
             return;
         }
 
         auto setupObject = ClusterCreator::getClusterNodeSetupObject(configuration, logger);
-        auto clusterChangeHandler = setupObject->getClusterDbChangeNodeHandler(cluster, operationLog);
+        auto clusterChangeHandler = setupObject->getClusterDbChangeNodeHandler(cluster, operationLog, operatorDispatcher);
 
         cluster->watchForChangesInNodesClusterDb([clusterChangeHandler](node_t changedNode, ClusterDbChangeType type) -> void {
             clusterChangeHandler->handleChange(changedNode, type);

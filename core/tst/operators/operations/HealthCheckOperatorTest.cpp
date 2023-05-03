@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "operators/operations/HealthCheckOperator.h"
+#include "operators/operations/cluster/HealthCheckOperator.h"
 
 TEST(HealthCheckOperator, CorrectConfig) {
     HealthCheckOperator healthCheckOperator{};

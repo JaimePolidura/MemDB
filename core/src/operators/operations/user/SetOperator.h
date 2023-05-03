@@ -4,19 +4,24 @@
 #include "messages/response/ErrorCode.h"
 #include "operators/DbOperatorExecutor.h"
 
-class DeleteOperator : public Operator {
+class SetOperator : public Operator {
 public:
-    static constexpr const uint8_t OPERATOR_NUMBER = 0x03;
+    static constexpr const uint8_t OPERATOR_NUMBER = 0x01;
 
     Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies dependencies) override {
-        bool ignoreTimestmaps = !options.requestOfNodeToReplicate;
-        bool removed = dependencies.dbStore->remove(operation.args->at(0), ignoreTimestmaps, operation.timestamp, operation.nodeId);
+        SimpleString key = operation.args->at(0);
+        SimpleString value = operation.args->at(1);
 
-        return removed ? Response::success() : Response::error(ErrorCode::UNKNOWN_KEY);
+        bool ignoreTimestmaps = !options.checkTimestamps;
+        bool updated = dependencies.dbStore->put(key, value, ignoreTimestmaps, operation.timestamp, operation.nodeId);
+
+        return updated ?
+            Response::success() :
+            Response::error(ErrorCode::ALREADY_REPLICATED);
     }
 
     std::vector<AuthenticationType> authorizedToExecute() override {
-        return { AuthenticationType::API, AuthenticationType::NODE };
+        return { AuthenticationType::NODE, AuthenticationType::API };
     }
 
     std::vector<OperatorDependency> dependencies() override {

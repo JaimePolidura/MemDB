@@ -1,10 +1,14 @@
 #pragma once
 
 #include "cluster/clusterdb/changehandler/ClusterDbNodeChangeHandler.h"
+#include "persistence/OperationLogSerializer.h"
+#include "persistence/oplog/OperationLog.h"
+#include "persistence/OperationLogUtils.h"
 
 class PartitionClusterNodeChangeHandler : public ClusterDbNodeChangeHandler {
 public:
-    PartitionClusterNodeChangeHandler(logger_t logger, cluster_t cluster, operationLog_t operationLog): ClusterDbNodeChangeHandler(logger, cluster, operationLog) {}
+    PartitionClusterNodeChangeHandler(logger_t logger, cluster_t cluster, operationLog_t operationLog, operatorDispatcher_t operatorDispatcher):
+        ClusterDbNodeChangeHandler(logger, cluster, operationLog, operatorDispatcher) {}
 
     void handleChange(node_t nodeChanged, const ClusterDbChangeType changeType) override {
         if(changeType == ClusterDbChangeType::DELETED) {
@@ -40,7 +44,7 @@ private:
     }
 
     void recomputeSelfOplogAndSendNextNode(RingEntry newRingEntryAdded) {
-        std::vector<OperationBody> allActualOplogs = this->operationLog->getAllFromDisk(OperationLogQueryOptions{.operationLogId = 0});
+        std::vector<OperationBody> allActualOplogs = this->operationLog->getAllFromDisk(OperationLogOptions{.operationLogId = 0});
         std::vector<OperationBody> oplogSelfNode;
         std::vector<OperationBody> oplogNextNode;
         oplogSelfNode.reserve(allActualOplogs.size() / 2);
@@ -58,21 +62,45 @@ private:
 
         //Send oplogNextNode to next node
         if(!oplogNextNode.empty()){
-            cluster->clusterNodes->sendRequest(newRingEntryAdded.nodeId, createSetPartitionOplogRequest(oplogNextNode));
+            cluster->clusterNodes->sendRequest(newRingEntryAdded.nodeId, createSetNewPartitionOplogRequest(0, oplogNextNode));
+            invalidateOplogNextNode(oplogNextNode);
         }
+        //Send oplogSelfNode to newOplog
         if(!oplogSelfNode.empty()){
-
+//            cluster->clusterNodes->sendRequest(newRingEntryAdded.nodeId, createSetNewPartitionOplogRequest(0, oplogNextNode));
         }
 
     }
 
-    Request createSetPartitionOplogRequest(const std::vector<OperationBody>& oplog) {
+    void invalidateOplogNextNode(const std::vector<OperationBody>& oplogNextNode) {
+        std::vector<SimpleString<memDbDataLength_t>> keysInOplogNextNode = OperationLogUtils::getUniqueKeys(oplogNextNode);
+        std::vector<OperationBody> deleteOperations(keysInOplogNextNode.size());
+
+        std::transform(keysInOplogNextNode.begin(), keysInOplogNextNode.end(), deleteOperations.begin(),
+                       [this](SimpleString<memDbDataLength_t> key ) -> OperationBody{ return this->createDeleteKeyOperation(key);});
+
+        this->operationLog->addAll(deleteOperations, OperationLogOptions{.dontUseBuffer = true});
+
+        std::shared_ptr<Operator> deleteOperator = this->operatorDispatcher->operatorRegistry->get(0x03);
+        for (const OperationBody& operation: deleteOperations) {
+            this->operatorDispatcher->executeOperator(deleteOperator, operation, OperationOptions{.checkTimestamps=true, .onlyExecute = true});
+        }
+    }
+
+    void updateNeighbors() {
+        auto selfNodeId = cluster->configuration->get(ConfigurationKeys::MEMDB_CORE_NODE_ID);
+        auto neighbors = cluster->clusterManager->getRingNeighbors(selfNodeId).neighbors;
+        cluster->clusterNodes->setOtherNodes(neighbors);
+    }
+
+    Request createSetNewPartitionOplogRequest(int newOplogId, const std::vector<OperationBody>& oplog) {
         OperationLogSerializer operationLogSerializer{};
         auto serialized = operationLogSerializer.serializeAllShared(oplog);
 
         OperationBody operationBody{};
         operationBody.operatorNumber = 0x06; //SetNewPartitionOplogOperator
         args_t args = OperationBody::createOperationBodyArg();
+        args->push_back(SimpleString<memDbDataLength_t>::fromNumber(newOplogId));
         args->push_back(SimpleString<memDbDataLength_t>::fromVector(*serialized));
 
         Request request{};
@@ -81,10 +109,13 @@ private:
         return request;
     }
 
-    void updateNeighbors() {
-        auto selfNodeId = cluster->configuration->get(ConfigurationKeys::MEMDB_CORE_NODE_ID);
-        auto neighbors = cluster->clusterManager->getRingNeighbors(selfNodeId).neighbors;
-        cluster->clusterNodes->setOtherNodes(neighbors);
+    OperationBody createDeleteKeyOperation(const SimpleString<memDbDataLength_t>& key) {
+        OperationBody operationBody{};
+        operationBody.operatorNumber = 0x03; //DeleteOperator
+        args_t args = OperationBody::createOperationBodyArg();
+        args->push_back(key);
+
+        return operationBody;
     }
 
     void handleDeletionOfNode(node_t changedNode) {

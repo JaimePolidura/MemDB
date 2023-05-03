@@ -5,6 +5,7 @@
 
 struct OperationLogOptions {
     int operationLogId;
+    bool dontUseBuffer;
 };
 
 class OperationLog {
@@ -14,7 +15,11 @@ protected:
 public:
     OperationLog(configuration_t configuration): configuration(configuration) {}
 
-    virtual void add(const OperationBody& operation) = 0;
+    virtual void add(const OperationBody& operation, const OperationLogOptions options = {}) = 0;
+
+    virtual void addAll(const std::vector<OperationBody>& toAddAll, const OperationLogOptions options = {}) = 0;
+
+    virtual std::vector<OperationBody> clear(const OperationLogOptions options = {}) = 0;
 
     virtual void replaceAll(const std::vector<OperationBody>& toReplace, const OperationLogOptions options = {}) = 0;
 

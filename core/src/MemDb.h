@@ -72,7 +72,7 @@ private:
             this->operatorDispatcher->executeOperator(
                     this->operatorRegistry->get(operationLogInDisk.operatorNumber),
                     operationLogInDisk,
-                    OperationOptions{.requestOfNodeToReplicate = true});
+                    OperationOptions{.checkTimestamps = true});
 
         this->operatorDispatcher->applyReplicatedOperationBuffer();
     }

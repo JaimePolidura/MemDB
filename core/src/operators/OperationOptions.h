@@ -3,6 +3,6 @@
 #include "shared.h"
 
 struct OperationOptions {
-    bool requestOfNodeToReplicate;
+    bool checkTimestamps;
     bool onlyExecute;
 };

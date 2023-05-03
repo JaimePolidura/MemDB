@@ -31,12 +31,33 @@ public:
         });
     }
 
-    void add(const OperationBody& operation) override {
+    void addAll(const std::vector<OperationBody>& operations, const OperationLogOptions options = {}) {
+        this->operationLogBuffer->addAll(operations);
+
+        if(options.dontUseBuffer){
+            this->operationLogBuffer->flush();
+        }
+    }
+
+    void add(const OperationBody& operation, const OperationLogOptions options = {}) override {
         this->operationLogBuffer->add(operation);
+
+        if(options.dontUseBuffer){
+            this->operationLogBuffer->flush();
+        }
     }
 
     void replaceAll(const std::vector<OperationBody>& toReplace, const OperationLogOptions options = {}) override {
         this->operationsLogDiskWriter.write(toReplace);
+    }
+
+    std::vector<OperationBody> clear(const OperationLogOptions options = {}) override {
+        auto operationLogsCleared = this->getAllFromDisk(options);
+
+        this->operationLogBuffer->flush(false);
+        this->operationsLogDiskWriter.clear();
+
+        return operationLogsCleared;
     }
 
     std::vector<OperationBody> getAfterTimestamp(uint64_t since, const OperationLogOptions options = {}) override {

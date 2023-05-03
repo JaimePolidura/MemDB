@@ -13,10 +13,11 @@ public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x06;
 
     Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies dependencies) override {
-        auto newOplogEntriesRaw = operation.getArg(0).toVector();
+        auto oplogNewId = operation.getArg(0).to<int>();
+        auto newOplogEntriesRaw = operation.getArg(1).toVector();
         auto newOplogEntries = this->operationLogDeserializer.deserializeAll(newOplogEntriesRaw);
 
-        dependencies.operationLog->replaceAll(newOplogEntries, OperationLogOptions{.operationLogId = 0});
+        dependencies.operationLog->replaceAll(newOplogEntries, OperationLogOptions{.operationLogId = oplogNewId});
         for (const auto& newOplog: newOplogEntries) {
             dependencies.operatorDispatcher(newOplog, OperationOptions{.onlyExecute = true});
         }

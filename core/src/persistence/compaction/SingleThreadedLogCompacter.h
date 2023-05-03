@@ -3,14 +3,13 @@
 #include "shared.h"
 
 #include "messages/request/Request.h"
-
-using alreadySennKeys_t = std::unordered_set<SimpleString<memDbDataLength_t>, SimpleStringHash<memDbDataLength_t>, SimpleStringEqual<memDbDataLength_t>>;
+#include "utils/strings/SimpleString.h"
 
 class SingleThreadedLogCompacter {
 public:
     auto compact(const std::vector<OperationBody>& uncompacted,
                  const std::vector<OperationBody>& compacted = {},
-                 const alreadySennKeys_t& seenOperationKeys = {}) -> std::vector<OperationBody> {
+                 const setSimpleString_t& seenOperationKeys = {}) -> std::vector<OperationBody> {
         if(uncompacted.empty()) {
             return uncompacted;
         }
@@ -23,7 +22,7 @@ public:
                 continue;
             }
 
-            const_cast<alreadySennKeys_t&>(seenOperationKeys).insert(actualOperationKey);
+            const_cast<setSimpleString_t&>(seenOperationKeys).insert(actualOperationKey);
             const_cast<std::vector<OperationBody>&>(compacted).push_back(actualOperation);
         }
 

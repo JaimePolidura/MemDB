@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "operators/operations/SyncOplogOperator.h"
+#include "operators/operations/user/SyncOplogOperator.h"
 
 TEST(SyncDataOperator, CorrectConfig) {
     SyncOplogOperator syncDataOperator{};

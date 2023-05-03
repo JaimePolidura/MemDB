@@ -28,7 +28,7 @@ public:
 
     virtual void setClusterInformation(cluster_t cluster) = 0;
 
-    virtual clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler(cluster_t cluster, operationLog_t operationLog) = 0;
+    virtual clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler(cluster_t cluster, operationLog_t operationLog, operatorDispatcher_t operatorDispatcher) = 0;
 
 protected:
     void setOtherNodes(cluster_t cluster, const std::vector<node_t>& allNodes) {

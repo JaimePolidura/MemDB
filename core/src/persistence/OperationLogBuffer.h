@@ -25,28 +25,49 @@ public:
         this->flushCallback = flushCallbackToSet;
     }
 
+    virtual void addAll(const std::vector<OperationBody>& operations) {
+        addBufferLock.lock();
+        for(int i = 0; i < operations.size(); i++){
+            OperationBody operation = operations.at(i);
+            this->operationBuffer.push_back(operation);
+
+            if(i == operations.size()) //Last element
+                this->updateBufferTimestamps(operation);
+        }
+        addBufferLock.lock();
+
+        if(this->operationBuffer.size() >= flushEvery){
+            this->flush(true);
+        }
+    }
+
     virtual void add(const OperationBody& operation) {
         addBufferLock.lock();
 
         this->operationBuffer.push_back(std::move(operation));
-
-        this->latestTimestampAdded = operation.timestamp;
-        if(this->operationBuffer.size() == 1){
-            this->oldestTimestampAdded = operation.timestamp;
-        }
+        this->updateBufferTimestamps(operation);
 
         addBufferLock.unlock();
 
-        if(this->operationBuffer.size() >= flushEvery && this->flushDiskLock.try_lock()){
-            std::vector<OperationBody> copyBuffer;
-            this->operationBuffer.swap(copyBuffer);
-
-            this->flushCallback(copyBuffer);
-            this->latestTimestampAdded = 0;
-            this->oldestTimestampAdded = 0;
-
-            this->flushDiskLock.unlock();
+        if(this->operationBuffer.size() >= flushEvery){
+            this->flush(true);
         }
+    }
+
+    void flush(const bool tryLock = false) {
+        if(tryLock && !this->flushDiskLock.try_lock())
+            return;
+        if(!tryLock)
+            this->flushDiskLock.lock();
+
+        std::vector<OperationBody> copyBuffer;
+        this->operationBuffer.swap(copyBuffer);
+
+        this->flushCallback(copyBuffer);
+        this->latestTimestampAdded = 0;
+        this->oldestTimestampAdded = 0;
+
+        this->flushDiskLock.unlock();
     }
 
     std::vector<OperationBody> get() {
@@ -67,6 +88,14 @@ public:
 
     void unlockFlushToDisk() {
         return this->flushDiskLock.unlock();
+    }
+
+private:
+    void updateBufferTimestamps(OperationBody operation) {
+        this->latestTimestampAdded = operation.timestamp;
+        if(this->operationBuffer.size() == 1){
+            this->oldestTimestampAdded = operation.timestamp;
+        }
     }
 };
 

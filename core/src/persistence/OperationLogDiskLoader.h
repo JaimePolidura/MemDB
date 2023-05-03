@@ -5,7 +5,7 @@
 #include "utils/Utils.h"
 
 #include "persistence/OperationLogDeserializer.h"
-#include "operators/operations/SetOperator.h"
+#include "operators/operations/user/SetOperator.h"
 #include "persistence/OperationLogSerializer.h"
 
 class OperationLogDiskLoader {

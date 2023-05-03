@@ -1,6 +1,8 @@
 #pragma once
 
 #include "shared.h"
+#include "utils/Utils.h"
+#include "memdbtypes.h"
 
 /**
  * Apparently you cannot create an string from already heap allocated char *. So we create this class
@@ -26,6 +28,11 @@ public:
 
     std::string toString() const {
         return std::string((char *) this->value.get(), this->size);
+    }
+
+    template<typename T>
+    T to() const {
+        return Utils::parse<T>(this->value.get());
     }
 
     //TODO Avoid copy. See std::span
@@ -120,3 +127,5 @@ struct SimpleStringEqual {
         return true;
     }
 };
+
+using setSimpleString_t = std::unordered_set<SimpleString<memDbDataLength_t>, SimpleStringHash<memDbDataLength_t>, SimpleStringEqual<memDbDataLength_t>>;

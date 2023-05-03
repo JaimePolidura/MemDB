@@ -36,6 +36,10 @@ public:
         return this->ringEntries.getDistanceClockwise(this->selfEntry.nodeId, nodeB) <= this->nodesPerPartition;
     }
 
+    std::vector<RingEntry> getNeighborsClockwise(int numberNeighbors = this->nodesPerPartition) {
+        return this->ringEntries.getNeighborsClockwise(this->selfEntry.nodeId, this->nodesPerPartition);
+    }
+
     // self --> (clockwise) nodeB
     bool isCounterClockwiseNeighbor(memdbNodeId_t nodeB) {
         return this->ringEntries.getDistanceCounterClockwise(this->selfEntry.nodeId, nodeB) <= this->nodesPerPartition;

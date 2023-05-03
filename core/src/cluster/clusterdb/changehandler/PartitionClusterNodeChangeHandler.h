@@ -26,7 +26,6 @@ public:
 private:
     void handleNewNode(node_t newNode) {
         RingEntry ringEntryAdded = cluster->clusterDb->getRingEntryByNodeId(newNode->nodeId);
-        uint32_t nodesPerPartition = cluster->partitions->getNodesPerPartition();
         cluster->partitions->add(ringEntryAdded);
 
         if(cluster->selfNode->nodeId == newNode->nodeId || !cluster->partitions->isNeighbor(newNode->nodeId))
@@ -38,12 +37,30 @@ private:
 
         if(cluster->partitions->getDistanceClockwise(newNode->nodeId) == 1){
             recomputeSelfOplogAndSendNextNode(ringEntryAdded);
-        }
-        if(cluster->partitions->isCounterClockwiseNeighbor(newNode->nodeId)){
-            //-1 oplog of all keys prev to newNode in nodesPerPartition
-        }
 
-        cluster->setRunning();
+            cluster->setRunning();
+            return;
+        }
+        if(cluster->partitions->isClockwiseNeighbor(newNode->nodeId)){
+            sendSelfOplogToNodes(newNode);
+
+            cluster->setRunning();
+            return;
+        }
+    }
+
+    void sendSelfOplogToNodes(node_t newNode) {
+        uint32_t distance = cluster->partitions->getDistanceClockwise(newNode->nodeId);
+        uint32_t nodesToSendNewOplog = cluster->partitions->getNodesPerPartition() - distance;
+        //+1 to get the last node which will contain a copy of the data. We need to delete its copy. In order to do that, we simply send a movePartitionOplogRequest
+        //of oplog nodesPerPartition + 1 to delete it.
+        std::vector<RingEntry> neighbors = this->cluster->partitions->getNeighborsClockwise(this->cluster->partitions->getNodesPerPartition() + 1);
+
+        std::vector<OperationBody> selfOplog = this->operationLog->getAllFromDisk({.operationLogId = 0});
+        for(int i = 0; i < nodesToSendNewOplog + 1; i++){
+            memdbNodeId_t nodeId = neighbors.at(i + nodesToSendNewOplog + 1).nodeId;
+            this->cluster->clusterNodes->sendRequest(nodeId, createMovePartitionOplogRequest(i + nodesToSendNewOplog + 1 , selfOplog));
+        }
     }
 
     void recomputeSelfOplogAndSendNextNode(RingEntry newRingEntryAdded) {
@@ -69,9 +86,20 @@ private:
                                                createMovePartitionOplogRequest(0, oplogNextNode));
             invalidateOplogNextNode(oplogNextNode);
         }
+
         //Send oplogSelfNode to newOplog
         if(!oplogSelfNode.empty()){
-//            cluster->clusterNodes->sendRequest(newRingEntryAdded.nodeId, createMovePartitionOplogRequest(0, oplogNextNode));
+            std::vector<RingEntry> neighbors = this->cluster->partitions->getNeighborsClockwise();
+            Request moveOplogRequest = this->createMovePartitionOplogRequest(0, oplogSelfNode);
+
+            for(int i = 0; i < neighbors.size(); i++){
+                memdbNodeId_t nodeId = neighbors.at(i).nodeId;
+                int oplogId = nodeId + 1;
+
+                moveOplogRequest.operation.setArg(0, SimpleString<memDbDataLength_t>::fromNumber(oplogId)); //Set new oplogId
+
+                cluster->clusterNodes->sendRequest(nodeId, moveOplogRequest);
+            }
         }
 
     }
@@ -99,7 +127,7 @@ private:
         auto serialized = operationLogSerializer.serializeAllShared(oplog);
 
         OperationBody operationBody{};
-        operationBody.operatorNumber = 0x06; //SetNewPartitionOplogOperator
+        operationBody.operatorNumber = 0x06; //MovePartitionOplogOperator
         args_t args = OperationBody::createOperationBodyArg();
         args->push_back(SimpleString<memDbDataLength_t>::fromNumber(newOplogId));
         args->push_back(SimpleString<memDbDataLength_t>::fromVector(*serialized));

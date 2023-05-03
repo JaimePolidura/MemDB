@@ -62,6 +62,15 @@ struct OperationBody {
         return this->args->at(position);
     }
 
+    void setArg(int position, arg_t newArg) {
+        if(position > this->args->size()){
+            this->args->push_back(newArg);
+        }else{
+            auto argValue = this->args->begin() + position;
+            *argValue = newArg;
+        }
+    }
+
     static args_t createOperationBodyArg() {
         return std::make_shared<std::vector<SimpleString<memDbDataLength_t>>>();
     }

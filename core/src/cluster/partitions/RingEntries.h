@@ -73,6 +73,18 @@ public:
         }
     }
 
+    std::vector<RingEntry> getNeighborsClockwise(memdbNodeId_t nodeId, int numberNeighbors) {
+        RingEntryNode * ringEntryOfNode = this->indexByNodeId.at(nodeId);
+        std::vector<RingEntry> neigbors(numberNeighbors);
+
+        for(int i = 0; i < numberNeighbors; i++){
+            ringEntryOfNode = ringEntryOfNode->next;
+            neigbors.push_back(ringEntryOfNode->entry);
+        }
+
+        return neigbors;
+    }
+
     RingEntry getRingEntryBelongsToPosition(uint32_t ringPosition) {
         auto actualPointer = this->head;
         uint32_t size = this->indexByNodeId.size();

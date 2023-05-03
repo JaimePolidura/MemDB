@@ -1,15 +1,16 @@
 #pragma once
 
-
 #include "operators/Operator.h"
 #include "operators/MaintenanceOperatorExecutor.h"
 #include "messages/response/ErrorCode.h"
 #include "persistence/OperationLogDeserializer.h"
+#include "persistence/OperationLogInvalidator.h"
 #include "persistence/OperationLogUtils.h"
 
 class MovePartitionOplogOperator : public Operator {
 private:
     OperationLogDeserializer operationLogDeserializer;
+    OperationLogInvalidator operationLogInvalidator;
 
 public:
     static constexpr int OPERATOR_NUMBER = 0x06;
@@ -21,22 +22,24 @@ public:
         //Oplogs ids start with 0. 0 = self node
         if(newOplogId + 1 >= dependencies.cluster->getPartitionObject()->getNodesPerPartition()) {
             std::vector<OperationBody> operationsCleared = dependencies.operationLog->clear(OperationLogOptions{.operationLogId = newOplogId});
-            dependencies.operatorsDispatcher(operationsCleared, {.onlyExecute = true});
+            std::vector<OperationBody> invalidationOperations = this->operationLogInvalidator.getInvalidationOperations(operationsCleared);
+            dependencies.operatorsDispatcher(invalidationOperations, {.onlyExecute = true});
+
             return Response::success();
         }
 
         std::vector<uint8_t> oplogRaw = operation.getArg(1).toVector();
         std::vector<OperationBody> oplog = this->operationLogDeserializer.deserializeAll(oplogRaw);
 
-        dependencies.operationLog->addAll(oplog, OperationLogOptions{
-                .operationLogId = newOplogId,
-                .dontUseBuffer = true,
-        });
-
         //Doest have data stored
         if(!dependencies.operationLog->hasOplogFile({.operationLogId = newOplogId})){
             dependencies.operatorsDispatcher(oplog, {.onlyExecute = true});
         }
+
+        dependencies.operationLog->addAll(oplog, OperationLogOptions{
+                .operationLogId = newOplogId,
+                .dontUseBuffer = true,
+        });
 
         dependencies.operationLog->clear(OperationLogOptions{.operationLogId = oldOplogId});
 

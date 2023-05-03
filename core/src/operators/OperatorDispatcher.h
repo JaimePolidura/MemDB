@@ -65,14 +65,23 @@ public:
             return Response::success();
         }
 
-        Response result = this->executeOperator(operatorToExecute, request.operation, options);
+        Response result = this->executeOperation(operatorToExecute, request.operation, options);
 
         return result;
     }
 
-    Response executeOperator(std::shared_ptr<Operator> operatorToExecute,
-                    const OperationBody& operation,
-                    const OperationOptions& options) {
+    void executeOperations(std::shared_ptr<Operator> operatorToExecute,
+                          const std::vector<OperationBody>& operations,
+                          const OperationOptions& options) {
+
+        for (const OperationBody& operation: operations){
+            this->executeOperation(operatorToExecute, operation, options);
+        }
+    }
+
+    Response executeOperation(std::shared_ptr<Operator> operatorToExecute,
+                              const OperationBody& operation,
+                              const OperationOptions& options) {
 
         OperatorDependencies dependencies = this->getDependencies(operatorToExecute);
         Response result = operatorToExecute->operate(operation, options, dependencies);
@@ -130,7 +139,12 @@ private:
                 break;
             case OPERATOR_DISPATCHER:
                 operatorDependencies->operatorDispatcher = [this](const OperationBody& op, const OperationOptions& options) -> Response {
-                    return this->executeOperator(this->operatorRegistry->get(op.operatorNumber), op, options);
+                    return this->executeOperation(this->operatorRegistry->get(op.operatorNumber), op, options);
+                };
+                operatorDependencies->operatorsDispatcher = [this](const std::vector<OperationBody>& ops, const OperationOptions& options) -> void {
+                    std::for_each(ops.begin(), ops.end(), [this, options](const OperationBody &op) -> void {
+                        this->executeOperation(this->operatorRegistry->get(op.operatorNumber), op, options);
+                    });
                 };
                 break;
         }

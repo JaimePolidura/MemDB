@@ -9,5 +9,7 @@ struct OperatorDependencies {
     memDbDataStore_t dbStore;
     operationLog_t operationLog;
     cluster_t cluster;
+
+    std::function<void(const std::vector<OperationBody>&, const OperationOptions&)> operatorsDispatcher;
     std::function<Response(const OperationBody&, const OperationOptions&)> operatorDispatcher;
 };

@@ -6,6 +6,9 @@
 #include "persistence/OperationLogUtils.h"
 
 class PartitionClusterNodeChangeHandler : public ClusterDbNodeChangeHandler {
+private:
+    OperationLogSerializer operationLogSerializer;
+
 public:
     PartitionClusterNodeChangeHandler(logger_t logger, cluster_t cluster, operationLog_t operationLog, operatorDispatcher_t operatorDispatcher):
         ClusterDbNodeChangeHandler(logger, cluster, operationLog, operatorDispatcher) {}
@@ -62,12 +65,13 @@ private:
 
         //Send oplogNextNode to next node
         if(!oplogNextNode.empty()){
-            cluster->clusterNodes->sendRequest(newRingEntryAdded.nodeId, createSetNewPartitionOplogRequest(0, oplogNextNode));
+            cluster->clusterNodes->sendRequest(newRingEntryAdded.nodeId,
+                                               createMovePartitionOplogRequest(0, oplogNextNode));
             invalidateOplogNextNode(oplogNextNode);
         }
         //Send oplogSelfNode to newOplog
         if(!oplogSelfNode.empty()){
-//            cluster->clusterNodes->sendRequest(newRingEntryAdded.nodeId, createSetNewPartitionOplogRequest(0, oplogNextNode));
+//            cluster->clusterNodes->sendRequest(newRingEntryAdded.nodeId, createMovePartitionOplogRequest(0, oplogNextNode));
         }
 
     }
@@ -82,9 +86,7 @@ private:
         this->operationLog->addAll(deleteOperations, OperationLogOptions{.dontUseBuffer = true});
 
         std::shared_ptr<Operator> deleteOperator = this->operatorDispatcher->operatorRegistry->get(0x03);
-        for (const OperationBody& operation: deleteOperations) {
-            this->operatorDispatcher->executeOperator(deleteOperator, operation, OperationOptions{.checkTimestamps=true, .onlyExecute = true});
-        }
+        this->operatorDispatcher->executeOperations(deleteOperator, deleteOperations, {.onlyExecute = true});
     }
 
     void updateNeighbors() {
@@ -93,8 +95,7 @@ private:
         cluster->clusterNodes->setOtherNodes(neighbors);
     }
 
-    Request createSetNewPartitionOplogRequest(int newOplogId, const std::vector<OperationBody>& oplog) {
-        OperationLogSerializer operationLogSerializer{};
+    Request createMovePartitionOplogRequest(int newOplogId, const std::vector<OperationBody>& oplog) {
         auto serialized = operationLogSerializer.serializeAllShared(oplog);
 
         OperationBody operationBody{};

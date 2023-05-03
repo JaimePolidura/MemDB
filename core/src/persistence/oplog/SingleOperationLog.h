@@ -51,6 +51,11 @@ public:
         this->operationsLogDiskWriter.write(toReplace);
     }
 
+    //TODO Return corect value
+    bool hasOplogFile(const OperationLogOptions options = {}) override {
+        return true; //Method only called by MultipleOperationLog
+    }
+
     std::vector<OperationBody> clear(const OperationLogOptions options = {}) override {
         auto operationLogsCleared = this->getAllFromDisk(options);
 

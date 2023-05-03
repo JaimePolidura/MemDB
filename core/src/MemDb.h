@@ -69,7 +69,7 @@ private:
 
     void applyUnsyncedOplogFromCluster(const std::vector<OperationBody>& opLogs) {
         for(const auto& operationLogInDisk : opLogs)
-            this->operatorDispatcher->executeOperator(
+            this->operatorDispatcher->executeOperation(
                     this->operatorRegistry->get(operationLogInDisk.operatorNumber),
                     operationLogInDisk,
                     OperationOptions{.checkTimestamps = true});

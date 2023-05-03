@@ -35,9 +35,18 @@ public:
         opLogToReplace->replaceAll(toReplace);
     }
 
+    bool hasOplogFile(const OperationLogOptions options = {}) override {
+        return this->operationLogs.size() < options.operationLogId &&
+            this->operationLogs.at(options.operationLogId)->hasOplogFile(options);
+    }
+
     std::vector<OperationBody> clear(const OperationLogOptions options = {}) {
+        if(options.operationLogId >= this->operationLogs.size()){
+            return;
+        }
+
         singleOperationLog_t operationLogToClear = this->operationLogs.at(options.operationLogId);
-        auto operationsCleared = operationLogToClear->clear(options);
+        std::vector<OperationBody> operationsCleared = operationLogToClear->clear(options);
 
         this->operationLogs.erase(this->operationLogs.begin() + options.operationLogId);
 

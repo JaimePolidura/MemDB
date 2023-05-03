@@ -19,9 +19,11 @@ public:
 
     virtual void addAll(const std::vector<OperationBody>& toAddAll, const OperationLogOptions options = {}) = 0;
 
-    virtual std::vector<OperationBody> clear(const OperationLogOptions options = {}) = 0;
-
     virtual void replaceAll(const std::vector<OperationBody>& toReplace, const OperationLogOptions options = {}) = 0;
+
+    virtual bool hasOplogFile(const OperationLogOptions options = {}) = 0;
+
+    virtual std::vector<OperationBody> clear(const OperationLogOptions options = {}) = 0;
 
     virtual std::vector<OperationBody> getAfterTimestamp(uint64_t timestamp, const OperationLogOptions options = {}) = 0;
 

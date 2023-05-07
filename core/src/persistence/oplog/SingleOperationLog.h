@@ -47,11 +47,6 @@ public:
         }
     }
 
-    void replaceAll(const std::vector<OperationBody>& toReplace, const OperationLogOptions options = {}) override {
-        this->operationsLogDiskWriter.write(toReplace);
-    }
-
-    //TODO Return corect value
     bool hasOplogFile(const OperationLogOptions options = {}) override {
         return true; //Method only called by MultipleOperationLog
     }
@@ -80,7 +75,7 @@ public:
             std::vector<OperationBody> compactedFromBuffer = this->compacter.compact(this->operationLogBuffer->get());
             this->operationLogBuffer->unlockFlushToDisk();
 
-            return this->fiterIfTimestampAfterThan(compactedFromBuffer, since);
+            return this->filterIfTimestampAfterThan(compactedFromBuffer, since);
         }else{
             std::vector<OperationBody> compactedFromBuffer = this->operationLogBuffer->get();
             std::vector<OperationBody> compactedFromDisk = this->operationLogDiskLoader.getAll();
@@ -88,19 +83,23 @@ public:
 
             std::vector<OperationBody> compacted = this->compacter.compact(Utils::concat(compactedFromDisk, compactedFromBuffer));
 
-            return this->fiterIfTimestampAfterThan(compacted, since);
+            return this->filterIfTimestampAfterThan(compacted, since);
         }
     }
 
-    std::vector<OperationBody> getAllFromDisk(const OperationLogOptions options = {}) override {
+    std::vector<OperationBody> getFromDisk(const OperationLogOptions options = {}) override {
         std::vector<OperationBody> fromDisk = this->operationLogDiskLoader.getAll();
         std::vector<OperationBody> compacted = this->compacter.compact(fromDisk);
 
         return compacted;
     }
 
+    int getNumberOplogFiles() override {
+        return 1;
+    }
+
 private:
-    std::vector<OperationBody> fiterIfTimestampAfterThan(const std::vector<OperationBody>& operations, uint64_t timestampSince) {
+    std::vector<OperationBody> filterIfTimestampAfterThan(const std::vector<OperationBody>& operations, uint64_t timestampSince) {
         std::vector<OperationBody> filtered{};
 
         if(operations.empty())

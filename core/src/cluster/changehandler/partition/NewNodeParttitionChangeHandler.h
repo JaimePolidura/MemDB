@@ -56,7 +56,7 @@ private:
         //of oplog nodesPerPartition + 1 to delete it.
         std::vector<RingEntry> neighbors = this->cluster->partitions->getNeighborsClockwise(this->cluster->partitions->getNodesPerPartition() + 1);
 
-        std::vector<OperationBody> selfOplog = this->operationLog->getAllFromDisk({.operationLogId = 0});
+        std::vector<OperationBody> selfOplog = this->operationLog->getFromDisk({.operationLogId = 0});
         for(int i = 0; i < nodesToSendNewOplog + 1; i++){
             memdbNodeId_t nodeId = neighbors.at(i + nodesToSendNewOplog + 1).nodeId;
             this->cluster->clusterNodes->sendRequest(nodeId, createMovePartitionOplogRequest(i + nodesToSendNewOplog + 1 , selfOplog));
@@ -86,7 +86,8 @@ private:
     }
 
     std::pair<std::vector<OperationBody>, std::vector<OperationBody>> splitSelfOplog(RingEntry newRingEntry) {
-        std::vector<OperationBody> allActualOplogs = this->operationLog->getAllFromDisk(OperationLogOptions{.operationLogId = 0});
+        std::vector<OperationBody> allActualOplogs = this->operationLog->getFromDisk(
+                OperationLogOptions{.operationLogId = 0});
         std::vector<OperationBody> oplogSelfNode;
         std::vector<OperationBody> oplogNextNode;
         oplogSelfNode.reserve(allActualOplogs.size() / 2);

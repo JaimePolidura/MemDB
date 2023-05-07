@@ -4,7 +4,7 @@
 #include "config/Configuration.h"
 
 struct OperationLogOptions {
-    int operationLogId;
+    uint32_t operationLogId;
     bool dontUseBuffer;
 };
 
@@ -19,15 +19,15 @@ public:
 
     virtual void addAll(const std::vector<OperationBody>& toAddAll, const OperationLogOptions options = {}) = 0;
 
-    virtual void replaceAll(const std::vector<OperationBody>& toReplace, const OperationLogOptions options = {}) = 0;
-
     virtual bool hasOplogFile(const OperationLogOptions options = {}) = 0;
 
     virtual std::vector<OperationBody> clear(const OperationLogOptions options = {}) = 0;
 
     virtual std::vector<OperationBody> getAfterTimestamp(uint64_t timestamp, const OperationLogOptions options = {}) = 0;
 
-    virtual std::vector<OperationBody> getAllFromDisk(const OperationLogOptions options = {}) = 0;
+    virtual std::vector<OperationBody> getFromDisk(const OperationLogOptions options = {}) = 0;
+
+    virtual int getNumberOplogFiles();
 };
 
 using operationLog_t = std::shared_ptr<OperationLog>;

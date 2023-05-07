@@ -17,7 +17,7 @@ public:
         this->initializeOplogs(numberOplogs, oplogFileNameResolver);
     }
 
-    void addAll(const std::vector<OperationBody>& operations, const OperationLogOptions options = {}) {
+    void addAll(const std::vector<OperationBody>& operations, const OperationLogOptions options = {}) override {
         for (const OperationBody& operation: operations) {
             this->add(operation, options);
         }
@@ -30,19 +30,14 @@ public:
         oplog->add(operation, options);
     }
 
-    void replaceAll(const std::vector<OperationBody>& toReplace, const OperationLogOptions options = {}) override {
-        singleOperationLog_t opLogToReplace = operationLogs.at(options.operationLogId);
-        opLogToReplace->replaceAll(toReplace);
-    }
-
     bool hasOplogFile(const OperationLogOptions options = {}) override {
         return this->operationLogs.size() < options.operationLogId &&
             this->operationLogs.at(options.operationLogId)->hasOplogFile(options);
     }
 
-    std::vector<OperationBody> clear(const OperationLogOptions options = {}) {
+    std::vector<OperationBody> clear(const OperationLogOptions options = {}) override {
         if(options.operationLogId >= this->operationLogs.size()){
-            return;
+            return std::vector<OperationBody>{};
         }
 
         singleOperationLog_t operationLogToClear = this->operationLogs.at(options.operationLogId);
@@ -59,21 +54,19 @@ public:
         return oplog->getAfterTimestamp(timestamp, options);
     }
 
-    std::vector<OperationBody> getAllFromDisk(OperationLogOptions options = {}) override {
+    std::vector<OperationBody> getFromDisk(OperationLogOptions options = {}) override {
         std::vector<OperationBody> totalFromDisk{};
 
-        for(singleOperationLog_t singleOperationLog : this->operationLogs) {
-            std::vector<OperationBody> fromDisk = singleOperationLog->getAllFromDisk();
+        return this->operationLogs.at(options.operationLogId)->getFromDisk(options);
+    }
 
-            totalFromDisk = Utils::concat(totalFromDisk, fromDisk);
-        }
-
-        return totalFromDisk;
+    int getNumberOplogFiles() override {
+        return this->operationLogs.size();
     }
 
 private:
-    void initializeOplogs(int numerOplogs, std::function<std::string(int)> oplogFileNameResolver) {
-        for(int i = 0; i < numerOplogs; i++) {
+    void initializeOplogs(int numberOplogs, std::function<std::string(int)> oplogFileNameResolver) {
+        for(int i = 0; i < numberOplogs; i++) {
             std::string fileName = oplogFileNameResolver(i);
             singleOperationLog_t oplog = std::make_shared<SingleOperationLog>(this->configuration, fileName);
 

@@ -5,4 +5,6 @@
 struct OperationOptions {
     bool checkTimestamps;
     bool onlyExecute;
+    bool dontBroadcastToCluster;
+    bool dontSaveInOperationLog;
 };

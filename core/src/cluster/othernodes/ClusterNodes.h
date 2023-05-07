@@ -13,11 +13,10 @@
 #include "cluster/othernodes/NodeGroupOptions.h"
 
 class ClusterNodes {
-public:
+private:
     std::map<memdbNodeId_t, node_t> nodesById;
     std::vector<NodeGroup> groups;
 
-private:
     configuration_t configuration;
     FixedThreadPool requestPool;
     logger_t logger;
@@ -38,6 +37,10 @@ public:
             this->nodesById[node->nodeId] = node;
             this->groups[options.nodeGroupId].add(node->nodeId);
         }
+    }
+
+    bool isEmtpy(const NodeGroupOptions options = {}) {
+        return options.nodeGroupId >= this->groups.size() || this->groups[options.nodeGroupId].size() == 0;
     }
 
     void setNodeState(memdbNodeId_t nodeId, const NodeState newState) {
@@ -73,7 +76,7 @@ public:
         std::set<memdbNodeId_t> alreadyCheckedNodesId = {};
 
         return Utils::retryUntilAndGet<Response, std::milli>(10, std::chrono::milliseconds(100), [this, &request, &alreadyCheckedNodesId, options]() -> Response {
-            node_t nodeToSendRequest = this->selectRandomNodeToSendRequest(alreadyCheckedNodesId, options);
+            node_t nodeToSendRequest = this->getRandomNode(alreadyCheckedNodesId, options);
 
             return nodeToSendRequest->sendRequest(this->prepareRequest(request.operation), true).value();
         });
@@ -97,8 +100,7 @@ public:
         }
     }
 
-private:
-    node_t selectRandomNodeToSendRequest(std::set<memdbNodeId_t> alreadyCheckedNodesId = {}, const NodeGroupOptions options = {}) {
+    node_t getRandomNode(std::set<memdbNodeId_t> alreadyCheckedNodesId = {}, const NodeGroupOptions options = {}) {
         std::srand(std::time(nullptr));
         NodeGroup group = this->groups[options.nodeGroupId];
         std::set<memdbNodeId_t> alreadyChecked{};
@@ -123,6 +125,7 @@ private:
         throw std::runtime_error("No node available for selecting");
     }
 
+private:
     Request prepareRequest(const OperationBody& operation) {
         Request request{};
 

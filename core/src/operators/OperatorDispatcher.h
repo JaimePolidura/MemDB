@@ -91,13 +91,15 @@ public:
                                 operatorToExecute->name(), options.checkTimestamps ? "node" : "user");
 
         if(operatorToExecute->type() == WRITE && result.isSuccessful && !options.onlyExecute) {
-            this->operationLog->add(operation);
+            if(!options.dontSaveInOperationLog){
+                this->operationLog->add(operation);
+            }
 
             if(!options.checkTimestamps) {
                 result.timestamp = this->clock->tick(operation.timestamp);
             }
 
-            if(this->isInReplicationMode() && !options.checkTimestamps){
+            if(this->isInReplicationMode() && !options.checkTimestamps && !options.dontBroadcastToCluster){
                 this->cluster->broadcast(operation);
 
                 this->logger->debugInfo("Broadcasted request for operator {0} from {1}",

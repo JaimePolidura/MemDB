@@ -7,6 +7,7 @@
 #include "cluster/NodeState.h"
 #include "cluster/othernodes/ClusterNodes.h"
 #include "cluster/clusterdb/ClusterDb.h"
+#include "cluster/othernodes/NodeGroupOptions.h"
 
 #include "utils/clock/LamportClock.h"
 #include "utils/strings/StringUtils.h"
@@ -55,17 +56,20 @@ public:
         this->logger->info("Changed cluster node state to RUNNING");
     }
 
-    auto getUnsyncedOplog(uint64_t lastTimestampProcessedFromOpLog) -> std::vector<OperationBody> {
-        if(this->clusterNodes->otherNodes.empty())
+    auto getUnsyncedOplog(uint64_t lastTimestampProcessedFromOpLog, const NodeGroupOptions options = {}) -> std::vector<OperationBody> {
+        if(this->clusterNodes->isEmtpy(options))
             return std::vector<OperationBody>{};
 
+        int oplogId = options.nodeGroupId;
         OperationLogDeserializer operationLogDeserializer{};
-        std::optional<Response> responseFromSyncDataOpt = this->clusterNodes->sendRequestToRandomNode(createSyncOplogRequest(lastTimestampProcessedFromOpLog));
 
-        if(!responseFromSyncDataOpt.has_value() || !responseFromSyncDataOpt.value().responseValue.hasData())
+        memdbNodeId_t nodeIdToSendRequest = this->clusterNodes->getRandomNode({}, NodeGroupOptions{.nodeGroupId = oplogId})->nodeId;
+        Request req = createSyncOplogRequest(lastTimestampProcessedFromOpLog, oplogId, nodeIdToSendRequest);
+        Response responseFromSyncData = clusterNodes->sendRequest(nodeIdToSendRequest, req);
+
+        if(!responseFromSyncData.responseValue.hasData())
             return std::vector<OperationBody>{};
 
-        Response responseFromSyncData = responseFromSyncDataOpt.value();
         uint8_t * begin = responseFromSyncData.responseValue.data();
         auto bytes = std::vector<uint8_t>(begin, begin + responseFromSyncData.responseValue.size);
 
@@ -99,15 +103,20 @@ public:
     }
 
 private:
-    auto createSyncOplogRequest(uint64_t timestamp) -> Request {
+    auto createSyncOplogRequest(uint64_t timestamp, uint32_t selfOplogId, memdbNodeId_t nodeIdToSendRequest) -> Request {
         auto authenticationBody = AuthenticationBody{this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY), false, false};
         auto argsVector = std::make_shared<std::vector<SimpleString<memDbDataLength_t>>>();
+        auto nodeOplogId = this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS) ?
+                (this->partitions->isClockwiseNeighbor(nodeIdToSendRequest) ?
+                    selfOplogId + this->partitions->getDistanceClockwise(nodeIdToSendRequest) :
+                    selfOplogId -this->partitions->getDistanceCounterClockwise(nodeIdToSendRequest)) : 0;
 
         uint32_t part1 = timestamp >> 32;
         uint32_t part2 = (uint32_t) timestamp & 0xFFFFFFFF;
 
         argsVector->push_back(SimpleString<memDbDataLength_t>::fromNumber(part1));
         argsVector->push_back(SimpleString<memDbDataLength_t>::fromNumber(part2));
+        argsVector->push_back(SimpleString<memDbDataLength_t>::fromNumber(nodeOplogId));
 
         OperationBody operationBody{};
         operationBody.args = argsVector;

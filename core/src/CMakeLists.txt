@@ -2,7 +2,7 @@ set(BINARY ${CMAKE_PROJECT_NAME})
 file(GLOB_RECURSE SOURCES LIST_DIRECTORIES true *.h *.cpp)
 add_executable(${BINARY}_run ${SOURCES})
 
-add_library(${BINARY}_lib STATIC ${SOURCES} cluster/setup/SimpleClusterNodeSetup.h cluster/changehandler/ClusterDbNodeChangeHandler.h cluster/changehandler/simple/SimpleClusterNodeChangeHandler.h cluster/clustermanager/responses/GetRingNeighborsResponse.h cluster/setup/PartitionsClusterNodeSetup.h cluster/changehandler/partition/PartitionClusterNodeChangeHandler.h cluster/partitions/Partitions.h persistence/oplog/OperationLog.h persistence/oplog/MultipleOperationLog.h cluster/partitions/RingEntries.h utils/crypto/HashCalculator.h operators/dependencies/OperatorDependency.h operators/dependencies/OperatorDependencies.h operators/operations/cluster/MovePartitionOplogOperator.h virtualnode/VirtualNode.h persistence/OperationLogUtils.h cluster/changehandler/partition/NewNodeParttitionChangeHandler.h persistence/OperationLogInvalidator.h)
+add_library(${BINARY}_lib STATIC ${SOURCES} cluster/othernodes/NodeGroupOptions.h)
 
 # VCPKG Libraries
 # He cambiado el nombre de la carpeta de boost a xd. Con eso el programa no se bloquea
@@ -11,14 +11,14 @@ include_directories(${CMAKE_PREFIX_PATH}/include)
 find_package(Boost REQUIRED)
 target_link_libraries(${BINARY}_lib PRIVATE Boost::boost)
 
-find_package(spdlog CONFIG REQUIRED 1.11.0)
+find_package(spdlog CONFIG REQUIRED)
 target_link_libraries(${BINARY}_lib PRIVATE spdlog::spdlog spdlog::spdlog_header_only)
 
 find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(${BINARY}_lib PRIVATE nlohmann_json::nlohmann_json)
 
 if(NOT BUILDING_LINUX_DEPLOYMENT)
-    find_package(etcd-cpp-api CONFIG REQUIRED)
+    find_package(etcd-cpp-api CONFIG)
     target_link_libraries(${BINARY}_lib PRIVATE etcd-cpp-api)
 else()
     target_include_directories(${BINARY}_lib PRIVATE /usr/local/include)

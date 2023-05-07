@@ -15,6 +15,7 @@
 #include "config/keys/ConfigurationKeys.h"
 
 #include "logging/Logger.h"
+#include "persistence/OperationLogDeserializer.h"
 
 class Cluster {
 private:

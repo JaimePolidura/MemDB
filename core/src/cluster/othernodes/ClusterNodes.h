@@ -9,10 +9,14 @@
 #include "messages/request/RequestSerializer.h"
 #include "messages/response/ResponseDeserializer.h"
 #include "logging/Logger.h"
+#include "cluster/othernodes/NodeGroup.h"
+#include "cluster/othernodes/NodeGroupOptions.h"
 
 class ClusterNodes {
 public:
-    std::vector<node_t> otherNodes;
+    std::map<memdbNodeId_t, node_t> nodesById;
+    std::vector<NodeGroup> groups;
+
 private:
     configuration_t configuration;
     FixedThreadPool requestPool;
@@ -24,74 +28,63 @@ public:
         configuration(configuration),
         requestPool(configuration->get<int>(ConfigurationKeys::MEMDB_CORE_SERVER_MAX_THREADS)) {}
 
-    void setOtherNodes(const std::vector<node_t>& otherNodesToSet) {
-        this->otherNodes = otherNodesToSet;
+    void setOtherNodes(const std::vector<node_t>& otherNodesToSet, const NodeGroupOptions options = {}) {
+        for (const node_t& node: otherNodesToSet) {
+            if(this->nodesById.contains(node->nodeId)) {
+                this->nodesById[node->nodeId]->closeConnection();
+                this->nodesById.erase(node->nodeId);
+            }
+
+            this->nodesById[node->nodeId] = node;
+            this->groups[options.nodeGroupId].add(node->nodeId);
+        }
     }
 
     void setNodeState(memdbNodeId_t nodeId, const NodeState newState) {
-        for(int i = 0; i < this->otherNodes.size(); i++){
-            if(this->otherNodes.at(i)->nodeId == nodeId){
-                this->otherNodes[i]->state = newState;
-                return;
-            }
-        }
+        this->nodesById[nodeId]->state = newState;
     }
 
-    bool isConnectionOpened(memdbNodeId_t nodeId) const {
-        node_t node = this->getNodeById(nodeId);
-
-        return node != nullptr && node->isConnectionOpened();
-    }
-
-    void setConnectionOfNode(memdbNodeId_t nodeId, connection_t connection) {
-        node_t node = this->getNodeById(nodeId);
-
-        if(node != nullptr){
-            node->connection = connection;
-        }
-    }
-
-    void addNode(node_t node) {
-        this->otherNodes.push_back(node);
-        node->openConnection();
+    void addNode(node_t node, const NodeGroupOptions options = {}) {
+        this->groups[options.nodeGroupId].add(node->nodeId);
+        this->nodesById[node->nodeId] = node;
     }
 
     bool existsByNodeId(memdbNodeId_t nodeId) {
-        return this->getNodeById(nodeId) != nullptr ;
+        return this->nodesById.count(nodeId) != 0;
     }
 
     void deleteNodeById(const memdbNodeId_t nodeId) {
-        for(int i = 0; i < this->otherNodes.size(); i++){
-            node_t actualNode = this->otherNodes.at(i);
+        this->nodesById.erase(nodeId);
 
-            if(actualNode->nodeId == nodeId){
-                actualNode->closeConnection();
-                this->otherNodes.erase(this->otherNodes.begin() + i);
-                break;
-            }
+        for(NodeGroup& group : this->groups){
+            group.remove(nodeId);
         }
     }
 
     auto sendRequest(memdbNodeId_t nodeId, const Request& request) -> Response {
-        node_t node = this->getNodeById(nodeId);
+        node_t node = this->nodesById.at(nodeId);
 
         return Utils::retryUntilSuccessAndGet<Response, std::milli>(std::chrono::milliseconds(100), [node, &request]() -> Response {
             return node->sendRequest(request, true).value();
         });
     }
 
-    auto sendRequestToRandomNode(const Request& request) -> std::optional<Response> {
+    auto sendRequestToRandomNode(const Request& request, const NodeGroupOptions options = {}) -> std::optional<Response> {
         std::set<memdbNodeId_t> alreadyCheckedNodesId = {};
 
-        return Utils::retryUntilAndGet<Response, std::milli>(10, std::chrono::milliseconds(100), [this, &request, &alreadyCheckedNodesId]() -> Response {
-            node_t nodeToSendRequest = this->selectRandomNodeToSendRequest(alreadyCheckedNodesId);
+        return Utils::retryUntilAndGet<Response, std::milli>(10, std::chrono::milliseconds(100), [this, &request, &alreadyCheckedNodesId, options]() -> Response {
+            node_t nodeToSendRequest = this->selectRandomNodeToSendRequest(alreadyCheckedNodesId, options);
 
             return nodeToSendRequest->sendRequest(this->prepareRequest(request.operation), true).value();
         });
     }
 
-    auto broadcast(const OperationBody& operation) -> void {
-        for(node_t node : this->otherNodes){
+    auto broadcast(const OperationBody& operation, const NodeGroupOptions options = {}) -> void {
+        std::set<memdbNodeId_t> allNodesIdInGroup = this->groups[options.nodeGroupId].getAll();
+
+        for(memdbNodeId_t nodeId : allNodesIdInGroup){
+            node_t node = this->nodesById.at(nodeId);
+
             if(!NodeStates::canAcceptRequest(node->state)) {
                 continue;
             }
@@ -105,11 +98,21 @@ public:
     }
 
 private:
-    node_t selectRandomNodeToSendRequest(std::set<memdbNodeId_t> alreadyCheckedNodesId = {}) {
+    node_t selectRandomNodeToSendRequest(std::set<memdbNodeId_t> alreadyCheckedNodesId = {}, const NodeGroupOptions options = {}) {
         std::srand(std::time(nullptr));
+        NodeGroup group = this->groups[options.nodeGroupId];
+        std::set<memdbNodeId_t> alreadyChecked{};
+        std::set<memdbNodeId_t> nodesInGroup = group.getAll();
 
-        while(alreadyCheckedNodesId.size() != otherNodes.size()) {
-            node_t randomNode = this->otherNodes[std::rand() % this->otherNodes.size()];
+        while(alreadyCheckedNodesId.size() != group.size()) {
+            memdbNodeId_t offset = std::rand() % group.size();
+
+            if(alreadyChecked.contains(offset))
+                continue;
+
+            auto ptr = std::begin(nodesInGroup);
+            std::advance(ptr, offset);
+            node_t randomNode = this->nodesById.at(* ptr);
 
             if(Node::canSendRequestUnicast(randomNode->state))
                 return randomNode;
@@ -118,17 +121,6 @@ private:
         }
 
         throw std::runtime_error("No node available for selecting");
-    }
-
-    node_t getNodeById(memdbNodeId_t nodeId) const {
-        for(int i = 0; i < this->otherNodes.size(); i++) {
-            const node_t actualNode = * (this->otherNodes.data() + i);
-
-            if(actualNode->nodeId == nodeId)
-                return actualNode;
-        }
-
-        return nullptr;
     }
 
     Request prepareRequest(const OperationBody& operation) {

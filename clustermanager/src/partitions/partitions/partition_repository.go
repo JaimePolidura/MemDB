@@ -5,22 +5,30 @@ import (
 	"encoding/json"
 	"sort"
 	"strconv"
+	"sync"
 )
 
 type PartitionRepository struct {
-	Client *etcd.EtcdClient[string]
+	Client etcd.EtcdClient[string]
+
+	partitionRingEntriesCache     PartitionRingEntries
+	partitionRingEntriesCacheLock sync.Mutex
 }
 
-func (repository PartitionRepository) Add(newEntriy PartitionRingEntry) error {
+func (repository *PartitionRepository) Add(newEntriy PartitionRingEntry) error {
 	entriesByte, err := json.Marshal(newEntriy)
 	if err != nil {
 		return err
 	}
 
+	repository.partitionRingEntriesCacheLock.Lock()
+	repository.partitionRingEntriesCache.Add(newEntriy)
+	repository.partitionRingEntriesCacheLock.Unlock()
+
 	return repository.Client.Put("/partitions/ring/"+strconv.Itoa(int(newEntriy.RingPosition)), string(entriesByte), etcd.STRING)
 }
 
-func (repository PartitionRepository) GetRingMaxSize() (uint32, error) {
+func (repository *PartitionRepository) GetRingMaxSize() (uint32, error) {
 	valueStr, err := repository.Client.Get("/partitions/config/ringSize", etcd.STRING)
 	valueInt, err := strconv.Atoi(valueStr)
 
@@ -31,7 +39,7 @@ func (repository PartitionRepository) GetRingMaxSize() (uint32, error) {
 	return uint32(valueInt), nil
 }
 
-func (repository PartitionRepository) GetNodesPerPartition() (uint32, error) {
+func (repository *PartitionRepository) GetNodesPerPartition() (uint32, error) {
 	valueStr, err := repository.Client.Get("/partitions/config/nodesPerPartition", etcd.STRING)
 	valueInt, err := strconv.Atoi(valueStr)
 
@@ -42,7 +50,11 @@ func (repository PartitionRepository) GetNodesPerPartition() (uint32, error) {
 	return uint32(valueInt), nil
 }
 
-func (repository PartitionRepository) GetRingEntriesSorted() (PartitionRingEntries, error) {
+func (repository *PartitionRepository) GetRingEntriesSorted() (PartitionRingEntries, error) {
+	if len(repository.partitionRingEntriesCache.Entries) > 0 {
+		return repository.partitionRingEntriesCache, nil
+	}
+
 	valueStrJson, err := repository.Client.Get("/partitions/ring", etcd.STRING)
 
 	if err != nil {

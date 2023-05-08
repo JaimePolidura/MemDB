@@ -10,7 +10,7 @@ import (
 )
 
 type GetRingInfoController struct {
-	PartitionsRepository partitions.PartitionRepository
+	PartitionsRepository *partitions.PartitionRepository
 	Configuration        *configuration.Configuartion
 }
 

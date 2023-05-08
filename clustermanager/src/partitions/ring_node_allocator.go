@@ -10,8 +10,8 @@ import (
 
 type RingNodeAllocator struct {
 	HashCalculator       utils.HashCalculator
-	PartitionsRepository partitions.PartitionRepository
-	NodeRepository       nodes.NodeRepository
+	PartitionsRepository *partitions.PartitionRepository
+	NodeRepository       *nodes.NodeRepository
 }
 
 func (ringNodeAllocator *RingNodeAllocator) CanAllocateNode(nodeId nodes.NodeId_t) bool {

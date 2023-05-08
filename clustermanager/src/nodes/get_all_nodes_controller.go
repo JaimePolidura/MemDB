@@ -16,9 +16,9 @@ type GetAllNodesResponse struct {
 }
 
 type GetAllNodeController struct {
-	PartitionRepository partitions2.PartitionRepository
+	PartitionRepository *partitions2.PartitionRepository
 	Configuartion       configuration.Configuartion
-	NodesRepository     nodes.NodeRepository
+	NodesRepository     *nodes.NodeRepository
 	Logger              *logging.Logger
 }
 

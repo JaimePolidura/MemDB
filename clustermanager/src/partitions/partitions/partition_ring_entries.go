@@ -14,6 +14,17 @@ type PartitionRingEntry struct {
 	RingPosition uint32         `json:"ringPosition"`
 }
 
+func (entries PartitionRingEntries) Add(entry PartitionRingEntry) {
+	var interfaceArray []interface{}
+	for _, s := range entries.Entries {
+		interfaceArray = append(interfaceArray, s)
+	}
+
+	utils.InsertIntoSortedArray(interfaceArray, entries.Entries, func(i int) bool {
+		return entries.Entries[i].RingPosition >= entry.RingPosition
+	})
+}
+
 func (entries PartitionRingEntries) GetNeighborByRingPosition(ringPosition uint32) (PartitionRingEntry, PartitionRingEntry, bool) { //Clock wise, counter clock wise, found
 	clockWise, counterClockWise, found := entries.getNeighborsByRingPosition(ringPosition, 1)
 	if !found {
@@ -28,7 +39,7 @@ func (entries PartitionRingEntries) GetNeighborsByNodeId(nodeId nodes.NodeId_t, 
 	if !found {
 		return []PartitionRingEntry{}, false
 	}
-	
+
 	clockWise, counterClockWise, found := entries.getNeighborsByRingPosition(entry.RingPosition, numberNeighbors)
 	neighbors := append(clockWise, counterClockWise...)
 

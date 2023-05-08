@@ -13,7 +13,7 @@ import (
 )
 
 type HealthCheckService struct {
-	NodesRespository nodes.NodeRepository
+	NodesRespository *nodes.NodeRepository
 	Configuration    *configuration.Configuartion
 	NodeConnections  *connection2.NodeConnections
 	Logger           *logging.Logger

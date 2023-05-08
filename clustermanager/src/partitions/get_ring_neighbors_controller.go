@@ -11,9 +11,9 @@ import (
 )
 
 type GetRingNeighborsController struct {
-	PartitionsRepository partitions.PartitionRepository
+	PartitionsRepository *partitions.PartitionRepository
 	Configuration        *configuration.Configuartion
-	NodeRepository       nodes.NodeRepository
+	NodeRepository       *nodes.NodeRepository
 }
 
 type GetRingNeighborsResponse struct {

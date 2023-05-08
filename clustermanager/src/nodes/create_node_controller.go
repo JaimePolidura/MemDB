@@ -12,7 +12,7 @@ import (
 )
 
 type CreateNodeController struct {
-	NodesRepository   nodes.NodeRepository
+	NodesRepository   *nodes.NodeRepository
 	RingNodeAllocator *partitions.RingNodeAllocator
 	Configuration     *configuration.Configuartion
 }

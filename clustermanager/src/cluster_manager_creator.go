@@ -30,8 +30,8 @@ func CreateClusterManager() *ClusterManager {
 		Configuration: loadedConfiguration,
 	}
 	etcdNativeClient := createEtcdNativeClient(loadedConfiguration)
-	partitionsRepository := partitions2.PartitionRepository{Client: &etcd.EtcdClient[string]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}}
-	nodesRepository := nodes.NodeRepository{Client: &etcd.EtcdClient[nodes.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}}
+	partitionsRepository := &partitions2.PartitionRepository{Client: etcd.EtcdClient[string]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}}
+	nodesRepository := &nodes.NodeRepository{Client: etcd.EtcdClient[nodes.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}}
 	nodeConnections := connection.CreateNodeConnectionsObject(logger)
 	healthService := createHealthCheckService(loadedConfiguration, nodeConnections, nodesRepository, logger)
 	apiEcho := configureHttpApi(loadedConfiguration, logger, partitionsRepository, nodesRepository)
@@ -62,7 +62,7 @@ func createEtcdNativeClient(configuration *configuration.Configuartion) *clientv
 func createHealthCheckService(
 	configuration *configuration.Configuartion,
 	connections *connection.NodeConnections,
-	nodesRepository nodes.NodeRepository,
+	nodesRepository *nodes.NodeRepository,
 	logger *logging.Logger) *healthchecks.HealthCheckService {
 
 	return &healthchecks.HealthCheckService{
@@ -75,8 +75,8 @@ func createHealthCheckService(
 
 func configureHttpApi(configuration *configuration.Configuartion,
 	logger *logging.Logger,
-	partitionRepository partitions2.PartitionRepository,
-	nodesRepository nodes.NodeRepository) *echo.Echo {
+	partitionRepository *partitions2.PartitionRepository,
+	nodesRepository *nodes.NodeRepository) *echo.Echo {
 
 	echoApi := echo.New()
 	echoApi.HideBanner = true

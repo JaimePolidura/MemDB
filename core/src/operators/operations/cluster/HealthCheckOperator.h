@@ -2,7 +2,6 @@
 
 #include "operators/Operator.h"
 #include "messages/response/ErrorCode.h"
-#include "operators/MaintenanceOperatorExecutor.h"
 
 class HealthCheckOperator : public Operator {
 public:

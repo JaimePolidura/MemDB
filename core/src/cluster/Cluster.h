@@ -33,7 +33,7 @@ private:
     friend class PartitionsClusterNodeSetup;
     friend class SimpleClusterNodeChangeHandler;
     friend class PartitionClusterNodeChangeHandler;
-    friend class NewNodeParttitionChangeHandler;
+    friend class NewNodePartitionChangeHandler;
 
 public:
     Cluster() = default;

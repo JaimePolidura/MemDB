@@ -6,7 +6,6 @@
 
 class Configuration {
 private:
-    const std::map<std::string, std::string> actualConfigurationValues;
     const std::map<std::string, std::string> defaultConfigurationValues;
 
 public:

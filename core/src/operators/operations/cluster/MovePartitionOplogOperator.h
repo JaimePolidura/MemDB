@@ -1,7 +1,6 @@
 #pragma once
 
 #include "operators/Operator.h"
-#include "operators/MaintenanceOperatorExecutor.h"
 #include "messages/response/ErrorCode.h"
 #include "persistence/OperationLogDeserializer.h"
 #include "persistence/OperationLogInvalidator.h"
@@ -16,8 +15,8 @@ public:
     static constexpr int OPERATOR_NUMBER = 0x06;
 
     Response operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies dependencies) override {
-        int newOplogId = operation.getArg(0).to<int>();
-        int oldOplogId = newOplogId - 1;
+        uint32_t newOplogId = operation.getArg(0).to<uint32_t>();
+        uint32_t oldOplogId = newOplogId - 1;
 
         //Oplogs ids start with 0. 0 = self node
         if(newOplogId + 1 >= dependencies.cluster->getPartitionObject()->getNodesPerPartition()) {

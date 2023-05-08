@@ -66,7 +66,7 @@ private:
     }
 
     std::vector<uint64_t> restoreDataFromOplogFromDisk() {
-        this->logger->info("Applaying logs from disk...");
+        this->logger->info("Applying logs from disk...");
 
         bool usingReplication = this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION);
         bool usingPartitions = this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS);

@@ -27,7 +27,7 @@ public:
 
     virtual std::vector<OperationBody> getFromDisk(const OperationLogOptions options = {}) = 0;
 
-    virtual int getNumberOplogFiles();
+    virtual uint32_t getNumberOplogFiles() = 0;
 };
 
 using operationLog_t = std::shared_ptr<OperationLog>;

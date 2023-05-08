@@ -31,7 +31,7 @@ public:
         });
     }
 
-    void addAll(const std::vector<OperationBody>& operations, const OperationLogOptions options = {}) {
+    void addAll(const std::vector<OperationBody>& operations, const OperationLogOptions options = {}) override {
         this->operationLogBuffer->addAll(operations);
 
         if(options.dontUseBuffer){
@@ -52,7 +52,7 @@ public:
     }
 
     std::vector<OperationBody> clear(const OperationLogOptions options = {}) override {
-        auto operationLogsCleared = this->getAllFromDisk(options);
+        auto operationLogsCleared = this->getFromDisk(options);
 
         this->operationLogBuffer->flush(false);
         this->operationsLogDiskWriter.clear();
@@ -94,7 +94,7 @@ public:
         return compacted;
     }
 
-    int getNumberOplogFiles() override {
+    uint32_t getNumberOplogFiles() override {
         return 1;
     }
 

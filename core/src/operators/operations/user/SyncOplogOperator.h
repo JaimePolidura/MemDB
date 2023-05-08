@@ -4,7 +4,6 @@
 #include "messages/response/ErrorCode.h"
 #include "utils/Utils.h"
 #include "persistence/OperationLogDiskLoader.h"
-#include "operators/MaintenanceOperatorExecutor.h"
 #include "persistence/compaction/OperationLogCompacter.h"
 
 class SyncOplogOperator : public Operator, public MaintenanceOperatorExecutor {

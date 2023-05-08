@@ -7,7 +7,7 @@
 #include "persistence/OperationLogUtils.h"
 #include "persistence/OperationLogInvalidator.h"
 
-class NewNodeParttitionChangeHandler {
+class NewNodePartitionChangeHandler {
 private:
     OperationLogInvalidator operationLogInvalidator;
     OperationLogSerializer operationLogSerializer;
@@ -18,10 +18,10 @@ private:
     logger_t logger;
 
 public:
-    NewNodeParttitionChangeHandler(logger_t logger, cluster_t cluster, operationLog_t operationLog, operatorDispatcher_t operatorDispatcher):
+    NewNodePartitionChangeHandler(logger_t logger, cluster_t cluster, operationLog_t operationLog, operatorDispatcher_t operatorDispatcher):
         logger(logger), cluster(cluster), operationLog(operationLog), operatorDispatcher(operatorDispatcher) {}
 
-    NewNodeParttitionChangeHandler() = default;
+    NewNodePartitionChangeHandler() = default;
 
     void handle(node_t newNode) {
         RingEntry ringEntryAdded = cluster->clusterDb->getRingEntryByNodeId(newNode->nodeId);
@@ -93,7 +93,7 @@ private:
         oplogSelfNode.reserve(allActualOplogs.size() / 2);
         oplogNextNode.reserve(allActualOplogs.size() / 2);
 
-        for(const OperationBody oplog : allActualOplogs){
+        for(const OperationBody& oplog : allActualOplogs){
             SimpleString<memDbDataLength_t> key = oplog.args->at(0);
             bool keyBelongsToNextNode = this->cluster->partitions->getRingPositionByKey(key) >= newRingEntry.ringPosition;
 

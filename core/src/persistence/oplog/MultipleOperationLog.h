@@ -60,7 +60,7 @@ public:
         return this->operationLogs.at(options.operationLogId)->getFromDisk(options);
     }
 
-    int getNumberOplogFiles() override {
+    uint32_t getNumberOplogFiles() override {
         return this->operationLogs.size();
     }
 

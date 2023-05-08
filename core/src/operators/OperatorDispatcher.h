@@ -3,7 +3,6 @@
 #include "operators/Operator.h"
 #include "operators/OperatorRegistry.h"
 #include "operators/DbOperatorExecutor.h"
-#include "operators/MaintenanceOperatorExecutor.h"
 #include "operators/dependencies/OperatorDependencies.h"
 #include "operators/dependencies/OperatorDependency.h"
 
@@ -37,7 +36,7 @@ public:
 
         auto operatorToExecute = this->operatorRegistry->get(request.operation.operatorNumber);
 
-        if(operatorToExecute.get() == nullptr){
+        if(operatorToExecute == nullptr){
             return Response::error(ErrorCode::UNKNOWN_OPERATOR);
         }
         if(!this->isAuthorizedToExecute(operatorToExecute, request.authenticationType)) {
@@ -122,13 +121,13 @@ private:
         OperatorDependencies dependencies;
         
         for(auto dependency : operatorToGetDependecies->dependencies()){
-            this->getDependecy(dependency, &dependencies);
+            this->getDependency(dependency, &dependencies);
         }
 
         return dependencies;
     }
 
-    void getDependecy(OperatorDependency dependency, OperatorDependencies * operatorDependencies){
+    void getDependency(OperatorDependency dependency, OperatorDependencies * operatorDependencies){
         switch (dependency) {
             case OPERATION_LOG:
                 operatorDependencies->operationLog = this->operationLog;
@@ -151,12 +150,6 @@ private:
                 break;
         }
     }
-    
-    void applyReplicatedOperationBufferIfNotEmpty() {
-        if(!this->replicationOperationBuffer->isEmpty()){
-            this->applyReplicatedOperationBuffer();
-        }
-    }
 
     bool isAuthorizedToExecute(std::shared_ptr<Operator> operatorToExecute, AuthenticationType authenticationOfUser) {
         for(AuthenticationType authentationTypeRequiredForOperator : operatorToExecute->authorizedToExecute()) {
@@ -170,10 +163,6 @@ private:
 
     bool isInReplicationMode() {
         return this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION);
-    }
-
-    bool isInPartitionMode() {
-        return this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS);
     }
 };
 

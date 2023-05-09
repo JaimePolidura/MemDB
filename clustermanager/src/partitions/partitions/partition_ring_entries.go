@@ -41,8 +41,8 @@ func (entries PartitionRingEntries) GetNeighborsByNodeId(nodeId nodes.NodeId_t, 
 	}
 
 	clockWise, counterClockWise, found := entries.getNeighborsByRingPosition(entry.RingPosition, numberNeighbors)
-	neighbors := append(clockWise, counterClockWise...)
-
+	neighbors := append(counterClockWise, clockWise...)
+	
 	return neighbors, found
 }
 

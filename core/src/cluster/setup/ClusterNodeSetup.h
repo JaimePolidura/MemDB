@@ -1,8 +1,7 @@
 #pragma once
 
 #include "cluster/Cluster.h"
-#include "cluster/clusterdb/changehandler/ClusterDbNodeChangeHandler.h"
-
+#include "cluster/changehandler/ClusterDbNodeChangeHandler.h"
 #include "persistence/oplog/OperationLog.h"
 
 class ClusterNodeSetup {
@@ -31,6 +30,23 @@ public:
     virtual clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler(cluster_t cluster, operationLog_t operationLog, operatorDispatcher_t operatorDispatcher) = 0;
 
 protected:
+    void setSelfNodeFromAllNodes(cluster_t cluster, const std::vector<node_t>& allNodes) {
+        memdbNodeId_t selfNodeId = this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
+
+        cluster->selfNode = *std::find_if(allNodes.begin(), allNodes.end(), [selfNodeId](node_t node) -> bool {
+            return node->nodeId == selfNodeId;
+        });
+    }
+
+    std::vector<node_t> getOtherNodesFromAllNodes(const std::vector<node_t>& allNodes) {
+        memdbNodeId_t selfNodeId = this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
+        std::vector<node_t> otherNodes;
+
+        std::copy_if(allNodes.begin(), allNodes.end(), std::back_inserter(otherNodes), [selfNodeId](node_t node) -> bool{
+            return node->nodeId != selfNodeId;
+        });
+    }
+
     void setOtherNodes(cluster_t cluster, const std::vector<node_t>& allNodes) {
         memdbNodeId_t selfNodeId = this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
 

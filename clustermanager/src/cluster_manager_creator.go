@@ -93,14 +93,12 @@ func configureHttpApi(configuration *configuration.Configuartion,
 	getAllNodesController := nodes2.GetAllNodeController{NodesRepository: nodesRepository, Logger: logger, PartitionRepository: partitionRepository}
 	loginController := &nodes2.LoginController{Configuration: configuration, Logger: logger}
 	getRingController := &partitions.GetRingInfoController{PartitionsRepository: partitionRepository, Configuration: configuration}
-	getRingNeighborsController := &partitions.GetRingNeighborsController{PartitionsRepository: partitionRepository, Configuration: configuration, NodeRepository: nodesRepository}
 
 	echoApi.POST("/login", loginController.Login)
 
 	apiGroup.POST("/nodes/create", createNodeController.CreateNode)
 	apiGroup.GET("/nodes/all", getAllNodesController.GetAllNodes)
 	apiGroup.GET("/partitions/ring/info", getRingController.GetRingInfo)
-	apiGroup.GET("/partitions/ring/neighbors", getRingNeighborsController.GetRingNeighbors)
 
 	return echoApi
 }

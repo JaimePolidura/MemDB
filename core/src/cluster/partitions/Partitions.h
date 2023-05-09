@@ -27,6 +27,10 @@ public:
 
     Partitions() = default;
 
+    RingEntry getRingEntryByNodeId(memdbNodeId_t nodeId) {
+        return this->ringEntries.getByNodeId(nodeId);
+    }
+
     uint32_t getRingPositionByKey(SimpleString<memDbDataLength_t> key) {
         return HashCalculator::calculate(key.toString()) % this->maxSize;
     }
@@ -36,13 +40,16 @@ public:
         return this->ringEntries.getDistanceClockwise(this->selfEntry.nodeId, nodeB) <= this->nodesPerPartition;
     }
 
-    std::vector<RingEntry> getNeighborsClockwise(int numberNeighbors = this->nodesPerPartition) {
-        return this->ringEntries.getNeighborsClockwise(this->selfEntry.nodeId, this->nodesPerPartition);
+    std::vector<RingEntry> getNeighborsClockwise(int numberNeighbors = -1) {
+        return this->ringEntries.getNeighborsClockwise(this->selfEntry.nodeId,numberNeighbors == -1 ? this->nodesPerPartition - 1 : numberNeighbors);
     }
 
-    // self --> (clockwise) nodeB
-    bool isCounterClockwiseNeighbor(memdbNodeId_t nodeB) {
-        return this->ringEntries.getDistanceCounterClockwise(this->selfEntry.nodeId, nodeB) <= this->nodesPerPartition;
+    std::vector<RingEntry> getNeighborsClockwiseByNodeId(memdbNodeId_t nodeId, int numberNeighbors = -1) {
+        return this->ringEntries.getNeighborsClockwise(nodeId,numberNeighbors == -1 ? this->nodesPerPartition - 1 : numberNeighbors);
+    }
+
+    RingEntry getNeighborCounterClockwiseByNodeId(memdbNodeId_t nodeId) {
+        return this->ringEntries.getNeighborCounterClockwise(nodeId);
     }
 
     uint32_t getDistanceOfKey(SimpleString<memDbDataLength_t> key) {
@@ -66,10 +73,6 @@ public:
         return this->ringEntries.getDistanceClockwise(this->selfEntry.nodeId, nodeB);
     }
 
-    uint32_t getDistance(memdbNodeId_t otherNode) {
-        return this->ringEntries.getDistance(this->selfEntry.nodeId, otherNode);
-    }
-
     bool isNeighbor(memdbNodeId_t otherNode) {
         return this->ringEntries.getDistance(this->selfEntry.nodeId, otherNode) <= this->nodesPerPartition;
     }
@@ -80,6 +83,10 @@ public:
 
     void add(RingEntry ringEntry){
         this->ringEntries.add(ringEntry);
+    }
+
+    RingEntry getSelfEntry() {
+        return this->selfEntry;
     }
 };
 

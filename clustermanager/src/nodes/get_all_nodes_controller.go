@@ -47,6 +47,8 @@ func (controller *GetAllNodeController) GetAllNodes(context echo.Context) error 
 
 func (controller *GetAllNodeController) getNodesNeighborsFromPartition(nodeIdString string) ([]nodes.Node, error) {
 	nodeId := nodes.NodeId_t(nodeIdString)
+	selfNode, err := controller.NodesRepository.FindById(nodeId)
+
 	ringEntries, err := controller.PartitionRepository.GetRingEntriesSorted()
 	nodesPerPartition, err := controller.PartitionRepository.GetNodesPerPartition()
 	if err != nil {
@@ -54,12 +56,14 @@ func (controller *GetAllNodeController) getNodesNeighborsFromPartition(nodeIdStr
 	}
 
 	var nodes []nodes.Node
-	neighborsEntries, _ := ringEntries.GetNeighborsByNodeId(nodeId, nodesPerPartition)
+	neighborsEntries, _ := ringEntries.GetNeighborsByNodeId(nodeId, nodesPerPartition-1)
 
 	for _, entry := range neighborsEntries {
 		node, _ := controller.NodesRepository.FindById(entry.NodeId)
 		nodes = append(nodes, node)
 	}
+
+	nodes = append(nodes, selfNode)
 
 	return nodes, nil
 }

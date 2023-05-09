@@ -28,13 +28,13 @@ private:
     node_t selfNode;
     logger_t logger;
 
-    friend class ClusterNodeSetup;
-    friend class SimpleClusterNodeSetup;
-    friend class PartitionsClusterNodeSetup;
-    friend class SimpleClusterNodeChangeHandler;
     friend class PartitionClusterNodeChangeHandler;
     friend class NewNodePartitionChangeHandler;
-
+    friend class PartitionsClusterNodeSetup;
+    friend class DeletionNodeChangeHandler;
+    friend class SimpleClusterNodeSetup;
+    friend class ClusterNodeSetup;
+    
 public:
     Cluster() = default;
 

@@ -116,6 +116,7 @@ private:
     }
 
     void updateNeighbors() {
+        //TODO Add group nodes
         std::string selfNodeId = cluster->configuration->get(ConfigurationKeys::MEMDB_CORE_NODE_ID);
         std::vector<node_t> neighbors = cluster->clusterManager->getRingNeighbors(selfNodeId).neighbors;
         cluster->clusterNodes->setOtherNodes(neighbors);

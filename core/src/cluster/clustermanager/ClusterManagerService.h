@@ -14,18 +14,18 @@
 class ClusterManagerService {
     logger_t logger;
     HttpClient httpClusterManagerClient;
-    configuration_t configuartion;
+    configuration_t configuration;
     std::string token;
 
 public:
-    ClusterManagerService(configuration_t configuartion, logger_t logger): configuartion(configuartion), logger(logger),
-        token(""), httpClusterManagerClient() {}
+    ClusterManagerService(configuration_t configuartion, logger_t logger): configuration(configuartion), logger(logger),
+                                                                           token(""), httpClusterManagerClient() {}
 
     GetRingInfoResponse getRingInfo() {
         this->token = this->authenticate();
 
         HttpResponse response = this->httpClusterManagerClient.get(
-                this->configuartion->get(ConfigurationKeys::MEMDB_CORE_CLUSTER_MANAGER_ADDRESS),
+                this->configuration->get(ConfigurationKeys::MEMDB_CORE_CLUSTER_MANAGER_ADDRESS),
                 "/api/partitions/ring/info",
                 this->token);
 
@@ -35,26 +35,12 @@ public:
         return GetRingInfoResponse::fromJson(response.body);
     }
 
-    GetRingNeighborsResponse getRingNeighbors(const std::string& nodeId) {
+    AllNodesResponse getAllNodes(memdbNodeId_t nodeId) {
         this->token = this->authenticate();
 
         HttpResponse response = this->httpClusterManagerClient.get(
-                this->configuartion->get(ConfigurationKeys::MEMDB_CORE_CLUSTER_MANAGER_ADDRESS),
-                "/api/partitions/ring/neighbors?nodeId" + nodeId,
-                this->token);
-
-        if(!response.isSuccessful())
-            throw std::runtime_error("Unexpected error when trying to get all nodes from the cluster manager " + response.body.dump());
-
-        return GetRingNeighborsResponse::fromJson(response.body);
-    }
-
-    AllNodesResponse getAllNodes() {
-        this->token = this->authenticate();
-
-        HttpResponse response = this->httpClusterManagerClient.get(
-                this->configuartion->get(ConfigurationKeys::MEMDB_CORE_CLUSTER_MANAGER_ADDRESS),
-                "/api/nodes/all",
+                this->configuration->get(ConfigurationKeys::MEMDB_CORE_CLUSTER_MANAGER_ADDRESS),
+                "/api/nodes/all?nodeId=" + nodeId,
                 this->token);
 
         if(!response.isSuccessful())
@@ -66,9 +52,9 @@ public:
 private:
     std::string authenticate() {
         auto response = this->httpClusterManagerClient.post(
-                this->configuartion->get(ConfigurationKeys::MEMDB_CORE_CLUSTER_MANAGER_ADDRESS),
+                this->configuration->get(ConfigurationKeys::MEMDB_CORE_CLUSTER_MANAGER_ADDRESS),
                 "/login",
-                {{"authKey", this->configuartion->get(ConfigurationKeys::MEMDB_CORE_AUTH_API_KEY)}});
+                {{"authKey", this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_API_KEY)}});
 
         if (response.code == 403) {
             logger->error("Invalid cluster auth key while trying to authenticate to they clustermanager");

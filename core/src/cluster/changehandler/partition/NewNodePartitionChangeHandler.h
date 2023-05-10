@@ -133,8 +133,12 @@ private:
 
         OperationBody operationBody{};
         operationBody.operatorNumber = 0x06; //MovePartitionOplogOperator
+        operationBody.flag1 = false; //applyNewOplog
+        operationBody.flag2 = true; //clearOldOplog
+
         args_t args = OperationBody::createOperationBodyArg();
         args->push_back(SimpleString<memDbDataLength_t>::fromNumber(newOplogId));
+        args->push_back(SimpleString<memDbDataLength_t>::fromNumber(newOplogId - 1));
         args->push_back(SimpleString<memDbDataLength_t>::fromVector(*serialized));
 
         Request request{};

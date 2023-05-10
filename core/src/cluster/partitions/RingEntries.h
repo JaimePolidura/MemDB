@@ -73,6 +73,12 @@ public:
         }
     }
 
+    void deleteByNodeId(memdbNodeId_t nodeId) {
+        RingEntryNode * ringEntryDeleted = this->indexByNodeId.at(nodeId);
+        ringEntryDeleted->back->next = ringEntryDeleted->next;
+        ringEntryDeleted->next->back = ringEntryDeleted->back;
+    }
+
     std::vector<RingEntry> getNeighborsClockwise(memdbNodeId_t nodeId, int numberNeighbors) {
         RingEntryNode * ringEntryOfNode = this->indexByNodeId.at(nodeId);
         std::vector<RingEntry> neighbors(numberNeighbors);

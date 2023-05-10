@@ -56,6 +56,10 @@ public:
         return this->nodesById.count(nodeId) != 0;
     }
 
+    node_t getByNodeId(memdbNodeId_t nodeId) {
+        return this->nodesById[nodeId];
+    }
+
     void deleteNodeById(const memdbNodeId_t nodeId) {
         this->nodesById.erase(nodeId);
 

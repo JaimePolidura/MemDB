@@ -20,15 +20,12 @@ public:
     template<typename T>
     static std::vector<T> concat(const std::vector<T>& a, const std::vector<T>& b) {
         if(a.empty() && b.empty()) {
-            std::cout << "b" << std::endl;
             return std::vector<T>{};
         }
         if(a.empty())
             return b;
         if(b.empty())
             return a;
-
-        std::cout << "e" << std::endl;
 
         std::vector<T> concatenated;
         concatenated.reserve(a.size() + b.size());

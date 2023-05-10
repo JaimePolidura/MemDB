@@ -77,6 +77,10 @@ public:
         return this->ringEntries.getDistance(this->selfEntry.nodeId, otherNode) <= this->nodesPerPartition;
     }
 
+    void deleteByNodeId(memdbNodeId_t nodeId) {
+        this->ringEntries.deleteByNodeId(nodeId);
+    }
+
     uint32_t getNodesPerPartition() {
         return this->nodesPerPartition;
     }

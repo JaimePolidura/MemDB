@@ -122,14 +122,10 @@ private:
 
     void updateNeighbors() {
         memdbNodeId_t selfNodeId = this->cluster->selfNode->nodeId;
-        std::vector<node_t> allNodes = cluster->clusterManager->getAllNodes(selfNodeId).nodes;
+        std::vector<node_t> otherNodes = cluster->clusterManager->getAllNodes(selfNodeId)
+                .getAllNodesExcept(selfNodeId);
 
-        this->partitionNeighborsNodesGroupSetter.setFromOtherNodes(this->cluster, Utils::filter<node_t>(allNodes, ));
-
-
-        //TODO Add group nodes
-        std::string selfNodeId = cluster->configuration->get(ConfigurationKeys::MEMDB_CORE_NODE_ID);
-        cluster->clusterNodes->setOtherNodes(neighbors);
+        this->partitionNeighborsNodesGroupSetter.setFromOtherNodes(this->cluster, otherNodes);
     }
 
     Request createMovePartitionOplogRequest(int newOplogId, const std::vector<OperationBody>& oplog) {

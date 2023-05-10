@@ -35,15 +35,6 @@ public:
     virtual void setClusterInformation(cluster_t cluster, const std::vector<node_t>& otherNodes) = 0;
 
     virtual clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler(cluster_t cluster, operationLog_t operationLog, operatorDispatcher_t operatorDispatcher) = 0;
-
-protected:
-    void setSelfNodeFromAllNodes(cluster_t cluster, const std::vector<node_t>& allNodes) {
-        memdbNodeId_t selfNodeId = this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
-
-        cluster->selfNode = *std::find_if(allNodes.begin(), allNodes.end(), [selfNodeId](node_t node) -> bool {
-            return node->nodeId == selfNodeId;
-        });
-    }
 };
 
 using clusterNodeSetup_t = std::shared_ptr<ClusterNodeSetup>;

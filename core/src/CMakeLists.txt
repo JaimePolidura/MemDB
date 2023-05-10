@@ -2,7 +2,7 @@ set(BINARY ${CMAKE_PROJECT_NAME})
 file(GLOB_RECURSE SOURCES LIST_DIRECTORIES true *.h *.cpp)
 add_executable(${BINARY}_run ${SOURCES})
 
-add_library(${BINARY}_lib STATIC ${SOURCES} cluster/othernodes/NodeGroupOptions.h cluster/changehandler/partition/DeletionNodeChangeHandler.h)
+add_library(${BINARY}_lib STATIC ${SOURCES} cluster/othernodes/NodeGroupOptions.h cluster/changehandler/partition/DeletionNodeChangeHandler.h cluster/partitions/PartitionNeighborsNodesGroupSetter.h)
 
 # VCPKG Libraries
 # He cambiado el nombre de la carpeta de boost a xd. Con eso el programa no se bloquea

@@ -7,12 +7,8 @@ class SimpleClusterNodeSetup : public ClusterNodeSetup {
 public:
     SimpleClusterNodeSetup(logger_t logger, configuration_t configuration): ClusterNodeSetup(logger, configuration) {}
 
-    void setClusterInformation(cluster_t cluster) override {
-        memdbNodeId_t selfNodeId = configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
-        std::vector<node_t> allNodes = cluster->clusterManager->getAllNodes(selfNodeId).nodes;
-
-        setSelfNodeFromAllNodes(cluster, allNodes);
-        cluster->clusterNodes->setOtherNodes(getOtherNodesFromAllNodes(allNodes));
+    void setClusterInformation(cluster_t cluster, const std::vector<node_t>& otherNodes) override {
+        cluster->clusterNodes->setOtherNodes(otherNodes, NodeGroupOptions{.nodeGroupId = 0});
     }
 
     clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler(cluster_t cluster, operationLog_t operationLog, operatorDispatcher_t operatorDispatcher) override {

@@ -5,6 +5,19 @@
 class Utils {
 public:
     template<typename T>
+    static std::vector<T> filter(const std::vector<T>& initial, std::function<bool(const T&)> predicate) {
+        std::vector<T> result{initial.size()};
+
+        for (const T& item : initial) {
+            if(predicate(item)){
+                result.push_back(std::move(item));
+            }
+        }
+
+        return result;
+    }
+
+    template<typename T>
     static std::vector<T> concat(const std::vector<T>& a, const std::vector<T>& b) {
         if(a.empty() && b.empty()) {
             std::cout << "b" << std::endl;

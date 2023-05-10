@@ -1,14 +1,19 @@
 #pragma once
 
-#include "logging/Logger.h"
+#include "cluster/partitions/PartitionNeighborsNodesGroupSetter.h"
 #include "cluster/Cluster.h"
+
+#include "logging/Logger.h"
+
 #include "operators/OperatorDispatcher.h"
+
 #include "persistence/OperationLogSerializer.h"
 #include "persistence/OperationLogUtils.h"
 #include "persistence/OperationLogInvalidator.h"
 
 class NewNodePartitionChangeHandler {
 private:
+    PartitionNeighborsNodesGroupSetter partitionNeighborsNodesGroupSetter;
     OperationLogInvalidator operationLogInvalidator;
     OperationLogSerializer operationLogSerializer;
 
@@ -116,9 +121,14 @@ private:
     }
 
     void updateNeighbors() {
+        memdbNodeId_t selfNodeId = this->cluster->selfNode->nodeId;
+        std::vector<node_t> allNodes = cluster->clusterManager->getAllNodes(selfNodeId).nodes;
+
+        this->partitionNeighborsNodesGroupSetter.setFromOtherNodes(this->cluster, Utils::filter<node_t>(allNodes, ));
+
+
         //TODO Add group nodes
         std::string selfNodeId = cluster->configuration->get(ConfigurationKeys::MEMDB_CORE_NODE_ID);
-        std::vector<node_t> neighbors = cluster->clusterManager->getRingNeighbors(selfNodeId).neighbors;
         cluster->clusterNodes->setOtherNodes(neighbors);
     }
 

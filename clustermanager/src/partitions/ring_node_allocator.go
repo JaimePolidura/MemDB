@@ -21,7 +21,7 @@ func (ringNodeAllocator *RingNodeAllocator) CanAllocateNode(nodeId nodes.NodeId_
 		return false
 	}
 
-	neighbors, _ := ringEntriesSorted.GetNeighborsByNodeId(nodeId, nodesPerPartition)
+	neighbors, _ := ringEntriesSorted.GetNeighborsByNodeId(nodeId, nodesPerPartition-1)
 
 	for _, neighbor := range neighbors {
 		node, err := ringNodeAllocator.NodeRepository.FindById(neighbor.NodeId)

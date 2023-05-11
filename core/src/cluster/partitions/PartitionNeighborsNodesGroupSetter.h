@@ -11,8 +11,7 @@ public:
         RingEntry actualEntry = cluster->partitions->getSelfEntry();
 
         for (int i = 0; i < nodesPerPartition; ++i) {
-            std::vector<RingEntry> ringEntries = cluster->partitions->getNeighborsClockwiseByNodeId(
-                    actualEntry.nodeId, nodesPerPartition - 1); //-1 to avoid including an extra node
+            std::vector<RingEntry> ringEntries = cluster->partitions->getNeighborsClockwiseByNodeId(actualEntry.nodeId);
             std::vector<node_t> nodes = this->toNodesFromRingEntries(otherNodes, ringEntries);
 
             cluster->clusterNodes->setOtherNodes(nodes, NodeGroupOptions {.nodeGroupId = i});

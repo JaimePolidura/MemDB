@@ -24,26 +24,19 @@ public:
     DeletionNodeChangeHandler() = default;
 
     void handle(node_t deletedNode) {
-        uint32_t nodesPerPartition = this->cluster->partitions->getNodesPerPartition();
         uint32_t distanceClockwise = this->cluster->partitions->getDistanceClockwise(deletedNode->nodeId);
-        std::vector<RingEntry> neighborsClockWise = this->cluster->partitions->getNeighborsClockwise(nodesPerPartition- 1);
+        std::vector<RingEntry> neighborsClockWise = this->cluster->partitions->getNeighborsClockwise();
         memdbNodeId_t prevNodeId = this->cluster->partitions->getNeighborCounterClockwiseByNodeId(deletedNode->nodeId).nodeId;
 
         this->cluster->partitions->deleteByNodeId(deletedNode->nodeId);
         this->cluster->clusterNodes->deleteNodeById(deletedNode->nodeId);
+        this->updateNeighbors();
 
         if(!this->cluster->partitions->isClockwiseNeighbor(deletedNode->nodeId) && distanceClockwise > 1){
             return;
         }
 
         cluster->setBooting();
-
-        this->updateNeighbors();
-
-        if(distanceClockwise == cluster->partitions->getNodesPerPartition()){
-            cluster->setRunning();
-            return;
-        }
 
         if(this->cluster->selfNode->nodeId == deletedNode->nodeId){
             this->sendSelfOplogToPrevNode(prevNodeId);
@@ -68,7 +61,7 @@ private:
                 memdbNodeId_t nodeIdToSendRequest = neighborsClockWise.at(i).nodeId;
 
                 bool applyNewOplog = !nodeAlreadyHoldsOplog;
-                bool clearOldOplog = !nodeAlreadyHoldsOplog;
+                bool clearOldOplog =  nodeAlreadyHoldsOplog;
 
                 this->cluster->clusterNodes->sendRequest(nodeIdToSendRequest, createMovePartitionOplogRequest(
                         oldOplog, newOplogId, actualOplog, applyNewOplog, clearOldOplog));

@@ -79,10 +79,10 @@ private:
     }
 
     std::vector<uint64_t> restoreMultipleOplog() {
-        int numberOplogs = this->operationLog->getNumberOplogFiles();
+        uint32_t numberOplogs = this->operationLog->getNumberOplogFiles();
         std::vector<uint64_t> lastRestoredTimestamps{};
 
-        for (int i = 0; i < numberOplogs; i++) {
+        for (uint32_t i = 0; i < numberOplogs; i++) {
             std::vector<OperationBody> oplog = this->operationLog->getFromDisk(OperationLogOptions{
                 .operationLogId = i
             });

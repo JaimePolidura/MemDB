@@ -110,7 +110,7 @@ private:
         auto nodeOplogId = this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS) ?
                 (this->partitions->isClockwiseNeighbor(nodeIdToSendRequest) ?
                     selfOplogId + this->partitions->getDistanceClockwise(nodeIdToSendRequest) :
-                    selfOplogId -this->partitions->getDistanceCounterClockwise(nodeIdToSendRequest)) : 0;
+                    selfOplogId - this->partitions->getDistanceCounterClockwise(nodeIdToSendRequest)) : 0;
 
         uint32_t part1 = timestamp >> 32;
         uint32_t part2 = (uint32_t) timestamp & 0xFFFFFFFF;

@@ -27,25 +27,21 @@ public:
 
     Partitions() = default;
 
-    RingEntry getRingEntryByNodeId(memdbNodeId_t nodeId) {
-        return this->ringEntries.getByNodeId(nodeId);
-    }
-
     uint32_t getRingPositionByKey(SimpleString<memDbDataLength_t> key) {
         return HashCalculator::calculate(key.toString()) % this->maxSize;
     }
 
     // self --> (clockwise) nodeB
     bool isClockwiseNeighbor(memdbNodeId_t nodeB) {
-        return this->ringEntries.getDistanceClockwise(this->selfEntry.nodeId, nodeB) <= this->nodesPerPartition;
+        return this->ringEntries.getDistanceClockwise(this->selfEntry.nodeId, nodeB) < this->nodesPerPartition;
     }
 
     std::vector<RingEntry> getNeighborsClockwise(int numberNeighbors = -1) {
         return this->ringEntries.getNeighborsClockwise(this->selfEntry.nodeId,numberNeighbors == -1 ? this->nodesPerPartition - 1 : numberNeighbors);
     }
 
-    std::vector<RingEntry> getNeighborsClockwiseByNodeId(memdbNodeId_t nodeId, int numberNeighbors = -1) {
-        return this->ringEntries.getNeighborsClockwise(nodeId,numberNeighbors == -1 ? this->nodesPerPartition - 1 : numberNeighbors);
+    std::vector<RingEntry> getNeighborsClockwiseByNodeId(memdbNodeId_t nodeId) {
+        return this->ringEntries.getNeighborsClockwise(nodeId,this->nodesPerPartition - 1);
     }
 
     RingEntry getNeighborCounterClockwiseByNodeId(memdbNodeId_t nodeId) {
@@ -60,7 +56,7 @@ public:
     }
 
     bool canHoldKey(SimpleString<memDbDataLength_t> key) {
-        return this->getDistanceOfKey(key) <= this->nodesPerPartition;
+        return this->getDistanceOfKey(key) < this->nodesPerPartition;
     }
 
     // self <-- (counter clockwise) nodeB
@@ -74,7 +70,7 @@ public:
     }
 
     bool isNeighbor(memdbNodeId_t otherNode) {
-        return this->ringEntries.getDistance(this->selfEntry.nodeId, otherNode) <= this->nodesPerPartition;
+        return this->ringEntries.getDistance(this->selfEntry.nodeId, otherNode) < this->nodesPerPartition;
     }
 
     void deleteByNodeId(memdbNodeId_t nodeId) {

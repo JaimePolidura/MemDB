@@ -2,7 +2,7 @@ set(BINARY ${CMAKE_PROJECT_NAME})
 file(GLOB_RECURSE SOURCES LIST_DIRECTORIES true *.h *.cpp)
 add_executable(${BINARY}_run ${SOURCES})
 
-add_library(${BINARY}_lib STATIC ${SOURCES} cluster/othernodes/NodeGroupOptions.h cluster/changehandler/partition/DeletionNodeChangeHandler.h cluster/partitions/PartitionNeighborsNodesGroupSetter.h)
+add_library(${BINARY}_lib STATIC ${SOURCES})
 
 # VCPKG Libraries
 # He cambiado el nombre de la carpeta de boost a xd. Con eso el programa no se bloquea
@@ -25,7 +25,7 @@ else()
     target_link_libraries(${BINARY}_lib PRIVATE cpprest etcd-cpp-api)
     target_link_directories(${BINARY}_lib PRIVATE /usr/local/lib)
     target_compile_options(${BINARY}_lib PRIVATE -I/usr/local/include/etcd)
-    target_link_libraries(${BINARY}_lib PRIVATE -letcd-cpp-api -lcpprest)
+    target_link_libraries(${BINARY}_lib PRIVATE -letcd-cpp-api -lcpprest -lcrypto -lcpprest)
     target_link_libraries(${BINARY}_run PRIVATE ${BINARY}_lib)
 endif()
 

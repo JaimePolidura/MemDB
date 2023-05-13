@@ -30,6 +30,7 @@ private:
 
     friend class PartitionNeighborsNodesGroupSetter;
     friend class PartitionClusterNodeChangeHandler;
+    friend class SimpleClusterNodeChangeHandler;
     friend class NewNodePartitionChangeHandler;
     friend class PartitionsClusterNodeSetup;
     friend class DeletionNodeChangeHandler;

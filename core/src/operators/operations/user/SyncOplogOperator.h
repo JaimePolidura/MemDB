@@ -3,12 +3,11 @@
 #include "operators/Operator.h"
 #include "messages/response/ErrorCode.h"
 #include "utils/Utils.h"
-#include "persistence/OperationLogDiskLoader.h"
+#include "persistence/OperationLogSerializer.h"
 #include "persistence/compaction/OperationLogCompacter.h"
 
-class SyncOplogOperator : public Operator, public MaintenanceOperatorExecutor {
+class SyncOplogOperator : public Operator {
 private:
-    OperationLogDiskLoader operationLogDiskLoader;
     OperationLogSerializer operationLogSerializer;
     OperationLogCompacter operationLogCompacter;
 

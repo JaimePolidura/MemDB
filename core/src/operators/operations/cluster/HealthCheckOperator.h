@@ -20,7 +20,7 @@ public:
     }
 
     constexpr OperatorType type() override {
-        return OperatorType::CONTROL;
+        return OperatorType::NODE_MAINTENANCE;
     }
 
     constexpr uint8_t operatorNumber() override {

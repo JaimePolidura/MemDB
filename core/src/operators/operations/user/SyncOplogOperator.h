@@ -5,7 +5,14 @@
 #include "utils/Utils.h"
 #include "persistence/OperationLogSerializer.h"
 #include "persistence/compaction/OperationLogCompacter.h"
+#include "config/keys/ConfigurationKeys.h"
 
+/**
+ * Args:
+ *  - uint32 part1 Timestamp to sync
+ *  - uint32 part2 Timestamp to sync
+ *  - uint32 nodeOplogIdToSync
+ */
 class SyncOplogOperator : public Operator {
 private:
     OperationLogSerializer operationLogSerializer;
@@ -16,10 +23,10 @@ public:
 
     Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies dependencies) override {
         uint64_t lastTimestampUnsync = parseUnsyncTimestampFromRequest(operation);
-        uint32_t selfOplogId = operation.getArg(2).to<uint32_t>();
+        uint32_t nodeOplogIdToSync = this->calculateSelfOplogIdFromNodeOplogId(operation, dependencies) ;
 
         std::vector<OperationBody> unsyncedOplog = dependencies.operationLog->getAfterTimestamp(lastTimestampUnsync, OperationLogOptions{
-            .operationLogId = selfOplogId
+            .operationLogId = nodeOplogIdToSync
         });
 
         unsyncedOplog = this->operationLogCompacter.compact(unsyncedOplog);
@@ -30,7 +37,7 @@ public:
     }
 
     std::vector<OperatorDependency> dependencies() override {
-        return { OperatorDependency::OPERATION_LOG };
+        return { OperatorDependency::OPERATION_LOG, OperatorDependency::CONFIGURATION, OperatorDependency::CLUSTER };
     }
 
     std::vector<AuthenticationType> authorizedToExecute() override {
@@ -38,7 +45,7 @@ public:
     }
 
     constexpr OperatorType type() override {
-        return OperatorType::CONTROL;
+        return OperatorType::NODE_MAINTENANCE;
     }
 
     constexpr uint8_t operatorNumber() override {
@@ -56,5 +63,18 @@ private:
         uint32_t part2 = Utils::parse<uint32_t>(operation.args->at(1).data());
 
         return part1 << 32 | part2;
+    }
+
+    uint32_t calculateSelfOplogIdFromNodeOplogId(const OperationBody &body, OperatorDependencies dependencies) {
+        uint32_t nodeOplogId = body.getArg(2).to<uint32_t>();
+
+        if(!dependencies.configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS)){
+            return nodeOplogId;
+        }
+
+        memdbNodeId_t otherNodeId = body.nodeId;
+        int distance = dependencies.cluster->getPartitionObject()->getDistance(otherNodeId);
+
+        return otherNodeId - distance;
     }
 };

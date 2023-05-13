@@ -52,7 +52,7 @@ public:
     }
 
     std::vector<OperationBody> clear(const OperationLogOptions options = {}) override {
-        auto operationLogsCleared = this->getFromDisk(options);
+        auto operationLogsCleared = this->get(options);
 
         this->operationLogBuffer->flush(false);
         this->operationsLogDiskWriter.clear();
@@ -87,7 +87,7 @@ public:
         }
     }
 
-    std::vector<OperationBody> getFromDisk(const OperationLogOptions options = {}) override {
+    std::vector<OperationBody> get(const OperationLogOptions options = {}) override {
         std::vector<OperationBody> fromDisk = this->operationLogDiskLoader.getAll();
         std::vector<OperationBody> compacted = this->compacter.compact(fromDisk);
 

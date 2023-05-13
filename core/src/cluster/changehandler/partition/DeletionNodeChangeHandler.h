@@ -51,7 +51,8 @@ private:
         for (uint32_t actualOplogId = 1; actualOplogId < nodesPerPartition; actualOplogId++) {
             int affectedNodes = nodesPerPartition - actualOplogId;
 
-            std::vector<OperationBody> actualOplog = this->operationLog->getFromDisk(OperationLogOptions{.operationLogId = actualOplogId});
+            std::vector<OperationBody> actualOplog = this->operationLog->get(
+                    OperationLogOptions{.operationLogId = actualOplogId});
 
             for (int i = 0; i < affectedNodes; i++) {
                 int newOplogId = i + actualOplogId;
@@ -70,7 +71,7 @@ private:
     }
 
     void sendSelfOplogToPrevNode(memdbNodeId_t prevNodeId) {
-        std::vector<OperationBody> selfOplog = this->operationLog->getFromDisk(OperationLogOptions{.operationLogId = 0});
+        std::vector<OperationBody> selfOplog = this->operationLog->get(OperationLogOptions{.operationLogId = 0});
         this->cluster->clusterNodes->sendRequest(prevNodeId, createMovePartitionOplogRequest(
                 0, 0, selfOplog, true, false));
     }

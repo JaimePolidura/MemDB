@@ -52,11 +52,15 @@ public:
         uint32_t ringPosition = this->getRingPositionByKey(key);
         uint32_t nodeThatWouldHoldThatKey = this->ringEntries.getRingEntryBelongsToPosition(ringPosition).nodeId;
 
-        return this->ringEntries.getDistance(this->selfEntry.nodeId, nodeThatWouldHoldThatKey);
+        return std::abs(this->ringEntries.getDistance(this->selfEntry.nodeId, nodeThatWouldHoldThatKey));
     }
 
     bool canHoldKey(SimpleString<memDbDataLength_t> key) {
         return this->getDistanceOfKey(key) < this->nodesPerPartition;
+    }
+
+    int getDistance(memdbNodeId_t nodeB) {
+        return this->ringEntries.getDistance(this->selfEntry.nodeId, nodeB);
     }
 
     // self <-- (counter clockwise) nodeB
@@ -70,7 +74,7 @@ public:
     }
 
     bool isNeighbor(memdbNodeId_t otherNode) {
-        return this->ringEntries.getDistance(this->selfEntry.nodeId, otherNode) < this->nodesPerPartition;
+        return std::abs(this->ringEntries.getDistance(this->selfEntry.nodeId, otherNode)) < this->nodesPerPartition;
     }
 
     void deleteByNodeId(memdbNodeId_t nodeId) {

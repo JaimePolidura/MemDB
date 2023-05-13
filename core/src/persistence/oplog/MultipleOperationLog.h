@@ -54,10 +54,10 @@ public:
         return oplog->getAfterTimestamp(timestamp, options);
     }
 
-    std::vector<OperationBody> getFromDisk(OperationLogOptions options = {}) override {
+    std::vector<OperationBody> get(const OperationLogOptions options = {}) override {
         std::vector<OperationBody> totalFromDisk{};
 
-        return this->operationLogs.at(options.operationLogId)->getFromDisk(options);
+        return this->operationLogs.at(options.operationLogId)->get(options);
     }
 
     uint32_t getNumberOplogFiles() override {

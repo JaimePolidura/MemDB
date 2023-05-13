@@ -10,7 +10,7 @@
 #include "persistence/oplog/OperationLog.h"
 
 enum OperatorType {
-    READ, WRITE, CONTROL
+    DB_STORE_READ, DB_STORE_WRITE, NODE_MAINTENANCE
 };
 
 class Operator {
@@ -27,3 +27,5 @@ public:
 
     virtual std::string name() = 0;
 };
+
+using operator_t = std::shared_ptr<Operator>;

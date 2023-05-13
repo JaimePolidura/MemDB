@@ -25,7 +25,7 @@ public:
 
     virtual std::vector<OperationBody> getAfterTimestamp(uint64_t timestamp, const OperationLogOptions options = {}) = 0;
 
-    virtual std::vector<OperationBody> getFromDisk(const OperationLogOptions options = {}) = 0;
+    virtual std::vector<OperationBody> get(const OperationLogOptions options = {}) = 0;
 
     virtual uint32_t getNumberOplogFiles() = 0;
 };

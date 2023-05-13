@@ -85,6 +85,10 @@ public:
     }
 
     static SimpleString<StringLengthType> fromVector(const std::vector<uint8_t>& values) {
+        if(values.empty()){
+            return SimpleString<StringLengthType>{};
+        }
+
         uint8_t * valuePtr = new uint8_t[values.size()];
         for (int i = 0; i < values.size(); ++i)
             * (valuePtr + i) = * (values.begin() + i);

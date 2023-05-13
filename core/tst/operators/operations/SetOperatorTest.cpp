@@ -12,7 +12,7 @@ OperationBody createOperationSet(uint8_t keyValue, uint8_t valueValue, uint64_t 
 TEST(SetOperator, CorrectConfig) {
     SetOperator setOperator{};
 
-    ASSERT_EQ(setOperator.type(), WRITE);
+    ASSERT_EQ(setOperator.type(), DB_STORE_WRITE);
     ASSERT_EQ(setOperator.operatorNumber(), SetOperator::OPERATOR_NUMBER);
     ASSERT_EQ(setOperator.authorizedToExecute(), AuthenticationType::USER);
 }

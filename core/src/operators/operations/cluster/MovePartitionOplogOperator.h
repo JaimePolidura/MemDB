@@ -59,7 +59,7 @@ public:
     }
 
     OperatorType type() override {
-        return OperatorType::CONTROL;
+        return OperatorType::NODE_MAINTENANCE;
     }
 
     std::vector<AuthenticationType> authorizedToExecute() override {

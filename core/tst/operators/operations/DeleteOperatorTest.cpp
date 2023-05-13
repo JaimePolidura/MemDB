@@ -11,7 +11,7 @@ OperationBody createOperationDelete(uint8_t keyValue, uint64_t timestamp, uint16
 TEST(DeleteOperator, CorrectConfig) {
     DeleteOperator deleteOperator{};
 
-    ASSERT_EQ(deleteOperator.type(), WRITE);
+    ASSERT_EQ(deleteOperator.type(), DB_STORE_WRITE);
     ASSERT_EQ(deleteOperator.operatorNumber(), DeleteOperator::OPERATOR_NUMBER);
     ASSERT_EQ(deleteOperator.authorizedToExecute(), AuthenticationType::USER);
 }

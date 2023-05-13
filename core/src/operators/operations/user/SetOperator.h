@@ -29,7 +29,7 @@ public:
     }
 
     constexpr OperatorType type() override {
-        return OperatorType::WRITE;
+        return OperatorType::DB_STORE_WRITE;
     }
 
     constexpr uint8_t operatorNumber() override {

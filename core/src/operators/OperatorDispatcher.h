@@ -10,13 +10,13 @@
 #include "persistence/oplog/SingleOperationLog.h"
 #include "utils/clock/LamportClock.h"
 #include "cluster/Cluster.h"
-#include "cluster/PendingReplicationOperationBuffer.h"
+#include "DelayedOperationsBuffer.h"
 
 class OperatorDispatcher {
 public: //Need it for mocking it
     operatorRegistry_t operatorRegistry;
 private:
-    replicationOperationBuffer_t replicationOperationBuffer;
+    delayedOperationsBuffer_t delayedOperationsBuffer;
     operationLog_t operationLog;
     configuration_t configuration;
     cluster_t cluster;
@@ -27,40 +27,41 @@ private:
 public:
     OperatorDispatcher(memDbDataStore_t dbCons, lamportClock_t clock, cluster_t cluster, configuration_t configuration,
                        logger_t logger, operationLog_t operationLog): db(dbCons), operationLog(operationLog), clock(clock),
-                       operatorRegistry(std::make_shared<OperatorRegistry>()), logger(logger), cluster(cluster),
-                       configuration(configuration), replicationOperationBuffer(std::make_shared<PendingReplicationOperationBuffer>())
+                                                                      operatorRegistry(std::make_shared<OperatorRegistry>()), logger(logger), cluster(cluster),
+                                                                      configuration(configuration), delayedOperationsBuffer(std::make_shared<DelayedOperationsBuffer>())
     {}
 
     Response dispatch(const Request& request) {
-        this->applyReplicatedOperationBuffer();
+        if(canExecuteRequest()){
+            applyDelayedOperationsBuffer();
+        }
 
-        auto operatorToExecute = this->operatorRegistry->get(request.operation.operatorNumber);
+        operator_t operatorToExecute = this->operatorRegistry->get(request.operation.operatorNumber);
 
         if(operatorToExecute == nullptr){
             return Response::error(ErrorCode::UNKNOWN_OPERATOR);
         }
-        if(!this->isAuthorizedToExecute(operatorToExecute, request.authenticationType)) {
+        if(!isAuthorizedToExecute(operatorToExecute, request.authenticationType)) {
             return Response::error(ErrorCode::NOT_AUTHORIZED);
         }
 
-        OperationOptions options = {.checkTimestamps = request.authenticationType == AuthenticationType::NODE &&
-                                    operatorToExecute->type() == OperatorType::WRITE};
+        bool writeDbRequestFromNode = operatorToExecute->type() == OperatorType::DB_STORE_WRITE && request.authenticationType == AuthenticationType::NODE;
+        bool writeDbRequest = operatorToExecute->type() == OperatorType::DB_STORE_WRITE;
+        bool readDbRequest = operatorToExecute->type() == OperatorType::DB_STORE_READ;
+
+        OperationOptions options = {.checkTimestamps = writeDbRequestFromNode};
 
         this->logger->debugInfo("Recieved request for operator {0} from {1}", request.requestNumber, operatorToExecute->name(),
                                 options.checkTimestamps ? "node" : "user");
 
-        if(this->isInReplicationMode() &&
-            (!NodeStates::canAcceptRequest(this->cluster->getNodeState()) ||
-            (!options.checkTimestamps && !NodeStates::cantExecuteRequest(this->cluster->getNodeState())))) {
+        if(isInReplicationMode() && (!canAcceptRequest() || (readDbRequest && !canExecuteRequest()))) {
             return Response::error(ErrorCode::INVALID_NODE_STATE);
         }
-        if(this->isInReplicationMode() && this->isInReplicationMode() && options.checkTimestamps &&
-           !this->cluster->getPartitionObject()->canHoldKey(request.operation.args->at(0))){
+        if(isInReplicationMode() && isInPartitionMode() && writeDbRequest && !canHoldKey(request.operation.args->at(0))) {
             return Response::error(ErrorCode::INVALID_PARTITION);
         }
-        if(this->isInReplicationMode() && options.checkTimestamps &&
-           !NodeStates::cantExecuteRequest(this->cluster->getNodeState())){
-            this->replicationOperationBuffer->add(request);
+        if(isInReplicationMode() && writeDbRequest && canAcceptRequest() && !canExecuteRequest()){
+            this->delayedOperationsBuffer->add(request);
             return Response::success();
         }
 
@@ -74,7 +75,7 @@ public:
                           const OperationOptions& options) {
 
         for (const OperationBody& operation: operations){
-            this->executeOperation(operatorToExecute, operation, options);
+            executeOperation(operatorToExecute, operation, options);
         }
     }
 
@@ -89,7 +90,7 @@ public:
                                 result.isSuccessful ? "successfuly" : "unsuccessfuly",
                                 operatorToExecute->name(), options.checkTimestamps ? "node" : "user");
 
-        if(operatorToExecute->type() == WRITE && result.isSuccessful && !options.onlyExecute) {
+        if(operatorToExecute->type() == DB_STORE_WRITE && result.isSuccessful && !options.onlyExecute) {
             if(!options.dontSaveInOperationLog){
                 this->operationLog->add(operation);
             }
@@ -98,7 +99,7 @@ public:
                 result.timestamp = this->clock->tick(operation.timestamp);
             }
 
-            if(this->isInReplicationMode() && !options.checkTimestamps && !options.dontBroadcastToCluster){
+            if(isInReplicationMode() && !options.checkTimestamps && !options.dontBroadcastToCluster){
                 this->cluster->broadcast(operation);
 
                 this->logger->debugInfo("Broadcasted request for operator {0} from {1}",
@@ -109,9 +110,9 @@ public:
         return result;
     }
 
-    void applyReplicatedOperationBuffer() {
-        while(!this->replicationOperationBuffer->isEmpty()){
-            Request operation = this->replicationOperationBuffer->get();
+    void applyDelayedOperationsBuffer() {
+        while(!this->delayedOperationsBuffer->isEmpty()){
+            Request operation = this->delayedOperationsBuffer->get();
             this->dispatch(operation);
         }
     }
@@ -131,6 +132,9 @@ private:
         switch (dependency) {
             case OPERATION_LOG:
                 operatorDependencies->operationLog = this->operationLog;
+                break;
+            case CONFIGURATION:
+                operatorDependencies->configuration = this->configuration;
                 break;
             case DB_STORE:
                 operatorDependencies->dbStore = this->db;
@@ -163,6 +167,22 @@ private:
 
     bool isInReplicationMode() {
         return this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION);
+    }
+
+    bool isInPartitionMode() {
+        return this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS);
+    }
+
+    bool canHoldKey(arg_t arg) {
+        this->cluster->getPartitionObject()->canHoldKey(arg);
+    }
+
+    bool canAcceptRequest() {
+        return NodeStates::canAcceptRequest(this->cluster->getNodeState());
+    }
+
+    bool canExecuteRequest() {
+        return NodeStates::cantExecuteRequest(this->cluster->getNodeState());
     }
 };
 

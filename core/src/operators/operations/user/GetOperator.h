@@ -25,7 +25,7 @@ public:
     }
 
     constexpr OperatorType type() override {
-        return OperatorType::READ;
+        return OperatorType::DB_STORE_READ;
     }
 
     constexpr uint8_t operatorNumber() override {

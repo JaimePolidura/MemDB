@@ -6,6 +6,7 @@
 #include "operators/OperationOptions.h"
 
 struct OperatorDependencies {
+    configuration_t configuration;
     memDbDataStore_t dbStore;
     operationLog_t operationLog;
     cluster_t cluster;

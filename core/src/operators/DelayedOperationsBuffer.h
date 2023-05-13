@@ -3,27 +3,28 @@
 #include "messages/request/Request.h"
 #include "shared.h"
 
-class PendingReplicationOperationBuffer {
+//TODO Add disk backing
+class DelayedOperationsBuffer {
 private:
-    std::queue<Request> requests;
+    std::queue<Request> operations;
     std::mutex lock;
 
 public:
     void add(const Request& request){
         this->lock.lock();
-        this->requests.push(request);
+        this->operations.push(request);
         this->lock.unlock();
     }
 
     bool isEmpty() {
-        return this->requests.empty();
+        return this->operations.empty();
     }
 
     Request get() {
         this->lock.lock();
 
-        Request toReturn = this->requests.front();
-        this->requests.pop();
+        Request toReturn = this->operations.front();
+        this->operations.pop();
 
         this->lock.unlock();
 
@@ -31,4 +32,4 @@ public:
     }
 };
 
-using replicationOperationBuffer_t = std::shared_ptr<PendingReplicationOperationBuffer>;
+using delayedOperationsBuffer_t = std::shared_ptr<DelayedOperationsBuffer>;

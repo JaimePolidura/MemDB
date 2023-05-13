@@ -21,7 +21,7 @@ public:
                 {ConfigurationKeys::MEMDB_CORE_CLUSTER_MANAGER_ADDRESS,           "127.0.0.1:8080"},
                 {ConfigurationKeys::MEMDB_CORE_NODE_ID,                           "1"},
                 {ConfigurationKeys::MEMDB_CORE_SHOW_DEBUG_LOG,                    "false"},
-                {ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS,                          "false"}
+                {ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS,                    "false"}
         };
     }
 };

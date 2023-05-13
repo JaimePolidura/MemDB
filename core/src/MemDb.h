@@ -83,8 +83,8 @@ private:
         std::vector<uint64_t> lastRestoredTimestamps{};
 
         for (uint32_t i = 0; i < numberOplogs; i++) {
-            std::vector<OperationBody> oplog = this->operationLog->getFromDisk(OperationLogOptions{
-                .operationLogId = i
+            std::vector<OperationBody> oplog = this->operationLog->get(OperationLogOptions{
+                    .operationLogId = i
             });
 
             this->applyUnsyncedOplogFromCluster(oplog, true);
@@ -95,7 +95,7 @@ private:
     }
 
     std::vector<uint64_t> restoreSingleOplog() {
-        std::vector<OperationBody> opLogsFromDisk = this->operationLog->getFromDisk();
+        std::vector<OperationBody> opLogsFromDisk = this->operationLog->get();
 
         this->applyUnsyncedOplogFromCluster(opLogsFromDisk, true);
 
@@ -109,6 +109,6 @@ private:
                     operationLogInDisk,
                     OperationOptions{.checkTimestamps = true, .dontBroadcastToCluster = true, .dontSaveInOperationLog = dontSaveInOperationLog});
 
-        this->operatorDispatcher->applyReplicatedOperationBuffer();
+        this->operatorDispatcher->applyDelayedOperationsBuffer();
     }
 };

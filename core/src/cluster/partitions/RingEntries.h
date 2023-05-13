@@ -156,7 +156,9 @@ public:
         return iterations;
     }
 
-    uint32_t getDistance(memdbNodeId_t nodeA, memdbNodeId_t nodeB) {
+    // nodeA --> nodeB -> positive
+    // nodeB --> nodeA -> negative
+    int getDistance(memdbNodeId_t nodeA, memdbNodeId_t nodeB) {
         uint32_t size = this->indexByNodeId.size();
         uint32_t iterations = 0;
 
@@ -177,7 +179,7 @@ public:
             iterations++;
         }
 
-        return iterations;
+        return actualPointerB->getNodeId() == nodeA ? iterations * -1 : iterations;
     }
 
     RingEntry getByNodeId(memdbNodeId_t nodeId) {

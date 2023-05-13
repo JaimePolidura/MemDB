@@ -12,7 +12,7 @@ OperationBody createOperationGet(uint8_t keyValue, uint64_t timestamp, uint16_t 
 TEST(GetOperator, CorrectConfig) {
     GetOperator getOperator{};
 
-    ASSERT_EQ(getOperator.type(), READ);
+    ASSERT_EQ(getOperator.type(), DB_STORE_READ);
     ASSERT_EQ(getOperator.operatorNumber(), GetOperator::OPERATOR_NUMBER);
     ASSERT_EQ(getOperator.authorizedToExecute(), AuthenticationType::USER);
 }

@@ -43,10 +43,6 @@ public:
         this->tcpServer->run();
     }
 
-    uint64_t tick(uint64_t other) {
-        return this->clock->tick(other);
-    }
-
 private:
     void syncOplogFromCluster(std::vector<uint64_t> lastTimestampProcessedFromOpLog) {
         this->logger->info("Synchronizing oplog with the cluster");

@@ -62,11 +62,11 @@ public:
         if(this->clusterNodes->isEmtpy(options))
             return std::vector<OperationBody>{};
 
-        int oplogId = options.nodeGroupId;
+        int selfOplogIdToSync = options.nodeGroupId;
         OperationLogDeserializer operationLogDeserializer{};
 
-        memdbNodeId_t nodeIdToSendRequest = this->clusterNodes->getRandomNode({}, NodeGroupOptions{.nodeGroupId = oplogId})->nodeId;
-        Request req = createSyncOplogRequest(lastTimestampProcessedFromOpLog, oplogId, nodeIdToSendRequest);
+        memdbNodeId_t nodeIdToSendRequest = this->clusterNodes->getRandomNode({}, NodeGroupOptions{.nodeGroupId = selfOplogIdToSync})->nodeId;
+        Request req = createSyncOplogRequest(lastTimestampProcessedFromOpLog, selfOplogIdToSync, nodeIdToSendRequest);
         Response responseFromSyncData = clusterNodes->sendRequest(nodeIdToSendRequest, req);
 
         if(!responseFromSyncData.responseValue.hasData())

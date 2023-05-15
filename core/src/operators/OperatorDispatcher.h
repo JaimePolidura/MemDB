@@ -178,11 +178,11 @@ private:
     }
 
     bool canAcceptRequest() {
-        return NodeStates::canAcceptRequest(this->cluster->getNodeState());
+        return !isInReplicationMode() || NodeStates::canAcceptRequest(this->cluster->getNodeState());
     }
 
     bool canExecuteRequest() {
-        return NodeStates::cantExecuteRequest(this->cluster->getNodeState());
+        return !isInReplicationMode() ||  NodeStates::cantExecuteRequest(this->cluster->getNodeState());
     }
 };
 

@@ -13,8 +13,12 @@ public final class ResponseDeserializer {
         long timestamp = ByteBuffer.wrap(raw, 4, 8).getLong();
         boolean isSuccessFul = (raw[4 + 8] & SUCCESSFUL_MASK) == 1;
         short errorCode = (short) (raw[4 + 8] >> 1);
-        String response = (raw.length > (4 + 4 + 8 + 1) && raw[4 + 4 + 8 + 1 - 1] > 0) ?
-                new String(this.split(raw, 4 + 4 + 8 + 1, raw.length), StandardCharsets.US_ASCII) :
+
+        int offsetResponseLength = 4 + 8 + 1;
+        int offsetResponseBody = offsetResponseLength + 4;
+
+        String response = raw.length > offsetResponseBody && raw[offsetResponseLength + 3] > 0 ?
+                new String(this.split(raw, offsetResponseBody, raw.length), StandardCharsets.US_ASCII) :
                 "";
 
         return Response.builder()

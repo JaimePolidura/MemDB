@@ -40,7 +40,7 @@ public:
 
         HttpResponse response = this->httpClusterManagerClient.get(
                 this->configuration->get(ConfigurationKeys::MEMDB_CORE_CLUSTER_MANAGER_ADDRESS),
-                "/api/nodes/all?nodeId=" + nodeId,
+                "/api/nodes/all?nodeId=" + std::to_string(nodeId),
                 this->token);
 
         if(!response.isSuccessful())

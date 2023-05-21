@@ -174,7 +174,7 @@ private:
     }
 
     bool canHoldKey(arg_t arg) {
-        this->cluster->getPartitionObject()->canHoldKey(arg);
+        return this->cluster->getPartitionObject()->canHoldKey(arg);
     }
 
     bool canAcceptRequest() {

@@ -1,1 +1,1 @@
-docker build -t memdb-core:1.0 .
+docker build --progress=plain -t memdb-core:1.0 .

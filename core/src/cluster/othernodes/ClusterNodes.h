@@ -35,6 +35,10 @@ public:
             }
 
             this->nodesById[node->nodeId] = node;
+
+            if(this->groups.size() >= options.nodeGroupId)
+                this->groups.emplace_back();
+
             this->groups[options.nodeGroupId].add(node->nodeId);
         }
     }

@@ -9,6 +9,8 @@ rm -r .idea
 
 cd src || exit
 
+rm -r build
+
 # Calling cmkae
 cmake -S .. -O ./build -D BUILDING_LINUX_DEPLOYMENT=ON
 

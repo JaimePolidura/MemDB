@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	clientv3 "go.etcd.io/etcd/client/v3"
-	"reflect"
 	"time"
 )
 
@@ -70,11 +69,10 @@ func (client EtcdClient[T]) convertToMediaType(value []byte, mediaType EtcdMedia
 		err := json.Unmarshal(value, &object)
 		return object, err
 	} else if mediaType == STRING {
-		strValue := string(value)
-		t := reflect.TypeOf("")
-		v := reflect.New(t).Interface()
-		reflect.ValueOf(v).Elem().SetString(strValue)
-		return v.(T), nil
+		var object any
+		object = any(string(value))
+
+		return object.(T), nil
 	}
 
 	panic("Invalid media type")

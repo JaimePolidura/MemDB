@@ -55,7 +55,7 @@ func (repository *PartitionRepository) GetRingEntriesSorted() (PartitionRingEntr
 		return repository.partitionRingEntriesCache, nil
 	}
 
-	valueStrJson, err := repository.Client.Get("/partitions/ring", etcd.STRING)
+	valueStrJson, err := repository.Client.Get("/partitions/ring", etcd.STRING) //error
 
 	if err != nil {
 		return PartitionRingEntries{}, err

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "shared.h"
+#include "config/keys/ConfigurationKeys.h"
 #include "utils/strings/StringUtils.h"
+#include "shared.h"
 
 class Configuration {
 private:
-    const std::map<std::string, std::string> actualConfigurationValues;
     const std::map<std::string, std::string> defaultConfigurationValues;
 
 public:

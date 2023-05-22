@@ -5,17 +5,28 @@
 class Utils {
 public:
     template<typename T>
+    static std::vector<T> filter(const std::vector<T>& initial, std::function<bool(const T&)> predicate) {
+        std::vector<T> result{};
+        result.reserve(initial.size());
+
+        for (const T& item : initial) {
+            if(predicate(item)){
+                result.push_back(item);
+            }
+        }
+
+        return result;
+    }
+    
+    template<typename T>
     static std::vector<T> concat(const std::vector<T>& a, const std::vector<T>& b) {
         if(a.empty() && b.empty()) {
-            std::cout << "b" << std::endl;
             return std::vector<T>{};
         }
         if(a.empty())
             return b;
         if(b.empty())
             return a;
-
-        std::cout << "e" << std::endl;
 
         std::vector<T> concatenated;
         concatenated.reserve(a.size() + b.size());
@@ -44,6 +55,19 @@ public:
         }
         std::cout << "]" << std::endl;
     }
+
+    template<typename T, typename B>
+    static T retryUntilSuccessAndGet(const std::chrono::duration<int64_t, B> backoffMillis, std::function<T(void)> toRetry) {
+        while(true) {
+            try{
+                return toRetry();
+            }catch (const std::exception& e){
+                if(backoffMillis.count() > 0)
+                    std::this_thread::sleep_for(backoffMillis);
+            }
+        }
+    }
+
 
     template<typename T, typename B>
     static std::optional<T> retryUntilAndGet(int numberAttempts, const std::chrono::duration<int64_t, B> backoffMillis, std::function<T(void)> toRetry) {

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "shared.h"
+#include "utils/Utils.h"
+#include "memdbtypes.h"
 
 /**
  * Apparently you cannot create an string from already heap allocated char *. So we create this class
@@ -22,6 +24,20 @@ public:
 
     bool hasData() const {
         return this->size != 0 || this->value.get() != nullptr;
+    }
+
+    std::string toString() const {
+        return std::string((char *) this->value.get(), this->size);
+    }
+
+    template<typename T>
+    T to() const {
+        return Utils::parse<T>(this->value.get());
+    }
+
+    //TODO Avoid copy. See std::span
+    std::vector<uint8_t> toVector() const {
+        return std::vector<uint8_t>(this->value.get(), this->value.get() + this->size);
     }
 
     uint8_t * operator[](int index) const {
@@ -69,6 +85,10 @@ public:
     }
 
     static SimpleString<StringLengthType> fromVector(const std::vector<uint8_t>& values) {
+        if(values.empty()){
+            return SimpleString<StringLengthType>{nullptr, 0};
+        }
+
         uint8_t * valuePtr = new uint8_t[values.size()];
         for (int i = 0; i < values.size(); ++i)
             * (valuePtr + i) = * (values.begin() + i);
@@ -111,3 +131,5 @@ struct SimpleStringEqual {
         return true;
     }
 };
+
+using setSimpleString_t = std::unordered_set<SimpleString<memDbDataLength_t>, SimpleStringHash<memDbDataLength_t>, SimpleStringEqual<memDbDataLength_t>>;

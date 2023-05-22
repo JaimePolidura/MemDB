@@ -7,7 +7,7 @@ TEST(OperatorRegistry, GetOperatorFound) {
     std::shared_ptr<Operator> operatorFound = registry.get(SetOperator::OPERATOR_NUMBER); //Set operator
 
     ASSERT_TRUE(operatorFound != nullptr && operatorFound.get() != nullptr);
-    ASSERT_TRUE(operatorFound->type() == WRITE);
+    ASSERT_TRUE(operatorFound->type() == DB_STORE_WRITE);
     ASSERT_TRUE(dynamic_cast<SetOperator *>(operatorFound.get()));
     ASSERT_FALSE(dynamic_cast<GetOperator *>(operatorFound.get()));
 }

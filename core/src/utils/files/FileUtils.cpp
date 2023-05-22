@@ -11,6 +11,17 @@
     #include <fcntl.h>
 #endif
 
+void FileUtils::writeBytes(const std::string &path, const std::vector<uint8_t> &bytes) {
+    std::ofstream file(path, std::ios::trunc | std::ios::binary);
+    if (file.is_open()) {
+        file.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+        file.flush();
+        file.close();
+    }else{
+        throw std::runtime_error("Cannot open file " + path);
+    }
+}
+
 void FileUtils::createDirectory(const std::string &path, const std::string &name) {
 #ifdef _WIN32
     CreateDirectoryA((path + "\\" + name).c_str(), NULL);
@@ -82,6 +93,7 @@ void FileUtils::clear(const std::string &path) {
     std::ofstream myfile;
     myfile.open(path, std::ios::trunc);
     myfile.close();
+    std::remove(path.data());
 }
 
 std::vector<uint8_t> FileUtils::readBytes(const std::string &path) {

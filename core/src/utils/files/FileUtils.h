@@ -10,6 +10,8 @@ public:
 
     static void appendBytes(const std::string& path, const std::vector<uint8_t>& bytes);
 
+    static void writeBytes(const std::string& path, const std::vector<uint8_t>& bytes);
+
     static void clear(const std::string& path);
 
     static std::vector<uint8_t> readBytes(const std::string& path);

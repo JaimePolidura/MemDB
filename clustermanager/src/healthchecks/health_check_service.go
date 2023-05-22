@@ -4,19 +4,18 @@ import (
 	"clustermanager/src/_shared/config"
 	"clustermanager/src/_shared/config/keys"
 	"clustermanager/src/_shared/logging"
-	"clustermanager/src/_shared/nodes"
-	"clustermanager/src/_shared/nodes/connection"
-	"clustermanager/src/_shared/nodes/connection/messages/request"
-	"clustermanager/src/_shared/nodes/states"
+	"clustermanager/src/nodes/nodes"
+	connection2 "clustermanager/src/nodes/nodes/connection"
+	"clustermanager/src/nodes/nodes/connection/messages/request"
 	"fmt"
 	"sync"
 	"time"
 )
 
 type HealthCheckService struct {
-	NodesRespository nodes.NodeRepository
+	NodesRespository *nodes.NodeRepository
 	Configuration    *configuration.Configuartion
-	NodeConnections  *connection.NodeConnections
+	NodeConnections  *connection2.NodeConnections
 	Logger           *logging.Logger
 
 	periodHealthCheck       int64 //both expressed in seconds
@@ -68,8 +67,8 @@ func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.N
 	connectionToNode, err := healthCheckService.getConnectionOrCreate(node)
 
 	if err != nil {
-		if node.State != states.SHUTDOWN {
-			healthCheckService.NodesRespository.Add(*node.WithState(states.SHUTDOWN))
+		if node.State != nodes.SHUTDOWN {
+			healthCheckService.NodesRespository.Add(*node.WithState(nodes.SHUTDOWN))
 		}
 		waitGroup.Done()
 		return
@@ -80,12 +79,12 @@ func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.N
 	didntRespondToHealthCheck := err != nil || !response.Success
 	respondedToHealthCheck := !didntRespondToHealthCheck
 
-	if didntRespondToHealthCheck && node.State != states.SHUTDOWN {
-		healthCheckService.NodesRespository.Add(*node.WithState(states.SHUTDOWN))
+	if didntRespondToHealthCheck && node.State != nodes.SHUTDOWN {
+		healthCheckService.NodesRespository.Add(*node.WithState(nodes.SHUTDOWN))
 		healthCheckService.NodeConnections.Delete(node.NodeId)
 		healthCheckService.Logger.Info("Node" + string(node.NodeId) + " doest repond to health check. Marked as SHUTDOWN")
-	} else if respondedToHealthCheck && node.State == states.SHUTDOWN {
-		healthCheckService.NodesRespository.Add(*node.WithState(states.BOOTING))
+	} else if respondedToHealthCheck && node.State == nodes.SHUTDOWN {
+		healthCheckService.NodesRespository.Add(*node.WithState(nodes.BOOTING))
 		healthCheckService.NodeConnections.Create(node)
 		healthCheckService.Logger.Info("Node" + string(node.NodeId) + " previously marked as SHUTDOWN, now it responds to health check. Marked as BOOTING")
 	}
@@ -93,8 +92,8 @@ func (healthCheckService *HealthCheckService) sendHealthCheckToNode(node nodes.N
 	waitGroup.Done()
 }
 
-func (healthCheckService *HealthCheckService) getConnectionOrCreate(node nodes.Node) (*connection.NodeConnection, error) {
-	if node.State == states.SHUTDOWN {
+func (healthCheckService *HealthCheckService) getConnectionOrCreate(node nodes.Node) (*connection2.NodeConnection, error) {
+	if node.State == nodes.SHUTDOWN {
 		healthCheckService.NodeConnections.Delete(node.NodeId)
 	}
 

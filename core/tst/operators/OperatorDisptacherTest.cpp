@@ -11,10 +11,10 @@ public:
     MOCK_METHOD1(getBoolean, bool(const std::string&));
 };
 
-class ReplicationMock : public Replication {
+class ReplicationMock : public Cluster {
 public:
     ReplicationMock(configuration_t configuration, clusterManagerService_t clusterManager, InfoNodeResponse infoNodeResponse) :
-            Replication(configuration, clusterManager, infoNodeResponse)
+            Cluster(configuration, clusterManager, infoNodeResponse)
     {}
 
     ReplicationMock(configuration_t configuration): Replication(configuration) {}
@@ -60,7 +60,7 @@ public:
     }
 
     constexpr OperatorType type()  {
-        return OperatorType::WRITE;
+        return OperatorType::DB_STORE_WRITE;
     }
 };
 
@@ -88,7 +88,7 @@ TEST(OperatorDispatcher, SuccessfulWriteTypeReplication) {
 
     ON_CALL(* replicationMock, getNodeState()).WillByDefault(testing::Return(NodeState::RUNNING));
     ON_CALL(* operatorRegistryMock, get(testing::Eq(1))).WillByDefault(testing::Return(operatorMock));
-    ON_CALL(* operatorMock, type()).WillByDefault(testing::Return(OperatorType::WRITE));
+    ON_CALL(* operatorMock, type()).WillByDefault(testing::Return(OperatorType::DB_STORE_WRITE));
     ON_CALL(* operatorMock, authorizedToExecute()).WillByDefault(testing::Return(AuthenticationType::CLUSTER));
     ON_CALL(* operatorMock, operate(_, _, _)).WillByDefault(testing::Return(Response::success()));
     ON_CALL(* lamportClockMock, tick(_)).WillByDefault(testing::Return(3));
@@ -121,7 +121,7 @@ TEST(OperatorDispatcher, SuccessfulWriteNotReplication) {
     std::shared_ptr<OperatorDbMock> operatorMock = std::make_shared<OperatorDbMock>();
 
     ON_CALL(* operatorRegistryMock, get(testing::Eq(1))).WillByDefault(testing::Return(operatorMock));
-    ON_CALL(* operatorMock, type()).WillByDefault(testing::Return(OperatorType::WRITE));
+    ON_CALL(* operatorMock, type()).WillByDefault(testing::Return(OperatorType::DB_STORE_WRITE));
     ON_CALL(* operatorMock, operate(_, _, _)).WillByDefault(testing::Return(Response::success()));
     ON_CALL(* lamportClockMock, tick(_)).WillByDefault(testing::Return(3));
     ON_CALL(* configuration, getBoolean(testing::Eq(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION))).WillByDefault(testing::Return(false));

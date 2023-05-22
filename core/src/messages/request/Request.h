@@ -6,8 +6,11 @@
 #include "memdbtypes.h"
 #include "auth/AuthenticationType.h"
 
+using arg_t = SimpleString<memDbDataLength_t>;
+using args_t = std::shared_ptr<std::vector<SimpleString<memDbDataLength_t>>>;
+
 struct OperationBody {
-    std::shared_ptr<std::vector<SimpleString<memDbDataLength_t>>> args;
+    args_t args;
     uint64_t timestamp;
     memdbNodeId_t nodeId; //2 bytes
     uint8_t operatorNumber; //0 - 127
@@ -53,6 +56,23 @@ struct OperationBody {
         }
 
         return totalLength;
+    }
+
+    arg_t getArg(int position) const {
+        return this->args->at(position);
+    }
+
+    void setArg(int position, arg_t newArg) {
+        if(position > this->args->size()){
+            this->args->push_back(newArg);
+        }else{
+            auto argValue = this->args->begin() + position;
+            *argValue = newArg;
+        }
+    }
+
+    static args_t createOperationBodyArg() {
+        return std::make_shared<std::vector<SimpleString<memDbDataLength_t>>>();
     }
 };
 

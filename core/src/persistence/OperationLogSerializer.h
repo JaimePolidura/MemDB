@@ -9,6 +9,16 @@ class OperationLogSerializer {
 public:
     OperationLogSerializer() = default;
 
+    std::shared_ptr<std::vector<uint8_t>> serializeAllShared(const std::vector<OperationBody>& toSerialize) {
+        std::shared_ptr<std::vector<uint8_t>> vectorShared = std::make_shared<std::vector<uint8_t>>();
+
+        for(int i = 0; i < toSerialize.size(); i++){
+            this->serialize(*vectorShared, toSerialize.at(i));
+        }
+
+        return vectorShared;
+    }
+
     std::vector<uint8_t> serializeAll(const std::vector<OperationBody>& toSerialize) {
         std::vector<uint8_t> serialized{};
 

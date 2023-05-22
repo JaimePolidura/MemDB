@@ -15,3 +15,4 @@ const std::string ConfigurationKeys::MEMDB_CORE_CLUSTER_MANAGER_ADDRESS = "MEMDB
 const std::string ConfigurationKeys::MEMDB_CORE_USE_REPLICATION = "MEMDB_CORE_USE_REPLICATION";
 const std::string ConfigurationKeys::MEMDB_CORE_ETCD_ADDRESSES = "MEMDB_CORE_ETCD_ADDRESSES";
 const std::string ConfigurationKeys::MEMDB_CORE_NODE_ID = "MEMDB_CORE_NODE_ID";
+const std::string ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS = "MEMDB_CORE_USE_PARTITIONS";

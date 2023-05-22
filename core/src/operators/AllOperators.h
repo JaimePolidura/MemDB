@@ -3,11 +3,11 @@
 #include "shared.h"
 
 #include "operators/Operator.h"
-#include "operators/operations/GetOperator.h"
-#include "operators/operations/SetOperator.h"
-#include "operators/operations/DeleteOperator.h"
-#include "operators/operations/HealthCheckOperator.h"
-#include "operators/operations/SyncOplogOperator.h"
+#include "operators/operations/user/GetOperator.h"
+#include "operators/operations/user/SetOperator.h"
+#include "operators/operations/user/DeleteOperator.h"
+#include "operators/operations/cluster/HealthCheckOperator.h"
+#include "operators/operations/user/SyncOplogOperator.h"
 
 class AllOperators {
 public:

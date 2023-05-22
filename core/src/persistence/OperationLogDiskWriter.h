@@ -8,15 +8,50 @@
 class OperationsLogDiskWriter {
 private:
     OperationLogSerializer operationLogSerializer;
-    std::mutex writeFileLock;
+    std::recursive_mutex writeFileLock;
     bool fileCreated = false;
+    bool fileCleared = false;
+    std::string oplogFileName;
 
 public:
+    OperationsLogDiskWriter(const std::string& oplogFileName): oplogFileName(oplogFileName) {}
+
+    void clear() {
+        writeFileLock.lock();
+        FileUtils::clear(FileUtils::getFileInProgramBasePath("memdb", this->oplogFileName));
+        this->fileCleared = true;
+        writeFileLock.unlock();
+    }
+
     void write(const std::vector<OperationBody>& toWrite) {
         this->createFileIfNotExists();
 
         std::vector<uint8_t> serialized = this->serializeAll(toWrite);
-        this->writeAppendModeSerialized(serialized);
+
+        writeFileLock.lock();
+        if(this->fileCleared) return;
+
+        FileUtils::writeBytes(FileUtils::getFileInProgramBasePath("memdb", this->oplogFileName), serialized);
+        writeFileLock.unlock();
+    }
+
+    void append(const std::vector<OperationBody>& toWrite) {
+        this->createFileIfNotExists();
+
+        std::vector<uint8_t> serialized = this->serializeAll(toWrite);
+        if(this->fileCleared) return;
+
+        writeFileLock.lock();
+        FileUtils::appendBytes(FileUtils::getFileInProgramBasePath("memdb", this->oplogFileName), serialized);
+        writeFileLock.unlock();
+    }
+
+    void lockWrites() {
+        this->writeFileLock.lock();
+    }
+
+    void unlockWrites() {
+        this->writeFileLock.unlock();
     }
 
 private:
@@ -24,23 +59,15 @@ private:
         if(this->fileCreated)
             return;
 
-        bool exists = FileUtils::exists(FileUtils::getFileInProgramBasePath("memdb", "oplog"));
+        bool exists = FileUtils::exists(FileUtils::getFileInProgramBasePath("memdb", this->oplogFileName));
         if(!exists) {
             if(!FileUtils::exists(FileUtils::getProgramsPath() + "/memdb"))
                 FileUtils::createDirectory(FileUtils::getProgramsPath(), "memdb");
 
-            FileUtils::createFile(FileUtils::getProgramBasePath("memdb"), "oplog");
+            FileUtils::createFile(FileUtils::getProgramBasePath("memdb"), this->oplogFileName);
         }
 
         this->fileCreated = true;
-    }
-
-    void writeAppendModeSerialized(const std::vector<uint8_t>& serialized) {
-        writeFileLock.lock();
-
-        FileUtils::appendBytes(FileUtils::getFileInProgramBasePath("memdb", "oplog"), serialized);
-
-        writeFileLock.unlock();
     }
 
     std::vector<uint8_t> serializeAll(const std::vector<OperationBody>& toSerialize) {

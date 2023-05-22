@@ -1,14 +1,18 @@
 package main
 
 import (
-	"clustermanager/src/_shared/config"
-	"clustermanager/src/_shared/config/keys"
+	configuration "clustermanager/src/_shared/config"
+	configuration_keys "clustermanager/src/_shared/config/keys"
 	"clustermanager/src/_shared/etcd"
 	"clustermanager/src/_shared/logging"
-	"clustermanager/src/_shared/nodes"
-	"clustermanager/src/_shared/nodes/connection"
-	"clustermanager/src/api"
+	"clustermanager/src/_shared/utils"
 	"clustermanager/src/healthchecks"
+	nodes2 "clustermanager/src/nodes"
+	"clustermanager/src/nodes/nodes"
+	"clustermanager/src/nodes/nodes/connection"
+	"clustermanager/src/partitions"
+	partitions2 "clustermanager/src/partitions/partitions"
+	"crypto/md5"
 	echojwt "github.com/labstack/echo-jwt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -26,9 +30,11 @@ func CreateClusterManager() *ClusterManager {
 		Configuration: loadedConfiguration,
 	}
 	etcdNativeClient := createEtcdNativeClient(loadedConfiguration)
+	partitionsRepository := &partitions2.PartitionRepository{Client: etcd.EtcdClient[string]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}}
+	nodesRepository := &nodes.NodeRepository{Client: etcd.EtcdClient[nodes.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}}
 	nodeConnections := connection.CreateNodeConnectionsObject(logger)
-	healthService := createHealthCheckService(loadedConfiguration, nodeConnections, etcdNativeClient, logger)
-	apiEcho := configureHttpApi(loadedConfiguration, etcdNativeClient, logger)
+	healthService := createHealthCheckService(loadedConfiguration, nodeConnections, nodesRepository, logger)
+	apiEcho := configureHttpApi(loadedConfiguration, logger, partitionsRepository, nodesRepository)
 
 	return &ClusterManager{
 		configuration:      loadedConfiguration,
@@ -56,11 +62,8 @@ func createEtcdNativeClient(configuration *configuration.Configuartion) *clientv
 func createHealthCheckService(
 	configuration *configuration.Configuartion,
 	connections *connection.NodeConnections,
-	etcdNativeClient *clientv3.Client,
+	nodesRepository *nodes.NodeRepository,
 	logger *logging.Logger) *healthchecks.HealthCheckService {
-
-	customEtcdClient := &etcd.EtcdClient[nodes.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}
-	nodesRepository := nodes.EtcdNodeRepository{Client: customEtcdClient}
 
 	return &healthchecks.HealthCheckService{
 		NodesRespository: nodesRepository,
@@ -70,7 +73,11 @@ func createHealthCheckService(
 	}
 }
 
-func configureHttpApi(configuration *configuration.Configuartion, etcdNativeClient *clientv3.Client, logger *logging.Logger) *echo.Echo {
+func configureHttpApi(configuration *configuration.Configuartion,
+	logger *logging.Logger,
+	partitionRepository *partitions2.PartitionRepository,
+	nodesRepository *nodes.NodeRepository) *echo.Echo {
+
 	echoApi := echo.New()
 	echoApi.HideBanner = true
 	echoApi.Use(middleware.Recover())
@@ -80,16 +87,18 @@ func configureHttpApi(configuration *configuration.Configuartion, etcdNativeClie
 		SigningKey: []byte(configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_API_JWT_SECRET_KEY)),
 	}))
 
-	customEtcdClient := &etcd.EtcdClient[nodes.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}
-	nodesRepository := nodes.EtcdNodeRepository{Client: customEtcdClient}
+	ringNodeAllocator := &partitions.RingNodeAllocator{HashCalculator: utils.HashCalculator{HashAlgorithm: md5.New()}, PartitionsRepository: partitionRepository}
 
-	getAllNodesController := api.GetAllNodeController{NodesRepository: nodesRepository, Logger: logger}
-	loginController := &api.LoginController{Configuration: configuration, Logger: logger}
-	createNodeController := &api.CreateNodeController{NodesRepository: nodesRepository}
+	createNodeController := &nodes2.CreateNodeController{NodesRepository: nodesRepository, RingNodeAllocator: ringNodeAllocator, Configuration: configuration}
+	getAllNodesController := nodes2.GetAllNodeController{NodesRepository: nodesRepository, Logger: logger, PartitionRepository: partitionRepository}
+	loginController := &nodes2.LoginController{Configuration: configuration, Logger: logger}
+	getRingController := &partitions.GetRingInfoController{PartitionsRepository: partitionRepository, Configuration: configuration}
 
 	echoApi.POST("/login", loginController.Login)
+
 	apiGroup.POST("/nodes/create", createNodeController.CreateNode)
 	apiGroup.GET("/nodes/all", getAllNodesController.GetAllNodes)
+	apiGroup.GET("/partitions/ring/info", getRingController.GetRingInfo)
 
 	return echoApi
 }

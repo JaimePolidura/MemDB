@@ -24,8 +24,11 @@ RUN apt-get update && TZ=Europe && DEBIAN_FRONTEND=noninteractive && apt-get ins
 # Set up vcpkg and basic dependecies
 RUN git clone https://github.com/Microsoft/vcpkg.git \
     && cd /vcpkg \
-    && ./bootstrap-vcpkg.sh \
-    && ./vcpkg install nlohmann-json:x64-linux boost:x64-linux spdlog:x64-linux
+    && ./bootstrap-vcpkg.sh
+
+RUN ./vcpkg/vcpkg install nlohmann-json:x64-linux
+RUN ./vcpkg/vcpkg install boost:x64-linux
+RUN ./vcpkg/vcpkg install spdlog:x64-linux
 
 RUN cd usr && cd local && cd include \
     && mkdir etcd && mkdir pplx && mkdir cpprest
@@ -53,12 +56,12 @@ RUN git clone https://github.com/etcd-cpp-apiv3/etcd-cpp-apiv3 \
 # Without this boost is included two times, for some reason io_context blocks for ever or crash with segfault
 RUN cd vcpkg/installed/x64-linux/include && mv boost xd
 
+# Update dynamic library cache
+RUN ldconfig
+
 # Copy project and compile
 WORKDIR /memdb
 COPY . /memdb
 RUN chmod +x /memdb/linux-build.sh && /memdb/linux-build.sh
-
-# Update dynamic library cache
-RUN ldconfig
 
 ENTRYPOINT ["/memdb/src/build/src/memdb_run"]

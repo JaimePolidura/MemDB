@@ -5,14 +5,14 @@
 
 #include "messages/response/ErrorCode.h"
 #include "messages/request/Request.h"
-#include "operators/operations/GetOperator.h"
+#include "operators/operations/user/GetOperator.h"
 
 OperationBody createOperationGet(uint8_t keyValue, uint64_t timestamp, uint16_t nodeId);
 
 TEST(GetOperator, CorrectConfig) {
     GetOperator getOperator{};
 
-    ASSERT_EQ(getOperator.type(), READ);
+    ASSERT_EQ(getOperator.type(), DB_STORE_READ);
     ASSERT_EQ(getOperator.operatorNumber(), GetOperator::OPERATOR_NUMBER);
     ASSERT_EQ(getOperator.authorizedToExecute(), AuthenticationType::USER);
 }
@@ -23,7 +23,7 @@ TEST(GetOperator, KeyNotFound) {
 
     auto operation = createOperationGet(0x41, 1, 1); //A
 
-    Response response = getOperator.operate(operation, OperationOptions{.requestOfNodeToReplicate=false}, db);
+    Response response = getOperator.operate(operation, OperationOptions{.checkTimestamps=false}, db);
 
     ASSERT_FALSE(response.isSuccessful);
     ASSERT_EQ(response.errorCode, 0x01);
@@ -41,7 +41,7 @@ TEST(GetOperator, KeyFound) {
     GetOperator getOperator{};
     auto operation = createOperationGet(0x41, 1, 1); //A
 
-    Response response = getOperator.operate(operation, OperationOptions{.requestOfNodeToReplicate=false}, db);
+    Response response = getOperator.operate(operation, OperationOptions{.checkTimestamps=false}, db);
 
     ASSERT_TRUE(response.isSuccessful);
     ASSERT_EQ(response.errorCode, 0);

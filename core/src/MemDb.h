@@ -35,9 +35,7 @@ public:
         if(this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION)){
             this->clock->nodeId = this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
 
-            std::async(std::launch::async, [this, lastTimestampStored] () -> void {
-                this->syncOplogFromCluster(lastTimestampStored);
-            });
+            this->syncOplogFromCluster(lastTimestampStored);
         }
 
         this->tcpServer->run();
@@ -45,18 +43,29 @@ public:
 
 private:
     void syncOplogFromCluster(std::vector<uint64_t> lastTimestampProcessedFromOpLog) {
-        this->logger->info("Synchronizing oplog with the cluster");
+        std::vector<std::future<void>> syncOplogFutures{};
 
         for(int i = 0; i < lastTimestampProcessedFromOpLog.size(); i++){
-            int oplogId = i;
+            std::future<void> syncOplogFuture = std::async(std::launch::async, [this, lastTimestampProcessedFromOpLog, i]() -> void{
+                int oplogId = i;
 
-            std::vector<OperationBody> unsyncedOplog = this->cluster->getUnsyncedOplog(lastTimestampProcessedFromOpLog[i], NodeGroupOptions{
-                .nodeGroupId = oplogId
+                this->logger->info("{0}", lastTimestampProcessedFromOpLog[i]);
+
+                std::vector<OperationBody> unsyncedOplog = this->cluster->getUnsyncedOplog(lastTimestampProcessedFromOpLog[i], NodeGroupOptions{
+                        .nodeGroupId = oplogId
+                });
+
+                this->applyUnsyncedOplogFromCluster(unsyncedOplog, false);
+                this->logger->info("Synchronized {0} oplog entries with the cluster", unsyncedOplog.size());
             });
 
-            this->applyUnsyncedOplogFromCluster(unsyncedOplog, false);
-            this->logger->info("Synchronized {0} oplog entries with the cluster", unsyncedOplog.size());
+            syncOplogFutures.push_back(std::move(syncOplogFuture));
         }
+
+        Utils::waitAll()
+
+        for (const std::future<void>& future : syncOplogFutures)
+            future.wait();
 
         this->cluster->setRunning();
     }

@@ -17,7 +17,7 @@ public:
 
         return result;
     }
-
+    
     template<typename T>
     static std::vector<T> concat(const std::vector<T>& a, const std::vector<T>& b) {
         if(a.empty() && b.empty()) {

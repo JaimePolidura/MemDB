@@ -25,7 +25,7 @@ services:
     depends_on:
       - memdb-clusterdb
     environment:
-      - MEMDB_CLUSTERMANAGER_HEALTHCHECK_PERIOD=30
+      - MEMDB_CLUSTERMANAGER_HEALTHCHECK_PERIOD=240
       - MEMDB_CLUSTERMANAGER_DO_LOGGING=false
       - MEMDB_CLUSTERMANAGER_ETCD_ENDPOINTS=memdb-clusterdb:2379
     restart: always

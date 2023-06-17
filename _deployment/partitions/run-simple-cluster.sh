@@ -1,9 +1,10 @@
+docker images prune
 docker-compose down -v --remove-orphans
 docker stop $(docker ps -a -q --filter "name=memdb-*")
 docker rm $(docker ps -a -q --filter "name=memdb-*")
 
 docker-compose up -d memdb-clusterdb &
-sleep 2s
+sleep 5s
 
 docker-compose exec memdb-clusterdb etcdctl put /partitions/config/nodesPerPartition "2"
 docker-compose exec memdb-clusterdb etcdctl put /partitions/config/ringSize "64"

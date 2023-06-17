@@ -30,7 +30,7 @@ func CreateClusterManager() *ClusterManager {
 		Configuration: loadedConfiguration,
 	}
 	etcdNativeClient := createEtcdNativeClient(loadedConfiguration)
-	partitionsRepository := &partitions2.PartitionRepository{Client: etcd.EtcdClient[string]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}}
+	partitionsRepository := &partitions2.PartitionRepository{Client: etcd.EtcdClient[string]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}, Logger: logger}
 	nodesRepository := &nodes.NodeRepository{Client: etcd.EtcdClient[nodes.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}}
 	nodeConnections := connection.CreateNodeConnectionsObject(logger)
 	healthService := createHealthCheckService(loadedConfiguration, nodeConnections, nodesRepository, logger)

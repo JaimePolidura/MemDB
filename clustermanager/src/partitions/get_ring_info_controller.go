@@ -15,7 +15,7 @@ type GetRingInfoController struct {
 }
 
 type GetRingInfoResponse struct {
-	Entries           partitions.PartitionRingEntries `json:"entries"`
+	Entries           []partitions.PartitionRingEntry `json:"entries"`
 	NodesPerPartition uint32                          `json:"nodesPerPartition"`
 	MaxSize           uint32                          `json:"maxSize"`
 }
@@ -34,7 +34,7 @@ func (controller *GetRingInfoController) GetRingInfo(context echo.Context) error
 	}
 
 	return context.JSON(http.StatusOK, GetRingInfoResponse{
-		Entries:           ringEntries,
+		Entries:           ringEntries.Entries,
 		NodesPerPartition: nodesPerPartition,
 		MaxSize:           maxSize,
 	})

@@ -68,7 +68,6 @@ public:
         }
     }
 
-
     template<typename T, typename B>
     static std::optional<T> retryUntilAndGet(int numberAttempts, const std::chrono::duration<int64_t, B> backoffMillis, std::function<T(void)> toRetry) {
         while(numberAttempts > 0) {

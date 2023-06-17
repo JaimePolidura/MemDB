@@ -79,7 +79,7 @@ public:
         ringEntryDeleted->next->back = ringEntryDeleted->back;
     }
 
-    std::vector<RingEntry> getNeighborsClockwise(memdbNodeId_t nodeId, int numberNeighbors) {
+    std::vector<RingEntry> getNeighborsClockwise(memdbNodeId_t nodeId, uint32_t numberNeighbors) {
         RingEntryNode * ringEntryOfNode = this->indexByNodeId.at(nodeId);
         std::vector<RingEntry> neighbors(numberNeighbors);
 

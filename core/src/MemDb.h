@@ -49,8 +49,6 @@ private:
             std::future<void> syncOplogFuture = std::async(std::launch::async, [this, lastTimestampProcessedFromOpLog, i]() -> void{
                 int oplogId = i;
 
-                this->logger->info("{0}", lastTimestampProcessedFromOpLog[i]);
-
                 std::vector<OperationBody> unsyncedOplog = this->cluster->getUnsyncedOplog(lastTimestampProcessedFromOpLog[i], NodeGroupOptions{
                         .nodeGroupId = oplogId
                 });
@@ -61,8 +59,6 @@ private:
 
             syncOplogFutures.push_back(std::move(syncOplogFuture));
         }
-
-        Utils::waitAll()
 
         for (const std::future<void>& future : syncOplogFutures)
             future.wait();

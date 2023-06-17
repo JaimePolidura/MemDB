@@ -63,7 +63,5 @@ func (controller *GetAllNodeController) getNodesNeighborsFromPartition(nodeIdStr
 		nodes = append(nodes, node)
 	}
 
-	nodes = append(nodes, selfNode)
-
-	return nodes, nil
+	return append(nodes, selfNode), nil
 }

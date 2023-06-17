@@ -42,7 +42,7 @@ func (entries PartitionRingEntries) GetNeighborsByNodeId(nodeId nodes.NodeId_t, 
 
 	clockWise, counterClockWise, found := entries.getNeighborsByRingPosition(entry.RingPosition, numberNeighbors)
 	neighbors := append(counterClockWise, clockWise...)
-	
+
 	return neighbors, found
 }
 
@@ -54,11 +54,13 @@ func (entries PartitionRingEntries) getNeighborsByRingPosition(ringPosition uint
 
 	ringIterator := utils.CircularArrayIterator[PartitionRingEntry]{Array: entries.Entries}
 	ringIterator.WithStartingIndex(indexOfRingEntry)
+
 	var counterClockWise []PartitionRingEntry
 	var clockWise []PartitionRingEntry
 
 	for i := 0; uint32(i) < numberNeighbors; i++ {
-		counterClockWise = append(counterClockWise, ringIterator.Back())
+		back := ringIterator.Back()
+		counterClockWise = append(counterClockWise, back)
 		clockWise = append(clockWise, ringIterator.Next())
 	}
 

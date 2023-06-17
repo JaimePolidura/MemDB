@@ -5,13 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"sync"
 )
 
 type NodeRepository struct {
 	Client etcd.EtcdClient[Node]
-
-	nodesByIdCache sync.Map
 }
 
 func (repository *NodeRepository) FindAll() ([]Node, error) {
@@ -35,19 +32,7 @@ func (repository *NodeRepository) FindByAddress(address string) (Node, error) {
 }
 
 func (repository *NodeRepository) FindById(nodeId NodeId_t) (Node, error) {
-	if node, found := repository.nodesByIdCache.Load(nodeId); found {
-		return node.(Node), nil
-	}
-
-	node, err := repository.Client.Get("/nodes/"+fmt.Sprint(nodeId), etcd.JSON)
-
-	if err != nil {
-		return Node{}, err
-	}
-
-	repository.nodesByIdCache.Store(node.NodeId, node)
-
-	return node, nil
+	return repository.Client.Get("/nodes/"+fmt.Sprint(nodeId), etcd.JSON)
 }
 
 func (repository *NodeRepository) Add(node Node) error {

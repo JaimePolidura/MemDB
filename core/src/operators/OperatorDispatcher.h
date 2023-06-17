@@ -46,7 +46,7 @@ public:
         }
 
         bool writeDbRequestFromNode = operatorToExecute->type() == OperatorType::DB_STORE_WRITE && request.authenticationType == AuthenticationType::NODE;
-        bool writeDbRequest = operatorToExecute->type() == OperatorType::DB_STORE_WRITE;
+        bool writeDbRequest = operatorToExecute->type() == OperatorType::DB_STORE_WRITE;    
         bool readDbRequest = operatorToExecute->type() == OperatorType::DB_STORE_READ;
 
         OperationOptions options = {.checkTimestamps = writeDbRequestFromNode};
@@ -90,11 +90,7 @@ public:
                                 result.isSuccessful ? "successfuly" : "unsuccessfuly",
                                 operatorToExecute->name(), options.checkTimestamps ? "node" : "user");
 
-        this->logger->debugInfo("a");
-
         if(operatorToExecute->type() == DB_STORE_WRITE && result.isSuccessful && !options.onlyExecute) {
-            this->logger->debugInfo("b");
-
             if(!options.dontSaveInOperationLog){
                 this->operationLog->add(operation);
             }
@@ -104,7 +100,6 @@ public:
             }
 
             if(isInReplicationMode() && !options.checkTimestamps && !options.dontBroadcastToCluster){
-                this->logger->debugInfo("c");
                 this->cluster->broadcast(operation);
 
                 this->logger->debugInfo("Broadcasted request for operator {0} from {1}",

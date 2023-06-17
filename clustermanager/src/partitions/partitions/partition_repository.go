@@ -2,6 +2,7 @@ package partitions
 
 import (
 	"clustermanager/src/_shared/etcd"
+	"clustermanager/src/_shared/logging"
 	"encoding/json"
 	"sort"
 	"strconv"
@@ -10,6 +11,7 @@ import (
 
 type PartitionRepository struct {
 	Client etcd.EtcdClient[string]
+	Logger *logging.Logger
 
 	partitionRingEntriesCache     PartitionRingEntries
 	partitionRingEntriesCacheLock sync.Mutex
@@ -55,18 +57,23 @@ func (repository *PartitionRepository) GetRingEntriesSorted() (PartitionRingEntr
 		return repository.partitionRingEntriesCache, nil
 	}
 
-	valueStrJson, err := repository.Client.Get("/partitions/ring", etcd.STRING) //error
+	valueStrJson, err := repository.Client.GetAll("/partitions/ring", etcd.STRING) //error
 
 	if err != nil {
 		return PartitionRingEntries{}, err
 	}
 
-	var partitionRing []PartitionRingEntry
-	err = json.Unmarshal([]byte(valueStrJson), &partitionRing)
+	var ringEntries []PartitionRingEntry
+	for _, actualJsonStr := range valueStrJson {
+		var actualRingEntry PartitionRingEntry
+		json.Unmarshal([]byte(actualJsonStr), &actualRingEntry)
 
-	sort.Slice(partitionRing, func(i, j int) bool {
-		return partitionRing[i].RingPosition < partitionRing[j].RingPosition
+		ringEntries = append(ringEntries, actualRingEntry)
+	}
+
+	sort.Slice(ringEntries, func(i, j int) bool {
+		return ringEntries[i].RingPosition < ringEntries[j].RingPosition
 	})
 
-	return PartitionRingEntries{Entries: partitionRing}, err
+	return PartitionRingEntries{Entries: ringEntries}, err
 }

@@ -22,7 +22,7 @@ endif()
 include_directories(src)
 add_subdirectory(src)
 
-#if(NOT BUILDING_LINUX_DEPLOYMENT)
-#    add_subdirectory(tst)
-#    add_subdirectory(playground)
-#endif()
+
+if(NOT BUILDING_LINUX_DEPLOYMENT)
+    add_subdirectory(tst)
+endif()

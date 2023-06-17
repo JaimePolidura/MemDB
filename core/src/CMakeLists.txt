@@ -11,16 +11,18 @@ include_directories(${CMAKE_PREFIX_PATH}/include)
 find_package(Boost REQUIRED)
 target_link_libraries(${BINARY}_lib PRIVATE Boost::boost)
 
-find_package(spdlog CONFIG REQUIRED)
-target_link_libraries(${BINARY}_lib PRIVATE spdlog::spdlog spdlog::spdlog_header_only)
-
 find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(${BINARY}_lib PRIVATE nlohmann_json::nlohmann_json)
+
+find_package(spdlog CONFIG REQUIRED)
+target_link_libraries(${BINARY}_lib PRIVATE spdlog::spdlog spdlog::spdlog_header_only)
 
 if(NOT BUILDING_LINUX_DEPLOYMENT)
     find_package(etcd-cpp-api CONFIG)
     target_link_libraries(${BINARY}_lib PRIVATE etcd-cpp-api)
-else()
+endif()
+
+if(BUILDING_LINUX_DEPLOYMENT)
     target_include_directories(${BINARY}_lib PRIVATE /usr/local/include)
     target_link_libraries(${BINARY}_lib PRIVATE cpprest etcd-cpp-api)
     target_link_directories(${BINARY}_lib PRIVATE /usr/local/lib)

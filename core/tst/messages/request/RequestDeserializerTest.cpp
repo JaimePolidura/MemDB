@@ -23,7 +23,7 @@ TEST(RequesteRequestDeserializer, WithArgsAndNodeId) {
 
     ASSERT_EQ(deserializedRequest.requestNumber, 511);
 
-    ASSERT_FALSE(deserializedRequest.authentication.flag1);
+    ASSERT_TRUE(deserializedRequest.authentication.flag1);
     ASSERT_FALSE(deserializedRequest.authentication.flag2);
     ASSERT_TRUE(authKeyExpected.compare(deserializedRequest.authentication.authKey) == 0);
 
@@ -35,7 +35,6 @@ TEST(RequesteRequestDeserializer, WithArgsAndNodeId) {
     ASSERT_EQ(deserializedRequest.operation.args->size(), 2);
 
     SimpleString firstArg = deserializedRequest.operation.args->at(0);
-    std::cout << *firstArg.data() << std::endl;
     ASSERT_EQ(firstArg.size, 1);
     ASSERT_TRUE(expectedArg1.compare(std::string((char *) firstArg.data(), firstArg.size)) == 0);
 
@@ -98,7 +97,7 @@ TEST(RequesteRequestDeserializer, EmptyArgsNodeId) {
 
     ASSERT_EQ(deserializedRequest.requestNumber, 1);
 
-    ASSERT_FALSE(deserializedRequest.authentication.flag1);
+    ASSERT_TRUE(deserializedRequest.authentication.flag1);
     ASSERT_FALSE(deserializedRequest.authentication.flag2);
     ASSERT_TRUE(authKeyExpected.compare(deserializedRequest.authentication.authKey) == 0);
 

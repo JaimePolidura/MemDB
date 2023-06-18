@@ -1,7 +1,6 @@
 #include "gtest/gtest.h"
 
 #include "messages/response/ResponseDeserializer.h"
-#include "messages/response/ErrorCode.h"
 #include "../../Assertions.h"
 
 #include <string>

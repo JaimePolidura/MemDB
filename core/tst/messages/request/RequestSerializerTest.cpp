@@ -21,12 +21,13 @@ TEST(RequestSerializer, WithArgsAndNodeId) {
     args->push_back(SimpleString<memDbDataLength_t>::fromChar(0x01));
     args->push_back(SimpleString<memDbDataLength_t>::fromChar(0x01));
     Request request = createRequestNodeId(args, "123", 1, 5, 0x1FF, 2); //00000001 11111111
+    request.authentication.flag1 = true;
 
-    auto actual = requestSerializer.serialize(request, true);
+    auto actual = requestSerializer.serialize(request);
     auto expected = std::vector<uint8_t>{
         0x00, 0x00, 0x00, 0x1D,
         0x00, 0x00, 0x00, 0x02, //Req number
-        0x0C, 0x31, 0x32, 0x33, //Auth
+        0x0E, 0x31, 0x32, 0x33, //Auth
         0x14, //Op number
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xFF, //Timestamp
         0x00, 0x01, //Node id,
@@ -52,11 +53,11 @@ TEST(RequestSerializer, WithoutArgsAndFlags) {
 
     auto actual = requestSerializer.serialize(request);
     auto expected = std::vector<uint8_t>{
-            0x00, 0x00, 0x00, 0x11,
-            0x00, 0x00, 0x00, 0x02, //Req number
-            0x0D, 0x31, 0x32, 0x33, //Auth
-            0x16, //Op number
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xFF, //Timestamp
+        0x00, 0x00, 0x00, 0x11,
+        0x00, 0x00, 0x00, 0x02, //Req number
+        0x0D, 0x31, 0x32, 0x33, //Auth
+        0x16, //Op number
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xFF, //Timestamp
     };
 
     Assertions::assertFirstItemsVectorsEqual(expected, actual);

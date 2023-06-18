@@ -80,12 +80,17 @@ public:
     }
 
     std::vector<RingEntry> getNeighborsClockwise(memdbNodeId_t nodeId, uint32_t numberNeighbors) {
-        RingEntryNode * ringEntryOfNode = this->indexByNodeId.at(nodeId);
         std::vector<RingEntry> neighbors(numberNeighbors);
+        RingEntryNode * initialNodePtr = this->indexByNodeId.at(nodeId);
+        RingEntryNode * startedNodePtr = initialNodePtr;
 
         for(int i = 0; i < numberNeighbors; i++){
-            ringEntryOfNode = ringEntryOfNode->next;
-            neighbors.push_back(ringEntryOfNode->entry);
+            if(i > 0 && initialNodePtr == startedNodePtr){
+                break;
+            }
+
+            initialNodePtr = initialNodePtr->next;
+            neighbors.push_back(initialNodePtr->entry);
         }
 
         return neighbors;

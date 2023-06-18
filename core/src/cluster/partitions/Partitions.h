@@ -81,12 +81,12 @@ public:
         this->ringEntries.deleteByNodeId(nodeId);
     }
 
-    uint32_t getNodesPerPartition() {
-        return this->nodesPerPartition;
-    }
-
     void add(RingEntry ringEntry){
         this->ringEntries.add(ringEntry);
+    }
+
+    uint32_t getNodesPerPartition() const {
+        return this->nodesPerPartition;
     }
 
     RingEntry getSelfEntry() {

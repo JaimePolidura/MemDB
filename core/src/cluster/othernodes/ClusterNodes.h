@@ -27,6 +27,8 @@ public:
         configuration(configuration),
         requestPool(configuration->get<int>(ConfigurationKeys::MEMDB_CORE_SERVER_MAX_THREADS)) {}
 
+    ClusterNodes() = default;
+
     void setOtherNodes(const std::vector<node_t>& otherNodesToSet, const NodeGroupOptions options = {}) {
         for (const node_t& node: otherNodesToSet) {
             if(this->nodesById.contains(node->nodeId)) {
@@ -41,6 +43,10 @@ public:
 
             this->groups[options.nodeGroupId].add(node->nodeId);
         }
+    }
+
+    std::vector<NodeGroup> getGroups() {
+        return this->groups;
     }
 
     bool isEmtpy(const NodeGroupOptions options = {}) {

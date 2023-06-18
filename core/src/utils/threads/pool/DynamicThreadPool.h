@@ -22,6 +22,8 @@ public:
         this->start();
     }
 
+    DynamicThreadPool() = default;
+
     void submit(Task task) {
         this->numberTaskEnqueued++;
 

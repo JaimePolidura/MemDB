@@ -23,6 +23,10 @@ public:
 
     Node(): connection(nullptr) {}
 
+    Node(memdbNodeId_t nodeId, const std::string& address, NodeState state):
+        connection(nullptr), nodeId(nodeId), address(address), state(state)
+    {}
+
     Node(const Node& other) {
         this->connection = other.connection;
         this->address = other.address;

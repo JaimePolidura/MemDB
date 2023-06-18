@@ -2,6 +2,7 @@
 
 #include "shared.h"
 #include "memdbtypes.h"
+#include "utils/Utils.h"
 
 using namespace boost::asio;
 

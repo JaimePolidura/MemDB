@@ -39,7 +39,7 @@ private:
         return std::async(std::launch::async, [this](std::shared_future<std::vector<OperationBody>> leftToCompactParam,
                                                      std::shared_future<std::vector<OperationBody>> rightToCompactParam){
             std::vector<OperationBody> compacted{};
-            alreadySennKeys_t alreadySennKeys{};
+            setSimpleString_t alreadySennKeys{};
 
             this->operationLogCompacter.compact(rightToCompactParam.get(), compacted, alreadySennKeys);
             this->operationLogCompacter.compact(leftToCompactParam.get(), compacted, alreadySennKeys);

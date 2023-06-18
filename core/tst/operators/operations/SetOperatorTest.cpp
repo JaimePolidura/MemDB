@@ -14,7 +14,6 @@ TEST(SetOperator, CorrectConfig) {
 
     ASSERT_EQ(setOperator.type(), DB_STORE_WRITE);
     ASSERT_EQ(setOperator.operatorNumber(), SetOperator::OPERATOR_NUMBER);
-    ASSERT_EQ(setOperator.authorizedToExecute(), AuthenticationType::USER);
 }
 
 TEST(SetOperator, ShouldtReplaceEvenNewerKeyTimestamp) {
@@ -22,8 +21,11 @@ TEST(SetOperator, ShouldtReplaceEvenNewerKeyTimestamp) {
     SetOperator setOperator{};
     db->put(SimpleString<memDbDataLength_t>::fromChar(0x41), SimpleString<memDbDataLength_t>::fromChar(0x01), IGNORE_TIMESTAMP, 3, 1);
 
-    auto operation = createOperationSet(0x41, 0x02, 2, 1); //A -> 1
-    auto result = setOperator.operate(operation, OperationOptions{.checkTimestamps=false}, db);
+    //A -> 1
+    auto result = setOperator.operate(
+            createOperationSet(0x41, 0x02, 2, 1),
+            OperationOptions{.checkTimestamps=false},
+            OperatorDependencies{.dbStore = db});
 
     ASSERT_TRUE(result.isSuccessful);
     ASSERT_EQ(* db->get(SimpleString<memDbDataLength_t>::fromChar('A')).value().value.data(), 0x02);
@@ -34,8 +36,11 @@ TEST(SetOperator, ShouldntReplaceNewerKeyTimestamp) { //fails
     SetOperator setOperator{};
     db->put(SimpleString<memDbDataLength_t>::fromChar(0x41), SimpleString<memDbDataLength_t>::fromChar(0x01), IGNORE_TIMESTAMP, 3, 1);
 
-    auto operation = createOperationSet(0x41, 0x02, 2, 1); //A -> 1
-    auto result = setOperator.operate(operation, OperationOptions{.checkTimestamps=true}, db);
+    //A -> 1
+    auto result = setOperator.operate(
+            createOperationSet(0x41, 0x02, 2, 1),
+            OperationOptions{.checkTimestamps=true},
+            OperatorDependencies{.dbStore = db});
 
     ASSERT_FALSE(result.isSuccessful);
     ASSERT_EQ(* db->get(SimpleString<memDbDataLength_t>::fromChar('A')).value().value.data(), 0x01);
@@ -47,8 +52,11 @@ TEST(SetOperator, ShouldReplaceOldKeyTimestamp) {
     SetOperator setOperator{};
     db->put(SimpleString<memDbDataLength_t>::fromChar(0x41), SimpleString<memDbDataLength_t>::fromChar(0x01), NOT_IGNORE_TIMESTAMP, 1, 1);
 
-    auto operation = createOperationSet(0x41, 0x02, 2, 1); //A -> 1
-    auto result = setOperator.operate(operation, OperationOptions{.checkTimestamps=true}, db);
+    //A -> 1
+    auto result = setOperator.operate(
+            createOperationSet(0x41, 0x02, 2, 1),
+            OperationOptions{.checkTimestamps=true},
+            OperatorDependencies{.dbStore = db});
 
     ASSERT_TRUE(result.isSuccessful);
     ASSERT_EQ(* db->get(SimpleString<memDbDataLength_t>::fromChar('A')).value().value.data(), 0x02);
@@ -57,9 +65,12 @@ TEST(SetOperator, ShouldReplaceOldKeyTimestamp) {
 TEST(SetOperator, ShouldSetNewKey) {
     memDbDataStore_t db = std::make_shared<Map<memDbDataLength_t>>(64);
     SetOperator setOperator{};
-    auto operation = createOperationSet(0x41, 0x01, 1, 1); //A -> 1
 
-    Response response = setOperator.operate(operation, OperationOptions{.checkTimestamps=true}, db);
+    //A -> 1
+    Response response = setOperator.operate(
+            createOperationSet(0x41, 0x01, 1, 1),
+            OperationOptions{.checkTimestamps=true},
+            OperatorDependencies{.dbStore = db});
 
     ASSERT_TRUE(response.isSuccessful);
     ASSERT_TRUE(db->contains(SimpleString<memDbDataLength_t>::fromChar('A')));

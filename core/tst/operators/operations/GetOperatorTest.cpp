@@ -14,16 +14,17 @@ TEST(GetOperator, CorrectConfig) {
 
     ASSERT_EQ(getOperator.type(), DB_STORE_READ);
     ASSERT_EQ(getOperator.operatorNumber(), GetOperator::OPERATOR_NUMBER);
-    ASSERT_EQ(getOperator.authorizedToExecute(), AuthenticationType::USER);
 }
 
 TEST(GetOperator, KeyNotFound) {
     memDbDataStore_t db = std::make_shared<Map<memDbDataLength_t>>(64);
     GetOperator getOperator{};
 
-    auto operation = createOperationGet(0x41, 1, 1); //A
-
-    Response response = getOperator.operate(operation, OperationOptions{.checkTimestamps=false}, db);
+    //A
+    Response response = getOperator.operate(
+            createOperationGet(0x41, 1, 1),
+            OperationOptions{.checkTimestamps=false},
+            OperatorDependencies{.dbStore = db});
 
     ASSERT_FALSE(response.isSuccessful);
     ASSERT_EQ(response.errorCode, 0x01);
@@ -39,9 +40,12 @@ TEST(GetOperator, KeyFound) {
     db->put(key, value, 1, 1, false);
 
     GetOperator getOperator{};
-    auto operation = createOperationGet(0x41, 1, 1); //A
 
-    Response response = getOperator.operate(operation, OperationOptions{.checkTimestamps=false}, db);
+    //A
+    Response response = getOperator.operate(
+            createOperationGet(0x41, 1, 1),
+            OperationOptions{.checkTimestamps=false},
+            OperatorDependencies{.dbStore = db});
 
     ASSERT_TRUE(response.isSuccessful);
     ASSERT_EQ(response.errorCode, 0);

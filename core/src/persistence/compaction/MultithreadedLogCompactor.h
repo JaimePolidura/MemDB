@@ -3,7 +3,7 @@
 #include "shared.h"
 
 #include "messages/request/Request.h"
-#include "persistence/compaction/MultiThreadedCompactionBlock.h"
+#include "persistence/compaction/MultithreadedCompactionBlock.h"
 
 class MultiThreadedLogCompactor {
 public:

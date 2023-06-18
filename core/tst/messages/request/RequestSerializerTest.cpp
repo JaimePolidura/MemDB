@@ -49,9 +49,8 @@ TEST(RequestSerializer, WithoutArgsAndFlags) {
     RequestSerializer requestSerializer{};
     auto args = std::make_shared<std::vector<SimpleString<memDbDataLength_t>>>();
     Request request = createRequestNodeId(args, "123", 0, 5, 0x1FF, 2, false, true, true, false);
-    request.authenticationType = AuthenticationType::USER;
 
-    auto actual = requestSerializer.serialize(request, false);
+    auto actual = requestSerializer.serialize(request);
     auto expected = std::vector<uint8_t>{
             0x00, 0x00, 0x00, 0x11,
             0x00, 0x00, 0x00, 0x02, //Req number

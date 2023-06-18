@@ -8,17 +8,17 @@
 
 class Authenticator {
 private:
-    configuration_t configuartion;
+    configuration_t configuration;
 
 public:
     Authenticator() = default;
 
-    Authenticator(configuration_t configuartion): configuartion(configuartion) {}
+    explicit Authenticator(configuration_t configuartion): configuration(configuartion) {}
 
     bool authenticate(const std::string& authKey) {
-        return this->configuartion->get(ConfigurationKeys::MEMDB_CORE_AUTH_API_KEY).compare(authKey) == 0 ||
-                this->configuartion->get(ConfigurationKeys::MEMDB_CORE_AUTH_MAINTENANCE_KEY).compare(authKey) == 0 ||
-                this->configuartion->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY).compare(authKey) == 0;
+        return this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_API_KEY) == authKey ||
+               this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_MAINTENANCE_KEY) == authKey ||
+               this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY) == authKey;
     }
 
     AuthenticationType getAuthenticationType(const std::string& authKey) {
@@ -39,11 +39,11 @@ public:
 
 private:
     AuthenticationType getAuthenticationTypeFromConfiguration(const std::string& authKey) {
-        if(this->configuartion->get(ConfigurationKeys::MEMDB_CORE_AUTH_API_KEY).compare(authKey) == 0) {
+        if(this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_API_KEY) == authKey) {
             return AuthenticationType::API;
-        }else if (this->configuartion->get(ConfigurationKeys::MEMDB_CORE_AUTH_MAINTENANCE_KEY).compare(authKey) == 0) {
+        }else if (this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_MAINTENANCE_KEY) == authKey) {
             return AuthenticationType::MAINTENANCE;
-        }else if (this->configuartion->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY).compare(authKey) == 0) {
+        }else if (this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY) == authKey) {
             return AuthenticationType::NODE;
         }
 

@@ -3,6 +3,7 @@ set(CMAKE_CXX_STANDARD 23)
 project(memdb)
 
 option(BUILDING_LINUX_DEPLOYMENT OFF)
+option(BUILDING_LINUX_TEST OFF)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
 
@@ -22,7 +23,6 @@ endif()
 include_directories(src)
 add_subdirectory(src)
 
-
-if(NOT BUILDING_LINUX_DEPLOYMENT)
+if(NOT BUILDING_LINUX_DEPLOYMENT OR BUILDING_LINUX_TEST)
     add_subdirectory(tst)
 endif()

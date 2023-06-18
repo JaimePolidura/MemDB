@@ -11,7 +11,7 @@ TEST(RequesteRequestDeserializer, WithArgsAndNodeId) {
 
     std::vector<uint8_t> buffer = {
             0x00, 0x00, 0x01, 0xFF, //Req number -> 511
-            0x0C, 0x4C, 0x4F, 0x4C, //Auth key -> LOL
+            0x0E, 0x4C, 0x4F, 0x4C, //Auth key -> LOL
             0x09, //Opdesc -> op num: 0x02, flag1: 0, flag2: 1
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, //Timestamp -> 255
             0x02, 0xFF, //NodeNumber -> 767
@@ -19,7 +19,7 @@ TEST(RequesteRequestDeserializer, WithArgsAndNodeId) {
             0x00, 0x00, 0x00, 0x02, 0x42, 0x43 //B
     };
 
-    Request deserializedRequest = requestDeserializer.deserialize(buffer, true);
+    Request deserializedRequest = requestDeserializer.deserialize(buffer);
 
     ASSERT_EQ(deserializedRequest.requestNumber, 511);
 
@@ -88,13 +88,13 @@ TEST(RequesteRequestDeserializer, EmptyArgsNodeId) {
 
     std::vector<uint8_t> buffer = {
             0x00, 0x00, 0x00, 0x01, //Req number -> 1
-            0x0C, 0x4C, 0x4F, 0x4C, //Auth key -> LOL
+            0x0E, 0x4C, 0x4F, 0x4C, //Auth key -> LOL
             0x09, //Operator number: 2, Flag1: 0, Flag2: 1
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, //Timestamp -> 255
             0x02, 0xFF //NodeNumber -> 767
     };
 
-    Request deserializedRequest = requestDeserializer.deserialize(buffer, true);
+    Request deserializedRequest = requestDeserializer.deserialize(buffer);
 
     ASSERT_EQ(deserializedRequest.requestNumber, 1);
 

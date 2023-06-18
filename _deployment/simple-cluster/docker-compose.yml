@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  #ubuntu:
+  #  image: ubuntu:latest
+  #  command: tail -f /dev/null
+
+  memdb-clusterdb:
+    image: bitnami/etcd:latest
+    container_name: memdb-clusterdb
+    ports:
+      - "2379:2379"
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCDCTL_API=3
+    logging:
+      driver: none
+    restart: always
+
+  memdb-clustermanager:
+    image: memdb-clustermanager:1.0
+    container_name: memdb-clustermanager
+    ports:
+      - "8080:8080"
+    depends_on:
+      - memdb-clusterdb
+    environment:
+      - MEMDB_CLUSTERMANAGER_HEALTHCHECK_PERIOD=240
+      - MEMDB_CLUSTERMANAGER_DO_LOGGING=false
+      - MEMDB_CLUSTERMANAGER_ETCD_ENDPOINTS=memdb-clusterdb:2379
+    restart: always
+
+  memdb-clusternode-1:
+    image: memdb-core:1.0
+    container_name: memdb-clusternode-1
+    depends_on:
+      - memdb-clustermanager
+    ports:
+      - "10000:10000"
+    environment:
+      - MEMDB_CORE_SHOW_DEBUG_LOG=true
+      - MEMDB_CORE_PORT=10000
+      - MEMDB_CORE_PERSISTANCE_WRITE_EVERY=1
+      - MEMDB_CORE_USE_REPLICATION=true
+      - MEMDB_CORE_CLUSTER_MANAGER_ADDRESS=memdb-clustermanager:8080
+      - MEMDB_CORE_ETCD_ADDRESSES=memdb-clusterdb:2379
+      - MEMDB_CORE_NODE_ID=1
+
+  memdb-clusternode-2:
+    image: memdb-core:1.0
+    container_name: memdb-clusternode-2
+    depends_on:
+      - memdb-clustermanager
+    ports:
+      - "10001:10001"
+    environment:
+      - MEMDB_CORE_SHOW_DEBUG_LOG=true
+      - MEMDB_CORE_PORT=10001
+      - MEMDB_CORE_PERSISTANCE_WRITE_EVERY=1
+      - MEMDB_CORE_USE_REPLICATION=true
+      - MEMDB_CORE_CLUSTER_MANAGER_ADDRESS=memdb-clustermanager:8080
+      - MEMDB_CORE_ETCD_ADDRESSES=memdb-clusterdb:2379
+      - MEMDB_CORE_NODE_ID=2

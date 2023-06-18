@@ -21,7 +21,7 @@ TEST(Partitions, add){
 
     ASSERT_EQ(partitions->getDistanceClockwise(5), 1);
     ASSERT_EQ(partitions->getDistanceClockwise(4), 2);
-    ASSERT_EQ(partitions->getDistanceClockwise(3), 3);
+    ASSERT_EQ(partitions->getDistanceClockwise(3), 4);
 
     ASSERT_TRUE(partitions->isNeighbor(5));
     ASSERT_FALSE(partitions->isNeighbor(4));
@@ -30,9 +30,9 @@ TEST(Partitions, add){
     std::vector<RingEntry> newNeighbors = partitions->getNeighborsClockwise(3);
 
     ASSERT_TRUE(newNeighbors.size() == 3);
-    ASSERT_TRUE(newNeighbors.at(0).nodeId == 4);
-    ASSERT_TRUE(newNeighbors.at(1).nodeId == 2);
-    ASSERT_TRUE(newNeighbors.at(1).nodeId == 3);
+    ASSERT_TRUE(newNeighbors.at(0).nodeId == 5);
+    ASSERT_TRUE(newNeighbors.at(1).nodeId == 4);
+    ASSERT_TRUE(newNeighbors.at(2).nodeId == 2);
 }
 
 TEST(Partitions, deleteByNodeId){
@@ -63,17 +63,17 @@ TEST(Partitions, isNeighbor){
 TEST(Partitions, getDistanceClockwise){
     partitions_t partitions = setup();
 
-    ASSERT_EQ(partitions->getDistance(4), 1);
-    ASSERT_EQ(partitions->getDistance(2), 2);
-    ASSERT_EQ(partitions->getDistance(3), 3);
+    ASSERT_EQ(partitions->getDistanceClockwise(4), 1);
+    ASSERT_EQ(partitions->getDistanceClockwise(2), 2);
+    ASSERT_EQ(partitions->getDistanceClockwise(3), 3);
 }
 
 TEST(Partitions, getDistanceCounterClockwise){
     partitions_t partitions = setup();
 
-    ASSERT_EQ(partitions->getDistance(4), 3);
-    ASSERT_EQ(partitions->getDistance(2), 2);
-    ASSERT_EQ(partitions->getDistance(3), 1);
+    ASSERT_EQ(partitions->getDistanceCounterClockwise(4), 3);
+    ASSERT_EQ(partitions->getDistanceCounterClockwise(2), 2);
+    ASSERT_EQ(partitions->getDistanceCounterClockwise(3), 1);
 }
 
 TEST(Partitions, getDistance){
@@ -81,7 +81,7 @@ TEST(Partitions, getDistance){
 
     ASSERT_EQ(partitions->getDistance(4), 1);
     ASSERT_EQ(partitions->getDistance(2), 2);
-    ASSERT_EQ(partitions->getDistance(3), 1);
+    ASSERT_EQ(partitions->getDistance(3), -1);
 }
 
 TEST(Partitions, canHoldKey) {
@@ -133,7 +133,7 @@ TEST(Partitions, getRingPositionByKey){
     uint32_t ringPosition = setup()
             ->getRingPositionByKey(SimpleString<memDbDataLength_t>::fromString("test"));
 
-    ASSERT_EQ(ringPosition, HASH_HOLA % 64);
+    ASSERT_EQ(ringPosition, RING_POSITION_KEY_HOLA);
 }
 
 partitions_t setup() {

@@ -36,9 +36,10 @@ private:
     friend class DeletionNodeChangeHandler;
     friend class SimpleClusterNodeSetup;
     friend class ClusterNodeSetup;
+    friend class ClusterTest;
 
 public:
-    Cluster() = default;
+    Cluster(): partitions(std::make_shared<Partitions>()), clusterNodes(std::make_shared<ClusterNodes>()) {}
 
     Cluster(logger_t logger, configuration_t configuration) :
             configuration(configuration), clusterDb(std::make_shared<ClusterDb>(configuration, logger)),

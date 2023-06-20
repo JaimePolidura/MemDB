@@ -19,6 +19,8 @@ private:
 
     configuration_t configuration;
 
+    friend class PartitionTest;
+
 public:
     Partitions(const std::vector<RingEntry>& allRingEntries, uint32_t nodesPerPartition, uint32_t maxSize, configuration_t configuration):
         nodesPerPartition(nodesPerPartition), maxSize(maxSize), ringEntries(RingEntries::fromEntries(allRingEntries)), configuration(configuration) {
@@ -27,7 +29,7 @@ public:
 
     Partitions() = default;
 
-    uint32_t getRingPositionByKey(SimpleString<memDbDataLength_t> key) {
+    uint32_t getRingPositionByKey(SimpleString<memDbDataLength_t> key) const {
         return HashCalculator::calculate(key.toString()) % this->maxSize;
     }
 
@@ -41,7 +43,7 @@ public:
     }
 
     std::vector<RingEntry> getNeighborsClockwiseByNodeId(memdbNodeId_t nodeId) {
-        return this->ringEntries.getNeighborsClockwise(nodeId,this->nodesPerPartition - 1);
+        return this->ringEntries.getNeighborsClockwise(nodeId, this->nodesPerPartition - 1);
     }
 
     RingEntry getNeighborCounterClockwiseByNodeId(memdbNodeId_t nodeId) {
@@ -87,6 +89,10 @@ public:
 
     uint32_t getNodesPerPartition() const {
         return this->nodesPerPartition;
+    }
+
+    RingEntry getByNodeId(memdbNodeId_t nodeId) {
+        return this->ringEntries.getByNodeId(nodeId);
     }
 
     RingEntry getSelfEntry() {

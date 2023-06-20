@@ -24,10 +24,11 @@ private:
 public:
     ClusterNodes(configuration_t configuration, logger_t logger):
         logger(logger),
+        nodesById(std::map<memdbNodeId_t, node_t>{}),
         configuration(configuration),
         requestPool(configuration->get<int>(ConfigurationKeys::MEMDB_CORE_SERVER_MAX_THREADS)) {}
-
-    ClusterNodes() = default;
+    
+    ClusterNodes(): nodesById() {}
 
     void setOtherNodes(const std::vector<node_t>& otherNodesToSet, const NodeGroupOptions options = {}) {
         for (const node_t& node: otherNodesToSet) {

@@ -3,7 +3,7 @@ set(BINARY ${CMAKE_PROJECT_NAME}_tst)
 file(GLOB_RECURSE TEST_SOURCES LIST_DIRECTORIES false *.h *.cpp)
 set(SOURCES ${TEST_SOURCES})
 
-add_executable(${BINARY} ${TEST_SOURCES} cluster/othernodes/ClusterNodesTest.cpp cluster/partitions/PartitionNeighborsNodesGroupSetterTest.cpp cluster/partitions/PartitionsTest.cpp)
+add_executable(${BINARY} ${TEST_SOURCES} cluster/othernodes/ClusterNodesTest.cpp cluster/partitions/PartitionNeighborsNodesGroupSetterTest.cpp cluster/partitions/PartitionsTest.cpp cluster/partitions/PartitionsTest.h cluster/ClusterTest.h)
 
 add_test(NAME ${BINARY} COMMAND ${BINARY})
 

@@ -13,9 +13,9 @@ class Partitions {
 private:
     RingEntries ringEntries;
 
-    RingEntry selfEntry;
-    uint32_t nodesPerPartition;
-    uint32_t maxSize;
+    RingEntry selfEntry{};
+    uint32_t nodesPerPartition{};
+    uint32_t maxSize{};
 
     configuration_t configuration;
 
@@ -61,7 +61,7 @@ public:
         return this->getDistanceOfKey(key) < this->nodesPerPartition;
     }
 
-    int getDistance(memdbNodeId_t nodeB) {
+    virtual int getDistance(memdbNodeId_t nodeB) {
         return this->ringEntries.getDistance(this->selfEntry.nodeId, nodeB);
     }
 

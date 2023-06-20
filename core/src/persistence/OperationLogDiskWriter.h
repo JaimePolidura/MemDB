@@ -14,7 +14,9 @@ private:
     std::string oplogFileName;
 
 public:
-    OperationsLogDiskWriter(const std::string& oplogFileName): oplogFileName(oplogFileName) {}
+    OperationsLogDiskWriter() = default;
+
+    explicit OperationsLogDiskWriter(const std::string& oplogFileName): oplogFileName(oplogFileName) {}
 
     void clear() {
         writeFileLock.lock();

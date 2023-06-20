@@ -10,12 +10,14 @@
 
 class OperationLogDiskLoader {
 private:
-    OperationLogDeserializer operationLogDeserializer;
+    OperationLogDeserializer operationLogDeserializer{};
     OperationLogSerializer operationLogSerializer;
     std::string oplogFileName;
 
 public:
-    OperationLogDiskLoader(const std::string& oplogFileName): oplogFileName(oplogFileName) {}
+    OperationLogDiskLoader() = default;
+
+    explicit OperationLogDiskLoader(const std::string& oplogFileName): oplogFileName(oplogFileName) {}
 
     std::vector<OperationBody> getAll() {
         if(!FileUtils::exists(FileUtils::getFileInProgramBasePath("memdb", this->oplogFileName))) {

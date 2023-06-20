@@ -17,11 +17,13 @@ class SingleOperationLog : public OperationLog {
 private:
     OperationsLogDiskWriter operationsLogDiskWriter;
     OperationLogDiskLoader operationLogDiskLoader;
-    OperationLogCompacter compacter;
+    OperationLogCompacter compacter{};
 
     operationLogBuffer_t operationLogBuffer;
 
 public:
+    SingleOperationLog() = default;
+
     SingleOperationLog(configuration_t configuration, const std::string& fileName):
         OperationLog(configuration), operationsLogDiskWriter(fileName), operationLogDiskLoader(fileName),
         operationLogBuffer(std::make_shared<OperationLogBuffer>(configuration->get<int>(ConfigurationKeys::MEMDB_CORE_PERSISTANCE_WRITE_EVERY))) {
@@ -31,7 +33,7 @@ public:
         });
     }
 
-    void addAll(const std::vector<OperationBody>& operations, const OperationLogOptions options = {}) override {
+    void addAll(const std::vector<OperationBody>& operations, const OperationLogOptions options) override {
         this->operationLogBuffer->addAll(operations);
 
         if(options.dontUseBuffer){
@@ -39,7 +41,7 @@ public:
         }
     }
 
-    void add(const OperationBody& operation, const OperationLogOptions options = {}) override {
+    void add(const OperationBody& operation, const OperationLogOptions options) override {
         this->operationLogBuffer->add(operation);
 
         if(options.dontUseBuffer){
@@ -47,11 +49,11 @@ public:
         }
     }
 
-    bool hasOplogFile(const OperationLogOptions options = {}) override {
+    bool hasOplogFile(const OperationLogOptions options) override {
         return true; //Method only called by MultipleOperationLog
     }
 
-    std::vector<OperationBody> clear(const OperationLogOptions options = {}) override {
+    std::vector<OperationBody> clear(const OperationLogOptions options) override {
         auto operationLogsCleared = this->get(options);
 
         this->operationLogBuffer->flush(false);
@@ -60,7 +62,7 @@ public:
         return operationLogsCleared;
     }
 
-    std::vector<OperationBody> getAfterTimestamp(uint64_t since, const OperationLogOptions options = {}) override {
+    std::vector<OperationBody> getAfterTimestamp(uint64_t since, const OperationLogOptions options) override {
         this->operationLogBuffer->lockFlushToDisk();
 
         uint64_t oldestTimestampInBuffer = operationLogBuffer->getOldestTimestampAdded();
@@ -87,7 +89,7 @@ public:
         }
     }
 
-    std::vector<OperationBody> get(const OperationLogOptions options = {}) override {
+    std::vector<OperationBody> get(const OperationLogOptions option) override {
         std::vector<OperationBody> fromDisk = this->operationLogDiskLoader.getAll();
         std::vector<OperationBody> compacted = this->compacter.compact(fromDisk);
 

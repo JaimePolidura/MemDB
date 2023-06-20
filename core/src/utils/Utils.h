@@ -107,7 +107,8 @@ public:
         T parsedValue = 0;
         for(int i = 0; i < sizeof(T); i++) {
             size_t toMove = (sizeof(T) - 1 - i) * 8;
-            parsedValue |= static_cast<T>(input[i]) << toMove;
+            uint8_t value = input[i];
+            parsedValue |= static_cast<T>(value) << toMove;
         }
 
         return parsedValue;

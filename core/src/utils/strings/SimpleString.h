@@ -64,9 +64,10 @@ public:
     static SimpleString<StringLengthType> fromNumber(const T& from) {
         static_assert(std::is_arithmetic<T>::value, "T must be a number type");
 
-        uint8_t * valuePtr = new uint8_t[sizeof(T)];
+        auto * valuePtr = new uint8_t[sizeof(T)];
         for(int i = 0; i < sizeof(T); i++){
-            * valuePtr = from >> (i * 8);
+            size_t toMove = (sizeof(T) - 1 - i) * 8;
+            * (valuePtr + i) = from >> toMove;
         }
 
         return SimpleString<StringLengthType>{valuePtr, static_cast<StringLengthType>(sizeof(T))};

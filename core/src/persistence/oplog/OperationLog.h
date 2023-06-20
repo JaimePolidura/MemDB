@@ -6,6 +6,10 @@
 struct OperationLogOptions {
     uint32_t operationLogId;
     bool dontUseBuffer;
+
+    bool operator==(const OperationLogOptions& other){
+        return operationLogId == other.operationLogId && dontUseBuffer == other.dontUseBuffer;
+    }
 };
 
 class OperationLog {
@@ -13,7 +17,9 @@ protected:
     configuration_t configuration;
 
 public:
-    OperationLog(configuration_t configuration): configuration(configuration) {}
+    explicit OperationLog(configuration_t configuration): configuration(configuration) {}
+
+    OperationLog() = default;
 
     virtual void add(const OperationBody& operation, const OperationLogOptions options = {}) = 0;
 

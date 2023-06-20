@@ -7,7 +7,7 @@
 #include "operators/operations/user/SetOperator.h"
 #include "operators/operations/user/DeleteOperator.h"
 #include "operators/operations/cluster/HealthCheckOperator.h"
-#include "operators/operations/user/SyncOplogOperator.h"
+#include "operators/operations/cluster/SyncOplogOperator.h"
 
 class AllOperators {
 public:

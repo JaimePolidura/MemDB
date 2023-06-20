@@ -20,7 +20,7 @@ public:
 
     ClusterDbNodeChangeHandler() = default;
 
-    virtual void handleChange(node_t nodeChanged, const ClusterDbChangeType changeType) = 0;
+    virtual void handleChange(node_t nodeChanged, ClusterDbChangeType changeType) = 0;
 };
 
 using clusterDbNodeChangeHandler_t = std::shared_ptr<ClusterDbNodeChangeHandler>;

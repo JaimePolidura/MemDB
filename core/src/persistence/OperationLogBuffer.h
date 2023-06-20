@@ -10,14 +10,14 @@ private:
     std::mutex addBufferLock;
     std::mutex flushDiskLock;
 
-    uint64_t oldestTimestampAdded;
-    uint64_t latestTimestampAdded;
+    uint64_t oldestTimestampAdded{};
+    uint64_t latestTimestampAdded{};
 
     std::function<void(const std::vector<OperationBody>&)> flushCallback;
     int flushEvery;
 
 public:
-    OperationLogBuffer(int flushEvery): flushEvery(flushEvery) {}
+    explicit OperationLogBuffer(int flushEvery): flushEvery(flushEvery) {}
 
     virtual ~OperationLogBuffer() = default;
 

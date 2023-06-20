@@ -13,6 +13,10 @@ public:
         return cluster->clusterNodes;
     }
 
+    void setPartitions(partitions_t partitions) {
+        this->cluster->partitions = partitions;
+    }
+
     void setSelfNodeId(node_t node) {
         cluster->selfNode = node;
     }

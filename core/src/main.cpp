@@ -2,7 +2,7 @@
 
 #include "shared.h"
 
-int main12() {
+int main() {
     std::shared_ptr<MemDb> memDb = MemDbCreator::create();
     memDb->run();
 

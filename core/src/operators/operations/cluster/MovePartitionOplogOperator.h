@@ -18,7 +18,7 @@
  */
 class MovePartitionOplogOperator : public Operator {
 private:
-    OperationLogDeserializer operationLogDeserializer;
+    OperationLogDeserializer operationLogDeserializer{};
     OperationLogInvalidator operationLogInvalidator;
 
 public:
@@ -27,8 +27,8 @@ public:
     Response operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies dependencies) override {
         bool applyNewOplog = operation.flag1;
         bool clearOldOplog = operation.flag2;
-        uint32_t newOplogId = operation.getArg(0).to<uint32_t>();
-        uint32_t oldOplogId = operation.getArg(1).to<uint32_t>();
+        auto newOplogId = operation.getArg(0).to<uint32_t>();
+        auto oldOplogId = operation.getArg(1).to<uint32_t>();
 
         //Oplogs ids start with 0. 0 = self node
         if(newOplogId >= dependencies.cluster->getPartitionObject()->getNodesPerPartition()) {

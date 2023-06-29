@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   memdb-instance-1:
-    image: memdb-core:1.0
+    image: jaimetruman/memdb-core:1.0
     container_name: memdb-instance-1
     ports:
       - "10000:10000"

@@ -87,7 +87,7 @@ public:
         this->ringEntries.add(ringEntry);
     }
 
-    uint32_t getNodesPerPartition() const {
+    virtual uint32_t getNodesPerPartition() const {
         return this->nodesPerPartition;
     }
 

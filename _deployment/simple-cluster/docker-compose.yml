@@ -18,7 +18,7 @@ services:
     restart: always
 
   memdb-clustermanager:
-    image: memdb-clustermanager:1.0
+    image: jaimetruman/memdb-clustermanager:1.0
     container_name: memdb-clustermanager
     ports:
       - "8080:8080"
@@ -31,7 +31,7 @@ services:
     restart: always
 
   memdb-clusternode-1:
-    image: memdb-core:1.0
+    image: jaimetruman/memdb-core:1.0
     container_name: memdb-clusternode-1
     depends_on:
       - memdb-clustermanager
@@ -47,7 +47,7 @@ services:
       - MEMDB_CORE_NODE_ID=1
 
   memdb-clusternode-2:
-    image: memdb-core:1.0
+    image: jaimetruman/memdb-core:1.0
     container_name: memdb-clusternode-2
     depends_on:
       - memdb-clustermanager

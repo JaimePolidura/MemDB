@@ -8,19 +8,11 @@ private:
     std::set<memdbNodeId_t> nodes;
 
 public:
-    std::set<memdbNodeId_t> getAll() {
-        return this->nodes;
-    }
+    std::set<memdbNodeId_t> getAll();
 
-    void add(memdbNodeId_t nodeId) {
-        this->nodes.insert(nodeId);
-    }
+    void add(memdbNodeId_t nodeId);
 
-    void remove(memdbNodeId_t nodeId) {
-        this->nodes.erase(nodeId);
-    }
-
-    int size() {
-        return this->nodes.size();
-    }
+    void remove(memdbNodeId_t nodeId);
+    
+    int size();
 };

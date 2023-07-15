@@ -36,25 +36,9 @@ public:
         return concatenated;
     }
 
-    static bool tryOnce(std::function<void(void)> toTry) {
-        try{
-            toTry();
-            return true;
-        }catch (const std::exception& e) {
-            return false;
-        }
-    }
+    static bool tryOnce(std::function<void(void)> toTry);
 
-    static void printVector(const std::vector<uint8_t>& toPrint) {
-        std::cout << "[";
-
-        for (size_t i = 0; i < toPrint.size(); ++i) {
-            std::cout << static_cast<unsigned>(toPrint[i]);
-            if (i != toPrint.size() - 1)
-                std::cout << ", ";
-        }
-        std::cout << "]" << std::endl;
-    }
+    static void printVector(const std::vector<uint8_t>& toPrint);
 
     template<typename T, typename B>
     static T retryUntilSuccessAndGet(const std::chrono::duration<int64_t, B> backoffMillis, std::function<T(void)> toRetry) {
@@ -135,18 +119,7 @@ public:
         return vectorOut;
     }
 
-    static auto copyFromBuffer(const std::vector<uint8_t>& buffer, const uint8_t initialPosition, const uint8_t endPosition) -> uint8_t * {
-        uint8_t * copyDest = new uint8_t[endPosition - initialPosition + 1];
-        std::copy(buffer.begin() + initialPosition, buffer.begin() + endPosition + 1, copyDest);
+    static auto copyFromBuffer(const std::vector<uint8_t>& buffer, const uint8_t initialPosition, const uint8_t endPosition) -> uint8_t *;
 
-        return copyDest;
-    }
-
-    static std::vector<uint8_t> appendToBuffer(const uint8_t * toAppendPtr, const uint8_t totalToAppend, std::vector<uint8_t>& vectorOut) {
-        for(auto i = 0; i < totalToAppend; i++) {
-            vectorOut.push_back(* (toAppendPtr + i));
-        }
-
-        return vectorOut;
-    }
+    static std::vector<uint8_t> appendToBuffer(const uint8_t * toAppendPtr, const uint8_t totalToAppend, std::vector<uint8_t>& vectorOut);
 };

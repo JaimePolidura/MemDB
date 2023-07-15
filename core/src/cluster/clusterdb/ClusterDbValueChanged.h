@@ -7,21 +7,12 @@ enum ClusterDbChangeType {
 };
 
 struct ClusterDbChangeTypes {
-    static std::string toString(ClusterDbChangeType clusterDbChangeType) {
-        return clusterDbChangeType == ClusterDbChangeType::DELETED ? "DELETED" : "PUT";
-    }
+    static std::string toString(ClusterDbChangeType clusterDbChangeType);
 };
 
 struct ClusterDbValueChanged {
     ClusterDbChangeType changeType;
     nlohmann::json value;
-
-    static auto fromEtcdResponse(const etcd::Response& response) -> ClusterDbValueChanged {
-        auto actionType = response.action() == "set" ? ClusterDbChangeType::PUT : ClusterDbChangeType::DELETED;
-        auto value = response.value().as_string() == "" ?
-                nlohmann::json::parse(response.prev_value().as_string()) :
-                nlohmann::json::parse(response.value().as_string());
-
-        return ClusterDbValueChanged{.changeType = actionType, .value = value};
-    };
+    
+    static ClusterDbValueChanged fromEtcdResponse(const etcd::Response& response);
 };

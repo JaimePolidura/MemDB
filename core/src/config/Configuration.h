@@ -11,16 +11,11 @@ private:
 public:
     Configuration() = default;
 
-    Configuration(const std::map<std::string, std::string>& defaultConfigurationValues):
-        defaultConfigurationValues(std::move(defaultConfigurationValues)) {}
+    Configuration(const std::map<std::string, std::string>& defaultConfigurationValues);
 
-    virtual std::string get(const std::string& key) {
-        return this->getOrDefault(key);
-    }
+    virtual std::string get(const std::string& key);
 
-    virtual bool getBoolean(const std::string& key) {
-        return this->getOrDefault(key) == "true";
-    }
+    virtual bool getBoolean(const std::string& key);
 
     template<typename T>
     T get(const std::string& key) {
@@ -30,22 +25,9 @@ public:
     }
 
 private:
-    std::string getOrDefault(const std::string& key) {
-        char * fromEnvVariable = std::getenv(key.data());
-        bool containedInActual = fromEnvVariable != nullptr;
+    std::string getOrDefault(const std::string& key);
 
-        return containedInActual ?
-            std::string(fromEnvVariable) :
-            this->getDefault(key);
-    }
-
-    std::string getDefault(const std::string& key) {
-        if(!this->defaultConfigurationValues.contains(key)) {
-            throw std::runtime_error("Env variable not declared: " + key);
-        }
-
-        return this->defaultConfigurationValues.at(key);
-    }
+    std::string getDefault(const std::string& key);
 };
 
 using configuration_t = std::shared_ptr<Configuration>;

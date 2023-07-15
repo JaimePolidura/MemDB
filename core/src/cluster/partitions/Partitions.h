@@ -22,82 +22,44 @@ private:
     friend class PartitionTest;
 
 public:
-    Partitions(const std::vector<RingEntry>& allRingEntries, uint32_t nodesPerPartition, uint32_t maxSize, configuration_t configuration):
-        nodesPerPartition(nodesPerPartition), maxSize(maxSize), ringEntries(RingEntries::fromEntries(allRingEntries)), configuration(configuration) {
-        this->selfEntry = this->ringEntries.getByNodeId(configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID));
-    }
+    Partitions(const std::vector<RingEntry>& allRingEntries, uint32_t nodesPerPartition, uint32_t maxSize, configuration_t configuration);
 
     Partitions() = default;
 
-    uint32_t getRingPositionByKey(SimpleString<memDbDataLength_t> key) const {
-        return HashCalculator::calculate(key.toString()) % this->maxSize;
-    }
+    uint32_t getRingPositionByKey(SimpleString<memDbDataLength_t> key) const;
 
     // self --> (clockwise) nodeB
-    bool isClockwiseNeighbor(memdbNodeId_t nodeB) {
-        return this->ringEntries.getDistanceClockwise(this->selfEntry.nodeId, nodeB) < this->nodesPerPartition;
-    }
+    bool isClockwiseNeighbor(memdbNodeId_t nodeB);
 
-    std::vector<RingEntry> getNeighborsClockwise(int numberNeighbors = -1) {
-        return this->ringEntries.getNeighborsClockwise(this->selfEntry.nodeId,numberNeighbors == -1 ? this->nodesPerPartition - 1 : numberNeighbors);
-    }
+    std::vector<RingEntry> getNeighborsClockwise(int numberNeighbors = -1);
 
-    std::vector<RingEntry> getNeighborsClockwiseByNodeId(memdbNodeId_t nodeId) {
-        return this->ringEntries.getNeighborsClockwise(nodeId, this->nodesPerPartition - 1);
-    }
+    std::vector<RingEntry> getNeighborsClockwiseByNodeId(memdbNodeId_t nodeId);
 
-    RingEntry getNeighborCounterClockwiseByNodeId(memdbNodeId_t nodeId) {
-        return this->ringEntries.getNeighborCounterClockwise(nodeId);
-    }
+    RingEntry getNeighborCounterClockwiseByNodeId(memdbNodeId_t nodeId);
 
-    uint32_t getDistanceOfKey(SimpleString<memDbDataLength_t> key) {
-        uint32_t ringPosition = this->getRingPositionByKey(key);
-        uint32_t nodeThatWouldHoldThatKey = this->ringEntries.getRingEntryBelongsToPosition(ringPosition).nodeId;
+    uint32_t getDistanceOfKey(SimpleString<memDbDataLength_t> key);
 
-        return std::abs(this->ringEntries.getDistance(this->selfEntry.nodeId, nodeThatWouldHoldThatKey));
-    }
+    bool canHoldKey(SimpleString<memDbDataLength_t> key);
 
-    bool canHoldKey(SimpleString<memDbDataLength_t> key) {
-        return this->getDistanceOfKey(key) < this->nodesPerPartition;
-    }
-
-    virtual int getDistance(memdbNodeId_t nodeB) {
-        return this->ringEntries.getDistance(this->selfEntry.nodeId, nodeB);
-    }
+    virtual int getDistance(memdbNodeId_t nodeB);
 
     // self <-- (counter clockwise) nodeB
-    uint32_t getDistanceCounterClockwise(memdbNodeId_t nodeB) {
-        return this->ringEntries.getDistanceCounterClockwise(this->selfEntry.nodeId, nodeB);
-    }
+    uint32_t getDistanceCounterClockwise(memdbNodeId_t nodeB);
 
     // self --> (clockwise) nodeB
-    uint32_t getDistanceClockwise(memdbNodeId_t nodeB) {
-        return this->ringEntries.getDistanceClockwise(this->selfEntry.nodeId, nodeB);
-    }
+    uint32_t getDistanceClockwise(memdbNodeId_t nodeB);
 
-    bool isNeighbor(memdbNodeId_t otherNode) {
-        return std::abs(this->ringEntries.getDistance(this->selfEntry.nodeId, otherNode)) < this->nodesPerPartition;
-    }
+    bool isNeighbor(memdbNodeId_t otherNode);
 
-    void deleteByNodeId(memdbNodeId_t nodeId) {
-        this->ringEntries.deleteByNodeId(nodeId);
-    }
+    void deleteByNodeId(memdbNodeId_t nodeId);
 
-    void add(RingEntry ringEntry){
-        this->ringEntries.add(ringEntry);
-    }
+    void add(RingEntry ringEntry);
 
-    virtual uint32_t getNodesPerPartition() const {
-        return this->nodesPerPartition;
-    }
+    virtual uint32_t getNodesPerPartition() const;
 
-    RingEntry getByNodeId(memdbNodeId_t nodeId) {
-        return this->ringEntries.getByNodeId(nodeId);
-    }
+    RingEntry getByNodeId(memdbNodeId_t nodeId);
 
-    RingEntry getSelfEntry() {
-        return this->selfEntry;
-    }
+    RingEntry getSelfEntry();
 };
 
 using partitions_t = std::shared_ptr<Partitions>;

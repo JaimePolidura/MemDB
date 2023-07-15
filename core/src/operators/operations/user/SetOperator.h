@@ -8,35 +8,15 @@ class SetOperator : public Operator {
 public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x01;
 
-    Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies dependencies) override {
-        SimpleString key = operation.args->at(0);
-        SimpleString value = operation.args->at(1);
+    Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies dependencies) override;
 
-        bool ignoreTimestmaps = !options.checkTimestamps;
-        bool updated = dependencies.dbStore->put(key, value, ignoreTimestmaps, operation.timestamp, operation.nodeId);
+    std::vector<AuthenticationType> authorizedToExecute() override;
 
-        return updated ?
-            Response::success() :
-            Response::error(ErrorCode::ALREADY_REPLICATED);
-    }
+    std::vector<OperatorDependency> dependencies() override;
 
-    std::vector<AuthenticationType> authorizedToExecute() override {
-        return { AuthenticationType::NODE, AuthenticationType::API };
-    }
+    constexpr OperatorType type() override;
 
-    std::vector<OperatorDependency> dependencies() override {
-        return { OperatorDependency::DB_STORE };
-    }
+    constexpr uint8_t operatorNumber() override;
 
-    constexpr OperatorType type() override {
-        return OperatorType::DB_STORE_WRITE;
-    }
-
-    constexpr uint8_t operatorNumber() override {
-        return OPERATOR_NUMBER;
-    }
-
-    std::string name() override {
-        return "SET";
-    }
+    std::string name() override;
 };

@@ -21,60 +21,21 @@ private:
 public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x05;
 
-    Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies dependencies) override {
-        uint64_t lastTimestampUnsync = parseUnsyncTimestampFromRequest(operation);
-        uint32_t nodeOplogIdToSync = calculateSelfOplogIdFromNodeOplogId(operation, dependencies) ;
+    Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies dependencies) override;
 
-        std::vector<OperationBody> unsyncedOplog = dependencies.operationLog->getAfterTimestamp(lastTimestampUnsync, OperationLogOptions{
-            .operationLogId = nodeOplogIdToSync
-        });
+    std::vector<OperatorDependency> dependencies() override;
 
-        unsyncedOplog = this->operationLogCompacter.compact(unsyncedOplog);
+    std::vector<AuthenticationType> authorizedToExecute() override;
 
-        std::vector<uint8_t> serializedUnsyncedOpLog = this->operationLogSerializer.serializeAll(unsyncedOplog);
+    constexpr OperatorType type() override;
 
-        return Response::success(SimpleString<memDbDataLength_t>::fromVector(serializedUnsyncedOpLog));
-    }
+    constexpr uint8_t operatorNumber() override;
 
-    std::vector<OperatorDependency> dependencies() override {
-        return { OperatorDependency::OPERATION_LOG, OperatorDependency::CONFIGURATION, OperatorDependency::CLUSTER };
-    }
-
-    std::vector<AuthenticationType> authorizedToExecute() override {
-        return { AuthenticationType::NODE };
-    }
-
-    constexpr OperatorType type() override {
-        return OperatorType::NODE_MAINTENANCE;
-    }
-
-    constexpr uint8_t operatorNumber() override {
-        return OPERATOR_NUMBER;
-    }
-
-    std::string name() override {
-        return "SYNC_OPLOG";
-    }
+    std::string name() override;
 
 private:
     //Timestamp is 64 bits Actual memdb data size is 32 bits. Doest fit, we pass two args that consist of the two parts
-    uint64_t parseUnsyncTimestampFromRequest(const OperationBody &operation) const {
-        auto part1 = operation.args->at(0).to<uint32_t>();
-        auto part2 = operation.args->at(1).to<uint32_t>();
+    uint64_t parseUnsyncTimestampFromRequest(const OperationBody &operation) const;
 
-        return ((uint64_t) part1) << 32 | part2;
-    }
-
-    uint32_t calculateSelfOplogIdFromNodeOplogId(const OperationBody &body, OperatorDependencies dependencies) {
-        auto nodeOplogId = body.getArg(2).to<uint32_t>();
-
-        if(!dependencies.configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS)){
-            return nodeOplogId;
-        }
-
-        memdbNodeId_t otherNodeId = body.nodeId;
-        int distance = dependencies.cluster->getPartitionObject()->getDistance(otherNodeId);
-
-        return nodeOplogId - distance;
-    }
+    uint32_t calculateSelfOplogIdFromNodeOplogId(const OperationBody &body, OperatorDependencies dependencies);
 };

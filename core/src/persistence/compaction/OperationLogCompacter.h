@@ -12,9 +12,5 @@ private:
     MultiThreadedLogCompactor multiThreaded;
 
 public:
-    std::vector<OperationBody> compact(const std::vector<OperationBody>& uncompacted) {
-        return uncompacted.size() > 10.000 ?
-            this->multiThreaded.compact(std::make_shared<std::vector<OperationBody>>(std::move(uncompacted))) :
-            this->singleThreaded.compact(uncompacted);
-    }
+    std::vector<OperationBody> compact(const std::vector<OperationBody>& uncompacted);
 };

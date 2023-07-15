@@ -9,29 +9,11 @@ private:
     std::mutex lock;
 
 public:
-    void lockShared() {
-        this->sharedCounterLock.lock();
+    void lockShared();
 
-        if(++this->sharedCount == 1)
-            this->lock.lock();
+    void unlockShared();
 
-        this->sharedCounterLock.unlock();
-    }
+    void lockExclusive();
 
-    void unlockShared() {
-        this->sharedCounterLock.lock();
-
-        if(--this->sharedCount == 0)
-            this->lock.unlock();
-
-        this->sharedCounterLock.unlock();
-    }
-
-    void lockExclusive() {
-        this->lock.lock();
-    }
-
-    void unlockExclusive() {
-        this->lock.unlock();
-    }
+    void unlockExclusive();
 };

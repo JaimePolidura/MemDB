@@ -10,26 +10,11 @@ private:
     std::mutex lock;
 
 public:
-    void add(const Request& request){
-        this->lock.lock();
-        this->operations.push(request);
-        this->lock.unlock();
-    }
+    void add(const Request& request);
 
-    bool isEmpty() {
-        return this->operations.empty();
-    }
+    bool isEmpty();
 
-    Request get() {
-        this->lock.lock();
-
-        Request toReturn = this->operations.front();
-        this->operations.pop();
-
-        this->lock.unlock();
-
-        return toReturn;
-    }
+    Request get();
 };
 
 using delayedOperationsBuffer_t = std::shared_ptr<DelayedOperationsBuffer>;

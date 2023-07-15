@@ -7,27 +7,15 @@ class HealthCheckOperator : public Operator {
 public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x04;
 
-    Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies dependencies) override {
-        return Response::success();
-    }
+    Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies dependencies) override;
 
-    std::vector<AuthenticationType> authorizedToExecute() override {
-        return { AuthenticationType::MAINTENANCE };
-    }
+    std::vector<AuthenticationType> authorizedToExecute() override;
 
-    std::vector<OperatorDependency> dependencies() override {
-        return {};
-    }
+    std::vector<OperatorDependency> dependencies() override;
 
-    constexpr OperatorType type() override {
-        return OperatorType::NODE_MAINTENANCE;
-    }
+    constexpr OperatorType type() override;
 
-    constexpr uint8_t operatorNumber() override {
-        return OPERATOR_NUMBER;
-    }
+    constexpr uint8_t operatorNumber() override;
 
-    std::string name() override {
-        return "HEALTH_CHECK";
-    }
+    std::string name() override;
 };

@@ -15,38 +15,12 @@ public:
 
     explicit Authenticator(configuration_t configuartion): configuration(configuartion) {}
 
-    bool authenticate(const std::string& authKey) {
-        return this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_API_KEY) == authKey ||
-               this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_MAINTENANCE_KEY) == authKey ||
-               this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY) == authKey;
-    }
-
-    AuthenticationType getAuthenticationType(const std::string& authKey) {
-        return this->getAuthenticationTypeFromConfiguration(authKey);
-    }
-
-    bool isKeyFromMaintenance(const std::string& authKey) {
-        return this->getAuthenticationTypeFromConfiguration(authKey) == AuthenticationType::MAINTENANCE;
-    }
-
-    bool isKeyFromNode(const std::string& authKey) {
-        return this->getAuthenticationTypeFromConfiguration(authKey) == AuthenticationType::NODE;
-    }
-
-    bool isKeyApi(const std::string& authKey) {
-        return this->getAuthenticationTypeFromConfiguration(authKey) == AuthenticationType::API;
-    }
+    bool authenticate(const std::string& authKey);
+    AuthenticationType getAuthenticationType(const std::string& authKey);
+    bool isKeyFromMaintenance(const std::string& authKey);
+    bool isKeyFromNode(const std::string& authKey);
+    bool isKeyApi(const std::string& authKey);
 
 private:
-    AuthenticationType getAuthenticationTypeFromConfiguration(const std::string& authKey) {
-        if(this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_API_KEY) == authKey) {
-            return AuthenticationType::API;
-        }else if (this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_MAINTENANCE_KEY) == authKey) {
-            return AuthenticationType::MAINTENANCE;
-        }else if (this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY) == authKey) {
-            return AuthenticationType::NODE;
-        }
-
-        throw std::runtime_error("Invalid authentication");
-    }
+    AuthenticationType getAuthenticationTypeFromConfiguration(const std::string& authKey);
 };

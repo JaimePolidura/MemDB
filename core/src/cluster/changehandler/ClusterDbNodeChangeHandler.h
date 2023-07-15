@@ -13,7 +13,7 @@ protected:
     operationLog_t operationLog;
     cluster_t cluster;
     logger_t logger;
-
+    
 public:
     ClusterDbNodeChangeHandler(logger_t logger, cluster_t cluster, operationLog_t operationLog, operatorDispatcher_t operatorDispatcher):
         logger(logger), cluster(cluster), operationLog(operationLog), operatorDispatcher(operatorDispatcher) {}

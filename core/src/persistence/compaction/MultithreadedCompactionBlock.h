@@ -17,58 +17,22 @@ private:
     bool firstPhase;
 
 public:
-    MultiThreadedCompactionBlock(bool firstPhase, std::vector<OperationBody> operations):
-            firstPhase(firstPhase), operationsFirstPhase(operations), left(nullptr), right(nullptr) {}
+    MultiThreadedCompactionBlock(bool firstPhase, std::vector<OperationBody> operations);
 
-    MultiThreadedCompactionBlock(): firstPhase(false), left(nullptr), right(nullptr) {}
+    MultiThreadedCompactionBlock();
 
-    std::future<std::vector<OperationBody>> get() {
-        if(this->firstPhase){
-            return this->futureOfOperationsFirstPhase();
-        }
-
-        std::future<std::vector<OperationBody>> compactionBlockLeft = this->left->get();
-        std::future<std::vector<OperationBody>> compactionBlockRight = this->right->get();
-
-        return this->mergeAndCompactAsync(compactionBlockLeft, compactionBlockRight);
-    }
+    std::future<std::vector<OperationBody>> get();
 
 private:
     std::future<std::vector<OperationBody>> mergeAndCompactAsync(std::future<std::vector<OperationBody>>& leftToCompact,
-                                                                 std::future<std::vector<OperationBody>>& rightToCompact) {
-        return std::async(std::launch::async, [this](std::shared_future<std::vector<OperationBody>> leftToCompactParam,
-                                                     std::shared_future<std::vector<OperationBody>> rightToCompactParam){
-            std::vector<OperationBody> compacted{};
-            setSimpleString_t alreadySennKeys{};
+                                                                 std::future<std::vector<OperationBody>>& rightToCompact);
 
-            this->operationLogCompacter.compact(rightToCompactParam.get(), compacted, alreadySennKeys);
-            this->operationLogCompacter.compact(leftToCompactParam.get(), compacted, alreadySennKeys);
-
-            return compacted;
-        }, leftToCompact.share(), rightToCompact.share());
-    }
-
-    std::future<std::vector<OperationBody>> futureOfOperationsFirstPhase() {
-        std::promise<std::vector<OperationBody>> promise;
-        promise.set_value(this->operationsFirstPhase);
-
-        return promise.get_future();
-    }
+    std::future<std::vector<OperationBody>> futureOfOperationsFirstPhase();
 
 public:
-    static MultiThreadedCompactionBlock * node() {
-        return new MultiThreadedCompactionBlock();
-    }
+    static MultiThreadedCompactionBlock * node();
 
-    static MultiThreadedCompactionBlock * root() {
-        return new MultiThreadedCompactionBlock();
-    }
+    static MultiThreadedCompactionBlock * root();
 
-    static MultiThreadedCompactionBlock * leaf(allOperationLogs_t uncompacted, int numberBlock, int totalBlocks) {
-        int logsPerBlock = uncompacted->size() / totalBlocks;
-        auto beginPtr = uncompacted->begin() + (logsPerBlock * numberBlock);
-        auto endPtr = numberBlock + 1 != totalBlocks ? uncompacted->begin() + (logsPerBlock * (numberBlock + 1)) : uncompacted->end();
-
-        return new MultiThreadedCompactionBlock(true, std::vector<OperationBody>(beginPtr, endPtr));
-    }
+    static MultiThreadedCompactionBlock * leaf(allOperationLogs_t uncompacted, int numberBlock, int totalBlocks);
 };

@@ -9,26 +9,11 @@ private:
     std::mutex lock;
 
 public:
-    void add(const Request& request){
-        this->lock.lock();
-        this->requests.push(request);
-        this->lock.unlock();
-    }
+    void add(const Request& request);
 
-    bool isEmpty() {
-        return this->requests.empty();
-    }
+    bool isEmpty();
 
-    Request get() {
-        this->lock.lock();
-
-        Request toReturn = this->requests.front();
-        this->requests.pop();
-
-        this->lock.unlock();
-
-        return toReturn;
-    }
+    Request get();
 };
 
 using replicationOperationBuffer_t = std::shared_ptr<PendingReplicationOperationBuffer>;

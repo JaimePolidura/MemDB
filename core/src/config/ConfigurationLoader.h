@@ -9,9 +9,5 @@
 
 class ConfiguartionLoader {
 public:
-    static configuration_t load() {
-        std::map<std::string, std::string> defaultConfiguartionValues = DefaultConfig::get();
-
-        return std::make_shared<Configuration>(defaultConfiguartionValues);
-    }
+    static configuration_t load();
 };

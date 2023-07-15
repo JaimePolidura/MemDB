@@ -13,34 +13,15 @@ public:
     uint8_t errorCode;
     bool isSuccessful;
 
-    Response(bool isSuccessful, uint8_t errorCode, uint64_t timestamp, memdbRequestNumberLength_t reqNumber, const SimpleString<memDbDataLength_t> &response) :
-            isSuccessful(isSuccessful),
-            responseValue(response),
-            requestNumber(reqNumber),
-            timestamp(timestamp),
-            errorCode(errorCode)
-    {}
-
-    memDbDataLength_t getTotalLength() const {
-        return sizeof(memdbRequestNumberLength_t) + sizeof(uint64_t) + 1 + (responseValue.size > 0 ? (sizeof(memDbDataLength_t) + responseValue.size) : sizeof(memDbDataLength_t));
-    }
-
-    static Response success(const SimpleString<memDbDataLength_t> &response, uint64_t timestamp = 0) {
-        return Response(true, 0x00, timestamp, 0, response);
-    }
+    Response(bool isSuccessful, uint8_t errorCode, uint64_t timestamp, memdbRequestNumberLength_t reqNumber, const SimpleString<memDbDataLength_t> &response);
     
-    static Response success(uint64_t timestamp = 0) {
-        return Response(true, 0x00, timestamp, 0, SimpleString<memDbDataLength_t>::empty());
-    }
+    memDbDataLength_t getTotalLength() const;
 
-    static Response error(uint8_t errorCode) {
-        return Response(false, errorCode, 0, 0, SimpleString<memDbDataLength_t>::empty());
-    };
+    static Response success(const SimpleString<memDbDataLength_t> &response, uint64_t timestamp = 0);
 
-    static Response error(uint8_t errorCode, memdbRequestNumberLength_t requestNumber, uint64_t timestamp = 0) {
-        Response response = Response(false, errorCode, timestamp, 0, SimpleString<memDbDataLength_t>::empty());
-        response.requestNumber = requestNumber;
+    static Response success(uint64_t timestamp = 0);
 
-        return response;
-    };
+    static Response error(uint8_t errorCode);
+
+    static Response error(uint8_t errorCode, memdbRequestNumberLength_t requestNumber, uint64_t timestamp = 0);
 };

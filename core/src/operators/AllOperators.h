@@ -11,13 +11,5 @@
 
 class AllOperators {
 public:
-    static std::vector<std::shared_ptr<Operator>> list() {
-        return {
-            std::make_shared<GetOperator>(),
-            std::make_shared<SetOperator>(),
-            std::make_shared<DeleteOperator>(),
-            std::make_shared<SyncOplogOperator>(),
-            std::make_shared<HealthCheckOperator>(),
-        };
-    }
+    static std::vector<std::shared_ptr<Operator>> list();
 };

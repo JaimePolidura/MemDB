@@ -24,64 +24,18 @@ private:
 public:
     static constexpr int OPERATOR_NUMBER = 0x06;
 
-    Response operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies dependencies) override {
-        bool applyNewOplog = operation.flag1;
-        bool clearOldOplog = operation.flag2;
-        auto newOplogId = operation.getArg(0).to<uint32_t>();
-        auto oldOplogId = operation.getArg(1).to<uint32_t>();
+    Response operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies dependencies) override;
 
-        //Oplogs ids start with 0. 0 = self node
-        if(newOplogId >= dependencies.cluster->getPartitionObject()->getNodesPerPartition()) {
-            this->clearOperationLog(dependencies, newOplogId);
-            return Response::success();
-        }
+    OperatorType type() override;
 
-        std::vector<uint8_t> oplogRaw = operation.getArg(2).toVector();
-        std::vector<OperationBody> oplog = this->operationLogDeserializer.deserializeAll(oplogRaw);
+    std::vector<AuthenticationType> authorizedToExecute() override;
 
-        //Doest have data stored
-        if(applyNewOplog || !dependencies.operationLog->hasOplogFile({.operationLogId = newOplogId})) {
-            dependencies.operatorsDispatcher(oplog, {.checkTimestamps = true, .onlyExecute = true});
-        }
+    std::vector<OperatorDependency> dependencies() override;
 
-        if(clearOldOplog){
-            this->clearOperationLog(dependencies, oldOplogId);
-        }
+    std::string name() override;
 
-        dependencies.operationLog->addAll(oplog, OperationLogOptions{
-                .operationLogId = newOplogId,
-                .dontUseBuffer = true,
-        });
-
-        dependencies.cluster->setRunning();
-
-        return Response::success();
-    }
-
-    OperatorType type() override {
-        return OperatorType::NODE_MAINTENANCE;
-    }
-
-    std::vector<AuthenticationType> authorizedToExecute() override {
-        return { AuthenticationType::NODE };
-    }
-
-    std::vector<OperatorDependency> dependencies() override {
-        return { OperatorDependency::OPERATION_LOG, OperatorDependency::OPERATOR_DISPATCHER, OperatorDependency::CLUSTER };
-    }
-
-    std::string name() override {
-        return "MOVE_PARTITION_OPLOG";
-    }
-
-    constexpr uint8_t operatorNumber() override {
-        return OPERATOR_NUMBER;
-    }
+    constexpr uint8_t operatorNumber() override;
 
 private:
-    void clearOperationLog(OperatorDependencies dependencies, uint32_t operationLogId) {
-        std::vector<OperationBody> operationsCleared = dependencies.operationLog->clear(OperationLogOptions{.operationLogId = operationLogId});
-        std::vector<OperationBody> invalidationOperations = this->operationLogInvalidator.getInvalidationOperations(operationsCleared);
-        dependencies.operatorsDispatcher(invalidationOperations, {.checkTimestamps = false, .onlyExecute = true});
-    }
+    void clearOperationLog(OperatorDependencies dependencies, uint32_t operationLogId);
 };

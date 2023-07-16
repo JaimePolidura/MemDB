@@ -7,7 +7,7 @@ NewNodePartitionChangeHandler::NewNodePartitionChangeHandler(logger_t logger, cl
 void NewNodePartitionChangeHandler::handle(node_t newNode) {
     std::vector<RingEntry> oldClockwiseNeighbors = this->cluster->partitions->getNeighborsClockwise();
 
-    RingEntry ringEntryAdded = cluster->clusterDb->getRingEntryByNodeId(newNode->nodeId).entry;
+    RingEntry ringEntryAdded = cluster->clusterDb->getRingEntryByNodeId(newNode->nodeId);
     cluster->partitions->add(ringEntryAdded);
 
     if(cluster->selfNode->nodeId == newNode->nodeId || !cluster->partitions->isNeighbor(newNode->nodeId))

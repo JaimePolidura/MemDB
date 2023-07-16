@@ -26,7 +26,7 @@ public:
 
     void setNode(memdbNodeId_t nodeId, node_t node);
 
-    RingEntryNode getRingEntryByNodeId(memdbNodeId_t nodeId);
+    RingEntry getRingEntryByNodeId(memdbNodeId_t nodeId);
 };
 
 using clusterdb_t = std::shared_ptr<ClusterDb>;

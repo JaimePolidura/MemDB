@@ -19,8 +19,8 @@ AuthenticationBody RequestDeserializer::deserializeAuthenticacion(const std::vec
     return AuthenticationBody(std::string((char *) authKey, authLength), flagAuth1, flagAuth2);
 }
 
-OperationBody RequestDeserializer::deserializeOperation(const std::vector<uint8_t>& buffer, uint64_t position = 0,
-                                   const bool includesNodeId = false) {
+OperationBody RequestDeserializer::deserializeOperation(const std::vector<uint8_t>& buffer, uint64_t position,
+                                   const bool includesNodeId) {
     uint8_t operatorNumber = this->getValueWithoutFlags(buffer, position);
     bool flagOperation1 = this->getFlag(buffer, position, FLAG1_MASK); //Si es true, la longitud de los argumentos ocuparan 2 bytes
     bool flagOperation2 = this->getFlag(buffer, position, FLAG2_MASK);

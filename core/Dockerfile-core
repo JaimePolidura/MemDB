@@ -1,0 +1,11 @@
+FROM jaimetruman/memdb-core-base:1.0
+
+# Update dynamic library cache
+RUN ldconfig
+
+# Copy project and compile
+WORKDIR /memdb
+COPY . /memdb
+RUN chmod +x /memdb/linux-build.sh && /memdb/linux-build.sh
+
+ENTRYPOINT ["/memdb/src/build/src/memdb_run"]

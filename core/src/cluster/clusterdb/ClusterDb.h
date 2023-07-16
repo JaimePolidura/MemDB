@@ -19,8 +19,7 @@ private:
     logger_t logger;
 
 public:
-    ClusterDb(configuration_t configuration, logger_t logger) : client(configuration->get(ConfigurationKeys::MEMDB_CORE_ETCD_ADDRESSES)),
-        configuration(configuration), logger(logger) {}
+    ClusterDb(configuration_t configuration, logger_t logger);
 
     void watchNodeChanges(std::function<void(ClusterDbValueChanged)> onChange);
 

@@ -1,5 +1,7 @@
 #include "utils/net/HttpClient.h"
 
+HttpClient::HttpClient(logger_t logger): logger(logger) {}
+
 HttpResponse HttpClient::get(const std::string& address,
                  const std::string& endpoint,
                  const std::string& authToken) {
@@ -15,6 +17,8 @@ HttpResponse HttpClient::get(const std::string& address,
     }
 
     req.prepare_payload();
+
+    logger->debugInfo("Sending GET request to {0} {1}", endpoint, address);
 
     http::write(socket, req);
 
@@ -51,6 +55,8 @@ HttpResponse HttpClient::post(const std::string& address,
     req.body() = json.dump();
 
     req.prepare_payload();
+
+    logger->debugInfo("Sending POST request to {0} {1}", endpoint, address);
 
     http::write(socket, req);
 

@@ -19,7 +19,7 @@ class ClusterManagerService {
 
 public:
     ClusterManagerService(configuration_t configuartion, logger_t logger): configuration(configuartion), logger(logger),
-                                                                           token(""), httpClusterManagerClient() {}
+                                                                           token(""), httpClusterManagerClient(logger) {}
 
     GetRingInfoResponse getRingInfo();
 

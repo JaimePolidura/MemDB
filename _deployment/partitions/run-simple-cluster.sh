@@ -9,10 +9,10 @@ sleep 5s
 docker-compose exec memdb-clusterdb etcdctl put /partitions/config/nodesPerPartition "2"
 docker-compose exec memdb-clusterdb etcdctl put /partitions/config/ringSize "64"
 
-docker-compose exec memdb-clusterdb etcdctl put /partitions/ring/2  "{\"nodeId\":\"1\",\"ringPosition\":2}"
-docker-compose exec memdb-clusterdb etcdctl put /partitions/ring/29 "{\"nodeId\":\"4\",\"ringPosition\":29}"
-docker-compose exec memdb-clusterdb etcdctl put /partitions/ring/35 "{\"nodeId\":\"2\",\"ringPosition\":35}"
-docker-compose exec memdb-clusterdb etcdctl put /partitions/ring/62 "{\"nodeId\":\"3\",\"ringPosition\":62}"
+docker-compose exec memdb-clusterdb etcdctl put /partitions/ring/1 "{\"nodeId\":\"1\",\"ringPosition\": 2}"
+docker-compose exec memdb-clusterdb etcdctl put /partitions/ring/4 "{\"nodeId\":\"4\",\"ringPosition\": 29}"
+docker-compose exec memdb-clusterdb etcdctl put /partitions/ring/2 "{\"nodeId\":\"2\",\"ringPosition\": 35}"
+docker-compose exec memdb-clusterdb etcdctl put /partitions/ring/3 "{\"nodeId\":\"3\",\"ringPosition\": 62}"
 
 docker-compose exec memdb-clusterdb etcdctl put /nodes/1 "{\"nodeId\":\"1\",\"address\":\"memdb-clusternode-1:10000\",\"state\":\"BOOTING\"}"
 docker-compose exec memdb-clusterdb etcdctl put /nodes/2 "{\"nodeId\":\"2\",\"address\":\"memdb-clusternode-2:10001\",\"state\":\"BOOTING\"}"

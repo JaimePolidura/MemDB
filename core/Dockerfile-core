@@ -6,6 +6,7 @@ RUN ldconfig
 # Copy project and compile
 WORKDIR /memdb
 COPY . /memdb
+RUN rm -r /memdb/src/build
 RUN chmod +x /memdb/linux-build.sh && /memdb/linux-build.sh
 
 ENTRYPOINT ["/memdb/src/build/src/memdb_run"]

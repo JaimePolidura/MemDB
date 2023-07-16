@@ -17,6 +17,8 @@ node_t AllNodesResponse::getNodeById(memdbNodeId_t nodeId) {
 }
 
 AllNodesResponse AllNodesResponse::fromJson(const nlohmann::json& json) {
+    std::cout << "AllNodesResponse " << json.dump() << std::endl;
+
     std::vector<node_t> nodes;
     auto jsonOtherNodes = json["nodes"];
     

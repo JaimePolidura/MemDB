@@ -1,6 +1,5 @@
 #pragma once
 
-#include "cluster/changehandler/partition/PartitionClusterNodeChangeHandler.h"
 #include "cluster/partitions/PartitionNeighborsNodesGroupSetter.h"
 #include "cluster/setup/ClusterNodeSetup.h"
 

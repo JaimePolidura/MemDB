@@ -4,7 +4,7 @@ This is the main component. This stores the data and handles request & replicati
 
 ## How it works
 - Data is stored in a hashmap with fixed number of buckets (default 64). Each bucket will contain an autobalanced AVL Tree and a shared lock to handle concurrency.
-- Data is persistent. When a append comes in, it will be stored in a buffer. When it reaches a threshold, the operations will be appended to a local file. When the server starts up, it will apply all operations stored in the file and compact them.
+- Data is persistent. When a append comes in, it will be stored in a buffer. When it reaches a threshold, the operations will be appended to a local filePath. When the server starts up, it will apply all operations stored in the filePath and compact them.
 - TCP protocol is used for serve request.
 - Authentication will be carried by different keys depending on the context. To use the memdb as a user, you will need AUTH_API_KEY.
 - Threads allocated for operations are dynamic. They grow or shrink depending on the demand.

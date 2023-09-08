@@ -18,7 +18,7 @@ void FileUtils::writeBytes(const std::string &path, const std::vector<uint8_t> &
         file.flush();
         file.close();
     }else{
-        throw std::runtime_error("Cannot open file " + path);
+        throw std::runtime_error("Cannot open filePath " + path);
     }
 }
 

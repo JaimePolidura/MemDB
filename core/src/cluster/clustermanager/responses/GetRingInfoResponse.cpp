@@ -1,8 +1,6 @@
 #include "cluster/clustermanager/responses/GetRingInfoResponse.h"
 
 GetRingInfoResponse GetRingInfoResponse::fromJson(const nlohmann::json& json) {
-    std::cout << "GetRingInfoResponse " << json.dump() << std::endl;
-
     std::vector<RingEntry> entries;
 
     uint32_t nodesPerPartition = json["nodesPerPartition"].get<uint32_t>();

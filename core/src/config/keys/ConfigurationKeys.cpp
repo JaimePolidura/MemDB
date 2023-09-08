@@ -3,6 +3,7 @@
 const std::string ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY = "MEMDB_CORE_AUTH_NODE_KEY";
 const std::string ConfigurationKeys::MEMDB_CORE_AUTH_MAINTENANCE_KEY = "MEMDB_CORE_AUTH_MAINTENANCE_KEY";
 const std::string ConfigurationKeys::MEMDB_CORE_AUTH_API_KEY = "MEMDB_CORE_AUTH_API_KEY";
+const std::string ConfigurationKeys::MEMDB_CORE_DATA_PATH = "MEMDB_CORE_DATA_PATH";
 
 const std::string ConfigurationKeys::MEMDB_CORE_PORT = "MEMDB_CORE_PORT";
 const std::string ConfigurationKeys::MEMDB_CORE_SERVER_MIN_THREADS = "MEMDB_CORE_SERVER_MIN_THREADS";

@@ -12,7 +12,11 @@ configuration_t ConfiguartionLoader::load(int nArgs, char ** args) {
 std::map<std::string, std::string> argsToConfigMap(int nArgs, char ** args) {
     std::map<std::string, std::string> toReturn{};
 
-    for (int i = 0; i < nArgs; ++i) {
+    for (int i = 1; i < nArgs; ++i) {
+        if(*(args + i) == nullptr) {
+            continue;
+        }
+
         std::string arg = std::string(*(args + i));
         std::vector<std::string> keyValueArgSplit = StringUtils::split(arg, '=');
 
@@ -21,4 +25,6 @@ std::map<std::string, std::string> argsToConfigMap(int nArgs, char ** args) {
 
         toReturn[keyArg] = valueArg;
     }
+
+    return toReturn;
 }

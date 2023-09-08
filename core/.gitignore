@@ -105,7 +105,7 @@ fabric.properties
 # Editor-based Rest Client
 .idea/httpRequests
 
-# Android studio 3.1+ serialized cache file
+# Android studio 3.1+ serialized cache filePath
 .idea/caches/build_file_checksums.ser
 CMakeLists.txt.user
 CMakeCache.txt

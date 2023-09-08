@@ -23,9 +23,6 @@ if(UNIX)
     find_package(spdlog CONFIG REQUIRED)
     target_link_libraries(${BINARY}_lib PRIVATE spdlog::spdlog spdlog::spdlog_header_only)
 
-    find_package(gRPC CONFIG REQUIRED)
-    target_link_libraries(main PRIVATE gRPC::gpr gRPC::grpc gRPC::grpc++ gRPC::grpc++_alts)
-
     find_package(etcd-cpp-api CONFIG)
     target_link_libraries(${BINARY}_lib PRIVATE etcd-cpp-api)
 endif()

@@ -8,6 +8,7 @@ public:
     static const std::string MEMDB_CORE_AUTH_MAINTENANCE_KEY;
     static const std::string MEMDB_CORE_AUTH_API_KEY;
 
+    static const std::string MEMDB_CORE_DATA_PATH;
     static const std::string MEMDB_CORE_PORT;
     static const std::string MEMDB_CORE_SERVER_MIN_THREADS;
     static const std::string MEMDB_CORE_SERVER_MAX_THREADS;

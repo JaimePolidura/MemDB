@@ -13,7 +13,7 @@
 
 class MemDbCreator {
 public:
-    static std::shared_ptr<MemDb> create();
+    static std::shared_ptr<MemDb> create(int nArgs, char ** args);
 
 private:
     static operationLog_t createOperationLogObject(configuration_t configuration, cluster_t cluster);

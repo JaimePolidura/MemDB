@@ -5,27 +5,32 @@ list(REMOVE_ITEM SOURCES ${REMOVE_CMAKE})
 
 add_executable(${BINARY}_run ${SOURCES})
 
-add_library(${BINARY}_lib STATIC ${SOURCES} MemDb.cpp MemDbCreator.cpp)
+add_library(${BINARY}_lib STATIC ${SOURCES} MemDb.cpp MemDbCreator.cpp utils/Utils.h)
 
 # VCPKG Libraries
 # He cambiado el nombre de la carpeta de boost a xd. Con eso el programa no se bloquea
 include_directories(${CMAKE_PREFIX_PATH}/include)
 
 find_package(Boost REQUIRED)
+
 target_link_libraries(${BINARY}_lib PRIVATE Boost::boost)
 
 find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(${BINARY}_lib PRIVATE nlohmann_json::nlohmann_json)
 
-find_package(spdlog CONFIG REQUIRED)
-target_link_libraries(${BINARY}_lib PRIVATE spdlog::spdlog spdlog::spdlog_header_only)
+# No funciona en windows y no se por que
+if(UNIX)
+    find_package(spdlog CONFIG REQUIRED)
+    target_link_libraries(${BINARY}_lib PRIVATE spdlog::spdlog spdlog::spdlog_header_only)
 
-if(NOT BUILDING_LINUX_DEPLOYMENT)
+    find_package(gRPC CONFIG REQUIRED)
+    target_link_libraries(main PRIVATE gRPC::gpr gRPC::grpc gRPC::grpc++ gRPC::grpc++_alts)
+
     find_package(etcd-cpp-api CONFIG)
     target_link_libraries(${BINARY}_lib PRIVATE etcd-cpp-api)
 endif()
 
-if(BUILDING_LINUX_DEPLOYMENT)
+if(UNIX)
     target_include_directories(${BINARY}_lib PRIVATE /usr/local/include)
     target_link_libraries(${BINARY}_lib PRIVATE cpprest etcd-cpp-api)
     target_link_directories(${BINARY}_lib PRIVATE /usr/local/lib)
@@ -36,7 +41,7 @@ endif()
 
 target_precompile_headers(${BINARY}_lib PRIVATE shared.h)
 
-if(NOT BUILDING_LINUX_DEPLOYMENT)
+if(NOT UNIX)
     target_link_libraries(${BINARY}_run PRIVATE ws2_32 wsock32)
 else()
     target_link_libraries(${BINARY}_run PRIVATE pthread)

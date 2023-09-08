@@ -1,7 +1,8 @@
 #include "config/Configuration.h"
 
-Configuration::Configuration(const std::map<std::string, std::string>& defaultConfigurationValues):
-        defaultConfigurationValues(std::move(defaultConfigurationValues)) {}
+Configuration::Configuration(const std::map<std::string, std::string>& configurationValues):
+        defaultConfigurationValues(std::move(configurationValues)) {
+}
 
 std::string Configuration::get(const std::string& key) {
     return this->getOrDefault(key);

@@ -11,7 +11,7 @@ private:
 public:
     Configuration() = default;
 
-    Configuration(const std::map<std::string, std::string>& defaultConfigurationValues);
+    Configuration(const std::map<std::string, std::string>& configurationValues);
 
     virtual std::string get(const std::string& key);
 

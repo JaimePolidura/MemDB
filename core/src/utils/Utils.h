@@ -4,6 +4,20 @@
 
 class Utils {
 public:
+    template<typename K, typename V>
+    static std::map<K, V> unionMaps(const std::map<K, V>& first, const std::map<K, V>& second) {
+        std::map<K, V> toReturn{};
+
+        for(const auto& [keyFirst, valueFirst] : first){
+            toReturn[keyFirst] = valueFirst;
+        }
+        for(const auto& [keySecond, valueSecond] : second){
+            toReturn[keySecond] = valueSecond;
+        }
+
+        return toReturn;
+    }
+
     template<typename T>
     static std::vector<T> filter(const std::vector<T>& initial, std::function<bool(const T&)> predicate) {
         std::vector<T> result{};

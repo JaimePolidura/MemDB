@@ -1,7 +1,7 @@
 #include "MemDbCreator.h"
 
-std::shared_ptr<MemDb> MemDbCreator::create() {
-    configuration_t configuration = ConfiguartionLoader::load();
+std::shared_ptr<MemDb> MemDbCreator::create(int nArgs, char ** args) {
+    configuration_t configuration = ConfiguartionLoader::load(nArgs, args);
     logger_t logger = std::make_shared<Logger>(configuration, "Starting memdb");
 
     cluster_t cluster = createClusterObject(logger, configuration);

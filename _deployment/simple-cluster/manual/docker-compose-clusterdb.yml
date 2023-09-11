@@ -1,0 +1,27 @@
+version: '3.8'
+
+
+
+services:
+
+  memdb-clusterdb:
+
+    image: bitnami/etcd:latest
+
+    container_name: memdb-clusterdb
+
+    ports:
+
+      - "2379:2379"
+
+    environment:
+
+      - ALLOW_NONE_AUTHENTICATION=yes
+
+      - ETCDCTL_API=3
+
+    logging:
+
+      driver: none
+
+    restart: always

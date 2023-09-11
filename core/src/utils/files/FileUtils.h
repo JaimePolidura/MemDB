@@ -6,7 +6,7 @@ class FileUtils {
 public:
     static void createFile(const std::string& path, const std::string& name);
 
-    static void createDirectory(const std::string& path, const std::string& name);
+    static void createDirectory(const std::string& path);
 
     static void appendBytes(const std::string& path, const std::vector<uint8_t>& bytes);
 
@@ -18,11 +18,5 @@ public:
 
     static bool exists(const std::string &path);
 
-    static std::string getProgramBasePath(const std::string& programName);
-
-    static std::string getFileInProgramBasePath(const std::string& programName, const std::string& fileName);
-
-    static std::string getProgramsPath();
-
-    static std::string getSeparator();
+    static std::string getFileInPath(const std::string& basePath, const std::string& fileName);
 };

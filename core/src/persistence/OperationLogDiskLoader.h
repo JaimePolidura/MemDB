@@ -9,17 +9,19 @@
 #include "persistence/OperationLogDeserializer.h"
 #include "operators/operations/user/SetOperator.h"
 #include "persistence/OperationLogSerializer.h"
+#include "config/Configuration.h"
 
 class OperationLogDiskLoader {
 private:
     OperationLogDeserializer operationLogDeserializer{};
     OperationLogSerializer operationLogSerializer;
     std::string oplogFileName;
+    configuration_t configuration;
 
 public:
     OperationLogDiskLoader() = default;
 
-    explicit OperationLogDiskLoader(std::string oplogFileName): oplogFileName(std::move(oplogFileName)) {}
+    explicit OperationLogDiskLoader(std::string oplogFileName, configuration_t configuration): oplogFileName(std::move(oplogFileName)), configuration(configuration) {}
 
     std::vector<OperationBody> getAll();
 

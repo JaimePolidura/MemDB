@@ -6,10 +6,12 @@
 
 #include "utils/files/FileUtils.h"
 #include "persistence/OperationLogSerializer.h"
+#include "config/Configuration.h"
 
 class OperationsLogDiskWriter {
 private:
     OperationLogSerializer operationLogSerializer;
+    configuration_t configuration;
     std::recursive_mutex writeFileLock;
     bool fileCreated = false;
     bool fileCleared = false;
@@ -18,7 +20,7 @@ private:
 public:
     OperationsLogDiskWriter() = default;
 
-    explicit OperationsLogDiskWriter(std::string  oplogFileName): oplogFileName(std::move(oplogFileName)) {}
+    explicit OperationsLogDiskWriter(std::string oplogFileName, configuration_t configuration): oplogFileName(std::move(oplogFileName)), configuration(configuration) {}
 
     void clear();
 

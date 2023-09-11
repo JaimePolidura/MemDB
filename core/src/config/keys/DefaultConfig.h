@@ -7,9 +7,9 @@
 class DefaultConfig {
 private:
 #ifdef _WIN32
-#define FILEPATH "C:/memdb"
+#define FILEPATH "C:\\memdb"
 #else
-#define FILEPATH "C:/memdb"
+#define FILEPATH "/etc/memdb"
 #endif
 
 public:

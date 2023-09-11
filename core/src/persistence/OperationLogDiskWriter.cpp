@@ -2,7 +2,7 @@
 
 void OperationsLogDiskWriter::clear() {
     writeFileLock.lock();
-    FileUtils::clear(FileUtils::getFileInProgramBasePath("memdb", this->oplogFileName));
+    FileUtils::clear(FileUtils::getFileInPath(configuration->get(ConfigurationKeys::MEMDB_CORE_DATA_PATH), this->oplogFileName));
     this->fileCleared = true;
     writeFileLock.unlock();
 }
@@ -15,7 +15,7 @@ void OperationsLogDiskWriter::write(const std::vector<OperationBody>& toWrite) {
     writeFileLock.lock();
     if(this->fileCleared) return;
 
-    FileUtils::writeBytes(FileUtils::getFileInProgramBasePath("memdb", this->oplogFileName), serialized);
+    FileUtils::writeBytes(FileUtils::getFileInPath(configuration->get(ConfigurationKeys::MEMDB_CORE_DATA_PATH), this->oplogFileName), serialized);
     writeFileLock.unlock();
 }
 
@@ -26,7 +26,7 @@ void OperationsLogDiskWriter::append(const std::vector<OperationBody>& toWrite) 
     if(this->fileCleared) return;
 
     writeFileLock.lock();
-    FileUtils::appendBytes(FileUtils::getFileInProgramBasePath("memdb", this->oplogFileName), serialized);
+    FileUtils::appendBytes(FileUtils::getFileInPath(configuration->get(ConfigurationKeys::MEMDB_CORE_DATA_PATH), this->oplogFileName), serialized);
     writeFileLock.unlock();
 }
 
@@ -42,12 +42,15 @@ void OperationsLogDiskWriter::createFileIfNotExists() {
     if(this->fileCreated)
         return;
 
-    bool exists = FileUtils::exists(FileUtils::getFileInProgramBasePath("memdb", this->oplogFileName));
-    if(!exists) {
-        if(!FileUtils::exists(FileUtils::getProgramsPath() + "/memdb"))
-            FileUtils::createDirectory(FileUtils::getProgramsPath(), "memdb");
+    const std::string memdbFilePath = configuration->get(ConfigurationKeys::MEMDB_CORE_DATA_PATH);
 
-        FileUtils::createFile(FileUtils::getProgramBasePath("memdb"), this->oplogFileName);
+    bool exists = FileUtils::exists(memdbFilePath);
+    if(!exists) {
+        if(!FileUtils::exists(memdbFilePath)) {
+            FileUtils::createDirectory(memdbFilePath);
+        }
+
+        FileUtils::createFile(memdbFilePath, this->oplogFileName);
     }
 
     this->fileCreated = true;

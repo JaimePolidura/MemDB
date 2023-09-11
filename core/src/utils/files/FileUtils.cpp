@@ -22,12 +22,11 @@ void FileUtils::writeBytes(const std::string &path, const std::vector<uint8_t> &
     }
 }
 
-void FileUtils::createDirectory(const std::string &path, const std::string &name) {
+void FileUtils::createDirectory(const std::string &path) {
 #ifdef _WIN32
-    CreateDirectoryA((path + "\\" + name).c_str(), NULL);
+    CreateDirectoryA(path.c_str(), NULL);
 #else
-    std::string fullPath = path + "/" + name;
-    mkdir(fullPath.c_str(), 0700);
+    mkdir(path.c_str(), 0700);
 #endif
 }
 
@@ -53,27 +52,11 @@ void FileUtils::appendBytes(const std::string &path, const std::vector<uint8_t> 
     file.close();
 }
 
-std::string FileUtils::getProgramsPath() {
+std::string FileUtils::getFileInPath(const std::string &basePath, const std::string &fileName) {
 #ifdef _WIN32
-    return "C:";
+    return basePath + "\\" + fileName;
 #else
-    return "/etc";
-#endif
-}
-
-std::string FileUtils::getFileInProgramBasePath(const std::string &programName, const std::string &fileName) {
-#ifdef _WIN32
-    return "C:\\" + programName + "\\" + fileName;
-#else
-    return "/etc/" + programName + "/" + fileName;
-#endif
-}
-
-std::string FileUtils::getProgramBasePath(const std::string &programName) {
-#ifdef _WIN32
-    return "C:\\" + programName;
-#else
-    return "/etc/" + programName;
+    return basePath + "/" + fileName;
 #endif
 }
 
@@ -85,9 +68,10 @@ bool FileUtils::exists(const std::string &path) {
     }
 }
 
-std::string FileUtils::getSeparator() {
-    return std::string(std::filesystem::path::preferred_separator, 1);
-}
+//TODO Remove
+//std::string FileUtils::getSeparator() {
+//    return std::string(std::filesystem::path::preferred_separator, 1);
+//}
 
 void FileUtils::clear(const std::string &path) {
     std::ofstream myfile;

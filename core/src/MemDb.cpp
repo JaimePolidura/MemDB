@@ -105,7 +105,7 @@ void listenCtrlCSignal(operationLog_t operationLog) {
     globalOperationLog = operationLog;
 
 #ifdef __linux__
-    sigaction(SIGINT, &ctrlHandler, NULL);
+    signal(SIGINT, &ctrlHandler);
 #endif
 }
 

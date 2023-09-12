@@ -7,7 +7,7 @@ struct OperationLogOptions {
     uint32_t operationLogId;
     bool dontUseBuffer;
 
-    bool operator==(const OperationLogOptions& other){
+    bool operator==(const OperationLogOptions& other) const {
         return operationLogId == other.operationLogId && dontUseBuffer == other.dontUseBuffer;
     }
 };
@@ -34,6 +34,8 @@ public:
     virtual std::vector<OperationBody> get(const OperationLogOptions options = {}) = 0;
 
     virtual uint32_t getNumberOplogFiles() = 0;
+
+    virtual void flush();
 };
 
 using operationLog_t = std::shared_ptr<OperationLog>;

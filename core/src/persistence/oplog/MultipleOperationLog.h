@@ -27,6 +27,8 @@ public:
 
     uint32_t getNumberOplogFiles() override;
 
+    void flush() override;
+
 private:
     void initializeOplogs(int numberOplogs, std::function<std::string(int)> oplogFileNameResolver);
 };

@@ -1,5 +1,8 @@
 #include "MemDb.h"
 
+void listenCtrlCSignal(operationLog_t operationLog);
+void ctrlHandler(int s);
+
 MemDb::MemDb(logger_t logger, memDbDataStore_t map, configuration_t configuration, operatorDispatcher_t operatorDispatcher, tcpServer_t tcpServer,
     lamportClock_t clock, cluster_t cluster, operationLog_t operationLog) : dbMap(map), configuration(configuration), tcpServer(tcpServer),
     operatorDispatcher(operatorDispatcher), clock(clock), logger(logger), cluster(cluster), operationLog(operationLog),
@@ -15,6 +18,8 @@ void MemDb::run() {
     }
 
     this->tcpServer->run();
+
+    listenCtrlCSignal(this->operationLog);
 }
 
 void MemDb::syncOplogFromCluster(std::vector<uint64_t> lastTimestampProcessedFromOpLog) {
@@ -86,4 +91,28 @@ void MemDb::applyUnsyncedOplogFromCluster(const std::vector<OperationBody>& opLo
                 OperationOptions{.checkTimestamps = true, .dontBroadcastToCluster = true, .dontSaveInOperationLog = dontSaveInOperationLog});
 
     this->operatorDispatcher->applyDelayedOperationsBuffer();
+}
+
+#ifdef __linux__
+#include <signal.h>
+#include <stdlib.h>
+#include <unistd.h>
+#endif
+
+operationLog_t globalOperationLog;
+
+void listenCtrlCSignal(operationLog_t operationLog) {
+    globalOperationLog = operationLog;
+
+#ifdef __linux__
+    sigaction(SIGINT, &ctrlHandler, NULL);
+#endif
+}
+
+void ctrlHandler(int s) {
+    globalOperationLog->flush();
+
+#if __linux__
+    exit(1);
+#endif
 }

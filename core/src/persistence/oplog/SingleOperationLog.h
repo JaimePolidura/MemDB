@@ -39,6 +39,8 @@ public:
     std::vector<OperationBody> get(const OperationLogOptions option) override;
 
     uint32_t getNumberOplogFiles() override;
+    
+    void flush() override;
 
 private:
     std::vector<OperationBody> filterIfTimestampAfterThan(const std::vector<OperationBody>& operations, uint64_t timestampSince);

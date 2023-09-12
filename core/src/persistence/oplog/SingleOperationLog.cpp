@@ -93,6 +93,10 @@ std::vector<OperationBody> SingleOperationLog::filterIfTimestampAfterThan(const 
     return operations;
 }
 
+void SingleOperationLog::flush() {
+    this->operationLogBuffer->flush();
+}
+
 void SingleOperationLog::flushToDisk(const std::vector<OperationBody>& operationsInBuffer) {
     std::vector<OperationBody> compacted = this->compacter.compact(operationsInBuffer);
 

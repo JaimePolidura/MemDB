@@ -11,10 +11,6 @@ add_library(${BINARY}_lib STATIC ${SOURCES} MemDb.cpp MemDbCreator.cpp utils/Uti
 # He cambiado el nombre de la carpeta de boost a xd. Con eso el programa no se bloquea
 include_directories(${CMAKE_PREFIX_PATH}/include)
 
-find_package(Boost REQUIRED)
-
-target_link_libraries(${BINARY}_lib PRIVATE Boost::boost)
-
 find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(${BINARY}_lib PRIVATE nlohmann_json::nlohmann_json)
 

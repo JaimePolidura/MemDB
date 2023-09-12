@@ -23,7 +23,7 @@ Configuration keys are stored in environtment variables:
 - MEMDB_CORE_AUTH_MAINTENANCE_KEY. Used to authenticate the cluster manager. Example: health checks. Default: 456
 - MEMDB_CORE_AUTH_API_KEY. Used by external users to authenticate, this will be used on your app to connect to the database. Default: 789
 - MEMDB_CORE_SERVER_MIN_THREADS. Min nº of allocated threads that will handle request. Default: 20
-- MEMDB_CORE_SERVER_MAX_THREADS. Max nº of allocated threads that will handle request. Default: 100
+- MEMDB_CORE_SERVER_THREADS. Max nº of allocated threads that will handle request. Default: 100
 - MEMDB_CORE_PORT. Default: 10000
 - MEMDB_CORE_NUMBER_BUCKETS. Internal hashmap number of buckets, each bucket will contain a shared lock and AVL Tree. Default: 64
 - MEMDB_CORE_PERSISTANCE_WRITE_EVERY. Threshold of the wrrites operation log buffer used for persistence. Default: 50

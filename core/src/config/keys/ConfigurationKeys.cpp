@@ -7,7 +7,7 @@ const std::string ConfigurationKeys::MEMDB_CORE_DATA_PATH = "MEMDB_CORE_DATA_PAT
 
 const std::string ConfigurationKeys::MEMDB_CORE_PORT = "MEMDB_CORE_PORT";
 const std::string ConfigurationKeys::MEMDB_CORE_SERVER_MIN_THREADS = "MEMDB_CORE_SERVER_MIN_THREADS";
-const std::string ConfigurationKeys::MEMDB_CORE_SERVER_MAX_THREADS = "MEMDB_CORE_SERVER_MAX_THREADS";
+const std::string ConfigurationKeys::MEMDB_CORE_SERVER_MAX_THREADS = "MEMDB_CORE_SERVER_THREADS";
 const std::string ConfigurationKeys::MEMDB_CORE_NUMBER_BUCKETS = "MEMDB_CORE_NUMBER_BUCKETS";
 const std::string ConfigurationKeys::MEMDB_CORE_PERSISTANCE_WRITE_EVERY = "MEMDB_CORE_PERSISTANCE_WRITE_EVERY";
 const std::string ConfigurationKeys::MEMDB_CORE_SHOW_DEBUG_LOG = "MEMDB_CORE_SHOW_DEBUG_LOG";

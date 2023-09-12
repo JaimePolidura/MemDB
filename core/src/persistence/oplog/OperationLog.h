@@ -34,7 +34,7 @@ public:
     virtual std::vector<OperationBody> get(const OperationLogOptions options = {}) = 0;
 
     virtual uint32_t getNumberOplogFiles() = 0;
-
+    
     virtual void flush() = 0;
 };
 

@@ -1,14 +1,14 @@
 #include "utils/threads/pool/Worker.h"
 
-Worker::Worker(): pendingTasks(std::make_shared<BlockingQueue<Task>>()), isStoped(false) {}
+Worker::Worker(): pendingTasks(std::make_shared<BlockingQueue<Task>>()), isStopped(false) {}
 
 void Worker::startThread() {
-    this->thread = std::thread([this]{this->run();});
+    this->thread = std::thread([this]{ this->pollPendingTasks();});
 }
 
-void Worker::run() {
+void Worker::pollPendingTasks() {
     while (true) {
-        if(this->isStoped && this->pendingTasks->getSize() == 0)
+        if(this->isStopped && this->pendingTasks->getSize() == 0)
             return;
 
         try{
@@ -22,7 +22,7 @@ void Worker::run() {
 }
 
 bool Worker::enqueue(Task task) {
-    if(this->isStoped)
+    if(this->isStopped)
         return false;
 
     this->pendingTasks->enqueue(task);
@@ -31,10 +31,6 @@ bool Worker::enqueue(Task task) {
 }
 
 void Worker::stop() {
-    this->isStoped = true;
+    this->isStopped = true;
     this->pendingTasks->stopNow();
-}
-
-int Worker::enqueuedTasks() const {
-    return this->pendingTasks->getSize();
 }

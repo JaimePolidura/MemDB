@@ -1,11 +1,11 @@
 #include "server/TCPServer.h"
 
-TCPServer::TCPServer(logger_t logger, configuration_t configuration, Authenticator authenicator, operatorDispatcher_t operatorDispatcher):
+TCPServer::TCPServer(logger_t logger, configuration_t configuration, Authenticator authenticator, operatorDispatcher_t operatorDispatcher):
     configuration(configuration),
     logger(logger),
     port(configuration->get<uint16_t>(ConfigurationKeys::MEMDB_CORE_PORT)),
-    authenicator(std::move(authenicator)),
-    connectionThreadPool(5, configuration->get<int>(ConfigurationKeys::MEMDB_CORE_SERVER_MAX_THREADS), configuration->get<int>(ConfigurationKeys::MEMDB_CORE_SERVER_MIN_THREADS), 100),
+    authenicator(std::move(authenticator)),
+    connectionThreadPool(configuration->get<int>(ConfigurationKeys::MEMDB_CORE_SERVER_THREADS)),
     operatorDispatcher(operatorDispatcher),
     acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}) {};
 

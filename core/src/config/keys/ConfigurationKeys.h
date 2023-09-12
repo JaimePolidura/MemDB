@@ -10,8 +10,7 @@ public:
 
     static const std::string MEMDB_CORE_DATA_PATH;
     static const std::string MEMDB_CORE_PORT;
-    static const std::string MEMDB_CORE_SERVER_MIN_THREADS;
-    static const std::string MEMDB_CORE_SERVER_MAX_THREADS;
+    static const std::string MEMDB_CORE_SERVER_THREADS;
     static const std::string MEMDB_CORE_NUMBER_BUCKETS;
     static const std::string MEMDB_CORE_PERSISTANCE_WRITE_EVERY;
 

@@ -9,18 +9,18 @@ using Task = std::function<void()>;
 class Worker {
 private:
     std::shared_ptr<BlockingQueue<Task>> pendingTasks;
-    volatile bool isStoped;
+    volatile bool isStopped;
     std::thread thread;
+
 public:
     Worker();
 
     void startThread();
 
-    void run();
-
     bool enqueue(Task task);
 
     void stop();
 
-    int enqueuedTasks() const;
+private:
+    void pollPendingTasks();
 };

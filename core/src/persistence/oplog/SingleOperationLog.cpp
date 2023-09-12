@@ -1,7 +1,9 @@
 #include "persistence/oplog/SingleOperationLog.h"
 
 SingleOperationLog::SingleOperationLog(configuration_t configuration, const std::string& fileName):
-    OperationLog(configuration), operationsLogDiskWriter(fileName, configuration), operationLogDiskLoader(fileName, configuration),
+    OperationLog(configuration),
+    operationsLogDiskWriter(fileName, configuration),
+    operationLogDiskLoader(fileName, configuration),
     operationLogBuffer(std::make_shared<OperationLogBuffer>(configuration->get<int>(ConfigurationKeys::MEMDB_CORE_PERSISTANCE_WRITE_EVERY))) {
 
     this->operationLogBuffer->setFlushCallback([this](auto& operations){

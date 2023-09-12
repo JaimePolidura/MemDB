@@ -8,7 +8,7 @@
 #include "messages/request/RequestDeserializer.h"
 #include "messages/response/ResponseSerializer.h"
 #include "messages/response/ErrorCode.h"
-#include "utils/threads/pool/DynamicThreadPool.h"
+#include "utils/threads/pool/ThreadPool.h"
 #include "server/Connection.h"
 #include "operators/OperatorDispatcher.h"
 #include "logging/Logger.h"
@@ -19,7 +19,7 @@ class TCPServer {
 private:
     operatorDispatcher_t operatorDispatcher;
     configuration_t configuration;
-    DynamicThreadPool connectionThreadPool;
+    ThreadPool connectionThreadPool;
     uint16_t port;
     RequestDeserializer requestDeserializer;
     ResponseSerializer responseSerializer;
@@ -29,7 +29,7 @@ private:
     logger_t logger;
 
 public:
-    TCPServer(logger_t logger, configuration_t configuration, Authenticator authenicator, operatorDispatcher_t operatorDispatcher);
+    TCPServer(logger_t logger, configuration_t configuration, Authenticator authenticator, operatorDispatcher_t operatorDispatcher);
 
     void run();
 

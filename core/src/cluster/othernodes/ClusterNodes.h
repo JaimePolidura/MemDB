@@ -4,7 +4,7 @@
 
 #include "cluster/Node.h"
 #include "utils/strings/StringUtils.h"
-#include "utils/threads/pool/FixedThreadPool.h"
+#include "utils/threads/pool/ThreadPool.h"
 #include "messages/request/Request.h"
 #include "messages/request/RequestSerializer.h"
 #include "messages/response/ResponseDeserializer.h"
@@ -18,7 +18,7 @@ private:
     std::vector<NodeGroup> groups;
     
     configuration_t configuration;
-    FixedThreadPool requestPool;
+    ThreadPool requestPool;
     logger_t logger;
 
 public:
@@ -26,8 +26,8 @@ public:
         logger(logger),
         nodesById(std::map<memdbNodeId_t, node_t>{}),
         configuration(configuration),
-        requestPool(configuration->get<int>(ConfigurationKeys::MEMDB_CORE_SERVER_MAX_THREADS)) {}
-    
+        requestPool(configuration->get<int>(ConfigurationKeys::MEMDB_CORE_SERVER_THREADS)) {}
+        
     ClusterNodes(): nodesById() {}
 
     void setOtherNodes(const std::vector<node_t>& otherNodesToSet, const NodeGroupOptions options = {});

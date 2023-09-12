@@ -23,8 +23,8 @@ import (
 	"time"
 )
 
-func CreateClusterManager() *ClusterManager {
-	loadedConfiguration := configuration.LoadConfiguration()
+func CreateClusterManager(args []string) *ClusterManager {
+	loadedConfiguration := configuration.LoadConfiguration(args)
 	logger := &logging.Logger{
 		NativeLogger:  log.New(os.Stdout, "[ClusterManager] ", log.Ldate|log.Ltime|log.Lmsgprefix),
 		Configuration: loadedConfiguration,

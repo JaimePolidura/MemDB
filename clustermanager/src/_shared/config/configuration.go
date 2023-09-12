@@ -3,11 +3,12 @@ package configuration
 import (
 	"os"
 	"strconv"
+	"strings"
 	"sync"
 )
 
 type Configuartion struct {
-	cachedConfigurationKeys sync.Map
+	cachedConfigurationKeys *sync.Map
 }
 
 func (configuartion *Configuartion) GetBoolean(key string) bool {
@@ -46,6 +47,21 @@ func (configuartion *Configuartion) Get(key string) string {
 	return defaultValue
 }
 
-func LoadConfiguration() *Configuartion {
-	return &Configuartion{cachedConfigurationKeys: sync.Map{}}
+func LoadConfiguration(args []string) *Configuartion {
+	return &Configuartion{cachedConfigurationKeys: argsToConfigMap(args)}
+}
+
+func argsToConfigMap(args []string) *sync.Map {
+	argMap := &sync.Map{}
+
+	for i := 1; i < len(args); i++ {
+		arg := args[i]
+		splitedByEq := strings.Split(arg, "=")
+		key := splitedByEq[0]
+		value := splitedByEq[1]
+
+		argMap.Store(key, value)
+	}
+
+	return argMap
 }

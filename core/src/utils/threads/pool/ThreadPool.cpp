@@ -1,15 +1,15 @@
 #include "utils/threads/pool/ThreadPool.h"
 
-ThreadPool::ThreadPool(int threads): counter(0) {
+ThreadPool::ThreadPool(int threads) {
     this->createWorkers(threads);
 }
 
 void ThreadPool::submit(Task task) {
-    if(this->counter == 0){
-        this->counter = std::hash<std::thread::id>{}(std::this_thread::get_id());
+    if(counter == 0){
+        counter = std::hash<std::thread::id>{}(std::this_thread::get_id());
     }
-
-    auto workerIndex = ++this->counter % this->workers.size();
+    
+    auto workerIndex = ++counter % this->workers.size();
     auto worker = this->workers[workerIndex];
 
     worker->enqueue(task);

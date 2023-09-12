@@ -35,7 +35,7 @@ public:
 
     virtual uint32_t getNumberOplogFiles() = 0;
 
-    virtual void flush();
+    virtual void flush() = 0;
 };
 
 using operationLog_t = std::shared_ptr<OperationLog>;

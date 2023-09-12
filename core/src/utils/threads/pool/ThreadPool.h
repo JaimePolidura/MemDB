@@ -3,11 +3,12 @@
 #include "shared.h"
 #include "utils/threads/pool/Worker.h"
 
+thread_local uint64_t counter;
+
 class ThreadPool {
 private:
     std::vector<std::shared_ptr<Worker>> workers;
-    thread_local uint64_t counter;
-
+    
 public:
     explicit ThreadPool(int threads);
 

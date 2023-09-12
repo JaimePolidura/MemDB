@@ -43,7 +43,7 @@ public:
 
     virtual int getDistance(memdbNodeId_t nodeB);
 
-    // self <-- (counter clockwise) nodeB
+    // self <-- (memdb_thread_pool_counter clockwise) nodeB
     uint32_t getDistanceCounterClockwise(memdbNodeId_t nodeB);
 
     // self --> (clockwise) nodeB

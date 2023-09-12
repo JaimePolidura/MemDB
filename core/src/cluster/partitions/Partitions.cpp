@@ -41,7 +41,7 @@ int Partitions::getDistance(memdbNodeId_t nodeB) {
     return this->ringEntries.getDistance(this->selfEntry.nodeId, nodeB);
 }
 
-// self <-- (counter clockwise) nodeB
+// self <-- (memdb_thread_pool_counter clockwise) nodeB
 uint32_t Partitions::getDistanceCounterClockwise(memdbNodeId_t nodeB) {
     return this->ringEntries.getDistanceCounterClockwise(this->selfEntry.nodeId, nodeB);
 }

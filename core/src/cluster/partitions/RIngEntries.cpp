@@ -127,7 +127,7 @@ int RingEntries::getDistance(memdbNodeId_t nodeA, memdbNodeId_t nodeB) {
     return actualPointerB->getNodeId() == nodeA ? iterations * -1 : iterations;
 }
 
-// nodeA <-- (counter clockwise) nodeB
+// nodeA <-- (memdb_thread_pool_counter clockwise) nodeB
 uint32_t RingEntries::getDistanceCounterClockwise(memdbNodeId_t nodeA, memdbNodeId_t nodeB) {
     int distance = this->getDistance(nodeA, nodeB);
 

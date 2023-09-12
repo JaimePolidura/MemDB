@@ -3,7 +3,7 @@
 #include "shared.h"
 #include "utils/threads/pool/Worker.h"
 
-thread_local uint64_t counter;
+thread_local uint64_t memdb_thread_pool_counter;
 
 class ThreadPool {
 private:

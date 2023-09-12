@@ -42,7 +42,7 @@ public:
     // nodeB --> nodeA -> negative
     int getDistance(memdbNodeId_t nodeA, memdbNodeId_t nodeB);
 
-    // nodeA <-- (counter clockwise) nodeB
+    // nodeA <-- (memdb_thread_pool_counter clockwise) nodeB
     uint32_t getDistanceCounterClockwise(memdbNodeId_t nodeA, memdbNodeId_t nodeB);
 
     // nodeA --> (clockwise) nodeB

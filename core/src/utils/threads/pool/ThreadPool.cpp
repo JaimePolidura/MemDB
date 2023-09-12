@@ -5,11 +5,11 @@ ThreadPool::ThreadPool(int threads) {
 }
 
 void ThreadPool::submit(Task task) {
-    if(counter == 0){
-        counter = std::hash<std::thread::id>{}(std::this_thread::get_id());
+    if(memdb_thread_pool_counter == 0){
+        memdb_thread_pool_counter = std::hash<std::thread::id>{}(std::this_thread::get_id());
     }
-    
-    auto workerIndex = ++counter % this->workers.size();
+
+    auto workerIndex = ++memdb_thread_pool_counter % this->workers.size();
     auto worker = this->workers[workerIndex];
 
     worker->enqueue(task);

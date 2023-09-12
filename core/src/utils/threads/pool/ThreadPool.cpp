@@ -1,5 +1,7 @@
 #include "utils/threads/pool/ThreadPool.h"
 
+thread_local uint64_t memdb_thread_pool_counter;
+
 ThreadPool::ThreadPool(int threads) {
     this->createWorkers(threads);
 }

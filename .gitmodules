@@ -1,0 +1,3 @@
+[submodule "core/libs/Wait-Free-Queues"]
+	path = core/libs/Wait-Free-Queues
+	url = https://github.com/JaimePolidura/Wait-Free-Queues.git

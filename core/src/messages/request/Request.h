@@ -32,6 +32,8 @@ struct OperationBody {
 
     void setArg(int position, arg_t newArg);
 
+    uint64_t getTimestamp();
+
     static args_t createOperationBodyArg();
 };
 

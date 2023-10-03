@@ -19,6 +19,9 @@ if(UNIX)
     set(CMAKE_PREFIX_PATH "${VCPKG_ROOT}/installed/x64-linux")
 endif()
 
+include_directories(libs/Wait-Free-Queues)
+add_subdirectory(libs/Wait-Free-Queues)
+
 include_directories(src)
 add_subdirectory(src)
 

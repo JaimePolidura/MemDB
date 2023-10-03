@@ -15,11 +15,11 @@ std::vector<OperatorDependency> DeleteOperator::dependencies() {
     return { OperatorDependency::DB_STORE };
 }
 
-constexpr OperatorType DeleteOperator::type() {
+OperatorType DeleteOperator::type() {
     return OperatorType::DB_STORE_WRITE;
 }
 
-constexpr uint8_t DeleteOperator::operatorNumber() {
+uint8_t DeleteOperator::operatorNumber() {
     return OPERATOR_NUMBER;
 }
 

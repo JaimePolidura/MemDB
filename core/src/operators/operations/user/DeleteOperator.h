@@ -14,9 +14,9 @@ public:
 
     std::vector<OperatorDependency> dependencies() override;
 
-    constexpr OperatorType type() override;
+    OperatorType type() override;
 
-    constexpr uint8_t operatorNumber() override;
+    uint8_t operatorNumber() override;
 
     std::string name() override;
 };

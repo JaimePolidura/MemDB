@@ -7,7 +7,7 @@ public:
     std::atomic_uint64_t counter;
     uint16_t nodeId;
 
-    LamportClock(uint16_t nodeId);
+    explicit LamportClock(uint16_t nodeId);
 
     LamportClock(uint16_t nodeId, uint64_t counter);
 

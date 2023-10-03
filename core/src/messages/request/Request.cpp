@@ -52,6 +52,10 @@ void OperationBody::setArg(int position, arg_t newArg) {
     }
 }
 
+uint64_t OperationBody::getTimestamp() {
+    return this->timestamp;
+}
+
 args_t OperationBody::createOperationBodyArg() {
     return std::make_shared<std::vector<SimpleString<memDbDataLength_t>>>();
 }

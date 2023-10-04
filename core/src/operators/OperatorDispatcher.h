@@ -41,6 +41,8 @@ public:
     void applyDelayedOperationsBuffer();
 
 private:
+    Response dispatch_no_applyDelayedOperationsBuffer(const Request& request);
+
     OperatorDependencies getDependencies(std::shared_ptr<Operator> operatorToGetDependecies);
 
     void getDependency(OperatorDependency dependency, OperatorDependencies * operatorDependencies);

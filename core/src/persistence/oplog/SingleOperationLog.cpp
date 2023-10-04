@@ -4,7 +4,7 @@ SingleOperationLog::SingleOperationLog(configuration_t configuration, const std:
     OperationLog(configuration),
     operationsLogDiskWriter(fileName, configuration),
     operationLogDiskLoader(fileName, configuration),
-    operationLogBuffer(std::make_shared<OperationLogBuffer>(configuration->get<int>(ConfigurationKeys::MEMDB_CORE_PERSISTANCE_WRITE_EVERY))) {
+    operationLogBuffer(std::make_shared<OperationLogBuffer>(configuration->get<int>(ConfigurationKeys::MEMDB_CORE_SERVER_THREADS) + 1)) {
 
     this->operationLogBuffer->setFlushCallback([this](auto& operations){
         this->flushToDisk(operations);
@@ -13,18 +13,10 @@ SingleOperationLog::SingleOperationLog(configuration_t configuration, const std:
 
 void SingleOperationLog::addAll(const std::vector<OperationBody>& operations, const OperationLogOptions options) {
     this->operationLogBuffer->addAll(operations);
-
-    if(options.dontUseBuffer){
-        this->operationLogBuffer->flush();
-    }
 }
 
 void SingleOperationLog::add(const OperationBody& operation, const OperationLogOptions options) {
     this->operationLogBuffer->add(operation);
-
-    if(options.dontUseBuffer){
-        this->operationLogBuffer->flush();
-    }
 }
 
 bool SingleOperationLog::hasOplogFile(const OperationLogOptions options) {
@@ -34,37 +26,37 @@ bool SingleOperationLog::hasOplogFile(const OperationLogOptions options) {
 std::vector<OperationBody> SingleOperationLog::clear(const OperationLogOptions options) {
     auto operationLogsCleared = this->get(options);
 
-    this->operationLogBuffer->flush(false);
     this->operationsLogDiskWriter.clear();
 
     return operationLogsCleared;
 }
 
 std::vector<OperationBody> SingleOperationLog::getAfterTimestamp(uint64_t since, const OperationLogOptions options) {
-    this->operationLogBuffer->lockFlushToDisk();
-
-    uint64_t oldestTimestampInBuffer = operationLogBuffer->getOldestTimestampAdded();
-    uint64_t latestTimestampInBuffer = operationLogBuffer->getLatestTimestampAdded();
-    bool bufferEmtpy = latestTimestampInBuffer == 0 || oldestTimestampInBuffer == 0;
-
-    if(!bufferEmtpy && latestTimestampInBuffer <= since){ //Already in sync
-        return std::vector<OperationBody>{};
-    }
-
-    if(!bufferEmtpy && since >= oldestTimestampInBuffer && since <= latestTimestampInBuffer) {
-        std::vector<OperationBody> compactedFromBuffer = this->compacter.compact(this->operationLogBuffer->get());
-        this->operationLogBuffer->unlockFlushToDisk();
-
-        return this->filterIfTimestampAfterThan(compactedFromBuffer, since);
-    }else{
-        std::vector<OperationBody> compactedFromBuffer = this->operationLogBuffer->get();
-        std::vector<OperationBody> compactedFromDisk = this->operationLogDiskLoader.getAll();
-        this->operationLogBuffer->unlockFlushToDisk();
-
-        std::vector<OperationBody> compacted = this->compacter.compact(Utils::concat(compactedFromDisk, compactedFromBuffer));
-
-        return this->filterIfTimestampAfterThan(compacted, since);
-    }
+//    TODO
+//    this->operationLogBuffer->lockFlushToDisk();
+//
+//    uint64_t oldestTimestampInBuffer = operationLogBuffer->getOldestTimestampAdded();
+//    uint64_t latestTimestampInBuffer = operationLogBuffer->getLatestTimestampAdded();
+//    bool bufferEmtpy = latestTimestampInBuffer == 0 || oldestTimestampInBuffer == 0;
+//
+//    if(!bufferEmtpy && latestTimestampInBuffer <= since){ //Already in sync
+//        return std::vector<OperationBody>{};
+//    }
+//
+//    if(!bufferEmtpy && since >= oldestTimestampInBuffer && since <= latestTimestampInBuffer) {
+//        std::vector<OperationBody> compactedFromBuffer = this->compacter.compact(this->operationLogBuffer->get());
+//        this->operationLogBuffer->unlockFlushToDisk();
+//
+//        return this->filterIfTimestampAfterThan(compactedFromBuffer, since);
+//    }else{
+//        std::vector<OperationBody> compactedFromBuffer = this->operationLogBuffer->get();
+//        std::vector<OperationBody> compactedFromDisk = this->operationLogDiskLoader.getAll();
+//        this->operationLogBuffer->unlockFlushToDisk();
+//
+//        std::vector<OperationBody> compacted = this->compacter.compact(Utils::concat(compactedFromDisk, compactedFromBuffer));
+//
+//        return this->filterIfTimestampAfterThan(compacted, since);
+//    }
 }
 
 std::vector<OperationBody> SingleOperationLog::get(const OperationLogOptions option) {
@@ -93,10 +85,6 @@ std::vector<OperationBody> SingleOperationLog::filterIfTimestampAfterThan(const 
     }
 
     return operations;
-}
-
-void SingleOperationLog::flush() {
-    this->operationLogBuffer->flush();
 }
 
 void SingleOperationLog::flushToDisk(const std::vector<OperationBody>& operationsInBuffer) {

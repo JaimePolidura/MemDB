@@ -11,6 +11,10 @@ Response OperatorDispatcher::dispatch(const Request& request) {
         applyDelayedOperationsBuffer();
     }
 
+    return this->dispatch_no_applyDelayedOperationsBuffer(request);
+}
+
+Response OperatorDispatcher::dispatch_no_applyDelayedOperationsBuffer(const Request &request) {
     operator_t operatorToExecute = this->operatorRegistry->get(request.operation.operatorNumber);
 
     if(operatorToExecute == nullptr){
@@ -26,7 +30,7 @@ Response OperatorDispatcher::dispatch(const Request& request) {
 
     OperationOptions options = {.checkTimestamps = writeDbRequestFromNode};
 
-    this->logger->debugInfo("Recieved request for operator {0} from {1}", request.requestNumber, operatorToExecute->name(),
+    this->logger->debugInfo("Received request for operator {0} from {1}", request.requestNumber, operatorToExecute->name(),
                             options.checkTimestamps ? "node" : "user");
 
     if(isInReplicationMode() && (!canAcceptRequest() || (readDbRequest && !canExecuteRequest()))) {
@@ -88,7 +92,7 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
 void OperatorDispatcher::applyDelayedOperationsBuffer() {
     while(!this->delayedOperationsBuffer->isEmpty()){
         Request operation = this->delayedOperationsBuffer->get();
-        this->dispatch(operation);
+        this->dispatch_no_applyDelayedOperationsBuffer(operation); //Avoid recursive call
     }
 }
 

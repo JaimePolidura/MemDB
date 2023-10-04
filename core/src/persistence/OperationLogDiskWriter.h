@@ -12,25 +12,22 @@ class OperationsLogDiskWriter {
 private:
     OperationLogSerializer operationLogSerializer;
     configuration_t configuration;
-    std::recursive_mutex writeFileLock;
-    bool fileCreated = false;
-    bool fileCleared = false;
+    std::atomic_bool fileCleared;
     std::string oplogFileName;
+    bool fileCreated;
 
 public:
     OperationsLogDiskWriter() = default;
 
-    explicit OperationsLogDiskWriter(std::string oplogFileName, configuration_t configuration): oplogFileName(std::move(oplogFileName)), configuration(configuration) {}
+    explicit OperationsLogDiskWriter(std::string oplogFileName, configuration_t configuration):
+        oplogFileName(std::move(oplogFileName)),
+        configuration(configuration),
+        fileCleared(false),
+        fileCreated(false) {}
 
     void clear();
 
-    void write(const std::vector<OperationBody>& toWrite);
-
     void append(const std::vector<OperationBody>& toWrite);
-
-    void lockWrites();
-
-    void unlockWrites();
 
 private:
     void createFileIfNotExists();

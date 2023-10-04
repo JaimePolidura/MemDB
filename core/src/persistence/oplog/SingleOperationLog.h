@@ -6,7 +6,6 @@
 
 #include "persistence/compaction/OperationLogCompacter.h"
 #include "persistence/OperationLogDiskLoader.h"
-#include "persistence/OperationLogBuffer.h"
 #include "persistence/OperationLogDiskWriter.h"
 #include "persistence/oplog/buffer/OperationLogBuffer.h"
 #include "persistence/oplog/OperationLog.h"
@@ -19,7 +18,7 @@ private:
     OperationsLogDiskWriter operationsLogDiskWriter;
     OperationLogDiskLoader operationLogDiskLoader;
     OperationLogCompacter compacter{};
-    
+
     operationLogBuffer_t operationLogBuffer;
 
 public:
@@ -40,8 +39,6 @@ public:
     std::vector<OperationBody> get(const OperationLogOptions option) override;
 
     uint32_t getNumberOplogFiles() override;
-    
-    void flush() override;
 
 private:
     std::vector<OperationBody> filterIfTimestampAfterThan(const std::vector<OperationBody>& operations, uint64_t timestampSince);

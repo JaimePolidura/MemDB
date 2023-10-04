@@ -20,10 +20,6 @@ public:
 
     virtual void addAll(const std::vector<OperationBody>& operations);
 
-    void flush();
-
-    void clear();
-
     void setFlushCallback(flushCallback_t flushCallbackToSet);
 };
 

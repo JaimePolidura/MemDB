@@ -1,46 +1,26 @@
 #include "persistence/OperationLogDiskWriter.h"
 
 void OperationsLogDiskWriter::clear() {
-    writeFileLock.lock();
     FileUtils::clear(FileUtils::getFileInPath(configuration->get(ConfigurationKeys::MEMDB_CORE_DATA_PATH), this->oplogFileName));
-    this->fileCleared = true;
-    writeFileLock.unlock();
-}
-
-void OperationsLogDiskWriter::write(const std::vector<OperationBody>& toWrite) {
-    this->createFileIfNotExists();
-
-    std::vector<uint8_t> serialized = this->serializeAll(toWrite);
-
-    writeFileLock.lock();
-    if(this->fileCleared) return;
-
-    FileUtils::writeBytes(FileUtils::getFileInPath(configuration->get(ConfigurationKeys::MEMDB_CORE_DATA_PATH), this->oplogFileName), serialized);
-    writeFileLock.unlock();
+    this->fileCleared.store(true, std::memory_order_release);
 }
 
 void OperationsLogDiskWriter::append(const std::vector<OperationBody>& toWrite) {
     this->createFileIfNotExists();
 
     std::vector<uint8_t> serialized = this->serializeAll(toWrite);
-    if(this->fileCleared) return;
 
-    writeFileLock.lock();
+    if(this->fileCleared.load(std::memory_order_acquire)) {
+        return;
+    }
+
     FileUtils::appendBytes(FileUtils::getFileInPath(configuration->get(ConfigurationKeys::MEMDB_CORE_DATA_PATH), this->oplogFileName), serialized);
-    writeFileLock.unlock();
-}
-
-void OperationsLogDiskWriter::lockWrites() {
-    this->writeFileLock.lock();
-}
-
-void OperationsLogDiskWriter::unlockWrites() {
-    this->writeFileLock.unlock();
 }
 
 void OperationsLogDiskWriter::createFileIfNotExists() {
-    if(this->fileCreated)
+    if(this->fileCreated) {
         return;
+    }
 
     const std::string memdbFilePath = configuration->get(ConfigurationKeys::MEMDB_CORE_DATA_PATH);
 

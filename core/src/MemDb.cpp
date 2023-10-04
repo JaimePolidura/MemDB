@@ -110,8 +110,6 @@ void listenCtrlCSignal(operationLog_t operationLog) {
 }
 
 void ctrlHandler(int s) {
-    globalOperationLog->flush();
-
 #if __linux__
     exit(1);
 #endif

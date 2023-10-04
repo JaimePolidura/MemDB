@@ -22,23 +22,23 @@ public:
 
     virtual ~OperationLogBuffer() = default;
 
-    void setFlushCallback(std::function<void(const std::vector<OperationBody>&)> flushCallbackToSet);
+    void setFlushCallback(std::function<void(const std::vector<OperationBody>&)> flushCallbackToSet); //OK
 
-    virtual void addAll(const std::vector<OperationBody>& operations);
+    virtual void addAll(const std::vector<OperationBody>& operations); //OK
 
-    virtual void add(const OperationBody& operation);
+    virtual void add(const OperationBody& operation); //OK
 
-    void flush(const bool tryLock = false);
+    void flush(const bool tryLock = false); //Discarded
 
     std::vector<OperationBody> get();
-
+    
     uint64_t getLatestTimestampAdded() const;
 
     uint64_t getOldestTimestampAdded() const;
 
-    void lockFlushToDisk();
+    void lockFlushToDisk(); //Discarded
 
-    void unlockFlushToDisk();
+    void unlockFlushToDisk(); //Discarded
 
 private:
     void updateBufferTimestamps(const OperationBody& operation);

@@ -44,14 +44,14 @@ std::vector<OperationBody> SingleOperationLog::getAfterTimestamp(uint64_t since,
     this->operationLogBuffer->lockFlushToDisk();
 
     uint64_t oldestTimestampInBuffer = operationLogBuffer->getOldestTimestampAdded();
-    uint64_t lastestTimestampInBuffer = operationLogBuffer->getLatestTimestampAdded();
-    bool bufferEmtpy = lastestTimestampInBuffer == 0 || oldestTimestampInBuffer == 0;
+    uint64_t latestTimestampInBuffer = operationLogBuffer->getLatestTimestampAdded();
+    bool bufferEmtpy = latestTimestampInBuffer == 0 || oldestTimestampInBuffer == 0;
 
-    if(!bufferEmtpy && lastestTimestampInBuffer <= since){ //Already in sync
+    if(!bufferEmtpy && latestTimestampInBuffer <= since){ //Already in sync
         return std::vector<OperationBody>{};
     }
 
-    if(!bufferEmtpy && since >= oldestTimestampInBuffer && since <= lastestTimestampInBuffer) {
+    if(!bufferEmtpy && since >= oldestTimestampInBuffer && since <= latestTimestampInBuffer) {
         std::vector<OperationBody> compactedFromBuffer = this->compacter.compact(this->operationLogBuffer->get());
         this->operationLogBuffer->unlockFlushToDisk();
 

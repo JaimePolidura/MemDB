@@ -8,6 +8,7 @@
 #include "persistence/OperationLogDiskLoader.h"
 #include "persistence/OperationLogBuffer.h"
 #include "persistence/OperationLogDiskWriter.h"
+#include "persistence/oplog/buffer/OperationLogBuffer.h"
 #include "persistence/oplog/OperationLog.h"
 
 #include "config/Configuration.h"
@@ -18,7 +19,7 @@ private:
     OperationsLogDiskWriter operationsLogDiskWriter;
     OperationLogDiskLoader operationLogDiskLoader;
     OperationLogCompacter compacter{};
-
+    
     operationLogBuffer_t operationLogBuffer;
 
 public:

@@ -6,8 +6,6 @@ list(REMOVE_ITEM SOURCES ${REMOVE_CMAKE})
 add_executable(${BINARY}_run ${SOURCES})
 
 add_library(${BINARY}_lib STATIC ${SOURCES} MemDb.cpp MemDbCreator.cpp utils/Utils.h
-        persistence/oplog/buffer/RingQueue.cpp
-        persistence/oplog/buffer/RingQueue.h
 )
 
 # VCPKG Libraries

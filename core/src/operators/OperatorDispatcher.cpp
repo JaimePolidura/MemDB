@@ -44,7 +44,8 @@ Response OperatorDispatcher::dispatch_no_applyDelayedOperationsBuffer(const Requ
         return Response::success();
     }
 
-    return this->executeOperation(operatorToExecute, request.operation, options);
+    OperationBody operationBody = request.operation;
+    return this->executeOperation(operatorToExecute, operationBody, options);
 }
 
 void OperatorDispatcher::executeOperations(std::shared_ptr<Operator> operatorToExecute,
@@ -52,12 +53,12 @@ void OperatorDispatcher::executeOperations(std::shared_ptr<Operator> operatorToE
                        const OperationOptions& options) {
 
     for (const OperationBody& operation: operations){
-        executeOperation(operatorToExecute, operation, options);
+        executeOperation(operatorToExecute, const_cast<OperationBody&>(operation), options);
     }
 }
 
 Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operatorToExecute,
-                          const OperationBody& operation,
+                          OperationBody& operation,
                           const OperationOptions& options) {
 
     OperatorDependencies dependencies = this->getDependencies(operatorToExecute);
@@ -68,13 +69,9 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
                             operatorToExecute->name(), options.checkTimestamps ? "node" : "user");
 
     if(operatorToExecute->type() == DB_STORE_WRITE && result.isSuccessful && !options.onlyExecute) {
-        if(options.updateClockStrategy == LamportClock::UpdateClockStrategy::TICK){
-            result.timestamp = this->clock->tick(operation.timestamp);
-            operation = result.timestamp;
-        } else if (options.updateClockStrategy == LamportClock::UpdateClockStrategy::SET)  {
-            result.timestamp = this->clock->set(operation.timestamp);
-            operation = result.timestamp;
-        }
+        uint64_t newTimestamp = this->updateClock(options.updateClockStrategy, operation.timestamp);
+        result.timestamp = this->clock->tick(newTimestamp);
+        operation.timestamp = newTimestamp;
 
         if(!options.dontSaveInOperationLog){
             this->operationLog->add(operation);
@@ -91,6 +88,16 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
     return result;
 }
 
+uint64_t OperatorDispatcher::updateClock(LamportClock::UpdateClockStrategy strategy, uint64_t newValue) {
+    if(strategy == LamportClock::UpdateClockStrategy::TICK){
+        return this->clock->tick(newValue);
+    } else if (strategy == LamportClock::UpdateClockStrategy::SET) {
+        return this->clock->set(newValue);
+    }
+
+    return this->clock->getCounterValue();
+}
+
 void OperatorDispatcher::applyDelayedOperationsBuffer() {
     while(!this->delayedOperationsBuffer->isEmpty()){
         Request operation = this->delayedOperationsBuffer->get();
@@ -98,10 +105,10 @@ void OperatorDispatcher::applyDelayedOperationsBuffer() {
     }
 }
 
-OperatorDependencies OperatorDispatcher::getDependencies(std::shared_ptr<Operator> operatorToGetDependecies) {
+OperatorDependencies OperatorDispatcher::getDependencies(std::shared_ptr<Operator> operatorToGetDependencies) {
     OperatorDependencies dependencies;
 
-    for(auto dependency : operatorToGetDependecies->dependencies()){
+    for(auto dependency : operatorToGetDependencies->dependencies()){
         this->getDependency(dependency, &dependencies);
     }
 
@@ -124,11 +131,11 @@ void OperatorDispatcher::getDependency(OperatorDependency dependency, OperatorDe
             break;
         case OPERATOR_DISPATCHER:
             operatorDependencies->operatorDispatcher = [this](const OperationBody& op, const OperationOptions& options) -> Response {
-                return this->executeOperation(this->operatorRegistry->get(op.operatorNumber), op, options);
+                return this->executeOperation(this->operatorRegistry->get(op.operatorNumber), const_cast<OperationBody&>(op), options);
             };
             operatorDependencies->operatorsDispatcher = [this](const std::vector<OperationBody>& ops, const OperationOptions& options) -> void {
                 std::for_each(ops.begin(), ops.end(), [this, options](const OperationBody &op) -> void {
-                    this->executeOperation(this->operatorRegistry->get(op.operatorNumber), op, options);
+                    this->executeOperation(this->operatorRegistry->get(op.operatorNumber), const_cast<OperationBody&>(op), options);
                 });
             };
             break;

@@ -34,6 +34,10 @@ uint64_t LamportClock::set(uint64_t newCounter) {
     return newCounter > actual ? newCounter : actual;
 }
 
+uint64_t LamportClock::getCounterValue() {
+    return this->counter.load(std::memory_order_acquire);
+}
+
 //Returns if this clock is bigger than the passed by arguments
 bool LamportClock::compare(uint64_t otherCount, uint16_t otherNodeId) {
     uint64_t selfCounterValue = this->counter.load(std::memory_order_acquire);

@@ -33,9 +33,9 @@ public:
     void executeOperations(std::shared_ptr<Operator> operatorToExecute,
                           const std::vector<OperationBody>& operations,
                           const OperationOptions& options);
-
+    
     Response executeOperation(std::shared_ptr<Operator> operatorToExecute,
-                              const OperationBody& operation,
+                              OperationBody& operation,
                               const OperationOptions& options);
 
     void applyDelayedOperationsBuffer();
@@ -43,11 +43,13 @@ public:
 private:
     Response dispatch_no_applyDelayedOperationsBuffer(const Request& request);
 
-    OperatorDependencies getDependencies(std::shared_ptr<Operator> operatorToGetDependecies);
+    OperatorDependencies getDependencies(std::shared_ptr<Operator> operatorToGetDependencies);
 
     void getDependency(OperatorDependency dependency, OperatorDependencies * operatorDependencies);
 
     bool isAuthorizedToExecute(std::shared_ptr<Operator> operatorToExecute, AuthenticationType authenticationOfUser);
+
+    uint64_t updateClock(LamportClock::UpdateClockStrategy updateStrategy, uint64_t newValue);
 
     bool isInReplicationMode();
 

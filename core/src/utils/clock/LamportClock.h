@@ -17,6 +17,8 @@ public:
 
     uint64_t set(uint64_t other);
 
+    uint64_t getCounterValue();
+
     //Returns if this clock is bigger than the passed by arguments
     bool compare(uint64_t otherCount, uint16_t otherNodeId);
 

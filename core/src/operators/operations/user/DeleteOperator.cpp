@@ -1,6 +1,6 @@
 #include "operators/operations/user/DeleteOperator.h"
 
-Response DeleteOperator::operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies dependencies) {
+Response DeleteOperator::operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) {
     bool ignoreTimestmaps = !options.checkTimestamps;
     bool removed = dependencies.dbStore->remove(operation.args->at(0), ignoreTimestmaps, operation.timestamp, operation.nodeId);
 
@@ -11,9 +11,6 @@ std::vector<AuthenticationType> DeleteOperator::authorizedToExecute() {
     return { AuthenticationType::API, AuthenticationType::NODE };
 }
 
-std::vector<OperatorDependency> DeleteOperator::dependencies() {
-    return { OperatorDependency::DB_STORE };
-}
 
 OperatorType DeleteOperator::type() {
     return OperatorType::DB_STORE_WRITE;

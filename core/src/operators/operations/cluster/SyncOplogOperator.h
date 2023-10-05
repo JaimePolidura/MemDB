@@ -6,6 +6,7 @@
 #include "persistence/OperationLogSerializer.h"
 #include "persistence/compaction/OperationLogCompacter.h"
 #include "config/keys/ConfigurationKeys.h"
+#include "operators/OperatorDependencies.h"
 
 /**
  * Args:
@@ -21,9 +22,7 @@ private:
 public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x05;
 
-    Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies dependencies) override;
-
-    std::vector<OperatorDependency> dependencies() override;
+    Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) override;
 
     std::vector<AuthenticationType> authorizedToExecute() override;
 

@@ -1,6 +1,6 @@
 #include "operators/operations/cluster/SyncOplogOperator.h"
 
-Response SyncOplogOperator::operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies dependencies) {
+Response SyncOplogOperator::operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) {
     uint64_t lastTimestampUnsync = parseUnsyncTimestampFromRequest(operation);
     uint32_t nodeOplogIdToSync = calculateSelfOplogIdFromNodeOplogId(operation, dependencies) ;
 
@@ -13,10 +13,6 @@ Response SyncOplogOperator::operate(const OperationBody& operation, const Operat
     std::vector<uint8_t> serializedUnsyncedOpLog = this->operationLogSerializer.serializeAll(unsyncedOplog);
 
     return Response::success(SimpleString<memDbDataLength_t>::fromVector(serializedUnsyncedOpLog));
-}
-
-std::vector<OperatorDependency> SyncOplogOperator::dependencies() {
-    return { OperatorDependency::OPERATION_LOG, OperatorDependency::CONFIGURATION, OperatorDependency::CLUSTER };
 }
 
 std::vector<AuthenticationType> SyncOplogOperator::authorizedToExecute() {

@@ -1,6 +1,6 @@
 #include "operators/operations/cluster/MovePartitionOplogOperator.h"
 
-Response MovePartitionOplogOperator::operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies dependencies) {
+Response MovePartitionOplogOperator::operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies& dependencies) {
     bool applyNewOplog = operation.flag1;
     bool clearOldOplog = operation.flag2;
     auto newOplogId = operation.getArg(0).to<uint32_t>();
@@ -40,10 +40,6 @@ OperatorType MovePartitionOplogOperator::type() {
 
 std::vector<AuthenticationType> MovePartitionOplogOperator::authorizedToExecute() {
     return { AuthenticationType::NODE };
-}
-
-std::vector<OperatorDependency> MovePartitionOplogOperator::dependencies() {
-    return { OperatorDependency::OPERATION_LOG, OperatorDependency::OPERATOR_DISPATCHER, OperatorDependency::CLUSTER };
 }
 
 std::string MovePartitionOplogOperator::name() {

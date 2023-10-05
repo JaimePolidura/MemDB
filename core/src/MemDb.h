@@ -38,5 +38,5 @@ private:
 
     std::vector<uint64_t> restoreSingleOplog();
 
-    void applyUnsyncedOplogFromCluster(const std::vector<OperationBody>& opLogs, bool dontSaveInOperationLog);
+    void applyUnsyncedOplogFromCluster(std::vector<OperationBody>& opLogs, bool dontSaveInOperationLog);
 };

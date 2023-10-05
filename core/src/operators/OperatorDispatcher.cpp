@@ -61,7 +61,7 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
                           OperationBody& operation,
                           const OperationOptions& options) {
 
-    OperatorDependencies dependencies = this->getDependencies(operatorToExecute);
+    OperatorDependencies dependencies = this->getDependencies();
     Response result = operatorToExecute->operate(operation, options, dependencies);
 
     this->logger->debugInfo("Executed {0} append request for operator {1} from {2}",
@@ -105,41 +105,23 @@ void OperatorDispatcher::applyDelayedOperationsBuffer() {
     }
 }
 
-OperatorDependencies OperatorDispatcher::getDependencies(std::shared_ptr<Operator> operatorToGetDependencies) {
+OperatorDependencies OperatorDispatcher::getDependencies() {
     OperatorDependencies dependencies;
 
-    for(auto dependency : operatorToGetDependencies->dependencies()){
-        this->getDependency(dependency, &dependencies);
-    }
+    dependencies.operationLog = this->operationLog;
+    dependencies.configuration = this->configuration;
+    dependencies.dbStore = this->db;
+    dependencies.cluster = this->cluster;
+    dependencies.operatorDispatcher = [this](const OperationBody& op, const OperationOptions& options) -> Response {
+        return this->executeOperation(this->operatorRegistry->get(op.operatorNumber), const_cast<OperationBody&>(op), options);
+    };
+    dependencies.operatorsDispatcher = [this](const std::vector<OperationBody>& ops, const OperationOptions& options) -> void {
+        std::for_each(ops.begin(), ops.end(), [this, options](const OperationBody &op) -> void {
+            this->executeOperation(this->operatorRegistry->get(op.operatorNumber), const_cast<OperationBody&>(op), options);
+        });
+    };
 
     return dependencies;
-}
-
-void OperatorDispatcher::getDependency(OperatorDependency dependency, OperatorDependencies * operatorDependencies){
-    switch (dependency) {
-        case OPERATION_LOG:
-            operatorDependencies->operationLog = this->operationLog;
-            break;
-        case CONFIGURATION:
-            operatorDependencies->configuration = this->configuration;
-            break;
-        case DB_STORE:
-            operatorDependencies->dbStore = this->db;
-            break;
-        case CLUSTER:
-            operatorDependencies->cluster = this->cluster;
-            break;
-        case OPERATOR_DISPATCHER:
-            operatorDependencies->operatorDispatcher = [this](const OperationBody& op, const OperationOptions& options) -> Response {
-                return this->executeOperation(this->operatorRegistry->get(op.operatorNumber), const_cast<OperationBody&>(op), options);
-            };
-            operatorDependencies->operatorsDispatcher = [this](const std::vector<OperationBody>& ops, const OperationOptions& options) -> void {
-                std::for_each(ops.begin(), ops.end(), [this, options](const OperationBody &op) -> void {
-                    this->executeOperation(this->operatorRegistry->get(op.operatorNumber), const_cast<OperationBody&>(op), options);
-                });
-            };
-            break;
-    }
 }
 
 bool OperatorDispatcher::isAuthorizedToExecute(std::shared_ptr<Operator> operatorToExecute, AuthenticationType authenticationOfUser) {

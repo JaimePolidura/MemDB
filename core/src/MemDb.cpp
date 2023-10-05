@@ -83,8 +83,8 @@ std::vector<uint64_t> MemDb::restoreSingleOplog() {
     return std::vector<uint64_t>{!opLogsFromDisk.empty() ? opLogsFromDisk[opLogsFromDisk.size() - 1].timestamp : 0};
 }
 
-void MemDb::applyUnsyncedOplogFromCluster(const std::vector<OperationBody>& opLogs, bool dontSaveInOperationLog) {
-    for(const auto& operationLogInDisk : opLogs) {
+void MemDb::applyUnsyncedOplogFromCluster(std::vector<OperationBody>& opLogs, bool dontSaveInOperationLog) {
+    for(OperationBody& operationLogInDisk : opLogs) {
         this->operatorDispatcher->executeOperation(
                 this->operatorRegistry->get(operationLogInDisk.operatorNumber),
                 operationLogInDisk,

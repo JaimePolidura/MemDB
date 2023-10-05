@@ -24,13 +24,11 @@ private:
 public:
     static constexpr int OPERATOR_NUMBER = 0x06;
 
-    Response operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies dependencies) override;
+    Response operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies& dependencies) override;
 
     OperatorType type() override;
 
     std::vector<AuthenticationType> authorizedToExecute() override;
-
-    std::vector<OperatorDependency> dependencies() override;
 
     std::string name() override;
 

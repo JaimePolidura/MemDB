@@ -57,6 +57,8 @@ std::vector<OperationBody> SingleOperationLog::getAfterTimestamp(uint64_t since,
 //
 //        return this->filterIfTimestampAfterThan(compacted, since);
 //    }
+
+    return {};
 }
 
 std::vector<OperationBody> SingleOperationLog::get(const OperationLogOptions option) {

@@ -3,8 +3,7 @@
 #include "operators/Operator.h"
 #include "operators/OperatorRegistry.h"
 #include "operators/DbOperatorExecutor.h"
-#include "operators/dependencies/OperatorDependencies.h"
-#include "operators/dependencies/OperatorDependency.h"
+#include "OperatorDependencies.h"
 
 #include "messages/response/ErrorCode.h"
 #include "persistence/oplog/SingleOperationLog.h"
@@ -33,7 +32,7 @@ public:
     void executeOperations(std::shared_ptr<Operator> operatorToExecute,
                           const std::vector<OperationBody>& operations,
                           const OperationOptions& options);
-    
+
     Response executeOperation(std::shared_ptr<Operator> operatorToExecute,
                               OperationBody& operation,
                               const OperationOptions& options);
@@ -43,9 +42,7 @@ public:
 private:
     Response dispatch_no_applyDelayedOperationsBuffer(const Request& request);
 
-    OperatorDependencies getDependencies(std::shared_ptr<Operator> operatorToGetDependencies);
-
-    void getDependency(OperatorDependency dependency, OperatorDependencies * operatorDependencies);
+    OperatorDependencies getDependencies();
 
     bool isAuthorizedToExecute(std::shared_ptr<Operator> operatorToExecute, AuthenticationType authenticationOfUser);
 

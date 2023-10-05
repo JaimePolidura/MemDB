@@ -52,12 +52,6 @@ uint32_t MultipleOperationLog::getNumberOplogFiles() {
     return this->operationLogs.size();
 }
 
-void MultipleOperationLog::flush() {
-    for (const auto &operationLog: this->operationLogs) {
-        operationLog->flush();
-    }
-}
-
 void MultipleOperationLog::initializeOplogs(int numberOplogs, std::function<std::string(int)> oplogFileNameResolver) {
     for(int i = 0; i < numberOplogs; i++) {
         std::string fileName = oplogFileNameResolver(i);

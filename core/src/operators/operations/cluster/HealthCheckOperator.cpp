@@ -1,15 +1,11 @@
 #include "operators/operations/cluster/HealthCheckOperator.h"
 
-Response HealthCheckOperator::operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies dependencies) {
+Response HealthCheckOperator::operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) {
     return Response::success();
 }
 
 std::vector<AuthenticationType> HealthCheckOperator::authorizedToExecute() {
     return { AuthenticationType::MAINTENANCE };
-}
-
-std::vector<OperatorDependency> HealthCheckOperator::dependencies() {
-    return {};
 }
 
 constexpr OperatorType HealthCheckOperator::type() {

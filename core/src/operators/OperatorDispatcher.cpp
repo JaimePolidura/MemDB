@@ -28,7 +28,7 @@ Response OperatorDispatcher::dispatch_no_applyDelayedOperationsBuffer(const Requ
     bool writeDbRequest = operatorToExecute->type() == OperatorType::DB_STORE_WRITE;
     bool readDbRequest = operatorToExecute->type() == OperatorType::DB_STORE_READ;
 
-    OperationOptions options = {.checkTimestamps = writeDbRequestFromNode};
+    OperationOptions options = {.checkTimestamps = writeDbRequestFromNode, .updateClockStrategy = LamportClock::UpdateClockStrategy::TICK};
 
     this->logger->debugInfo("Received request for operator {0} from {1}", request.requestNumber, operatorToExecute->name(),
                             options.checkTimestamps ? "node" : "user");
@@ -44,9 +44,7 @@ Response OperatorDispatcher::dispatch_no_applyDelayedOperationsBuffer(const Requ
         return Response::success();
     }
 
-    Response result = this->executeOperation(operatorToExecute, request.operation, options);
-
-    return result;
+    return this->executeOperation(operatorToExecute, request.operation, options);
 }
 
 void OperatorDispatcher::executeOperations(std::shared_ptr<Operator> operatorToExecute,
@@ -66,7 +64,7 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
     Response result = operatorToExecute->operate(operation, options, dependencies);
 
     this->logger->debugInfo("Executed {0} append request for operator {1} from {2}",
-                            result.isSuccessful ? "successfuly" : "unsuccessfuly",
+                            result.isSuccessful ? "successfully" : "unsuccessfully",
                             operatorToExecute->name(), options.checkTimestamps ? "node" : "user");
 
     if(operatorToExecute->type() == DB_STORE_WRITE && result.isSuccessful && !options.onlyExecute) {
@@ -74,14 +72,16 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
             this->operationLog->add(operation);
         }
 
-        if(!options.checkTimestamps) {
+        if(options.updateClockStrategy == LamportClock::UpdateClockStrategy::TICK){
             result.timestamp = this->clock->tick(operation.timestamp);
+        } else if (options.updateClockStrategy == LamportClock::UpdateClockStrategy::SET)  {
+            result.timestamp = this->clock->set(operation.timestamp);
         }
 
-        if(isInReplicationMode() && !options.checkTimestamps && !options.dontBroadcastToCluster){
+        if(isInReplicationMode() && options.fromClient() && !options.dontBroadcastToCluster){
             this->cluster->broadcast(operation);
 
-            this->logger->debugInfo("Broadcasted request for operator {0} from {1}",
+            this->logger->debugInfo("Broadcast request for operator {0} from {1}",
                                     operatorToExecute->name(), options.checkTimestamps ? "node" : "user");
         }
     }

@@ -166,7 +166,9 @@ private:
             last->keyHash = toInsert->keyHash;
             last->value = toInsert->value;
             last->key = toInsert->key;
-            last->timestamp = toInsert->timestamp;
+            if(last->timestamp < toInsert->timestamp){
+                last->timestamp = toInsert->timestamp;
+            }
         }
 
         return this->rebalance(last);

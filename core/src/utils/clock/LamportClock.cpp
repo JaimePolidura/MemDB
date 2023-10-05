@@ -17,11 +17,21 @@ uint64_t LamportClock::tick(uint64_t other) {
     uint64_t newCounter = max + 1;
 
     do {
-        actualCounterValue = this->counter.load();
+        actualCounterValue = this->counter.load(std::memory_order_acquire);
         newCounter = std::max(actualCounterValue, other) + 1;
     } while(!this->counter.compare_exchange_weak(actualCounterValue, newCounter, std::memory_order_release));
 
     return newCounter;
+}
+
+uint64_t LamportClock::set(uint64_t newCounter) {
+    uint64_t actual = this->counter.load(std::memory_order_acquire);
+
+    while (newCounter > actual && !this->counter.compare_exchange_weak(actual, newCounter, std::memory_order_release)) {
+        actual = this->counter.load(std::memory_order_acquire);
+    }
+
+    return newCounter > actual ? newCounter : actual;
 }
 
 //Returns if this clock is bigger than the passed by arguments

@@ -84,11 +84,16 @@ std::vector<uint64_t> MemDb::restoreSingleOplog() {
 }
 
 void MemDb::applyUnsyncedOplogFromCluster(const std::vector<OperationBody>& opLogs, bool dontSaveInOperationLog) {
-    for(const auto& operationLogInDisk : opLogs)
+    for(const auto& operationLogInDisk : opLogs) {
         this->operatorDispatcher->executeOperation(
                 this->operatorRegistry->get(operationLogInDisk.operatorNumber),
                 operationLogInDisk,
-                OperationOptions{.checkTimestamps = true, .dontBroadcastToCluster = true, .dontSaveInOperationLog = dontSaveInOperationLog});
+                OperationOptions{
+                        .checkTimestamps = true,
+                        .dontBroadcastToCluster = true,
+                        .dontSaveInOperationLog = dontSaveInOperationLog,
+                        .updateClockStrategy = LamportClock::UpdateClockStrategy::SET });
+    }
 
     this->operatorDispatcher->applyDelayedOperationsBuffer();
 }

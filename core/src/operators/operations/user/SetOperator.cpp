@@ -4,8 +4,8 @@ Response SetOperator::operate(const OperationBody& operation, const OperationOpt
     SimpleString key = operation.args->at(0);
     SimpleString value = operation.args->at(1);
 
-    bool ignoreTimestmaps = !options.checkTimestamps;
-    bool updated = dependencies.dbStore->put(key, value, ignoreTimestmaps, operation.timestamp, operation.nodeId);
+    bool ignoreTimestamps = !options.checkTimestamps;
+    bool updated = dependencies.dbStore->put(key, value, ignoreTimestamps, operation.timestamp, operation.nodeId);
 
     return updated ?
         Response::success() :

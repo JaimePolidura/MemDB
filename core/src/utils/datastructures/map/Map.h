@@ -109,10 +109,10 @@ bool Map<SizeValue>::put(const SimpleString<SizeValue>& key, const SimpleString<
     lockWrite(keyHash);
 
     AVLTree<SizeValue> * bucket = this->getBucket(keyHash);
-    bool areadyContained = bucket->contains(keyHash);
+    bool alreadyContained = bucket->contains(keyHash);
     bool added = bucket->add(key, keyHash, value, ignoreTimestamps, timestamp, nodeId);
 
-    if(added && !areadyContained) {
+    if(added && !alreadyContained) {
         this->size++;
     }
 

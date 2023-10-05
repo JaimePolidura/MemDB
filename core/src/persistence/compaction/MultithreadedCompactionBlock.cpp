@@ -22,10 +22,10 @@ std::future<std::vector<OperationBody>> MultiThreadedCompactionBlock::mergeAndCo
     return std::async(std::launch::async, [this](std::shared_future<std::vector<OperationBody>> leftToCompactParam,
                                                  std::shared_future<std::vector<OperationBody>> rightToCompactParam){
         std::vector<OperationBody> compacted{};
-        setSimpleString_t alreadySennKeys{};
+        timestampsByKeysMap_t timestampsByKeys{};
 
-        this->operationLogCompacter.compact(rightToCompactParam.get(), compacted, alreadySennKeys);
-        this->operationLogCompacter.compact(leftToCompactParam.get(), compacted, alreadySennKeys);
+        this->operationLogCompacter.compact(rightToCompactParam.get(), compacted, timestampsByKeys);
+        this->operationLogCompacter.compact(leftToCompactParam.get(), compacted, timestampsByKeys);
 
         return compacted;
     }, leftToCompact.share(), rightToCompact.share());

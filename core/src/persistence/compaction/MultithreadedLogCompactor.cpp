@@ -13,7 +13,7 @@ MultiThreadedCompactionBlock * MultiThreadedLogCompactor::createCompactionTree(a
 
 std::map<int, std::vector<MultiThreadedCompactionBlock *>> MultiThreadedLogCompactor::createBlocksByPhaseMap(allOperationLogs_t uncompacted) {
     uint32_t numberThreads = std::thread::hardware_concurrency();
-    // We want the number of nodes that are goning to perform compaction to be the same as the number of threads. Min height nodes dont perform compaction
+    // We want the number of nodes that are goning to perform compaction to be the same as the number of threads. Min height nodes don't perform compaction
     uint32_t height = std::log2(numberThreads) + 2;
     std::map<int, std::vector<MultiThreadedCompactionBlock *>> blocksByPhase;
 

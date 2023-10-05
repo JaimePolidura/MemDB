@@ -25,7 +25,7 @@ struct OperationBody {
                   std::shared_ptr<std::vector<SimpleString<memDbDataLength_t>>> argsCons);
 
     bool operator==(const OperationBody& a) const;
-
+    
     memDbDataLength_t getTotalLength(bool includesNodeId) const;
 
     arg_t getArg(int position) const;

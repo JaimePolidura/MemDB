@@ -68,14 +68,16 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
                             operatorToExecute->name(), options.checkTimestamps ? "node" : "user");
 
     if(operatorToExecute->type() == DB_STORE_WRITE && result.isSuccessful && !options.onlyExecute) {
-        if(!options.dontSaveInOperationLog){
-            this->operationLog->add(operation);
-        }
-
         if(options.updateClockStrategy == LamportClock::UpdateClockStrategy::TICK){
             result.timestamp = this->clock->tick(operation.timestamp);
+            operation = result.timestamp;
         } else if (options.updateClockStrategy == LamportClock::UpdateClockStrategy::SET)  {
             result.timestamp = this->clock->set(operation.timestamp);
+            operation = result.timestamp;
+        }
+
+        if(!options.dontSaveInOperationLog){
+            this->operationLog->add(operation);
         }
 
         if(isInReplicationMode() && options.fromClient() && !options.dontBroadcastToCluster){

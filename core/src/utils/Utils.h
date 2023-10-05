@@ -5,6 +5,15 @@
 class Utils {
 public:
     template<typename K, typename V>
+    static std::vector<V> collectValuesInto(const std::map<K, V>& map, std::vector<V>& vector) {
+        for (const auto& entry : map) {
+            vector.push_back(entry.second);
+        }
+
+        return vector;
+    }
+
+    template<typename K, typename V>
     static std::map<K, V> unionMaps(const std::map<K, V>& first, const std::map<K, V>& second) {
         std::map<K, V> toReturn{};
 

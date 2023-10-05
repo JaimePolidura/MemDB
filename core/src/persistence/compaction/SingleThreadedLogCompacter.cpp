@@ -1,23 +1,28 @@
 #include "persistence/compaction/SingleThreadedLogCompacter.h"
 
-auto SingleThreadedLogCompacter::compact(const std::vector<OperationBody>& uncompacted,
-             const std::vector<OperationBody>& compacted,
-             const setSimpleString_t& seenOperationKeys) -> std::vector<OperationBody> {
-    if(uncompacted.empty()) {
-        return uncompacted;
-    }
+auto SingleThreadedLogCompacter::compact(
+        const std::vector<OperationBody>& uncompacted,
+        const std::vector<OperationBody>& compacted,
+        const timestampsByKeysMap_t& timestampsByKeys) -> std::vector<OperationBody> {
+
+    std::map<SimpleString<memDbDataLength_t>, OperationBody> compactedToReturn{};
 
     for(int i = uncompacted.size() - 1; i >= 0; i--) {
         auto actualOperation = uncompacted[i];
         auto actualOperationKey = * actualOperation.args->begin();
+        auto actualTimestamp = actualOperation.timestamp;
+        
+        if(timestampsByKeys.contains(actualOperationKey)){
+            if(timestampsByKeys.at(actualOperationKey) < actualTimestamp) {
+                compactedToReturn[actualOperationKey] = actualOperation;
+            }
 
-        if(seenOperationKeys.contains(actualOperationKey)){
             continue;
         }
 
-        const_cast<setSimpleString_t&>(seenOperationKeys).insert(actualOperationKey);
-        const_cast<std::vector<OperationBody>&>(compacted).push_back(actualOperation);
+        const_cast<timestampsByKeysMap_t&>(timestampsByKeys)[actualOperationKey] = actualTimestamp;
+        compactedToReturn[actualOperationKey] = actualOperation;
     }
 
-    return compacted;
+    return Utils::collectValuesInto(compactedToReturn, const_cast<std::vector<OperationBody>&>(compacted));
 }

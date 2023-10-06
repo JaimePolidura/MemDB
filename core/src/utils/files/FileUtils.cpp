@@ -30,6 +30,23 @@ void FileUtils::createDirectory(const std::string &path) {
 #endif
 }
 
+std::vector<std::string> FileUtils::ls(const std::string &path) {
+    std::vector<std::string> filesNames{};
+
+    for(auto const& file : std::filesystem::directory_iterator(path)){
+        if(file.is_regular_file()){
+            filesNames.push_back(file.path().filename().string());
+        }
+    }
+
+    return filesNames;
+}
+
+uint64_t FileUtils::size(const std::string &basePath, const std::string &fileName) {
+    std::ifstream in(basePath + "/" + fileName, std::ifstream::ate | std::ifstream::binary);
+    return in.tellg();
+}
+
 void FileUtils::createFile(const std::string &path, const std::string &name) {
 #ifdef _WIN32
     HANDLE handle = CreateFile((path + "\\" + name).c_str(), GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -56,7 +73,7 @@ std::string FileUtils::getFileInPath(const std::string &basePath, const std::str
 #ifdef _WIN32
     return basePath + "\\" + fileName;
 #else
-    return basePath + "/" + fileName;
+    return memdDbBasePath + "/" + FILE_NAME;
 #endif
 }
 

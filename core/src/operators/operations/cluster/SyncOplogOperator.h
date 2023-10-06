@@ -3,7 +3,7 @@
 #include "operators/Operator.h"
 #include "messages/response/ErrorCode.h"
 #include "utils/Utils.h"
-#include "persistence/OperationLogSerializer.h"
+#include "persistence/utils/OperationLogSerializer.h"
 #include "persistence/compaction/OperationLogCompacter.h"
 #include "config/keys/ConfigurationKeys.h"
 #include "operators/OperatorDependencies.h"

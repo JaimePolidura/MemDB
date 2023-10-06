@@ -6,9 +6,9 @@
 #include "utils/datastructures/map/Map.h"
 #include "utils/Utils.h"
 
-#include "persistence/OperationLogDeserializer.h"
+#include "persistence/serializers/OperationLogDeserializer.h"
 #include "operators/operations/user/SetOperator.h"
-#include "persistence/OperationLogSerializer.h"
+#include "persistence/utils/OperationLogSerializer.h"
 #include "config/Configuration.h"
 
 class OperationLogDiskLoader {

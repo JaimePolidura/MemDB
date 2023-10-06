@@ -1,6 +1,6 @@
 #pragma once
 
-#include "persistence/OperationLogUtils.h"
+#include "persistence/utils/OperationLogUtils.h"
 #include "messages/request/Request.h"
 #include "shared.h"
 

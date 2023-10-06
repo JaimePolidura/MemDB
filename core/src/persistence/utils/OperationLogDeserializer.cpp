@@ -1,4 +1,4 @@
-#include "persistence/OperationLogDeserializer.h"
+#include "OperationLogDeserializer.h"
 
 std::vector<OperationBody> OperationLogDeserializer::deserializeAll(const std::vector<uint8_t>& bytes) {
     std::vector<OperationBody> logs{};

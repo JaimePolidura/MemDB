@@ -3,8 +3,8 @@
 #include "logging/Logger.h"
 #include "cluster/Cluster.h"
 #include "operators/OperatorDispatcher.h"
-#include "persistence/OperationLogSerializer.h"
-#include "persistence/OperationLogUtils.h"
+#include "persistence/utils/OperationLogSerializer.h"
+#include "persistence/utils/OperationLogUtils.h"
 #include "persistence/OperationLogInvalidator.h"
 #include "cluster/partitions/PartitionNeighborsNodesGroupSetter.h"
 

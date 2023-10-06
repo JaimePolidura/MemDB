@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "../Assertions.h"
-#include "persistence/OperationLogSerializer.h"
+#include "persistence/utils/OperationLogSerializer.h"
 
 TEST(OperationLogSerializer, ShouldSerializeWithArgs) {
     OperationLogSerializer operationLogSerializer{};

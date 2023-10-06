@@ -1,4 +1,4 @@
-#include "persistence/OperationLogSerializer.h"
+#include "OperationLogSerializer.h"
 
 std::shared_ptr<std::vector<uint8_t>> OperationLogSerializer::serializeAllShared(const std::vector<OperationBody>& toSerialize) {
     std::shared_ptr<std::vector<uint8_t>> vectorShared = std::make_shared<std::vector<uint8_t>>();

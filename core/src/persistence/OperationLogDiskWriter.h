@@ -5,7 +5,7 @@
 #include "shared.h"
 
 #include "utils/files/FileUtils.h"
-#include "persistence/OperationLogSerializer.h"
+#include "persistence/utils/OperationLogSerializer.h"
 #include "config/Configuration.h"
 
 class OperationsLogDiskWriter {

@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "persistence/OperationLogDeserializer.h"
+#include "persistence/serializers/OperationLogDeserializer.h"
 
 TEST(OperationLogDeserializer, ShouldDeserialize) {
     OperationLogDeserializer operationLogDeserializer{};

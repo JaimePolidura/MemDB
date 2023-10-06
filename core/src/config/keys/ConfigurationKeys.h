@@ -13,6 +13,7 @@ public:
     static const std::string MEMDB_CORE_SERVER_THREADS;
     static const std::string MEMDB_CORE_NUMBER_BUCKETS;
     static const std::string MEMDB_CORE_PERSISTANCE_WRITE_EVERY;
+    static const std::string PERSISTENCE_SEGMENT_SIZE_MB;
 
     static const std::string MEMDB_CORE_SHOW_DEBUG_LOG;
     static const std::string MEMDB_CORE_USE_REPLICATION;

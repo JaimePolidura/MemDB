@@ -10,6 +10,7 @@ const std::string ConfigurationKeys::MEMDB_CORE_SERVER_THREADS = "MEMDB_CORE_SER
 const std::string ConfigurationKeys::MEMDB_CORE_NUMBER_BUCKETS = "MEMDB_CORE_NUMBER_BUCKETS";
 const std::string ConfigurationKeys::MEMDB_CORE_PERSISTANCE_WRITE_EVERY = "MEMDB_CORE_PERSISTANCE_WRITE_EVERY";
 const std::string ConfigurationKeys::MEMDB_CORE_SHOW_DEBUG_LOG = "MEMDB_CORE_SHOW_DEBUG_LOG";
+const std::string ConfigurationKeys::PERSISTENCE_SEGMENT_SIZE_MB = "PERSISTENCE_SEGMENT_SIZE_MB";
 
 const std::string ConfigurationKeys::MEMDB_CORE_CLUSTER_MANAGER_ADDRESS = "MEMDB_CORE_CLUSTER_MANAGER_ADDRESS";
 const std::string ConfigurationKeys::MEMDB_CORE_USE_REPLICATION = "MEMDB_CORE_USE_REPLICATION";

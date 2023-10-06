@@ -7,7 +7,7 @@
 #include "persistence/compaction/OperationLogCompacter.h"
 #include "persistence/OperationLogDiskLoader.h"
 #include "persistence/OperationLogDiskWriter.h"
-#include "persistence/oplog/buffer/OperationLogBuffer.h"
+#include "persistence/buffer/OperationLogBuffer.h"
 #include "persistence/oplog/OperationLog.h"
 
 #include "config/Configuration.h"

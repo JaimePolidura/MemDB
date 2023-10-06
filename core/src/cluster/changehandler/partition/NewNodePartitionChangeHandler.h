@@ -7,8 +7,8 @@
 
 #include "operators/OperatorDispatcher.h"
 
-#include "persistence/OperationLogSerializer.h"
-#include "persistence/OperationLogUtils.h"
+#include "persistence/utils/OperationLogSerializer.h"
+#include "persistence/utils/OperationLogUtils.h"
 #include "persistence/OperationLogInvalidator.h"
 
 class NewNodePartitionChangeHandler {

@@ -2,9 +2,9 @@
 
 #include "operators/Operator.h"
 #include "messages/response/ErrorCode.h"
-#include "persistence/OperationLogDeserializer.h"
+#include "persistence/serializers/OperationLogDeserializer.h"
 #include "persistence/OperationLogInvalidator.h"
-#include "persistence/OperationLogUtils.h"
+#include "persistence/utils/OperationLogUtils.h"
 
 /**
  * Flags:

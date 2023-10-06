@@ -1,4 +1,4 @@
-#include "persistence/OperationLogUtils.h"
+#include "OperationLogUtils.h"
 
 std::vector<SimpleString<memDbDataLength_t>> OperationLogUtils::getUniqueKeys(const std::vector<OperationBody>& operationLogs) {
     setSimpleString_t keysAlreadySeen{};

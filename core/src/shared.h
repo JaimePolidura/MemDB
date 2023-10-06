@@ -48,6 +48,7 @@
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <openssl/md5.h>
+#include <boost/crc.hpp>
 
 //OS
 //#ifdef _WIN32

@@ -7,7 +7,7 @@
 #include "utils/clock/LamportClock.h"
 #include "cluster/setup/ClusterCreator.h"
 #include "logging/Logger.h"
-#include "persistence/oplog/SingleOperationLog.h"
+#include "persistence/SingleOperationLog.h"
 
 #include "memdbtypes.h"
 

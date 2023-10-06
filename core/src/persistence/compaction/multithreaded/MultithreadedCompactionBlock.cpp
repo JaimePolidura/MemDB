@@ -1,4 +1,4 @@
-#include "persistence/compaction/MultithreadedCompactionBlock.h"
+#include "MultithreadedCompactionBlock.h"
 
 MultiThreadedCompactionBlock::MultiThreadedCompactionBlock(bool firstPhase, std::vector<OperationBody> operations):
         firstPhase(firstPhase), operationsFirstPhase(operations), left(nullptr), right(nullptr) {}

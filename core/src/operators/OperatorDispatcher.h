@@ -6,7 +6,7 @@
 #include "OperatorDependencies.h"
 
 #include "messages/response/ErrorCode.h"
-#include "persistence/oplog/SingleOperationLog.h"
+#include "persistence/SingleOperationLog.h"
 #include "utils/clock/LamportClock.h"
 #include "cluster/Cluster.h"
 #include "DelayedOperationsBuffer.h"

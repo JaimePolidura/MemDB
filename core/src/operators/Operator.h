@@ -5,7 +5,7 @@
 #include "messages/response/Response.h"
 #include "utils/datastructures/map/Map.h"
 #include "shared.h"
-#include "persistence/oplog/OperationLog.h"
+#include "persistence/OperationLog.h"
 #include "OperatorDependencies.h"
 
 enum OperatorType {

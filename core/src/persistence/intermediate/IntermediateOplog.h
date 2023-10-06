@@ -4,7 +4,7 @@
 #include "messages/request/Request.h"
 #include "config/Configuration.h"
 #include "utils/files/FileUtils.h"
-#include "persistence/utils/OperationLogSerializer.h"
+#include "persistence/serializers/OperationLogSerializer.h"
 
 class IntermediateOplog {
 private:

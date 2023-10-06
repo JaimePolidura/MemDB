@@ -1,4 +1,4 @@
-#include "persistence/compaction/SingleThreadedLogCompacter.h"
+#include "SingleThreadedLogCompacter.h"
 
 auto SingleThreadedLogCompacter::compact(
         const std::vector<OperationBody>& uncompacted,

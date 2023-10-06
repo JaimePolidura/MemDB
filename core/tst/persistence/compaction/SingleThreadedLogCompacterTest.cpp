@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "persistence/compaction/SingleThreadedLogCompacter.h"
+#include "persistence/compaction/singlethreaded/SingleThreadedLogCompacter.h"
 #include "CompactionTestUtils.h"
 #include "../../Assertions.h"
 

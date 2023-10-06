@@ -3,7 +3,7 @@
 #include "operators/Operator.h"
 #include "messages/response/ErrorCode.h"
 #include "persistence/serializers/OperationLogDeserializer.h"
-#include "persistence/OperationLogInvalidator.h"
+#include "persistence/utils/OperationLogInvalidator.h"
 #include "persistence/utils/OperationLogUtils.h"
 
 /**

@@ -3,9 +3,9 @@
 #include "logging/Logger.h"
 #include "cluster/Cluster.h"
 #include "operators/OperatorDispatcher.h"
-#include "persistence/utils/OperationLogSerializer.h"
+#include "persistence/serializers/OperationLogSerializer.h"
 #include "persistence/utils/OperationLogUtils.h"
-#include "persistence/OperationLogInvalidator.h"
+#include "persistence/utils/OperationLogInvalidator.h"
 #include "cluster/partitions/PartitionNeighborsNodesGroupSetter.h"
 
 class DeletionNodeChangeHandler {

@@ -2,7 +2,7 @@
 
 #include "shared.h"
 
-#include "persistence/v2/index/OplogIndexSegmentWriter.h"
+#include "OplogIndexSegmentWriter.h"
 #include "config/Configuration.h"
 #include "utils/files/FileUtils.h"
 

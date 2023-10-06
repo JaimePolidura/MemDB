@@ -1,6 +1,6 @@
 #pragma once
 
-#include "persistence/oplog/OperationLog.h"
+#include "persistence/OperationLog.h"
 #include "utils/datastructures/map/Map.h"
 #include "cluster/Cluster.h"
 #include "operators/OperationOptions.h"

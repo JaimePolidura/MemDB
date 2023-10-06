@@ -34,3 +34,9 @@ std::vector<uint8_t> Utils::appendToBuffer(const uint8_t * toAppendPtr, const ui
 
     return vectorOut;
 }
+
+uint32_t Utils::crc(const std::vector<uint8_t>& values) {
+    boost::crc_32_type crcCalculator;
+    crcCalculator.process_bytes(values.data(), values.size());
+    return crcCalculator.checksum();
+}

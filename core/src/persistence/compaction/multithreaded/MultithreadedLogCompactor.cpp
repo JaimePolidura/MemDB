@@ -1,4 +1,4 @@
-#include "persistence/compaction/MultithreadedLogCompactor.h"
+#include "MultithreadedLogCompactor.h"
 
 std::vector<OperationBody> MultiThreadedLogCompactor::compact(allOperationLogs_t uncompacted) {
     return createCompactionTree(uncompacted)->get().get();

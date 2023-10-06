@@ -2,7 +2,7 @@
 
 #include "cluster/Cluster.h"
 #include "cluster/changehandler/ClusterDbNodeChangeHandler.h"
-#include "persistence/oplog/OperationLog.h"
+#include "persistence/OperationLog.h"
 
 #include "utils/Utils.h"
 

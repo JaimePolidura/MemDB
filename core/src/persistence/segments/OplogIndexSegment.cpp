@@ -6,12 +6,12 @@ OplogIndexSegment::OplogIndexSegment(configuration_t configuration, uint32_t opl
         partitionPath(memdDbBasePath + "/" + std::to_string(oplogId)),
         fullPathIndex(partitionPath + "/" + INDEX_FILE_NAME),
         fullPathData(partitionPath + "/" + DATA_FILE_NAME),
-        oplogIndexSegmentWriter(partitionPath) {
+        oplogIndexSegmentWriter(partitionPath, DATA_FILE_NAME, INDEX_FILE_NAME) {
     this->initializeFiles();
 }
 
 void OplogIndexSegment::save(const std::vector<uint8_t>& toSave) {
-
+    this->oplogIndexSegmentWriter.write(toSave);
 }
 
 void OplogIndexSegment::initializeFiles() {

@@ -1,4 +1,4 @@
-#include "persistence/OperationLogInvalidator.h"
+#include "OperationLogInvalidator.h"
 
 std::vector<OperationBody> OperationLogInvalidator::getInvalidationOperations(const std::vector<OperationBody> &toInvalidate) {
     std::vector<SimpleString<memDbDataLength_t>> keys = OperationLogUtils::getUniqueKeys(toInvalidate);

@@ -2,7 +2,7 @@
 #include "gmock/gmock.h"
 
 #include "operators/operations/cluster/SyncOplogOperator.h"
-#include "persistence/oplog/SingleOperationLog.h"
+#include "persistence/SingleOperationLog.h"
 #include "../../cluster/ClusterTest.h"
 
 using ::testing::_;

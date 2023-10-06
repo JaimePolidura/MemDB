@@ -21,7 +21,7 @@ operationLog_t MemDbCreator::createOperationLogObject(configuration_t configurat
     if(configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS)){
         return setupMultipleOplogConfiguration(configuration, cluster);
     }else{
-        return std::make_shared<SingleOperationLog>(configuration, "oplog-0");
+        return std::make_shared<SingleOperationLog>(configuration, 0);
     }
 }
 

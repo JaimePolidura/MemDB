@@ -8,8 +8,8 @@
 #include "auth/Authenticator.h"
 #include "config/ConfigurationLoader.h"
 
-#include "persistence/oplog/MultipleOperationLog.h"
-#include "persistence/oplog/SingleOperationLog.h"
+#include "persistence/MultipleOperationLog.h"
+#include "persistence/SingleOperationLog.h"
 
 class MemDbCreator {
 public:

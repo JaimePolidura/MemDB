@@ -10,11 +10,5 @@ public:
 
     Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) override;
 
-    std::vector<AuthenticationType> authorizedToExecute() override;
-
-    OperatorType type() override;
-
-    uint8_t operatorNumber() override;
-
-    std::string name() override;
+    constexpr OperatorDescriptor desc() override;
 };

@@ -12,17 +12,19 @@ enum OperatorType {
     DB_STORE_READ, DB_STORE_WRITE, NODE_MAINTENANCE
 };
 
+struct OperatorDescriptor {
+    OperatorType type;
+    uint8_t number;
+    std::string name;
+    std::vector<AuthenticationType> authorizedToExecute;
+    bool isMulti;
+};
+
 class Operator {
 public:
     virtual Response operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies& dependencies) = 0;
 
-    virtual OperatorType type() = 0;
-
-    virtual uint8_t operatorNumber() = 0;
-
-    virtual std::vector<AuthenticationType> authorizedToExecute() = 0;
-
-    virtual std::string name() = 0;
+    virtual constexpr OperatorDescriptor desc() = 0;
 };
 
 using operator_t = std::shared_ptr<Operator>;

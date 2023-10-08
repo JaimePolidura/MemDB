@@ -24,13 +24,13 @@ Response OperatorDispatcher::dispatch_no_applyDelayedOperationsBuffer(const Requ
         return Response::error(ErrorCode::NOT_AUTHORIZED);
     }
 
-    bool writeDbRequestFromNode = operatorToExecute->type() == OperatorType::DB_STORE_WRITE && request.authenticationType == AuthenticationType::NODE;
-    bool writeDbRequest = operatorToExecute->type() == OperatorType::DB_STORE_WRITE;
-    bool readDbRequest = operatorToExecute->type() == OperatorType::DB_STORE_READ;
+    bool writeDbRequestFromNode = operatorToExecute->desc().type == OperatorType::DB_STORE_WRITE && request.authenticationType == AuthenticationType::NODE;
+    bool writeDbRequest = operatorToExecute->desc().type == OperatorType::DB_STORE_WRITE;
+    bool readDbRequest = operatorToExecute->desc().type == OperatorType::DB_STORE_READ;
 
     OperationOptions options = {.checkTimestamps = writeDbRequestFromNode, .updateClockStrategy = LamportClock::UpdateClockStrategy::TICK};
 
-    this->logger->debugInfo("Received request for operator {0} from {1}", request.requestNumber, operatorToExecute->name(),
+    this->logger->debugInfo("Received request for operator {0} from {1}", request.requestNumber, operatorToExecute->desc().name,
                             options.checkTimestamps ? "node" : "user");
 
     if(isInReplicationMode() && (!canAcceptRequest() || (readDbRequest && !canExecuteRequest()))) {
@@ -66,9 +66,9 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
 
     this->logger->debugInfo("Executed {0} append request for operator {1} from {2}",
                             result.isSuccessful ? "successfully" : "unsuccessfully",
-                            operatorToExecute->name(), options.checkTimestamps ? "node" : "user");
+                            operatorToExecute->desc().name, options.checkTimestamps ? "node" : "user");
 
-    if(operatorToExecute->type() == DB_STORE_WRITE && result.isSuccessful && !options.onlyExecute) {
+    if(operatorToExecute->desc().type == DB_STORE_WRITE && result.isSuccessful && !options.onlyExecute) {
         uint64_t newTimestamp = this->updateClock(options.updateClockStrategy, operation.timestamp);
         result.timestamp = this->clock->tick(newTimestamp);
         operation.timestamp = newTimestamp;
@@ -81,7 +81,7 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
             this->cluster->broadcast(operation);
 
             this->logger->debugInfo("Broadcast request for operator {0} from {1}",
-                                    operatorToExecute->name(), options.checkTimestamps ? "node" : "user");
+                                    operatorToExecute->desc().name, options.checkTimestamps ? "node" : "user");
         }
     }
 
@@ -125,7 +125,7 @@ OperatorDependencies OperatorDispatcher::getDependencies() {
 }
 
 bool OperatorDispatcher::isAuthorizedToExecute(std::shared_ptr<Operator> operatorToExecute, AuthenticationType authenticationOfUser) {
-    for(AuthenticationType authentationTypeRequiredForOperator : operatorToExecute->authorizedToExecute()) {
+    for(AuthenticationType authentationTypeRequiredForOperator : operatorToExecute->desc().authorizedToExecute) {
         if(authentationTypeRequiredForOperator == authenticationOfUser){
             return true;
         }

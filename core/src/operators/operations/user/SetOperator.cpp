@@ -12,18 +12,12 @@ Response SetOperator::operate(const OperationBody& operation, const OperationOpt
         Response::error(ErrorCode::ALREADY_REPLICATED);
 }
 
-std::vector<AuthenticationType> SetOperator::authorizedToExecute() {
-    return { AuthenticationType::NODE, AuthenticationType::API };
-}
-
-constexpr OperatorType SetOperator::type() {
-    return OperatorType::DB_STORE_WRITE;
-}
-
-constexpr uint8_t SetOperator::operatorNumber() {
-    return OPERATOR_NUMBER;
-}
-
-std::string SetOperator::name() {
-    return "SET";
+constexpr OperatorDescriptor DeleteOperator::desc() {
+    return OperatorDescriptor{
+            .type = OperatorType::DB_STORE_WRITE,
+            .number = OPERATOR_NUMBER,
+            .name = "DELETE",
+            .authorizedToExecute = { AuthenticationType::API, AuthenticationType::NODE },
+            .isMulti = false,
+    };
 }

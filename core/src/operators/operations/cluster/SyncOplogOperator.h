@@ -24,14 +24,7 @@ public:
 
     Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) override;
 
-    std::vector<AuthenticationType> authorizedToExecute() override;
-
-    constexpr OperatorType type() override;
-
-    constexpr uint8_t operatorNumber() override;
-
-    std::string name() override;
-
+    constexpr OperatorDescriptor desc() override;
 private:
     //Timestamp is 64 bits Actual memdb data size is 32 bits. Doest fit, we pass two args that consist of the two parts
     uint64_t parseUnsyncTimestampFromRequest(const OperationBody &operation) const;

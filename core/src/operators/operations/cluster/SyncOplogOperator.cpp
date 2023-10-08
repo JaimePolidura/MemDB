@@ -15,20 +15,14 @@ Response SyncOplogOperator::operate(const OperationBody& operation, const Operat
     return Response::success(SimpleString<memDbDataLength_t>::fromVector(serializedUnsyncedOpLog));
 }
 
-std::vector<AuthenticationType> SyncOplogOperator::authorizedToExecute() {
-    return { AuthenticationType::NODE };
-}
-
-constexpr OperatorType SyncOplogOperator::type() {
-    return OperatorType::NODE_MAINTENANCE;
-}
-
-constexpr uint8_t SyncOplogOperator::operatorNumber() {
-    return OPERATOR_NUMBER;
-}
-
-std::string SyncOplogOperator::name() {
-    return "SYNC_OPLOG";
+constexpr OperatorDescriptor SyncOplogOperator::desc() {
+    return OperatorDescriptor{
+            .type = OperatorType::NODE_MAINTENANCE,
+            .number = OPERATOR_NUMBER,
+            .name = "SYNC",
+            .authorizedToExecute = { AuthenticationType::NODE },
+            .isMulti = true,
+    };
 }
 
 //Timestamp is 64 bits Actual memdb data size is 32 bits. Doest fit, we pass two args that consist of the two parts

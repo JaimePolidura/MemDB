@@ -8,7 +8,7 @@ This is the main component. This stores the data and handles request & replicati
 - TCP protocol is used for serve request.
 - Authentication will be carried by different keys depending on the context. To use the memdb as a user, you will need AUTH_API_KEY.
 - Threads allocated for operations are dynamic. They grow or shrink depending on the demand.
-- Every operation that can be executed in the database (set, delete, get etc.) will be indentified by a operatorNumber, which will be in every request.
+- Every operation that can be executed in the database (set, delete, get etc.) will be indentified by a number, which will be in every request.
 #### Replication
 - When a append from a client is executed successfuly, the server will broadcast the append operation to every node in the cluster.
 - Conflict resolution in replication is handled by LWW (Last append wins) approach. Every replication request & data stored will have a Lamport clock. If a SET request comes in with a lower timestamp than the stored data, it will get rejected.

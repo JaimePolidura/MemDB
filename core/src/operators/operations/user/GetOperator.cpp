@@ -8,18 +8,12 @@ Response GetOperator::operate(const OperationBody& operation, const OperationOpt
         Response::error(ErrorCode::UNKNOWN_KEY); //No successful
 }
 
-std::vector<AuthenticationType> GetOperator::authorizedToExecute() {
-    return { AuthenticationType::API };
-}
-
-constexpr OperatorType GetOperator::type() {
-    return OperatorType::DB_STORE_READ;
-}
-
-constexpr uint8_t GetOperator::operatorNumber() {
-    return OPERATOR_NUMBER;
-}
-
-std::string GetOperator::name() {
-    return "GET";
+constexpr OperatorDescriptor DeleteOperator::desc() {
+    return OperatorDescriptor{
+            .type = OperatorType::DB_STORE_READ,
+            .number = OPERATOR_NUMBER,
+            .name = "GET",
+            .authorizedToExecute = { AuthenticationType::API },
+            .isMulti = false,
+    };
 }

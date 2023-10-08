@@ -46,30 +46,30 @@ TEST(MultiThreadedLogCompactor, ShouldCompact) {
     ASSERT_EQ(compacted.size(), 7);
 
     Assertions::assertAnyMatch<OperationBody>(compacted, [](const auto& op) -> bool {
-        return *op.args->at(0).data() == 'H' && op.operatorNumber == 1 && *op.args->at(1).data() == '1';
+        return *op.args->at(0).data() == 'H' && op.number == 1 && *op.args->at(1).data() == '1';
     });
 
     Assertions::assertAnyMatch<OperationBody>(compacted, [](const auto& op) -> bool {
-        return *op.args->at(0).data() == 'A' && op.operatorNumber == 2;
+        return *op.args->at(0).data() == 'A' && op.number == 2;
     });
 
     Assertions::assertAnyMatch<OperationBody>(compacted, [](const auto& op) -> bool {
-        return *op.args->at(0).data() == 'H' && op.operatorNumber == 1 && *op.args->at(1).data() == '1';
+        return *op.args->at(0).data() == 'H' && op.number == 1 && *op.args->at(1).data() == '1';
     });
 
     Assertions::assertAnyMatch<OperationBody>(compacted, [](const auto& op) -> bool {
-        return *op.args->at(0).data() == 'E' && op.operatorNumber == 1 && *op.args->at(1).data() == '4';
+        return *op.args->at(0).data() == 'E' && op.number == 1 && *op.args->at(1).data() == '4';
     });
 
     Assertions::assertAnyMatch<OperationBody>(compacted, [](const auto& op) -> bool {
-        return *op.args->at(0).data() == 'C' && op.operatorNumber == 1 && *op.args->at(1).data() == '2';
+        return *op.args->at(0).data() == 'C' && op.number == 1 && *op.args->at(1).data() == '2';
     });
 
     Assertions::assertAnyMatch<OperationBody>(compacted, [](const auto& op) -> bool {
-        return *op.args->at(0).data() == 'F' && op.operatorNumber == 2;
+        return *op.args->at(0).data() == 'F' && op.number == 2;
     });
 
     Assertions::assertAnyMatch<OperationBody>(compacted, [](const auto& op) -> bool {
-        return *op.args->at(0).data() == 'D' && op.operatorNumber == 1 && *op.args->at(1).data() == '1';
+        return *op.args->at(0).data() == 'D' && op.number == 1 && *op.args->at(1).data() == '1';
     });
 }

@@ -55,7 +55,7 @@
 //        return AuthenticationType::USER;
 //    }
 //
-//    constexpr uint8_t operatorNumber() {
+//    constexpr uint8_t number() {
 //        return 1;
 //    }
 //
@@ -67,7 +67,7 @@
 //class OperatorDbMock : public OperatorDbMockAdapter {
 //public:
 //    MOCK_METHOD0(type, OperatorType());
-//    MOCK_METHOD0(operatorNumber, uint8_t());
+//    MOCK_METHOD0(number, uint8_t());
 //    MOCK_METHOD0(authorizedToExecute, AuthenticationType());
 //
 //    MOCK_METHOD3(operate, Response(const OperationBody&, const OperationOptions&, memDbDataStore_t));
@@ -222,7 +222,7 @@
 //Request createRequest(uint8_t opNumber, AuthenticationType authType, uint64_t timetamp) {
 //    Request request{};
 //    OperationBody operationBody;
-//    operationBody.operatorNumber = opNumber;
+//    operationBody.number = opNumber;
 //    request.operation = operationBody;
 //    request.authenticationType = authType;
 //    request.operation.timestamp = timetamp;

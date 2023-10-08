@@ -55,6 +55,8 @@ public:
 
     virtual auto getNodeState() -> NodeState;
 
+    auto getNodeId() -> memdbNodeId_t;
+
     auto watchForChangesInNodesClusterDb(std::function<void(node_t nodeChanged, ClusterDbChangeType changeType)> onChangeCallback) -> void;
 
 private:

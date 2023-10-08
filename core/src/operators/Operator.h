@@ -17,7 +17,7 @@ struct OperatorDescriptor {
     uint8_t number;
     std::string name;
     std::vector<AuthenticationType> authorizedToExecute;
-    bool isMulti;
+    bool isMultiResponsesFragment;
 };
 
 class Operator {

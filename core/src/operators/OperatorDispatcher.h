@@ -4,6 +4,7 @@
 #include "operators/OperatorRegistry.h"
 #include "operators/DbOperatorExecutor.h"
 #include "OperatorDependencies.h"
+#include "operators/multi/MultipleResponses.h"
 
 #include "messages/response/ErrorCode.h"
 #include "persistence/SingleOperationLog.h"
@@ -16,6 +17,7 @@ public: //Need it for mocking it
     operatorRegistry_t operatorRegistry;
 private:
     delayedOperationsBuffer_t delayedOperationsBuffer;
+    multipleResponses_t multipleResponses;
     operationLog_t operationLog;
     configuration_t configuration;
     cluster_t cluster;

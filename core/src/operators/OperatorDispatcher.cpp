@@ -1,9 +1,16 @@
 #include "operators/OperatorDispatcher.h"
 
 OperatorDispatcher::OperatorDispatcher(memDbDataStore_t dbCons, lamportClock_t clock, cluster_t cluster, configuration_t configuration,
-        logger_t logger, operationLog_t operationLog): db(dbCons), operationLog(operationLog), clock(clock),
-    operatorRegistry(std::make_shared<OperatorRegistry>()), logger(logger), cluster(cluster),
-    configuration(configuration), delayedOperationsBuffer(std::make_shared<DelayedOperationsBuffer>())
+                                       logger_t logger, operationLog_t operationLog):
+        db(dbCons),
+        operationLog(operationLog),
+        clock(clock),
+        operatorRegistry(std::make_shared<OperatorRegistry>()),
+        logger(logger),
+        cluster(cluster),
+        configuration(configuration),
+        multipleResponses(std::make_shared<MultipleResponses>(cluster->getNodeId())),
+        delayedOperationsBuffer(std::make_shared<DelayedOperationsBuffer>())
 {}
 
 Response OperatorDispatcher::dispatch(const Request& request) {
@@ -28,7 +35,11 @@ Response OperatorDispatcher::dispatch_no_applyDelayedOperationsBuffer(const Requ
     bool writeDbRequest = operatorToExecute->desc().type == OperatorType::DB_STORE_WRITE;
     bool readDbRequest = operatorToExecute->desc().type == OperatorType::DB_STORE_READ;
 
-    OperationOptions options = {.checkTimestamps = writeDbRequestFromNode, .updateClockStrategy = LamportClock::UpdateClockStrategy::TICK};
+    OperationOptions options = {
+            .checkTimestamps = writeDbRequestFromNode,
+            .updateClockStrategy = LamportClock::UpdateClockStrategy::TICK,
+            .requestNumber = request.requestNumber
+    };
 
     this->logger->debugInfo("Received request for operator {0} from {1}", request.requestNumber, operatorToExecute->desc().name,
                             options.checkTimestamps ? "node" : "user");
@@ -42,6 +53,10 @@ Response OperatorDispatcher::dispatch_no_applyDelayedOperationsBuffer(const Requ
     if(isInReplicationMode() && writeDbRequest && canAcceptRequest() && !canExecuteRequest()){
         this->delayedOperationsBuffer->add(request);
         return Response::success();
+    }
+    if(operatorToExecute->desc().isMultiResponsesFragment){
+        bool lastFragment = this->multipleResponses->handleFragmentRequest(request.requestNumber);
+        options.lastFragmentMultiResponses = lastFragment;
     }
 
     OperationBody operationBody = request.operation;
@@ -108,10 +123,11 @@ void OperatorDispatcher::applyDelayedOperationsBuffer() {
 OperatorDependencies OperatorDispatcher::getDependencies() {
     OperatorDependencies dependencies;
 
-    dependencies.operationLog = this->operationLog;
+    dependencies.multipleResponses = this->multipleResponses;
     dependencies.configuration = this->configuration;
-    dependencies.dbStore = this->db;
+    dependencies.operationLog = this->operationLog;
     dependencies.cluster = this->cluster;
+    dependencies.dbStore = this->db;
     dependencies.operatorDispatcher = [this](const OperationBody& op, const OperationOptions& options) -> Response {
         return this->executeOperation(this->operatorRegistry->get(op.operatorNumber), const_cast<OperationBody&>(op), options);
     };
@@ -125,8 +141,8 @@ OperatorDependencies OperatorDispatcher::getDependencies() {
 }
 
 bool OperatorDispatcher::isAuthorizedToExecute(std::shared_ptr<Operator> operatorToExecute, AuthenticationType authenticationOfUser) {
-    for(AuthenticationType authentationTypeRequiredForOperator : operatorToExecute->desc().authorizedToExecute) {
-        if(authentationTypeRequiredForOperator == authenticationOfUser){
+    for(AuthenticationType authenticationTypeRequiredForOperator : operatorToExecute->desc().authorizedToExecute) {
+        if(authenticationTypeRequiredForOperator == authenticationOfUser){
             return true;
         }
     }

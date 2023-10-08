@@ -21,7 +21,7 @@ constexpr OperatorDescriptor SyncOplogOperator::desc() {
             .number = OPERATOR_NUMBER,
             .name = "SYNC",
             .authorizedToExecute = { AuthenticationType::NODE },
-            .isMulti = true,
+            .isMultiResponsesFragment = true,
     };
 }
 

@@ -50,6 +50,10 @@ auto Cluster::getNodeState() -> NodeState {
     return this->selfNode->state;
 }
 
+auto Cluster::getNodeId() -> memdbNodeId_t {
+    return this->selfNode->nodeId;
+}
+
 auto Cluster::watchForChangesInNodesClusterDb(std::function<void(node_t nodeChanged, ClusterDbChangeType changeType)> onChangeCallback) -> void {
     this->clusterDb->watchNodeChanges([this, onChangeCallback](ClusterDbValueChanged nodeChangedEvent) {
         auto node = Node::fromJson(nodeChangedEvent.value);

@@ -18,6 +18,8 @@ public:
 
     static bool exists(const std::string &path);
 
+    static std::vector<uint8_t> seekBytes(const std::string& path, uint64_t ptr, uint64_t total);
+
     static std::vector<std::string> ls(const std::string &path);
 
     static uint64_t size(const std::string& basePath, const std::string& fileName);

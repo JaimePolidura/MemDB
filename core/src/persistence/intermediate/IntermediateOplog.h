@@ -5,9 +5,11 @@
 #include "config/Configuration.h"
 #include "utils/files/FileUtils.h"
 #include "persistence/serializers/OperationLogSerializer.h"
+#include "persistence/serializers/OperationLogDeserializer.h"
 
 class IntermediateOplog {
 private:
+    OperationLogDeserializer operationLogDeserializer;
     OperationLogSerializer operationLogSerializer;
 
     configuration_t configuration;
@@ -30,6 +32,8 @@ public:
     void addAll(const std::vector<OperationBody>& operations);
 
     void setOnFlushingIntermediate(const std::function<void(const std::vector<uint8_t>&)> callback);
+
+    std::vector<OperationBody> getAll();
 
 private:
     void initializeFiles();

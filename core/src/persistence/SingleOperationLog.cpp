@@ -10,9 +10,21 @@ SingleOperationLog::SingleOperationLog(configuration_t configuration, uint32_t o
     this->initializeFiles();
 }
 
+OplogSegmentIterator SingleOperationLog::getAfterTimestamp(uint64_t after, const OperationLogOptions options) {
+    std::vector<OplogIndexSegmentDescriptor> desc = this->oplogIndexSegment_t->getByAfterTimestamp(after);
+    std::vector<OperationBody> intermediate = this->intermediateOplog->getAll();
+
+    return OplogSegmentIterator{desc, intermediate, [this](OplogIndexSegmentDescriptor desc){return this->oplogIndexSegment_t->getDataByDescriptor(desc);}};
+}
+
+OplogSegmentIterator SingleOperationLog::get(const OperationLogOptions option) {
+    std::vector<OplogIndexSegmentDescriptor> desc = this->oplogIndexSegment_t->getAll();
+    std::vector<OperationBody> intermediate = this->intermediateOplog->getAll();
+
+    return OplogSegmentIterator{desc, intermediate, [this](OplogIndexSegmentDescriptor desc){return this->oplogIndexSegment_t->getDataByDescriptor(desc);}};
+}
+
 std::vector<OperationBody> SingleOperationLog::clear(const OperationLogOptions options) {}
-std::vector<OperationBody> SingleOperationLog::getAfterTimestamp(uint64_t since, const OperationLogOptions options) {}
-std::vector<OperationBody> SingleOperationLog::get(const OperationLogOptions option) {}
 
 void SingleOperationLog::add(const OperationBody &operation, const OperationLogOptions options) {
     this->operationLogBuffer->add(operation);

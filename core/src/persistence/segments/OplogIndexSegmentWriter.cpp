@@ -18,7 +18,7 @@ void OplogIndexSegmentWriter::write(const std::vector<uint8_t> &toWrite) {
             .max = compacted.at(compacted.size() - 1).timestamp,
             .ptr = FileUtils::size(partitionPath, this->dataFileName),
             .crc = Utils::crc(compactedSerialized),
-            .flags = 0x00000000
+            .size = static_cast<uint32_t>(compactedSerialized.size())
     });
 
     FileUtils::appendBytes(this->partitionPath + "/" + this->indexFileName, descriptorSerialized);

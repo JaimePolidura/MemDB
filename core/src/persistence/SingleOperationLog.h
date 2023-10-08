@@ -10,6 +10,8 @@
 
 #include "persistence/intermediate/IntermediateOplog.h"
 #include "persistence/segments/OplogIndexSegment.h"
+#include "persistence/OplogSegmentIterator.h"
+#include "persistence/segments/OplogIndexSegmentDescriptor.h"
 
 #include "config/Configuration.h"
 #include "utils/Utils.h"
@@ -34,9 +36,9 @@ public:
 
     std::vector<OperationBody> clear(const OperationLogOptions options) override;
 
-    std::vector<OperationBody> getAfterTimestamp(uint64_t since, const OperationLogOptions options) override;
-
-    std::vector<OperationBody> get(const OperationLogOptions option) override;
+    OplogSegmentIterator getAfterTimestamp(uint64_t since, const OperationLogOptions options) override; //Implemented
+    
+    OplogSegmentIterator get(const OperationLogOptions option) override; //Implemented
 
     uint32_t getNumberOplogFiles() override; //Implemented
 

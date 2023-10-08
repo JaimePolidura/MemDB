@@ -2,6 +2,7 @@
 
 #include "messages/request/Request.h"
 #include "config/Configuration.h"
+#include "persistence/OplogSegmentIterator.h"
 
 struct OperationLogOptions {
     uint32_t operationLogId;
@@ -29,9 +30,9 @@ public:
 
     virtual std::vector<OperationBody> clear(const OperationLogOptions options = {}) = 0;
 
-    virtual std::vector<OperationBody> getAfterTimestamp(uint64_t timestamp, const OperationLogOptions options = {}) = 0;
+    virtual OplogSegmentIterator getAfterTimestamp(uint64_t timestamp, const OperationLogOptions options = {}) = 0;
 
-    virtual std::vector<OperationBody> get(const OperationLogOptions options = {}) = 0;
+    virtual OplogSegmentIterator get(const OperationLogOptions options = {}) = 0;
 
     virtual uint32_t getNumberOplogFiles() = 0;
 };

@@ -30,6 +30,19 @@ void FileUtils::createDirectory(const std::string &path) {
 #endif
 }
 
+std::vector<uint8_t> FileUtils::seekBytes(const std::string &path, uint64_t ptr, uint64_t total) {
+    std::vector<uint8_t> bytes(total);
+    uint8_t * toWrite = bytes.data();
+
+    std::ifstream file(path, std::ios::binary);
+    file.seekg(ptr);
+
+    file.read((char *) toWrite, total);
+    file.close();
+
+    return bytes;
+}
+
 std::vector<std::string> FileUtils::ls(const std::string &path) {
     std::vector<std::string> filesNames{};
 

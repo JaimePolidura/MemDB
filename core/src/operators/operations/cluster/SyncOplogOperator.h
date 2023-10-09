@@ -24,6 +24,8 @@ public:
 
     Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) override;
 
+    multipleResponseSenderIterator_t multiResponseSenderIterator(const OperationBody& operation, OperatorDependencies& dependencies) override;
+
     constexpr OperatorDescriptor desc() override;
 private:
     //Timestamp is 64 bits Actual memdb data size is 32 bits. Doest fit, we pass two args that consist of the two parts

@@ -26,7 +26,6 @@ std::vector<OplogIndexSegmentDescriptor> OplogIndexSegmentReader::readAllIndex()
     return this->oplogIndexSegmentDescriptorDeserializer.deserializeAll(FileUtils::readBytes(this->fullPathIndex));
 }
 
-std::vector<OperationBody> OplogIndexSegmentReader::readDataByDescriptor(OplogIndexSegmentDescriptor descriptor) {
-    std::vector<uint8_t> bytes = FileUtils::seekBytes(this->fullPathData, descriptor.ptr, descriptor.size);
-    return this->operationLogDeserializer.deserializeAll(bytes);
+std::vector<uint8_t> OplogIndexSegmentReader::readBytesDataByDescriptor(OplogIndexSegmentDescriptor descriptor) {
+    return FileUtils::seekBytes(this->fullPathData, descriptor.ptr, descriptor.size);
 }

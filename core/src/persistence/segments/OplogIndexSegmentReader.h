@@ -31,5 +31,5 @@ public:
 
     std::vector<OplogIndexSegmentDescriptor> readAllIndex();
 
-    std::vector<OperationBody> readDataByDescriptor(OplogIndexSegmentDescriptor descriptor);
+    std::vector<uint8_t> readBytesDataByDescriptor(OplogIndexSegmentDescriptor descriptor);
 };

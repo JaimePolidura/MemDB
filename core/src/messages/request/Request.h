@@ -30,9 +30,9 @@ struct OperationBody {
 
     arg_t getArg(int position) const;
 
-    void setArg(int position, arg_t newArg);
+    uint64_t getDoubleArgU64(int start) const;
 
-    uint64_t getTimestamp();
+    void setArg(int position, arg_t newArg);
 
     static args_t createOperationBodyArg();
 };

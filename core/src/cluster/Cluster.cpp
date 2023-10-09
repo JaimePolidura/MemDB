@@ -18,6 +18,42 @@ auto Cluster::setRunning() -> void {
     this->logger->info("Changed cluster node state to RUNNING");
 }
 
+auto Cluster::syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodeGroupOptions options) -> MultiResponseReceiverIterator {
+    if(this->clusterNodes->isEmtpy(options)) {
+        return MultiResponseReceiverIterator::emtpy();
+    }
+
+    int selfOplogIdToSync = options.nodeGroupId;
+    OperationLogDeserializer operationLogDeserializer{};
+    memdbNodeId_t nodeIdToSendRequest = this->clusterNodes->getRandomNode({}, NodeGroupOptions{.nodeGroupId = selfOplogIdToSync})->nodeId;
+
+    Request initMultiSyncOplogReq = createInitMultiRequestSyncOplog(0x05); //SyncOplog
+    Response initMultiSyncOplogRes = clusterNodes->sendRequest(nodeIdToSendRequest, initMultiSyncOplogReq);
+    uint64_t nFragments = initMultiSyncOplogRes.responseValue.to<uint64_t>();
+
+    return MultiResponseReceiverIterator(nFragments, [](uint64_t nFragmentId) {
+        return std::vector<OperationBody>{};
+    });
+}
+
+auto Cluster::createInitMultiRequestSyncOplog(uint8_t operatorNumber) -> Request {
+    auto authenticationBody = AuthenticationBody{this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY), false, false};
+    auto argsVector = std::make_shared<std::vector<SimpleString<memDbDataLength_t>>>();
+
+    argsVector->push_back(SimpleString<memDbDataLength_t>::fromNumber(operatorNumber));
+
+    OperationBody operationBody{};
+    operationBody.args = argsVector;
+    operationBody.operatorNumber = 0x06; //InitMulti operator number
+
+    Request request{};
+    request.operation = operationBody;
+    request.authentication = authenticationBody;
+    request.requestNumber = 1; // Used as multi-response Id TODO
+
+    return request;
+}
+
 auto Cluster::getUnsyncedOplog(uint64_t lastTimestampProcessedFromOpLog, const NodeGroupOptions options) -> std::vector<OperationBody> {
     if(this->clusterNodes->isEmtpy(options))
         return std::vector<OperationBody>{};

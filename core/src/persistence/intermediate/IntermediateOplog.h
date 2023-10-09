@@ -33,7 +33,7 @@ public:
 
     void setOnFlushingIntermediate(const std::function<void(const std::vector<uint8_t>&)> callback);
 
-    std::vector<OperationBody> getAll();
+    std::vector<uint8_t> getAllBytes();
 
 private:
     void initializeFiles();

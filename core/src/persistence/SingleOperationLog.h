@@ -36,14 +36,12 @@ public:
 
     std::vector<OperationBody> clear(const OperationLogOptions options) override;
 
-    OplogSegmentIterator getAfterTimestamp(uint64_t since, const OperationLogOptions options) override; //Implemented
+    oplogSegmentIterator_t getAfterTimestamp(uint64_t since, const OperationLogOptions options) override; //Implemented
 
-    OplogSegmentIterator get(const OperationLogOptions option) override; //Implemented
+    oplogSegmentIterator_t get(const OperationLogOptions option) override; //Implemented
 
     uint32_t getNumberOplogFiles() override; //Implemented
 
 private:
     void initializeFiles();  //Implemented
 };
-
-using singleOperationLog_t = std::shared_ptr<SingleOperationLog>;

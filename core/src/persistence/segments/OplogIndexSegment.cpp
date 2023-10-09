@@ -36,8 +36,8 @@ std::vector<OplogIndexSegmentDescriptor> OplogIndexSegment::getAll() {
     return this->oplogIndexSegmentReader.readAllIndex();
 }
 
-std::vector<OperationBody> OplogIndexSegment::getDataByDescriptor(OplogIndexSegmentDescriptor descriptor) {
-    return this->oplogIndexSegmentReader.readDataByDescriptor(descriptor);
+std::vector<uint8_t> OplogIndexSegment::getDataByDescriptorBytes(OplogIndexSegmentDescriptor descriptor) {
+    return this->oplogIndexSegmentReader.readBytesDataByDescriptor(descriptor);
 }
 
 void OplogIndexSegment::initializeFiles() {

@@ -3,9 +3,13 @@
 Response InitMultiResponsesOperator::operate(const OperationBody &operation,
                                              const OperationOptions options,
                                              OperatorDependencies &dependencies) {
-    dependencies.multipleResponses->handleInitMultiResponseRequest(options.requestNumber, operation);
+    uint8_t operatorNumber = operation.getArg(0).to<uint8_t>();
+    multipleResponseSenderIterator_t iterator = dependencies.getMultiResponseSenderIterator(operation, operatorNumber);
+    uint64_t multiResponseId = options.requestNumber;
 
-    return Response::success();
+    dependencies.multipleResponses->registerIncomingMultiInit(multiResponseId, iterator);
+
+    return Response::success(iterator->size());
 }
 
 constexpr OperatorDescriptor InitMultiResponsesOperator::desc() {
@@ -14,6 +18,5 @@ constexpr OperatorDescriptor InitMultiResponsesOperator::desc() {
         .number = OPERATOR_NUMBER,
         .name = "INIT_MULTI_RESPONSES",
         .authorizedToExecute = { AuthenticationType::NODE },
-        .isMultiResponsesFragment = false,
     };
 }

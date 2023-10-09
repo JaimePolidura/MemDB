@@ -12,6 +12,9 @@
 #include "utils/clock/LamportClock.h"
 #include "utils/strings/StringUtils.h"
 
+#include "messages/multi/MultiResponseIterator.h"
+#include "messages/multi/MultiResponseReceiverIterator.h"
+
 #include "config/Configuration.h"
 #include "config/keys/ConfigurationKeys.h"
 
@@ -47,6 +50,8 @@ public:
 
     auto setRunning() -> void;
 
+    auto syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodeGroupOptions options = {}) -> MultiResponseReceiverIterator<std::vector<OperationBody>>;
+
     auto getUnsyncedOplog(uint64_t lastTimestampProcessedFromOpLog, const NodeGroupOptions options = {}) -> std::vector<OperationBody>;
 
     auto getPartitionObject() -> partitions_t;
@@ -60,6 +65,8 @@ public:
     auto watchForChangesInNodesClusterDb(std::function<void(node_t nodeChanged, ClusterDbChangeType changeType)> onChangeCallback) -> void;
 
 private:
+    auto createInitMultiRequestSyncOplog(uint8_t operatorNumber) -> Request;
+
     auto createSyncOplogRequest(uint64_t timestamp, uint32_t selfOplogId, memdbNodeId_t nodeIdToSendRequest) -> Request;
 };
 

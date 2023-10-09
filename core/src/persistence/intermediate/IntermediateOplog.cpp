@@ -24,10 +24,8 @@ void IntermediateOplog::addAll(const std::vector<OperationBody>& operations) {
     }
 }
 
-std::vector<OperationBody> IntermediateOplog::getAll() {
-    return this->operationLogDeserializer.deserializeAll(
-            FileUtils::readBytes(this->fullPath)
-    );
+std::vector<uint8_t> IntermediateOplog::getAllBytes() {
+    return FileUtils::readBytes(this->fullPath);
 }
 
 void IntermediateOplog::setOnFlushingIntermediate(std::function<void(const std::vector<uint8_t> &)> callback) {

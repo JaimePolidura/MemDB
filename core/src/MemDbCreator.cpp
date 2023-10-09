@@ -3,13 +3,14 @@
 std::shared_ptr<MemDb> MemDbCreator::create(int nArgs, char ** args) {
     configuration_t configuration = ConfiguartionLoader::load(nArgs, args);
     logger_t logger = std::make_shared<Logger>(configuration, "Starting memdb");
+    onGoingMultipleResponsesStore_t multipleResponses = std::make_shared<OnGoingMultipleResponsesStore>(configuration->get<memdbNodeId_t >(ConfigurationKeys::MEMDB_CORE_NODE_ID));
 
     cluster_t cluster = createClusterObject(logger, configuration);
     operationLog_t operationLog = createOperationLogObject(configuration, cluster);
 
     lamportClock_t clock = std::make_shared<LamportClock>(1);
     memDbDataStore_t map = std::make_shared<Map<memDbDataLength_t>>(configuration->get<uint16_t>(ConfigurationKeys::MEMDB_CORE_NUMBER_BUCKETS));
-    operatorDispatcher_t operatorDispatcher = std::make_shared<OperatorDispatcher>(map, clock, cluster, configuration, logger, operationLog);
+    operatorDispatcher_t operatorDispatcher = std::make_shared<OperatorDispatcher>(map, clock, cluster, configuration, logger, operationLog, multipleResponses);
     tcpServer_t tcpServer = std::make_shared<TCPServer>(logger, configuration, Authenticator{configuration}, operatorDispatcher);
 
     setupClusterChangeWatcher(cluster, operationLog, configuration, logger, operatorDispatcher);

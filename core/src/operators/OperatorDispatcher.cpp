@@ -1,15 +1,15 @@
 #include "operators/OperatorDispatcher.h"
 
 OperatorDispatcher::OperatorDispatcher(memDbDataStore_t dbCons, lamportClock_t clock, cluster_t cluster, configuration_t configuration,
-                                       logger_t logger, operationLog_t operationLog):
+                                       logger_t logger, operationLog_t operationLog, onGoingMultipleResponsesStore_t multipleResponses):
         db(dbCons),
         operationLog(operationLog),
+        multipleResponses(multipleResponses),
         clock(clock),
         operatorRegistry(std::make_shared<OperatorRegistry>()),
         logger(logger),
         cluster(cluster),
         configuration(configuration),
-        multipleResponses(std::make_shared<MultipleResponses>(cluster->getNodeId())),
         delayedOperationsBuffer(std::make_shared<DelayedOperationsBuffer>())
 {}
 
@@ -53,10 +53,6 @@ Response OperatorDispatcher::dispatch_no_applyDelayedOperationsBuffer(const Requ
     if(isInReplicationMode() && writeDbRequest && canAcceptRequest() && !canExecuteRequest()){
         this->delayedOperationsBuffer->add(request);
         return Response::success();
-    }
-    if(operatorToExecute->desc().isMultiResponsesFragment){
-        bool lastFragment = this->multipleResponses->handleFragmentRequest(request.requestNumber);
-        options.lastFragmentMultiResponses = lastFragment;
     }
 
     OperationBody operationBody = request.operation;
@@ -135,6 +131,9 @@ OperatorDependencies OperatorDispatcher::getDependencies() {
         std::for_each(ops.begin(), ops.end(), [this, options](const OperationBody &op) -> void {
             this->executeOperation(this->operatorRegistry->get(op.operatorNumber), const_cast<OperationBody&>(op), options);
         });
+    };
+    dependencies.getMultiResponseSenderIterator = [this, dependencies](const OperationBody& operation, uint8_t operatorNumber) -> multipleResponseSenderIterator_t {
+        return this->operatorRegistry->get(operatorNumber)->multiResponseSenderIterator(operation, const_cast<OperatorDependencies&>(dependencies));
     };
 
     return dependencies;

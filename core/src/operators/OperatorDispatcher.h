@@ -4,7 +4,7 @@
 #include "operators/OperatorRegistry.h"
 #include "operators/DbOperatorExecutor.h"
 #include "OperatorDependencies.h"
-#include "operators/multi/MultipleResponses.h"
+#include "messages/multi/OnGoingMultipleResponsesStore.h"
 
 #include "messages/response/ErrorCode.h"
 #include "persistence/SingleOperationLog.h"
@@ -17,7 +17,7 @@ public: //Need it for mocking it
     operatorRegistry_t operatorRegistry;
 private:
     delayedOperationsBuffer_t delayedOperationsBuffer;
-    multipleResponses_t multipleResponses;
+    onGoingMultipleResponsesStore_t multipleResponses;
     operationLog_t operationLog;
     configuration_t configuration;
     cluster_t cluster;
@@ -27,7 +27,7 @@ private:
 
 public:
     OperatorDispatcher(memDbDataStore_t dbCons, lamportClock_t clock, cluster_t cluster, configuration_t configuration,
-                       logger_t logger, operationLog_t operationLog);
+                       logger_t logger, operationLog_t operationLog, onGoingMultipleResponsesStore_t multipleResponses);
 
     Response dispatch(const Request& request);
 

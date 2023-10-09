@@ -4,23 +4,28 @@
 
 #include "persistence/segments/OplogIndexSegmentDescriptor.h"
 #include "messages/request/Request.h"
+#include "messages/multi/MultipleResponseSenderIterator.h"
 
-using descriptorDataFetcher_t = std::function<std::vector<OperationBody>(OplogIndexSegmentDescriptor)>;
+using descriptorDataFetcher_t = std::function<std::vector<uint8_t>(OplogIndexSegmentDescriptor)>;
 
-class OplogSegmentIterator {
+class OplogSegmentIterator : public MultipleResponseSenderIterator {
 private:
     std::vector<OplogIndexSegmentDescriptor> descriptors;
     descriptorDataFetcher_t descriptorDataFetcher;
-    std::vector<OperationBody> intermediate;
+    std::vector<uint8_t > intermediate;
 
     int actualIndexDescriptor;
 
 public:
     OplogSegmentIterator(const std::vector<OplogIndexSegmentDescriptor>& descriptors,
-                         const std::vector<OperationBody>& intermediate,
+                         const std::vector<uint8_t>& intermediate,
                          descriptorDataFetcher_t descriptorDataFetcher);
 
-    bool hasNext();
+    bool hasNext() override;
 
-    std::vector<OperationBody> next();
+    std::vector<uint8_t> next() override;
+
+    uint64_t size() override;
 };
+
+using oplogSegmentIterator_t = std::shared_ptr<OplogSegmentIterator>;

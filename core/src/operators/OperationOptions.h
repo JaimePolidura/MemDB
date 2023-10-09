@@ -12,7 +12,6 @@ public:
     LamportClock::UpdateClockStrategy updateClockStrategy;
 
     uint64_t requestNumber;
-    bool lastFragmentMultiResponses;
 
     bool fromClient() const {
         return !this->checkTimestamps;

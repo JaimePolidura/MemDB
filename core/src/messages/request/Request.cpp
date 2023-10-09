@@ -43,6 +43,13 @@ arg_t OperationBody::getArg(int position) const {
     return this->args->at(position);
 }
 
+uint64_t OperationBody::getDoubleArgU64(int start) const {
+    uint64_t part1 = this->getArg(start).to<uint64_t>();
+    uint64_t part2 = this->getArg(start + 1).to<uint64_t>();
+
+    return ((uint64_t) part1) << 32 | part2;
+}
+
 void OperationBody::setArg(int position, arg_t newArg) {
     if(position > this->args->size()){
         this->args->push_back(newArg);

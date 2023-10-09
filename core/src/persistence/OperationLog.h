@@ -30,9 +30,9 @@ public:
 
     virtual std::vector<OperationBody> clear(const OperationLogOptions options = {}) = 0;
 
-    virtual OplogSegmentIterator getAfterTimestamp(uint64_t timestamp, const OperationLogOptions options = {}) = 0;
+    virtual oplogSegmentIterator_t getAfterTimestamp(uint64_t timestamp, const OperationLogOptions options = {}) = 0;
 
-    virtual OplogSegmentIterator get(const OperationLogOptions options = {}) = 0;
+    virtual oplogSegmentIterator_t get(const OperationLogOptions options = {}) = 0;
 
     virtual uint32_t getNumberOplogFiles() = 0;
 };

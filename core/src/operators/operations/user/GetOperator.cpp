@@ -14,6 +14,5 @@ constexpr OperatorDescriptor DeleteOperator::desc() {
             .number = OPERATOR_NUMBER,
             .name = "GET",
             .authorizedToExecute = { AuthenticationType::API },
-            .isMultiResponsesFragment = false,
     };
 }

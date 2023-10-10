@@ -4,18 +4,11 @@ Response HealthCheckOperator::operate(const OperationBody& operation, const Oper
     return Response::success();
 }
 
-std::vector<AuthenticationType> HealthCheckOperator::authorizedToExecute() {
-    return { AuthenticationType::MAINTENANCE };
-}
-
-constexpr OperatorType HealthCheckOperator::type() {
-    return OperatorType::NODE_MAINTENANCE;
-}
-
-constexpr uint8_t HealthCheckOperator::operatorNumber() {
-    return OPERATOR_NUMBER;
-}
-
-std::string HealthCheckOperator::name() {
-    return "HEALTH_CHECK";
+constexpr OperatorDescriptor HealthCheckOperator::desc() {
+    return OperatorDescriptor{
+            .type = OperatorType::NODE_MAINTENANCE,
+            .number = OPERATOR_NUMBER,
+            .name = "HEALTH_CHECK",
+            .authorizedToExecute = { AuthenticationType::MAINTENANCE },
+    };
 }

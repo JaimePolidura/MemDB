@@ -25,14 +25,8 @@ public:
     static constexpr int OPERATOR_NUMBER = 0x06;
 
     Response operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies& dependencies) override;
-
-    OperatorType type() override;
-
-    std::vector<AuthenticationType> authorizedToExecute() override;
-
-    std::string name() override;
-
-    constexpr uint8_t operatorNumber() override;
+    
+    constexpr OperatorDescriptor desc() override;
 
 private:
     void clearOperationLog(OperatorDependencies dependencies, uint32_t operationLogId);

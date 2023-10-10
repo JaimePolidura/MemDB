@@ -89,7 +89,7 @@ uint64_t MemDb::applyOplog(iterator_t oplogIterator, bool dontSaveInOperationLog
     OperationLogDeserializer operationLogDeserializer{};
     uint64_t latestTimestampApplied = 0;
 
-    while(oplogIterator->hasNext()){
+    while(oplogIterator->hasNext()) {
         std::vector<uint8_t> serializedOplog = oplogIterator->next();
         std::vector<OperationBody> deserializedOplog = operationLogDeserializer.deserializeAll(serializedOplog);
 

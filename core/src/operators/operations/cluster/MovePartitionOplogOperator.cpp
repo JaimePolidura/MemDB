@@ -34,20 +34,13 @@ Response MovePartitionOplogOperator::operate(const OperationBody& operation, con
     return Response::success();
 }
 
-OperatorType MovePartitionOplogOperator::type() {
-    return OperatorType::NODE_MAINTENANCE;
-}
-
-std::vector<AuthenticationType> MovePartitionOplogOperator::authorizedToExecute() {
-    return { AuthenticationType::NODE };
-}
-
-std::string MovePartitionOplogOperator::name() {
-    return "MOVE_PARTITION_OPLOG";
-}
-
-constexpr uint8_t MovePartitionOplogOperator::operatorNumber() {
-    return OPERATOR_NUMBER;
+constexpr OperatorDescriptor MovePartitionOplogOperator::desc() {
+    return OperatorDescriptor{
+            .type = OperatorType::NODE_MAINTENANCE,
+            .number = OPERATOR_NUMBER,
+            .name = "MOVE_PARTITION_OPLOG",
+            .authorizedToExecute = { AuthenticationType::NODE },
+    };
 }
 
 void MovePartitionOplogOperator::clearOperationLog(OperatorDependencies dependencies, uint32_t operationLogId) {

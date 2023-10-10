@@ -8,11 +8,12 @@
 
 class ClusterNodeSetup {
 protected:
+    onGoingMultipleResponsesStore_t multipleResponses;
     configuration_t configuration;
     logger_t logger;
 
 public:
-    ClusterNodeSetup(logger_t logger, configuration_t configuration): logger(logger), configuration(configuration) {}
+    ClusterNodeSetup(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t multipleResponses): logger(logger), configuration(configuration) {}
 
     void initializeNodeInCluster(cluster_t cluster);
 

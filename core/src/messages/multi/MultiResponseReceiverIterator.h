@@ -1,21 +1,29 @@
 #pragma once
 
 #include "shared.h"
+#include "utils/strings/SimpleString.h"
+#include "messages/multi/Iterator.h"
 
-class MultiResponseReceiverIterator {
+using nextFragment_t = std::function<std::vector<uint8_t>(uint64_t multiResponseId, uint64_t fragmentId)>;
+
+class MultiResponseReceiverIterator : public Iterator {
 private:
+    uint64_t multiResponseId;
     uint64_t nTotalFragments;
     uint64_t actualFragment;
 
-    std::function<std::vector<uint8_t>(uint64_t)> nextFragment;
+    nextFragment_t nextFragment;
 
 public:
-    MultiResponseReceiverIterator(uint64_t nTotalFragments, std::function<std::vector<uint8_t>(uint64_t)> nextFragment);
+    using multiResponseReceiverIterator_t = std::shared_ptr<MultiResponseReceiverIterator>;
 
-    bool hasNext();
+    MultiResponseReceiverIterator(uint64_t multiResponseId, uint64_t nTotalFragments, nextFragment_t nextFragment);
 
-    std::vector<uint8_t> next();
+    bool hasNext() override;
 
-    static MultiResponseReceiverIterator emtpy();
+    std::vector<uint8_t> next() override;
+
+    uint64_t size() override;
+
+    static multiResponseReceiverIterator_t emtpy();
 };
-

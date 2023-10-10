@@ -18,7 +18,7 @@ public:
 private:
     static operationLog_t createOperationLogObject(configuration_t configuration, cluster_t cluster);
 
-    static cluster_t createClusterObject(logger_t logger, configuration_t configuration);
+    static cluster_t createClusterObject(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t multipleResponses);
 
     static operationLog_t setupMultipleOplogConfiguration(configuration_t configuration, cluster_t cluster);
 

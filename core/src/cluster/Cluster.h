@@ -12,8 +12,8 @@
 #include "utils/clock/LamportClock.h"
 #include "utils/strings/StringUtils.h"
 
-#include "messages/multi/MultiResponseIterator.h"
 #include "messages/multi/MultiResponseReceiverIterator.h"
+#include "messages/multi/OnGoingMultipleResponsesStore.h"
 
 #include "config/Configuration.h"
 #include "config/keys/ConfigurationKeys.h"
@@ -23,6 +23,7 @@
 
 class Cluster {
 private:
+    onGoingMultipleResponsesStore_t onGoingMultipleResponsesStore;
     configuration_t configuration;
     clusterNodes_t clusterNodes;
     clusterManagerService_t clusterManager;
@@ -44,15 +45,13 @@ private:
 public:
     Cluster(): partitions(std::make_shared<Partitions>()), clusterNodes(std::make_shared<ClusterNodes>()) {}
 
-    Cluster(logger_t logger, configuration_t configuration);
+    Cluster(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t onGoingMultipleResponsesStore);
 
     auto setBooting() -> void;
 
     auto setRunning() -> void;
 
-    auto syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodeGroupOptions options = {}) -> MultiResponseReceiverIterator<std::vector<OperationBody>>;
-
-    auto getUnsyncedOplog(uint64_t lastTimestampProcessedFromOpLog, const NodeGroupOptions options = {}) -> std::vector<OperationBody>;
+    auto syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodeGroupOptions options = {}) -> multiResponseReceiverIterator_t;
 
     auto getPartitionObject() -> partitions_t;
 
@@ -65,9 +64,9 @@ public:
     auto watchForChangesInNodesClusterDb(std::function<void(node_t nodeChanged, ClusterDbChangeType changeType)> onChangeCallback) -> void;
 
 private:
-    auto createInitMultiRequestSyncOplog(uint8_t operatorNumber) -> Request;
+    auto createSyncOplogRequestInitMultiResponse(uint64_t timestamp, uint32_t selfOplogId, memdbNodeId_t nodeIdToSendRequest) -> Request;
 
-    auto createSyncOplogRequest(uint64_t timestamp, uint32_t selfOplogId, memdbNodeId_t nodeIdToSendRequest) -> Request;
+    auto createNextFragmentMultiResponseRequest(uint64_t multiResponseId) -> Request;
 };
 
 using cluster_t = std::shared_ptr<Cluster>;

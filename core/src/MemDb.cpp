@@ -29,12 +29,13 @@ void MemDb::syncOplogFromCluster(std::vector<uint64_t> lastTimestampProcessedFro
         std::future<void> syncOplogFuture = std::async(std::launch::async, [this, lastTimestampProcessedFromOpLog, i]() -> void{
             int oplogId = i;
 
-            std::vector<OperationBody> unsyncedOplog = this->cluster->getUnsyncedOplog(lastTimestampProcessedFromOpLog[i], NodeGroupOptions{
+            auto unsyncedOplog = this->cluster->syncOplog(lastTimestampProcessedFromOpLog[i], NodeGroupOptions{
                     .nodeGroupId = oplogId
             });
 
-            this->applyUnsyncedOplogFromCluster(unsyncedOplog, false);
-            this->logger->info("Synchronized {0} oplog entries with the cluster", unsyncedOplog.size());
+
+            this->applyOplog(unsyncedOplog, false);
+            this->logger->info("Synchronized {0} oplog entries with the cluster", unsyncedOplog->size());
         });
 
         syncOplogFutures.push_back(std::move(syncOplogFuture));
@@ -55,7 +56,7 @@ std::vector<uint64_t> MemDb::restoreDataFromOplogFromDisk() {
     if(usingReplication && usingPartitions){
         return restoreMultipleOplog();
     }else{
-        return restoreSingleOplog();
+        return std::vector<uint64_t>{restoreSingleOplog()};
     }
 }
 
@@ -64,38 +65,51 @@ std::vector<uint64_t> MemDb::restoreMultipleOplog() {
     std::vector<uint64_t> lastRestoredTimestamps{};
 
     for (uint32_t i = 0; i < numberOplogs; i++) {
-        std::vector<OperationBody> oplog = this->operationLog->get(OperationLogOptions{
+        oplogSegmentIterator_t oplogIterator = this->operationLog->get(OperationLogOptions{
                 .operationLogId = i
         });
 
-        this->applyUnsyncedOplogFromCluster(oplog, true);
-        lastRestoredTimestamps.push_back(!oplog.empty() ? oplog[oplog.size() - 1].timestamp : 0);
+        uint64_t lastAppliedTimestamp = this->applyOplog(oplogIterator, true);
+
+        lastRestoredTimestamps.push_back(lastAppliedTimestamp);
     }
 
     return lastRestoredTimestamps;
 }
 
-std::vector<uint64_t> MemDb::restoreSingleOplog() {
-    std::vector<OperationBody> opLogsFromDisk = this->operationLog->get();
+uint64_t MemDb::restoreSingleOplog() {
+    oplogSegmentIterator_t opLogsFromDisk = this->operationLog->get();
 
-    this->applyUnsyncedOplogFromCluster(opLogsFromDisk, true);
+    uint64_t latestApplied = this->applyOplog(opLogsFromDisk, true);
 
-    return std::vector<uint64_t>{!opLogsFromDisk.empty() ? opLogsFromDisk[opLogsFromDisk.size() - 1].timestamp : 0};
+    return latestApplied;
 }
 
-void MemDb::applyUnsyncedOplogFromCluster(std::vector<OperationBody>& opLogs, bool dontSaveInOperationLog) {
-    for(OperationBody& operationLogInDisk : opLogs) {
-        this->operatorDispatcher->executeOperation(
-                this->operatorRegistry->get(operationLogInDisk.operatorNumber),
-                operationLogInDisk,
-                OperationOptions{
-                        .checkTimestamps = true,
-                        .dontBroadcastToCluster = true,
-                        .dontSaveInOperationLog = dontSaveInOperationLog,
-                        .updateClockStrategy = LamportClock::UpdateClockStrategy::SET });
+uint64_t MemDb::applyOplog(iterator_t oplogIterator, bool dontSaveInOperationLog) {
+    OperationLogDeserializer operationLogDeserializer{};
+    uint64_t latestTimestampApplied = 0;
+
+    while(oplogIterator->hasNext()){
+        std::vector<uint8_t> serializedOplog = oplogIterator->next();
+        std::vector<OperationBody> deserializedOplog = operationLogDeserializer.deserializeAll(serializedOplog);
+
+        for(OperationBody& operationLogInDisk : deserializedOplog) {
+            latestTimestampApplied = operationLogInDisk.timestamp;
+
+            this->operatorDispatcher->executeOperation(
+                    this->operatorRegistry->get(operationLogInDisk.operatorNumber),
+                    operationLogInDisk,
+                    OperationOptions{
+                            .checkTimestamps = true,
+                            .dontBroadcastToCluster = true,
+                            .dontSaveInOperationLog = dontSaveInOperationLog,
+                            .updateClockStrategy = LamportClock::UpdateClockStrategy::SET });
+        }
     }
 
     this->operatorDispatcher->applyDelayedOperationsBuffer();
+
+    return latestTimestampApplied;
 }
 
 #ifdef __linux__

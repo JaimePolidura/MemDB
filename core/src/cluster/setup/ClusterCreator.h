@@ -10,7 +10,7 @@
 
 class ClusterCreator {
 public:
-    static cluster_t setup(configuration_t configuration, logger_t logger);
+    static cluster_t setup(configuration_t configuration, logger_t logger, onGoingMultipleResponsesStore_t multipleResponses);
 
-    static clusterNodeSetup_t getClusterNodeSetupObject(configuration_t configuration, logger_t logger);
+    static clusterNodeSetup_t getClusterNodeSetupObject(configuration_t configuration, logger_t logger, onGoingMultipleResponsesStore_t multipleResponses);
 };

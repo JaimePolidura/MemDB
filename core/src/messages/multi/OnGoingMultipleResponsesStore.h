@@ -1,13 +1,13 @@
 #pragma once
 
 #include "messages/request/Request.h"
-#include "messages/multi/MultipleResponseSenderIterator.h"
+#include "messages/multi/Iterator.h"
 #include "shared.h"
 
-struct OnGoingMultipleResponses {
-    multipleResponseSenderIterator_t iterator;
+struct OnGoingMultipleResponsesSender {
+    iterator_t iterator;
     uint64_t totalNFragments;
-    uint64_t nFragmentsReceived;
+    uint64_t nFragmentsSent;
 };
 
 /**
@@ -15,7 +15,7 @@ struct OnGoingMultipleResponses {
  */
 class OnGoingMultipleResponsesStore {
 private:
-    std::map<uint64_t, OnGoingMultipleResponses> onGoingMultiResponsesById{};
+    std::map<uint64_t, OnGoingMultipleResponsesSender> onGoingMultiResponsesById{};
     std::mutex onGoingMultiResponsesByIdLock{};
 
     std::atomic_uint32_t nextMultiIdCounter; //Used by initiator / receiver
@@ -24,7 +24,11 @@ private:
 public:
     explicit OnGoingMultipleResponsesStore(memdbNodeId_t nodeId);
 
-    void registerIncomingMultiInit(uint64_t multiId, multipleResponseSenderIterator_t iterator);
+    void registerIncomingMultiInit(uint64_t multiId, iterator_t iterator);
+
+    iterator_t getSenderIteratorByMultiId(uint64_t multiId);
+
+    void markFragmentSend(uint64_t multiId);
 
     uint64_t nextMultiResponseId();
 };

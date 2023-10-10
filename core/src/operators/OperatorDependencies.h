@@ -15,5 +15,5 @@ struct OperatorDependencies {
 
     std::function<void(const std::vector<OperationBody>&, const OperationOptions&)> operatorsDispatcher;
     std::function<Response(const OperationBody&, const OperationOptions&)> operatorDispatcher;
-    std::function<multipleResponseSenderIterator_t(const OperationBody&, uint8_t)> getMultiResponseSenderIterator;
+    std::function<iterator_t(const OperationBody&, uint8_t)> getMultiResponseSenderIterator;
 };

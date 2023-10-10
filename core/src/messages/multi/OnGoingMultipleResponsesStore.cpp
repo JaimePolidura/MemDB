@@ -2,34 +2,27 @@
 
 OnGoingMultipleResponsesStore::OnGoingMultipleResponsesStore(memdbNodeId_t nodeId): nodeId(nodeId) {}
 
-void OnGoingMultipleResponsesStore::handleInitMultiResponseRequest(uint64_t requestNumber, uint64_t totalNFragmentsFromRequest) {
-    this->onGoingMultiResponsesByIdLock.lock();
-
-    this->onGoingMultiResponsesById[requestNumber] = OnGoingMultipleResponses {
-        .totalNFragments = totalNFragmentsFromRequest,
-        .nFragmentsReceived = 0,
+void OnGoingMultipleResponsesStore::registerIncomingMultiInit(uint64_t multiId, iterator_t iterator) {
+    this->onGoingMultiResponsesById[multiId] = OnGoingMultipleResponsesSender{
+        .iterator = iterator,
+        .totalNFragments = iterator->size(),
+        .nFragmentsSent = 0,
     };
+}
 
-    this->onGoingMultiResponsesByIdLock.unlock();
+iterator_t OnGoingMultipleResponsesStore::getSenderIteratorByMultiId(uint64_t multiId) {
+    return this->onGoingMultiResponsesById[multiId].iterator;
+}
+
+void OnGoingMultipleResponsesStore::markFragmentSend(uint64_t multiId) {
+    OnGoingMultipleResponsesSender& onGoingMultiResponse = this->onGoingMultiResponsesById[multiId];
+    onGoingMultiResponse.nFragmentsSent++;
+
+    if(onGoingMultiResponse.nFragmentsSent >= onGoingMultiResponse.totalNFragments){
+        this->onGoingMultiResponsesById.erase(multiId);
+    }
 }
 
 uint64_t OnGoingMultipleResponsesStore::nextMultiResponseId() {
-    return this->nodeId << 32 | this->nextMultiResponsesIdCounter.fetch_add(1);
-}
-
-bool OnGoingMultipleResponsesStore::handleFragmentRequest(uint64_t requestNumber) {
-    bool allFragmentsReceived = false;
-
-    this->onGoingMultiResponsesByIdLock.lock();
-
-    if(this->onGoingMultiResponsesById.contains(requestNumber)){
-        OnGoingMultipleResponses& onGoingMultiResponses = this->onGoingMultiResponsesById.at(requestNumber);
-        onGoingMultiResponses.nFragmentsReceived++;
-        allFragmentsReceived = onGoingMultiResponses.nFragmentsReceived >= onGoingMultiResponses.totalNFragments;
-        this->onGoingMultiResponsesById.erase(requestNumber);
-    }
-
-    this->onGoingMultiResponsesByIdLock.unlock();
-
-    return allFragmentsReceived;
+    return this->nodeId << 32 | this->nextMultiIdCounter.fetch_add(1);
 }

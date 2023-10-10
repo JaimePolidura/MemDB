@@ -15,5 +15,5 @@ void ClusterNodeSetup::initializeNodeInCluster(cluster_t cluster) {
 }
 
 std::shared_ptr<Cluster> ClusterNodeSetup::create() {
-    return std::make_shared<Cluster>(this->logger, this->configuration);
+    return std::make_shared<Cluster>(this->logger, this->configuration, this->multipleResponses);
 }

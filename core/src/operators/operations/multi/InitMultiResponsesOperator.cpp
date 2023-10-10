@@ -4,7 +4,7 @@ Response InitMultiResponsesOperator::operate(const OperationBody &operation,
                                              const OperationOptions options,
                                              OperatorDependencies &dependencies) {
     uint8_t operatorNumber = operation.getArg(0).to<uint8_t>();
-    multipleResponseSenderIterator_t iterator = dependencies.getMultiResponseSenderIterator(operation, operatorNumber);
+    iterator_t iterator = dependencies.getMultiResponseSenderIterator(operation, operatorNumber);
     uint64_t multiResponseId = options.requestNumber;
 
     dependencies.multipleResponses->registerIncomingMultiInit(multiResponseId, iterator);

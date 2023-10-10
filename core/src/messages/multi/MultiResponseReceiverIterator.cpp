@@ -1,7 +1,8 @@
 #include "MultiResponseReceiverIterator.h"
 
 
-MultiResponseReceiverIterator::MultiResponseReceiverIterator(uint64_t nTotalFragments, std::function<std::vector<uint8_t>(uint64_t)> nextFragment):
+MultiResponseReceiverIterator::MultiResponseReceiverIterator(uint64_t multiResponseId, uint64_t nTotalFragments, nextFragment_t nextFragment):
+        multiResponseId(multiResponseId),
         nextFragment(nextFragment),
         actualFragment(0),
         nTotalFragments(nTotalFragments) {}
@@ -11,9 +12,13 @@ bool MultiResponseReceiverIterator::hasNext() {
 }
 
 std::vector<uint8_t> MultiResponseReceiverIterator::next() {
-    return this->nextFragment(this->actualFragment++);
+    return this->nextFragment(this->multiResponseId, this->actualFragment++);
 }
 
-MultiResponseReceiverIterator MultiResponseReceiverIterator::emtpy() {
-    return MultiResponseReceiverIterator{0, nullptr};
+uint64_t MultiResponseReceiverIterator::size() {
+    return this->nTotalFragments - this->actualFragment;
+}
+
+multiResponseReceiverIterator_t MultiResponseReceiverIterator::emtpy() {
+    return std::make_shared<MultiResponseReceiverIterator>(0, 0, nullptr);
 }

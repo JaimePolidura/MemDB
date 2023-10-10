@@ -9,27 +9,22 @@
 #include "operators/OperatorDependencies.h"
 
 /**
+ * Invoked by InitMultiResponse
  * Args:
- *  - uint32 part1 Timestamp to sync
- *  - uint32 part2 Timestamp to sync
- *  - uint32 nodeOplogIdToSync
+ * - Operator number of syncOplog
+ * - Timestamp to sync
+ * - Timestamp to sync
+ * - Node id: nodeOplogIdToSync
  */
 class SyncOplogOperator : public Operator {
-private:
-    OperationLogSerializer operationLogSerializer;
-    OperationLogCompacter operationLogCompacter{};
-
 public:
     static constexpr const uint8_t OPERATOR_NUMBER = 0x05;
 
     Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) override;
 
-    multipleResponseSenderIterator_t multiResponseSenderIterator(const OperationBody& operation, OperatorDependencies& dependencies) override;
+    iterator_t createMultiResponseSenderIterator(const OperationBody& operation, OperatorDependencies& dependencies) override;
 
     constexpr OperatorDescriptor desc() override;
 private:
-    //Timestamp is 64 bits Actual memdb data size is 32 bits. Doest fit, we pass two args that consist of the two parts
-    uint64_t parseUnsyncTimestampFromRequest(const OperationBody &operation) const;
-
     uint32_t calculateSelfOplogIdFromNodeOplogId(const OperationBody &body, OperatorDependencies dependencies);
 };

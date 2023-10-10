@@ -5,7 +5,7 @@
 
 class SimpleClusterNodeSetup : public ClusterNodeSetup {
 public:
-    SimpleClusterNodeSetup(logger_t logger, configuration_t configuration): ClusterNodeSetup(logger, configuration) {}
+    SimpleClusterNodeSetup(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t multipleResponses): ClusterNodeSetup(logger, configuration, multipleResponses) {}
 
     void setClusterInformation(cluster_t cluster, const std::vector<node_t>& otherNodes) override;
 

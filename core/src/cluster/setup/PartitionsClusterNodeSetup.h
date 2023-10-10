@@ -9,7 +9,8 @@ private:
     PartitionNeighborsNodesGroupSetter partitionNeighborsNodesGroupSetter;
 
 public:
-    PartitionsClusterNodeSetup(logger_t logger, configuration_t configuration): ClusterNodeSetup(logger, configuration) {}
+    PartitionsClusterNodeSetup(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t multipleResponses):
+        ClusterNodeSetup(logger, configuration, multipleResponses) {}
 
     void setClusterInformation(cluster_t cluster, const std::vector<node_t>& otherNodes) override;
 

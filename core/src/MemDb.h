@@ -8,6 +8,7 @@
 #include "cluster/setup/ClusterCreator.h"
 #include "logging/Logger.h"
 #include "persistence/SingleOperationLog.h"
+#include "persistence/serializers/OperationLogDeserializer.h"
 
 #include "memdbtypes.h"
 
@@ -36,7 +37,7 @@ private:
 
     std::vector<uint64_t> restoreMultipleOplog();
 
-    std::vector<uint64_t> restoreSingleOplog();
+    uint64_t restoreSingleOplog();
 
-    void applyUnsyncedOplogFromCluster(std::vector<OperationBody>& opLogs, bool dontSaveInOperationLog);
+    uint64_t MemDb::applyOplog(iterator_t oplogIterator, bool dontSaveInOperationLog);
 };

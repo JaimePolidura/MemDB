@@ -26,9 +26,9 @@ operationLog_t MemDbCreator::createOperationLogObject(configuration_t configurat
     }
 }
 
-cluster_t MemDbCreator::createClusterObject(logger_t logger, configuration_t configuration) {
+cluster_t MemDbCreator::createClusterObject(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t multipleResponses) {
     if(configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION)){
-        return ClusterCreator::setup(configuration, logger);
+        return ClusterCreator::setup(configuration, logger, multipleResponses);
     }else{
         return std::make_shared<Cluster>();
     }

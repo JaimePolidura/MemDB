@@ -31,7 +31,7 @@ void DeletionNodeChangeHandler::sendRestOplogsToNextNodes(const std::vector<Ring
     for (uint32_t actualOplogId = 1; actualOplogId < nodesPerPartition; actualOplogId++) {
         int affectedNodes = nodesPerPartition - actualOplogId;
 
-        std::vector<OperationBody> actualOplog = this->operationLog->get(
+        std::vector<OperationBody> actualOplog = this->operationLog->getAll(
                 OperationLogOptions{.operationLogId = actualOplogId});
 
         for (int i = 0; i < affectedNodes; i++) {
@@ -51,7 +51,7 @@ void DeletionNodeChangeHandler::sendRestOplogsToNextNodes(const std::vector<Ring
 }
 
 void DeletionNodeChangeHandler::sendSelfOplogToPrevNode(memdbNodeId_t prevNodeId) {
-    std::vector<OperationBody> selfOplog = this->operationLog->get(OperationLogOptions{.operationLogId = 0});
+    std::vector<OperationBody> selfOplog = this->operationLog->getAll(OperationLogOptions{.operationLogId = 0});
     this->cluster->clusterNodes->sendRequest(prevNodeId, createMovePartitionOplogRequest(
             0, 0, selfOplog, true, false));
 }

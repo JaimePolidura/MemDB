@@ -12,7 +12,7 @@ class OplogSegmentIterator : public Iterator {
 private:
     std::vector<OplogIndexSegmentDescriptor> descriptors;
     descriptorDataFetcher_t descriptorDataFetcher;
-    std::vector<uint8_t > intermediate;
+    std::vector<uint8_t> intermediate;
 
     int actualIndexDescriptor;
 

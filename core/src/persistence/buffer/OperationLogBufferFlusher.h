@@ -11,8 +11,15 @@ private:
     operationsBufferQueue_t buffer;
     std::thread flusherThread;
 
+    std::atomic_bool stopFlushingFlag;
+    std::atomic_bool flusherExited;
+    std::mutex flusherExitMutex;
+    std::condition_variable flusherExitCondVariable;
+
 public:
     explicit OperationLogBufferFlusher(operationsBufferQueue_t buffer);
 
     void startFlushing(flushCallback_t flushCallback);
+
+    void stopFlushing();
 };

@@ -33,7 +33,6 @@ void MemDb::syncOplogFromCluster(std::vector<uint64_t> lastTimestampProcessedFro
                     .nodeGroupId = oplogId
             });
 
-
             this->applyOplog(unsyncedOplog, false);
             this->logger->info("Synchronized {0} oplog entries with the cluster", unsyncedOplog->size());
         });
@@ -65,7 +64,7 @@ std::vector<uint64_t> MemDb::restoreMultipleOplog() {
     std::vector<uint64_t> lastRestoredTimestamps{};
 
     for (uint32_t i = 0; i < numberOplogs; i++) {
-        oplogSegmentIterator_t oplogIterator = this->operationLog->get(OperationLogOptions{
+        oplogSegmentIterator_t oplogIterator = this->operationLog->getAll(OperationLogOptions{
                 .operationLogId = i
         });
 
@@ -78,7 +77,7 @@ std::vector<uint64_t> MemDb::restoreMultipleOplog() {
 }
 
 uint64_t MemDb::restoreSingleOplog() {
-    oplogSegmentIterator_t opLogsFromDisk = this->operationLog->get();
+    oplogSegmentIterator_t opLogsFromDisk = this->operationLog->getAll();
 
     uint64_t latestApplied = this->applyOplog(opLogsFromDisk, true);
 

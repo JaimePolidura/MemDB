@@ -23,5 +23,5 @@ private:
     static operationLog_t setupMultipleOplogConfiguration(configuration_t configuration, cluster_t cluster);
 
     static void setupClusterChangeWatcher(cluster_t cluster, operationLog_t operationLog, configuration_t configuration,
-                                          logger_t logger, operatorDispatcher_t operatorDispatcher);
+                                          logger_t logger, operatorDispatcher_t operatorDispatcher, onGoingMultipleResponsesStore_t multipleResponses);
 };

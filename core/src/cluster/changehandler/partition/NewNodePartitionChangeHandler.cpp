@@ -34,10 +34,10 @@ void NewNodePartitionChangeHandler::handle(node_t newNode) {
 void NewNodePartitionChangeHandler::sendSelfOplogToNodes(node_t newNode) {
     uint32_t distance = cluster->partitions->getDistanceClockwise(newNode->nodeId);
     uint32_t nodesToSendNewOplog = cluster->partitions->getNodesPerPartition() - distance;
-    //+1 to get the last node which will contain a copy of the data. We need to delete its copy. In order to do that, we simply send a movePartitionOplogRequest
+    //+1 to getAll the last node which will contain a copy of the data. We need to delete its copy. In order to do that, we simply send a movePartitionOplogRequest
     //of oplog nodesPerPartition + 1 to delete it.
     std::vector<RingEntry> neighbors = this->cluster->partitions->getNeighborsClockwise(this->cluster->partitions->getNodesPerPartition());
-    std::vector<OperationBody> selfOplog = this->operationLog->get({.operationLogId = 0});
+    std::vector<OperationBody> selfOplog = this->operationLog->getAll({.operationLogId = 0});
 
     for(int i = 0; i < nodesToSendNewOplog + 1; i++){
         memdbNodeId_t nodeId = neighbors.at(i + nodesToSendNewOplog).nodeId;
@@ -67,7 +67,7 @@ void NewNodePartitionChangeHandler::recomputeSelfOplogAndSendNextNode(RingEntry 
 }
 
 std::pair<std::vector<OperationBody>, std::vector<OperationBody>> NewNodePartitionChangeHandler::splitSelfOplog(RingEntry newRingEntry) {
-    std::vector<OperationBody> allActualOplogs = this->operationLog->get(
+    std::vector<OperationBody> allActualOplogs = this->operationLog->getAll(
             OperationLogOptions{.operationLogId = 0});
     std::vector<OperationBody> oplogSelfNode;
     std::vector<OperationBody> oplogNextNode;

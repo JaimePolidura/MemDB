@@ -27,3 +27,5 @@ public:
 
     static multiResponseReceiverIterator_t emtpy();
 };
+
+using multiResponseReceiverIterator_t = std::shared_ptr<MultiResponseReceiverIterator>;

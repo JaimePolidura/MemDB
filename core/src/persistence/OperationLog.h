@@ -28,11 +28,11 @@ public:
 
     virtual bool hasOplogFile(const OperationLogOptions options = {}) = 0;
 
-    virtual std::vector<OperationBody> clear(const OperationLogOptions options = {}) = 0;
+    virtual void clear(const OperationLogOptions options = {}) = 0;
 
     virtual oplogSegmentIterator_t getAfterTimestamp(uint64_t timestamp, const OperationLogOptions options = {}) = 0;
 
-    virtual oplogSegmentIterator_t get(const OperationLogOptions options = {}) = 0;
+    virtual oplogSegmentIterator_t getAll(const OperationLogOptions options = {}) = 0;
 
     virtual uint32_t getNumberOplogFiles() = 0;
 };

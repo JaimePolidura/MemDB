@@ -5,7 +5,7 @@ std::shared_ptr<MemDb> MemDbCreator::create(int nArgs, char ** args) {
     logger_t logger = std::make_shared<Logger>(configuration, "Starting memdb");
     onGoingMultipleResponsesStore_t multipleResponses = std::make_shared<OnGoingMultipleResponsesStore>(configuration->get<memdbNodeId_t >(ConfigurationKeys::MEMDB_CORE_NODE_ID));
 
-    cluster_t cluster = createClusterObject(logger, configuration);
+    cluster_t cluster = createClusterObject(logger, configuration, multipleResponses);
     operationLog_t operationLog = createOperationLogObject(configuration, cluster);
 
     lamportClock_t clock = std::make_shared<LamportClock>(1);
@@ -13,7 +13,7 @@ std::shared_ptr<MemDb> MemDbCreator::create(int nArgs, char ** args) {
     operatorDispatcher_t operatorDispatcher = std::make_shared<OperatorDispatcher>(map, clock, cluster, configuration, logger, operationLog, multipleResponses);
     tcpServer_t tcpServer = std::make_shared<TCPServer>(logger, configuration, Authenticator{configuration}, operatorDispatcher);
 
-    setupClusterChangeWatcher(cluster, operationLog, configuration, logger, operatorDispatcher);
+    setupClusterChangeWatcher(cluster, operationLog, configuration, logger, operatorDispatcher, multipleResponses);
 
     return std::make_shared<MemDb>(logger, map, configuration, operatorDispatcher, tcpServer, clock, cluster, operationLog);
 }
@@ -47,12 +47,12 @@ operationLog_t MemDbCreator::setupMultipleOplogConfiguration(configuration_t con
 }
 
 void MemDbCreator::setupClusterChangeWatcher(cluster_t cluster, operationLog_t operationLog, configuration_t configuration,
-                                             logger_t logger, operatorDispatcher_t operatorDispatcher) {
+                                             logger_t logger, operatorDispatcher_t operatorDispatcher, onGoingMultipleResponsesStore_t multipleResponses) {
     if(!configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION)){
         return;
     }
 
-    auto setupObject = ClusterCreator::getClusterNodeSetupObject(configuration, logger);
+    auto setupObject = ClusterCreator::getClusterNodeSetupObject(configuration, logger, multipleResponses);
     auto clusterChangeHandler = setupObject->getClusterDbChangeNodeHandler(cluster, operationLog, operatorDispatcher);
 
     cluster->watchForChangesInNodesClusterDb([clusterChangeHandler](node_t changedNode, ClusterDbChangeType type) -> void {

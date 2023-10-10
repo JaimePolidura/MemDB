@@ -39,5 +39,5 @@ private:
 
     uint64_t restoreSingleOplog();
 
-    uint64_t MemDb::applyOplog(iterator_t oplogIterator, bool dontSaveInOperationLog);
+    uint64_t applyOplog(iterator_t oplogIterator, bool dontSaveInOperationLog);
 };

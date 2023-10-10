@@ -12,6 +12,10 @@ void OperationLogBuffer::addAll(const std::vector<OperationBody> &operations) {
     std::for_each(operations.begin(), operations.end(), [this](const OperationBody& it){this->buffer->enqueue(it);});
 }
 
+void OperationLogBuffer::stopFlushing() {
+    this->flusher.stopFlushing();
+}
+
 void OperationLogBuffer::setFlushCallback(flushCallback_t flushCallbackToSet) {
     this->flusher.startFlushing(flushCallbackToSet);
 }

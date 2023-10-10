@@ -9,7 +9,7 @@ GetRingInfoResponse ClusterManagerService::getRingInfo() {
             this->token);
 
     if(!response.isSuccessful())
-        throw std::runtime_error("Unexpected error when trying to get the ring from the cluster manager " + response.body.dump());
+        throw std::runtime_error("Unexpected error when trying to getAll the ring from the cluster manager " + response.body.dump());
 
     return GetRingInfoResponse::fromJson(response.body);
 }
@@ -23,7 +23,7 @@ AllNodesResponse ClusterManagerService::getAllNodes(memdbNodeId_t nodeId) {
             this->token);
 
     if(!response.isSuccessful())
-        throw std::runtime_error("Unexpected error when trying to get all nodes from the cluster manager " + response.body.dump());
+        throw std::runtime_error("Unexpected error when trying to getAll all nodes from the cluster manager " + response.body.dump());
 
     return AllNodesResponse::fromJson(response.body);
 }

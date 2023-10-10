@@ -21,6 +21,8 @@ public:
     virtual void addAll(const std::vector<OperationBody>& operations);
 
     void setFlushCallback(flushCallback_t flushCallbackToSet);
+
+    void stopFlushing();
 };
 
 using operationLogBuffer_t = std::shared_ptr<OperationLogBuffer>;

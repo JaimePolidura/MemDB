@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 USER root
 
-RUN apt-get update && TZ=Europe && DEBIAN_FRONTEND=noninteractive && apt-get install -y \
+RUN apt-getAll update && TZ=Europe && DEBIAN_FRONTEND=noninteractive && apt-getAll install -y \
     build-essential \
     zip \
     git \

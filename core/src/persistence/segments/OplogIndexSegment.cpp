@@ -40,6 +40,11 @@ std::vector<uint8_t> OplogIndexSegment::getDataByDescriptorBytes(OplogIndexSegme
     return this->oplogIndexSegmentReader.readBytesDataByDescriptor(descriptor);
 }
 
+void OplogIndexSegment::clearAll() {
+    FileUtils::clear(this->fullPathIndex);
+    FileUtils::clear(this->fullPathData);
+}
+
 void OplogIndexSegment::initializeFiles() {
     if(!FileUtils::exists(memdDbBasePath)){
         FileUtils::createDirectory(memdDbBasePath);

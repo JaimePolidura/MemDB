@@ -13,17 +13,17 @@ public:
     MultipleOperationLog(configuration_t configuration, std::function<int(const OperationBody&)> oplogResolver,
                          std::function<std::string(int)> oplogFileNameResolver, uint32_t numberOplogs);
 
-    void addAll(const std::vector<OperationBody>& operations, const OperationLogOptions options = {}) override;
-
     void add(const OperationBody& operation, const OperationLogOptions options = {}) override;
+
+    void addAll(const std::vector<OperationBody>& operations, const OperationLogOptions options = {}) override;
 
     bool hasOplogFile(const OperationLogOptions options = {}) override;
 
-    std::vector<OperationBody> clear(const OperationLogOptions options = {}) override;
+    void clear(const OperationLogOptions options = {}) override;
 
-    std::vector<OperationBody> getAfterTimestamp(uint64_t timestamp, OperationLogOptions options) override;
+    oplogSegmentIterator_t getAfterTimestamp(uint64_t timestamp, OperationLogOptions options) override;
 
-    std::vector<OperationBody> get(const OperationLogOptions options = {}) override;
+    oplogSegmentIterator_t getAll(const OperationLogOptions options = {}) override;
 
     uint32_t getNumberOplogFiles() override;
 

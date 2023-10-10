@@ -35,6 +35,8 @@ public:
 
     std::vector<uint8_t> getAllBytes();
 
+    void clearAll();
+
 private:
     void initializeFiles();
 };

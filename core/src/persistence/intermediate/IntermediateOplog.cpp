@@ -32,6 +32,10 @@ void IntermediateOplog::setOnFlushingIntermediate(std::function<void(const std::
     this->onFlushingIntermediate = callback;
 }
 
+void IntermediateOplog::clearAll() {
+    FileUtils::clear(this->fullPath);
+}
+
 void IntermediateOplog::initializeFiles() {
     if(!FileUtils::exists(memdDbBasePath)){
         FileUtils::createDirectory(memdDbBasePath);

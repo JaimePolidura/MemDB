@@ -33,6 +33,8 @@ public:
 
     void save(const std::vector<uint8_t>& toSave);
 
+    void clearAll();
+
 private:
     void initializeFiles();
 };

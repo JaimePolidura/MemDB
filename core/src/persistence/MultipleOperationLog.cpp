@@ -23,29 +23,24 @@ bool MultipleOperationLog::hasOplogFile(const OperationLogOptions options) {
             this->operationLogs.at(options.operationLogId)->hasOplogFile(options);
 }
 
-std::vector<OperationBody> MultipleOperationLog::clear(const OperationLogOptions options) {
+void MultipleOperationLog::clear(const OperationLogOptions options) {
     if(options.operationLogId >= this->operationLogs.size()){
-        return std::vector<OperationBody>{};
+        return;
     }
 
-    singleOperationLog_t operationLogToClear = this->operationLogs.at(options.operationLogId);
-    std::vector<OperationBody> operationsCleared = operationLogToClear->clear(options);
-
-    this->operationLogs.erase(this->operationLogs.begin() + options.operationLogId);
-
-    return operationsCleared;
+    this->operationLogs.at(options.operationLogId)->clear(options);
 }
 
-std::vector<OperationBody> MultipleOperationLog::getAfterTimestamp(uint64_t timestamp, OperationLogOptions options) {
+oplogSegmentIterator_t MultipleOperationLog::getAfterTimestamp(uint64_t timestamp, OperationLogOptions options) {
     singleOperationLog_t oplog = this->operationLogs[options.operationLogId];
 
     return oplog->getAfterTimestamp(timestamp, options);
 }
 
-std::vector<OperationBody> MultipleOperationLog::get(const OperationLogOptions options) {
+oplogSegmentIterator_t MultipleOperationLog::getAll(const OperationLogOptions options) {
     std::vector<OperationBody> totalFromDisk{};
 
-    return this->operationLogs.at(options.operationLogId)->get(options);
+    return this->operationLogs.at(options.operationLogId)->getAll(options);
 }
 
 uint32_t MultipleOperationLog::getNumberOplogFiles() {

@@ -93,7 +93,7 @@ TEST(AVLTree, ShouldGetAll) {
 
     auto allNodes = avlTree.all();
 
-    ASSERT_TRUE(allNodes.size() == 5);
+    ASSERT_TRUE(allNodes.totalSize() == 5);
 }
 
 TEST(AVLTree, ShouldntGetAllEmpty) {

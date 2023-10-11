@@ -4,6 +4,7 @@
 
 #include "utils/strings/SimpleString.h"
 #include "utils/clock/LamportClock.h"
+#include "MapEntry.h"
 
 #define IGNORE_TIMESTAMP true
 #define NOT_IGNORE_TIMESTAMP false
@@ -13,8 +14,8 @@ class AVLNode {
 public:
     SimpleString<SizeValue> key;
     SimpleString<SizeValue> value;
-    LamportClock timestamp;
     AVLNode<SizeValue> * left;
+    LamportClock timestamp;
     AVLNode<SizeValue> * right;
     uint32_t keyHash;
     int16_t height;
@@ -94,7 +95,38 @@ public:
         return nullptr;
     }
 
+    void clear(){
+        this->clearRecursive(this->root);
+    }
+
+    std::vector<MapEntry<SizeValue>> getOrderedByHash() const {
+        std::vector<MapEntry<SizeValue>> toReturn{};
+
+        return this->getOrderedByHashRecursive(this->root, toReturn);
+    }
+    
 private:
+    std::vector<MapEntry<SizeValue>> getOrderedByHashRecursive(AVLNode<SizeValue> * node, std::vector<MapEntry<SizeValue>>& toReturn) const {
+        if(node->left != nullptr){
+            this->getOrderedByHashRecursive(node->left, toReturn);
+        }
+        toReturn.emplace_back(node->key, node->value, node->keyHash);
+        if(node->right != nullptr){
+            this->getOrderedByHashRecursive(node->right, toReturn);
+        }
+    }
+
+    void clearRecursive(AVLNode<SizeValue> * node) {
+        if(node->left != nullptr){
+            this->clearRecursive(node->left);
+        }
+        if(node->right != nullptr){
+            this->clearRecursive(node->right);
+        }
+
+        delete node;
+    }
+
     AVLNode<SizeValue> * removeRecursive(AVLNode<SizeValue> * last, uint32_t keyHashToRemove, uint64_t timestamp, uint16_t nodeId,
                               bool& removed, bool ignoreTimeStamps, bool alreadyDeleted = false) {
         if(last == nullptr){

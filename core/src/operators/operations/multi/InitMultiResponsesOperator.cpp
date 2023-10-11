@@ -9,7 +9,7 @@ Response InitMultiResponsesOperator::operate(const OperationBody &operation,
 
     dependencies.multipleResponses->registerIncomingMultiInit(multiResponseId, iterator);
 
-    return Response::success(iterator->size());
+    return Response::success(iterator->totalSize());
 }
 
 constexpr OperatorDescriptor InitMultiResponsesOperator::desc() {

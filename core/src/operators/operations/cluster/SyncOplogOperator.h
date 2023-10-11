@@ -22,7 +22,7 @@ public:
 
     Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) override;
 
-    iterator_t createMultiResponseSenderIterator(const OperationBody& operation, OperatorDependencies& dependencies) override;
+    iterator_t<std::vector<uint8_t>> createMultiResponseSenderIterator(const OperationBody& operation, OperatorDependencies& dependencies) override;
 
     constexpr OperatorDescriptor desc() override;
 private:

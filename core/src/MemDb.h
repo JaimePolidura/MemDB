@@ -40,5 +40,5 @@ private:
 
     uint64_t restoreSingleOplog();
 
-    uint64_t applyOplog(iterator_t oplogIterator, bool dontSaveInOperationLog, uint32_t partitionId);
+    uint64_t applyOplog(iterator_t<std::vector<uint8_t>> oplogIterator, bool dontSaveInOperationLog, uint32_t partitionId);
 };

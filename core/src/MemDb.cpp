@@ -34,7 +34,7 @@ void MemDb::syncOplogFromCluster(std::vector<uint64_t> lastTimestampProcessedFro
             });
 
             this->applyOplog(unsyncedOplog, false, oplogId);
-            this->logger->info("Synchronized {0} oplog entries with the cluster", unsyncedOplog->size());
+            this->logger->info("Synchronized {0} oplog entries with the cluster", unsyncedOplog->totalSize());
         });
 
         syncOplogFutures.push_back(std::move(syncOplogFuture));
@@ -84,7 +84,7 @@ uint64_t MemDb::restoreSingleOplog() {
     return latestApplied;
 }
 
-uint64_t MemDb::applyOplog(iterator_t oplogIterator, bool dontSaveInOperationLog, uint32_t partitionId) {
+uint64_t MemDb::applyOplog(iterator_t<std::vector<uint8_t>> oplogIterator, bool dontSaveInOperationLog, uint32_t partitionId) {
     OperationLogDeserializer operationLogDeserializer{};
     uint64_t latestTimestampApplied = 0;
 

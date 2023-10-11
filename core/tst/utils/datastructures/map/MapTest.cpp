@@ -17,7 +17,8 @@ TEST(Map, ShouldPut) {
     const std::optional<MapEntry<memDbDataLength_t>> mapEntryNombre = map.get(SimpleString<memDbDataLength_t>::fromString("nombre"));
     std::string expectedValue = "pedro";
     ASSERT_TRUE(mapEntryNombre.has_value());
-    ASSERT_TRUE(expectedValue.compare(std::string((char *) mapEntryNombre.value().value.data(), mapEntryNombre.value().value.size)) == 0);
+    ASSERT_TRUE(expectedValue.compare(
+            std::string((char *) mapEntryNombre.value().value.data(), mapEntryNombre.value().value.totalSize)) == 0);
 }
 
 TEST(Map, ShouldntPut) {
@@ -45,14 +46,14 @@ TEST(Map, GetAll) {
 
     auto all = map.all();
 
-    ASSERT_TRUE(all.size() == 4);
+    ASSERT_TRUE(all.totalSize() == 4);
 }
 
 TEST(Map, ShouldntGetAllEmpty) {
     Map<memDbDataLength_t> map{2};
     auto all = map.all();
 
-    ASSERT_TRUE(all.size() == 0);
+    ASSERT_TRUE(all.totalSize() == 0);
 }
 
 TEST(Map, ShouldRemoveEvenOldTimestamp) {

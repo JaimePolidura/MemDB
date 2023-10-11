@@ -21,6 +21,6 @@ std::vector<uint8_t> OplogSegmentIterator::next() {
     }
 }
 
-uint64_t OplogSegmentIterator::size() {
+uint64_t OplogSegmentIterator::totalSize() {
     return this->descriptors.size() + 1;
 }

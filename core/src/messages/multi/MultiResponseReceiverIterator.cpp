@@ -15,7 +15,7 @@ std::vector<uint8_t> MultiResponseReceiverIterator::next() {
     return this->nextFragment(this->multiResponseId, this->actualFragment++);
 }
 
-uint64_t MultiResponseReceiverIterator::size() {
+uint64_t MultiResponseReceiverIterator::totalSize() {
     return this->nTotalFragments - this->actualFragment;
 }
 

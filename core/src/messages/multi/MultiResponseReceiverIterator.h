@@ -2,11 +2,11 @@
 
 #include "shared.h"
 #include "utils/strings/SimpleString.h"
-#include "messages/multi/Iterator.h"
+#include "utils/Iterator.h"
 
 using nextFragment_t = std::function<std::vector<uint8_t>(uint64_t multiResponseId, uint64_t fragmentId)>;
 
-class MultiResponseReceiverIterator : public Iterator {
+class MultiResponseReceiverIterator : public Iterator<std::vector<uint8_t>> {
 private:
     uint64_t multiResponseId;
     uint64_t nTotalFragments;
@@ -23,7 +23,7 @@ public:
 
     std::vector<uint8_t> next() override;
 
-    uint64_t size() override;
+    uint64_t totalSize() override;
 
     static multiResponseReceiverIterator_t emtpy();
 };

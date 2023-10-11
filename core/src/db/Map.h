@@ -4,23 +4,9 @@
 
 #include "AVLTree.h"
 #include "utils/threads/SharedLock.h"
+#include "utils/Iterator.h"
 #include "memdbtypes.h"
-
-template<typename SizeValue>
-struct MapEntry {
-    SimpleString<SizeValue> key;
-    uint32_t keyHash;
-    SimpleString<SizeValue> value;
-
-    MapEntry(const SimpleString<SizeValue>& key, uint32_t keyHash, const SimpleString<SizeValue>& value):
-        keyHash(keyHash),
-        value(value),
-        key(key) {}
-
-    bool hasValue() {
-        return this->value.data() != nullptr;
-    }
-};
+#include "MapEntry.h"
 
 template<typename SizeValue>
 class Map {
@@ -29,9 +15,12 @@ private:
     std::vector<AVLTree<SizeValue>> buckets;
     std::vector<SharedLock *> locks;
     uint16_t numberBuckets;
+    friend class BucketMapHashOrderedIterator;
 
 public:
     Map(uint16_t numberBuckets);
+
+    using memDbDataStoreMap_t = std::shared_ptr<Map<memDbDataLength_t>>;
 
     /**
      * Returns true if operation was successful
@@ -39,6 +28,8 @@ public:
     bool put(const SimpleString<SizeValue>& key, const SimpleString<SizeValue>& value, bool ignoreTimeStamps, uint64_t timestamp, uint16_t nodeId);
 
     std::optional<MapEntry<SizeValue>> get(const SimpleString<SizeValue>& key) const;
+
+    void clear();
 
     /**
      * Returns true if operation was successful
@@ -88,6 +79,32 @@ private:
     void unlockWrite(uint32_t hashCode) const {
         const_cast<SharedLock *>(this->locks.at(hashCode % numberBuckets))->unlockExclusive();
     }
+
+public:
+    class BucketMapHashOrderedIterator : public Iterator<std::vector<MapEntry<memDbDataLength_t>>> {
+    private:
+        Map<SizeValue> * map;
+        uint32_t actualBucket;
+
+    public:
+        BucketMapHashOrderedIterator(Map * map): map(map), actualBucket(0) {}
+
+        std::vector<MapEntry<memDbDataLength_t>> next() override {
+            return this->map->buckets.at(this->actualBucket++).getOrderedByHash();
+        }
+
+        bool hasNext() override {
+            return this->actualBucket >= this->map->numberBuckets;
+        }
+
+        uint64_t totalSize() override {
+            return this->map->numberBuckets;
+        }
+    };
+
+    BucketMapHashOrderedIterator bucketIterator() {
+        return BucketMapHashOrderedIterator{this};
+    }
 };
 
 using memDbDataStoreMap_t = std::shared_ptr<Map<memDbDataLength_t>>;
@@ -127,7 +144,7 @@ std::vector<MapEntry<SizeValue>> Map<SizeValue>::all() {
 
     for (const AVLTree bucket: this->buckets){
         for (const auto node : bucket.all()){
-            all.push_back(MapEntry{node->key, node->keyHash, node->value});
+            all.push_back(MapEntry{node->key, node->value, node->keyHash});
         }
     }
 
@@ -143,7 +160,7 @@ std::optional<MapEntry<SizeValue>> Map<SizeValue>::get(const SimpleString<SizeVa
     AVLNode<SizeValue> * node = this->getNodeByKeyHash(hash);
     
     const std::optional<MapEntry<SizeValue>> response = (node != nullptr ?
-                                                         std::optional<MapEntry<SizeValue>>{MapEntry{node->key, node->keyHash, node->value}} :
+                                                         std::optional<MapEntry<SizeValue>>{MapEntry{node->key, node->value, node->keyHash}} :
                                                          std::nullopt);
     unlockRead(hash);
 
@@ -165,6 +182,15 @@ bool Map<SizeValue>::remove(const SimpleString<SizeValue>& key, bool ignoreTimes
     unlockWrite(hash);
 
     return removed;
+}
+
+template<typename SizeValue>
+void Map<SizeValue>::clear() {
+    for(int i = 0; i < numberBuckets; i++){
+        this->locks[i]->lockExclusive();
+        this->buckets[i].clear();
+        this->locks[i]->unlockExclusive();
+    }
 }
 
 template<typename SizeValue>

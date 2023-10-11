@@ -5,7 +5,7 @@ OnGoingMultipleResponsesStore::OnGoingMultipleResponsesStore(memdbNodeId_t nodeI
 void OnGoingMultipleResponsesStore::registerIncomingMultiInit(uint64_t multiId, iterator_t iterator) {
     this->onGoingMultiResponsesById[multiId] = OnGoingMultipleResponsesSender{
         .iterator = iterator,
-        .totalNFragments = iterator->size(),
+        .totalNFragments = iterator->totalSize(),
         .nFragmentsSent = 0,
     };
 }

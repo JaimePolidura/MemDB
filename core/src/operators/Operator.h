@@ -3,7 +3,7 @@
 #include "operators/OperationOptions.h"
 #include "auth/AuthenticationType.h"
 #include "messages/response/Response.h"
-#include "messages/multi/Iterator.h"
+#include "utils/Iterator.h"
 #include "shared.h"
 #include "persistence/OperationLog.h"
 #include "OperatorDependencies.h"
@@ -23,7 +23,7 @@ class Operator {
 public:
     virtual Response operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies& dependencies) = 0;
 
-    virtual iterator_t createMultiResponseSenderIterator(const OperationBody& operation, OperatorDependencies& dependencies);
+    virtual iterator_t<std::vector<uint8_t>> createMultiResponseSenderIterator(const OperationBody& operation, OperatorDependencies& dependencies);
 
     virtual constexpr OperatorDescriptor desc() = 0;
 };

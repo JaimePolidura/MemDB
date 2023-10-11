@@ -1,6 +1,6 @@
 #include "messages/response/Response.h"
 
-Response::Response(bool isSuccessful, uint8_t errorCode, uint64_t timestamp, memdbRequestNumberLength_t reqNumber, const SimpleString<memDbDataLength_t> &response) :
+Response::Response(bool isSuccessful, uint8_t errorCode, uint64_t timestamp, memdbRequestNumber_t reqNumber, const SimpleString<memDbDataLength_t> &response) :
         isSuccessful(isSuccessful),
         responseValue(response),
         requestNumber(reqNumber),
@@ -9,7 +9,7 @@ Response::Response(bool isSuccessful, uint8_t errorCode, uint64_t timestamp, mem
 {}
 
 memDbDataLength_t Response::getTotalLength() const {
-    return sizeof(memdbRequestNumberLength_t) + sizeof(uint64_t) + 1 + (responseValue.size > 0 ? (sizeof(memDbDataLength_t) + responseValue.size) : sizeof(memDbDataLength_t));
+    return sizeof(memdbRequestNumber_t) + sizeof(uint64_t) + 1 + (responseValue.size > 0 ? (sizeof(memDbDataLength_t) + responseValue.size) : sizeof(memDbDataLength_t));
 }
 
 Response Response::success(const SimpleString<memDbDataLength_t> &response, uint64_t timestamp) {
@@ -24,7 +24,7 @@ Response Response::error(uint8_t errorCode) {
     return Response(false, errorCode, 0, 0, SimpleString<memDbDataLength_t>::empty());
 }
 
-Response Response::error(uint8_t errorCode, memdbRequestNumberLength_t requestNumber, uint64_t timestamp) {
+Response Response::error(uint8_t errorCode, memdbRequestNumber_t requestNumber, uint64_t timestamp) {
     Response response = Response(false, errorCode, timestamp, 0, SimpleString<memDbDataLength_t>::empty());
     response.requestNumber = requestNumber;
 

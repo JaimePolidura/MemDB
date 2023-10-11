@@ -8,12 +8,12 @@
 struct Response {
 public:
     SimpleString<memDbDataLength_t> responseValue;
-    memdbRequestNumberLength_t requestNumber;
+    memdbRequestNumber_t requestNumber;
     uint64_t timestamp;
     uint8_t errorCode;
     bool isSuccessful;
 
-    Response(bool isSuccessful, uint8_t errorCode, uint64_t timestamp, memdbRequestNumberLength_t reqNumber, const SimpleString<memDbDataLength_t> &response);
+    Response(bool isSuccessful, uint8_t errorCode, uint64_t timestamp, memdbRequestNumber_t reqNumber, const SimpleString<memDbDataLength_t> &response);
     
     memDbDataLength_t getTotalLength() const;
 
@@ -23,5 +23,5 @@ public:
 
     static Response error(uint8_t errorCode);
 
-    static Response error(uint8_t errorCode, memdbRequestNumberLength_t requestNumber, uint64_t timestamp = 0);
+    static Response error(uint8_t errorCode, memdbRequestNumber_t requestNumber, uint64_t timestamp = 0);
 };

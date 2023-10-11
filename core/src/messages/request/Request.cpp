@@ -119,7 +119,7 @@ Request & Request::operator=(Request&& other) noexcept {
 
 memDbDataLength_t Request::getTotalLength() const {
     memDbDataLength_t length = 0;
-    length += sizeof(memdbRequestNumberLength_t);
+    length += sizeof(memdbRequestNumber_t);
     length += this->authentication.getTotalLength();
     length += this->operation.getTotalLength(authentication.flag1);
 

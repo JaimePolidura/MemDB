@@ -59,7 +59,7 @@ public:
 struct Request {
     AuthenticationBody authentication;
     OperationBody operation;
-    memdbRequestNumberLength_t requestNumber;
+    memdbRequestNumber_t requestNumber;
     AuthenticationType authenticationType; //Not in serializetion
 
     Request(const Request& other);

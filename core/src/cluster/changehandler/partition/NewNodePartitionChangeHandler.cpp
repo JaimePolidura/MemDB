@@ -62,6 +62,9 @@ void NewNodePartitionChangeHandler::recomputeSelfOplogAndSendNextNode2(RingEntry
             }
         }
 
+        std::for_each(keysOwnedByOtherNode.begin(), keysOwnedByOtherNode.end(), [this](MapEntry<memDbDataLength_t>& keyIDontOwnAnymore) -> void {
+            this->cluster->memDbStores->getByPartitionId(0)->remove(keyIDontOwnAnymore.key, true, 0, 0);
+        });
     }
 }
 

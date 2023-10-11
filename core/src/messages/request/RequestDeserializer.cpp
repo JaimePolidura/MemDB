@@ -2,19 +2,19 @@
 
 Request RequestDeserializer::deserialize(const std::vector<uint8_t>& buffer) {
     Request request{};
-    request.requestNumber = Utils::parseFromBuffer<memdbRequestNumberLength_t>(buffer);
+    request.requestNumber = Utils::parseFromBuffer<memdbRequestNumber_t>(buffer);
     request.authentication = this->deserializeAuthenticacion(buffer);
-    request.operation = this->deserializeOperation(buffer, request.authentication.getTotalLength() + sizeof(memdbRequestNumberLength_t),
+    request.operation = this->deserializeOperation(buffer, request.authentication.getTotalLength() + sizeof(memdbRequestNumber_t),
                                                    request.authentication.flag1);
 
     return request;
 }
 
 AuthenticationBody RequestDeserializer::deserializeAuthenticacion(const std::vector<uint8_t>& buffer) {
-    uint8_t authLength = this->getValueWithoutFlags(buffer, sizeof(memdbRequestNumberLength_t));
-    uint8_t * authKey = this->fill(buffer, sizeof(memdbRequestNumberLength_t) + 1, sizeof(memdbRequestNumberLength_t) + authLength + 1);
-    bool flagAuth1 = this->getFlag(buffer, sizeof(memdbRequestNumberLength_t), FLAG1_MASK);
-    bool flagAuth2 = this->getFlag(buffer, sizeof(memdbRequestNumberLength_t), FLAG2_MASK);
+    uint8_t authLength = this->getValueWithoutFlags(buffer, sizeof(memdbRequestNumber_t));
+    uint8_t * authKey = this->fill(buffer, sizeof(memdbRequestNumber_t) + 1, sizeof(memdbRequestNumber_t) + authLength + 1);
+    bool flagAuth1 = this->getFlag(buffer, sizeof(memdbRequestNumber_t), FLAG1_MASK);
+    bool flagAuth2 = this->getFlag(buffer, sizeof(memdbRequestNumber_t), FLAG2_MASK);
 
     return AuthenticationBody(std::string((char *) authKey, authLength), flagAuth1, flagAuth2);
 }

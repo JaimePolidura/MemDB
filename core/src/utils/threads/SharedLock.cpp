@@ -1,21 +1,21 @@
 #include "utils/threads/SharedLock.h"
 
 void SharedLock::lockShared() {
-    this->sharedCounterLock.lock();
+    this->sharedCountLock.lock();
 
-    if(++this->sharedCount == 1)
+    if(++this->lockedSharedCount == 1)
         this->lock.lock();
 
-    this->sharedCounterLock.unlock();
+    this->sharedCountLock.unlock();
 }
 
 void SharedLock::unlockShared() {
-    this->sharedCounterLock.lock();
+    this->sharedCountLock.lock();
 
-    if(--this->sharedCount == 0)
+    if(--this->lockedSharedCount == 0)
         this->lock.unlock();
 
-    this->sharedCounterLock.unlock();
+    this->sharedCountLock.unlock();
 }
 
 void SharedLock::lockExclusive() {

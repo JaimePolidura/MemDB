@@ -3,7 +3,7 @@
 This is the main component. This stores the data and handles request & replication.
 
 ## How it works
-- Data is stored in a hashmap with fixed number of buckets (default 64). Each bucket will contain an autobalanced AVL Tree and a shared lock to handle concurrency.
+- Data is stored in a hashmap with fixed number of buckets (default 64). Each bucket will contain an autobalanced AVL Tree and a shared exclusiveLock to handle concurrency.
 - Data is persistent. When a append comes in, it will be stored in a buffer. When it reaches a threshold, the operations will be appended to a local filePath. When the server starts up, it will apply all operations stored in the filePath and compact them.
 - TCP protocol is used for serve request.
 - Authentication will be carried by different keys depending on the context. To use the memdb as a user, you will need AUTH_API_KEY.
@@ -25,7 +25,7 @@ Configuration keys are stored in environtment variables:
 - MEMDB_CORE_SERVER_MIN_THREADS. Min nº of allocated threads that will handle request. Default: 20
 - MEMDB_CORE_SERVER_THREADS. Max nº of allocated threads that will handle request. Default: 100
 - MEMDB_CORE_PORT. Default: 10000
-- MEMDB_CORE_NUMBER_BUCKETS. Internal hashmap number of buckets, each bucket will contain a shared lock and AVL Tree. Default: 64
+- MEMDB_CORE_NUMBER_BUCKETS. Internal hashmap number of buckets, each bucket will contain a shared exclusiveLock and AVL Tree. Default: 64
 - MEMDB_CORE_PERSISTANCE_WRITE_EVERY. Threshold of the wrrites operation log buffer used for persistence. Default: 50
 - MEMDB_CORE_USE_REPLICATION. Default: false.
 - MEMDB_CORE_ETCD_ADDRESSES. Etcd addresses. Default: 127.0.0.1:2379. Exmaple <address1>,<address2> etc.

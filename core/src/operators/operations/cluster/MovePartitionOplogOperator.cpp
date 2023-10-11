@@ -37,7 +37,7 @@ Response MovePartitionOplogOperator::operate(const OperationBody& operation, con
 constexpr OperatorDescriptor MovePartitionOplogOperator::desc() {
     return OperatorDescriptor{
             .type = OperatorType::NODE_MAINTENANCE,
-            .number = OPERATOR_NUMBER,
+            .number = OperatorNumbers::MOVE_OPLOG,
             .name = "MOVE_PARTITION_OPLOG",
             .authorizedToExecute = { AuthenticationType::NODE },
     };

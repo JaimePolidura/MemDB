@@ -90,8 +90,6 @@ auto Cluster::watchForChangesInNodesClusterDb(std::function<void(node_t nodeChan
 }
 
 auto Cluster::createSyncOplogRequestInitMultiResponse(uint64_t timestamp, uint32_t selfOplogId, memdbNodeId_t nodeIdToSendRequest) -> Request {
-    auto authenticationBody = AuthenticationBody{this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY), false, false};
-    auto argsVector = std::make_shared<std::vector<SimpleString<memDbDataLength_t>>>();
     uint32_t part1 = timestamp >> 32;
     uint32_t part2 = (uint32_t) timestamp & 0xFFFFFFFF;
     uint32_t nodeOplogId = this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS) ?
@@ -99,31 +97,23 @@ auto Cluster::createSyncOplogRequestInitMultiResponse(uint64_t timestamp, uint32
                             selfOplogId + this->partitions->getDistanceClockwise(nodeIdToSendRequest) :
                             selfOplogId - this->partitions->getDistanceCounterClockwise(nodeIdToSendRequest)) : 0;
 
-    argsVector->push_back(SimpleString<memDbDataLength_t>::fromNumber(0x05)); //Sync oplog operator ID
-    argsVector->push_back(SimpleString<memDbDataLength_t>::fromNumber(part1));
-    argsVector->push_back(SimpleString<memDbDataLength_t>::fromNumber(part2));
-    argsVector->push_back(SimpleString<memDbDataLength_t>::fromNumber(nodeOplogId));
-
-    OperationBody operationBody{};
-    operationBody.args = argsVector;
-    operationBody.operatorNumber = 0x06; //InitMulti operator number
-
-    Request request{};
-    request.operation = operationBody;
-    request.authentication = authenticationBody;
-    request.requestNumber = this->onGoingMultipleResponsesStore->nextMultiResponseId(); // Used as multi-response Id
-
-    return request;
+    return RequestBuilder::builder()
+            .authKey(this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY))
+            ->args({
+                SimpleString<memDbDataLength_t>::fromNumber(OperatorNumbers::SYNC_OPLOG),
+                SimpleString<memDbDataLength_t>::fromNumber(part1),
+                SimpleString<memDbDataLength_t>::fromNumber(part2),
+                SimpleString<memDbDataLength_t>::fromNumber(nodeOplogId)
+            })
+            ->operatorNumber(OperatorNumbers::INIT_MULTI)
+            ->requestNumber(this->onGoingMultipleResponsesStore->nextMultiResponseId()) // Used as multi-response Id
+            ->build();
 }
 
 auto Cluster::createNextFragmentMultiResponseRequest(uint64_t multiResponseId) -> Request {
-    OperationBody operationBody{};
-    operationBody.operatorNumber = 0x07; //Next fragment multi-response
-
-    Request request{};
-    request.operation = operationBody;
-    request.authentication = AuthenticationBody{this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY), false, false};
-    request.requestNumber = multiResponseId;
-
-    return request;
+    return RequestBuilder::builder()
+            .authKey(this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY))
+            ->operatorNumber(OperatorNumbers::NEXT_FRAGMENT)
+            ->requestNumber(multiResponseId)
+            ->build();
 }

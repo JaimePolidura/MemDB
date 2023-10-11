@@ -16,7 +16,7 @@ Response SetOperator::operate(const OperationBody& operation, const OperationOpt
 constexpr OperatorDescriptor SetOperator::desc() {
     return OperatorDescriptor{
             .type = OperatorType::DB_STORE_WRITE,
-            .number = SetOperator::OPERATOR_NUMBER,
+            .number = OperatorNumbers::SET,
             .name = "SET",
             .authorizedToExecute = { AuthenticationType::API, AuthenticationType::NODE },
     };

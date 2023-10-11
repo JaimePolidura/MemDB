@@ -16,7 +16,7 @@ Response NextFragmentOperator::operate(const OperationBody& operation, const Ope
 constexpr OperatorDescriptor NextFragmentOperator::desc() {
     return OperatorDescriptor{
         .type = OperatorType::NODE_MAINTENANCE,
-        .number = OPERATOR_NUMBER,
+        .number = OperatorNumbers::NEXT_FRAGMENT,
         .name = "NEXT_FRAGMENT",
         .authorizedToExecute = { AuthenticationType::NODE },
     };

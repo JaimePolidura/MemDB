@@ -16,7 +16,7 @@ Response SyncOplogOperator::operate(const OperationBody& operation, const Operat
 constexpr OperatorDescriptor SyncOplogOperator::desc() {
     return OperatorDescriptor{
             .type = OperatorType::NODE_MAINTENANCE,
-            .number = OPERATOR_NUMBER,
+            .number = OperatorNumbers::SYNC_OPLOG,
             .name = "SYNC",
             .authorizedToExecute = { AuthenticationType::NODE },
     };

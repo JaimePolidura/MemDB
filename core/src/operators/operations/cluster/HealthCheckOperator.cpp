@@ -7,7 +7,7 @@ Response HealthCheckOperator::operate(const OperationBody& operation, const Oper
 constexpr OperatorDescriptor HealthCheckOperator::desc() {
     return OperatorDescriptor{
             .type = OperatorType::NODE_MAINTENANCE,
-            .number = OPERATOR_NUMBER,
+            .number = OperatorNumbers::HEALTH_CHECK,
             .name = "HEALTH_CHECK",
             .authorizedToExecute = { AuthenticationType::MAINTENANCE },
     };

@@ -15,7 +15,7 @@ Response InitMultiResponsesOperator::operate(const OperationBody &operation,
 constexpr OperatorDescriptor InitMultiResponsesOperator::desc() {
     return OperatorDescriptor{
         .type = OperatorType::NODE_MAINTENANCE,
-        .number = OPERATOR_NUMBER,
+        .number = OperatorNumbers::INIT_MULTI,
         .name = "INIT_MULTI_RESPONSES",
         .authorizedToExecute = { AuthenticationType::NODE },
     };

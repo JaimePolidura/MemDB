@@ -11,7 +11,7 @@ Response DeleteOperator::operate(const OperationBody& operation, const Operation
 constexpr OperatorDescriptor DeleteOperator::desc() {
     return OperatorDescriptor{
         .type = OperatorType::DB_STORE_WRITE,
-        .number = DeleteOperator::OPERATOR_NUMBER,
+        .number = OperatorNumbers::DEL,
         .name = "DELETE",
         .authorizedToExecute = { AuthenticationType::API, AuthenticationType::NODE },
     };

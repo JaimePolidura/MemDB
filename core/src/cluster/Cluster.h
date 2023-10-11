@@ -14,6 +14,7 @@
 
 #include "messages/multi/MultiResponseReceiverIterator.h"
 #include "messages/multi/OnGoingMultipleResponsesStore.h"
+#include "messages/request/RequestBuilder.h"
 
 #include "config/Configuration.h"
 #include "config/keys/ConfigurationKeys.h"
@@ -21,6 +22,8 @@
 #include "persistence/serializers/OperationLogDeserializer.h"
 #include "logging/Logger.h"
 #include "db/MemDbStores.h"
+#include "operators/OperatorNumbers.h"
+
 
 class Cluster {
 private:

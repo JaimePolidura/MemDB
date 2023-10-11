@@ -12,7 +12,7 @@ Response GetOperator::operate(const OperationBody& operation, const OperationOpt
 constexpr OperatorDescriptor GetOperator::desc() {
     return OperatorDescriptor{
             .type = OperatorType::DB_STORE_READ,
-            .number = GetOperator::OPERATOR_NUMBER,
+            .number = OperatorNumbers::GET,
             .name = "GET",
             .authorizedToExecute = { AuthenticationType::API },
     };

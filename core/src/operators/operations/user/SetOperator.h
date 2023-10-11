@@ -1,12 +1,11 @@
 #pragma once
 
 #include "operators/Operator.h"
+#include "operators/OperatorNumbers.h"
 #include "messages/response/ErrorCode.h"
 
 class SetOperator : public Operator {
 public:
-    static constexpr const uint8_t OPERATOR_NUMBER = 0x01;
-
     Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) override;
 
     constexpr OperatorDescriptor desc() override;

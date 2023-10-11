@@ -1,6 +1,7 @@
 #pragma once
 
 #include "operators/Operator.h"
+#include "operators/OperatorNumbers.h"
 #include "messages/response/ErrorCode.h"
 #include "persistence/serializers/OperationLogDeserializer.h"
 #include "persistence/utils/OperationLogInvalidator.h"
@@ -22,8 +23,6 @@ private:
     OperationLogInvalidator operationLogInvalidator;
 
 public:
-    static constexpr int OPERATOR_NUMBER = 0x06;
-
     Response operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies& dependencies) override;
     
     constexpr OperatorDescriptor desc() override;

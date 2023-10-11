@@ -20,8 +20,6 @@ private:
 public:
     Map(uint16_t numberBuckets);
 
-    using memDbDataStoreMap_t = std::shared_ptr<Map<memDbDataLength_t>>;
-
     /**
      * Returns true if operation was successful
      */

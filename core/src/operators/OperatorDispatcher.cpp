@@ -59,6 +59,7 @@ Response OperatorDispatcher::dispatch_no_applyDelayedOperationsBuffer(const Requ
     }
 
     OperationBody operationBody = request.operation;
+
     return this->executeOperation(operatorToExecute, operationBody, options);
 }
 

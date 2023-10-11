@@ -26,6 +26,10 @@ RingEntry Partitions::getNeighborCounterClockwiseByNodeId(memdbNodeId_t nodeId) 
     return this->ringEntries.getNeighborCounterClockwise(nodeId);
 }
 
+uint32_t Partitions::getRingPositionByNodeId(memdbNodeId_t nodeId) {
+    return this->ringEntries.getByNodeId(nodeId).ringPosition;
+}
+
 uint32_t Partitions::getDistanceOfKey(SimpleString<memDbDataLength_t> key) {
     uint32_t ringPosition = this->getRingPositionByKey(key);
     uint32_t nodeThatWouldHoldThatKey = this->ringEntries.getRingEntryBelongsToPosition(ringPosition).nodeId;

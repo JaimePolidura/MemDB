@@ -28,6 +28,8 @@ public:
 
     uint32_t getRingPositionByKey(SimpleString<memDbDataLength_t> key) const;
 
+    uint32_t getRingPositionByNodeId(memdbNodeId_t nodeId);
+
     // self --> (clockwise) nodeB
     bool isClockwiseNeighbor(memdbNodeId_t nodeB);
 

@@ -20,8 +20,12 @@ void SharedLock::unlockShared() {
 
 void SharedLock::lockExclusive() {
     this->lock.lock();
+    this->lockedExclusiveCount++;
 }
 
 void SharedLock::unlockExclusive() {
-    this->lock.unlock();
+    if(--this->lockedExclusiveCount == 0){
+        this->lockedExclusiveCount = 0;
+        this->lock.unlock();
+    }
 }

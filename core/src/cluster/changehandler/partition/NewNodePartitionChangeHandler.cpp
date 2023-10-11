@@ -45,6 +45,26 @@ void NewNodePartitionChangeHandler::sendSelfOplogToNodes(node_t newNode) {
     }
 }
 
+void NewNodePartitionChangeHandler::recomputeSelfOplogAndSendNextNode2(RingEntry newRingEntryAdded, const std::vector<RingEntry>& oldClockwiseNeighbors) {
+    uint32_t nodePositionNewNode = this->cluster->partitions->getRingPositionByNodeId(newRingEntryAdded.nodeId);
+    auto bucketIterator = this->cluster->memDbStores->getByPartitionId(0)->bucketIterator();
+
+    while(bucketIterator.hasNext()){
+        std::vector<MapEntry<memDbDataLength_t>> dataInBucket = bucketIterator.next();
+        std::vector<MapEntry<memDbDataLength_t>> keysOwnedByMe{};
+        std::vector<MapEntry<memDbDataLength_t>> keysOwnedByOtherNode{};
+
+        for (const MapEntry<memDbDataLength_t>& mapEntry: dataInBucket) {
+            if(mapEntry.keyHash < nodePositionNewNode) {
+                keysOwnedByMe.push_back(mapEntry);
+            } else {
+                keysOwnedByOtherNode.push_back(mapEntry);
+            }
+        }
+
+    }
+}
+
 void NewNodePartitionChangeHandler::recomputeSelfOplogAndSendNextNode(RingEntry newRingEntryAdded, const std::vector<RingEntry>& oldClockwiseNeighbors) {
     auto[oplogSelfNode, oplogNextNode] = this->splitSelfOplog(newRingEntryAdded);
 

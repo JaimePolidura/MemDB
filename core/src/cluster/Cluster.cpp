@@ -1,7 +1,8 @@
 #include "cluster/Cluster.h"
 
-Cluster::Cluster(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t onGoingMultipleResponsesStore) :
+Cluster::Cluster(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t onGoingMultipleResponsesStore, memDbStores_t memDbStores) :
     configuration(configuration),
+    memDbStores(memDbStores),
     clusterDb(std::make_shared<ClusterDb>(configuration, logger)),
     onGoingMultipleResponsesStore(onGoingMultipleResponsesStore),
     clusterNodes(std::make_shared<ClusterNodes>(configuration, logger)),

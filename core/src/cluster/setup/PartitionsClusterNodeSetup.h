@@ -7,10 +7,12 @@
 class PartitionsClusterNodeSetup : public ClusterNodeSetup {
 private:
     PartitionNeighborsNodesGroupSetter partitionNeighborsNodesGroupSetter;
+    memDbStores_t memDbStores;
 
 public:
-    PartitionsClusterNodeSetup(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t multipleResponses):
-        ClusterNodeSetup(logger, configuration, multipleResponses) {}
+    PartitionsClusterNodeSetup(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t multipleResponses, memDbStores_t memDbStores):
+            memDbStores(memDbStores),
+            ClusterNodeSetup(logger, configuration, multipleResponses) {}
 
     void setClusterInformation(cluster_t cluster, const std::vector<node_t>& otherNodes) override;
 

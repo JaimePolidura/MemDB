@@ -6,17 +6,16 @@ std::shared_ptr<MemDb> MemDbCreator::create(int nArgs, char ** args) {
     onGoingMultipleResponsesStore_t multipleResponses = std::make_shared<OnGoingMultipleResponsesStore>(configuration->get<memdbNodeId_t >(ConfigurationKeys::MEMDB_CORE_NODE_ID));
     memDbStores_t memDbStores = std::make_shared<MemDbStores>();
 
-    cluster_t cluster = createClusterObject(logger, configuration, multipleResponses);
+    cluster_t cluster = createClusterObject(logger, configuration, multipleResponses, memDbStores);
     memDbStores->initializeStoresMap(cluster->getNodesPerPartition(), configuration);
-    
-    operationLog_t operationLog = createOperationLogObject(configuration, cluster);
 
+    operationLog_t operationLog = createOperationLogObject(configuration, cluster);
 
     lamportClock_t clock = std::make_shared<LamportClock>(1);
     operatorDispatcher_t operatorDispatcher = std::make_shared<OperatorDispatcher>(memDbStores, clock, cluster, configuration, logger, operationLog, multipleResponses);
     tcpServer_t tcpServer = std::make_shared<TCPServer>(logger, configuration, Authenticator{configuration}, operatorDispatcher);
 
-    setupClusterChangeWatcher(cluster, operationLog, configuration, logger, operatorDispatcher, multipleResponses);
+    setupClusterChangeWatcher(cluster, operationLog, configuration, logger, operatorDispatcher, multipleResponses, memDbStores);
 
     return std::make_shared<MemDb>(logger, memDbStores, configuration, operatorDispatcher, tcpServer, clock, cluster, operationLog);
 }
@@ -29,9 +28,9 @@ operationLog_t MemDbCreator::createOperationLogObject(configuration_t configurat
     }
 }
 
-cluster_t MemDbCreator::createClusterObject(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t multipleResponses) {
+cluster_t MemDbCreator::createClusterObject(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t multipleResponses, memDbStores_t memDbStores) {
     if(configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION)){
-        return ClusterCreator::setup(configuration, logger, multipleResponses);
+        return ClusterCreator::setup(configuration, logger, multipleResponses, memDbStores);
     }else{
         return std::make_shared<Cluster>();
     }
@@ -50,12 +49,12 @@ operationLog_t MemDbCreator::setupMultipleOplogConfiguration(configuration_t con
 }
 
 void MemDbCreator::setupClusterChangeWatcher(cluster_t cluster, operationLog_t operationLog, configuration_t configuration,
-                                             logger_t logger, operatorDispatcher_t operatorDispatcher, onGoingMultipleResponsesStore_t multipleResponses) {
+                                             logger_t logger, operatorDispatcher_t operatorDispatcher, onGoingMultipleResponsesStore_t multipleResponses, memDbStores_t memDbStores) {
     if(!configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION)){
         return;
     }
 
-    auto setupObject = ClusterCreator::getClusterNodeSetupObject(configuration, logger, multipleResponses);
+    auto setupObject = ClusterCreator::getClusterNodeSetupObject(configuration, logger, multipleResponses, memDbStores);
     auto clusterChangeHandler = setupObject->getClusterDbChangeNodeHandler(cluster, operationLog, operatorDispatcher);
 
     cluster->watchForChangesInNodesClusterDb([clusterChangeHandler](node_t changedNode, ClusterDbChangeType type) -> void {

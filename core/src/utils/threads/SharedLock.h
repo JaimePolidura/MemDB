@@ -7,6 +7,8 @@ private:
     int64_t sharedCount;
     std::mutex sharedCounterLock;
     std::mutex lock;
+    
+    uint64_t lockedExclusiveCount;
 
 public:
     void lockShared();

@@ -4,6 +4,7 @@ void PartitionsClusterNodeSetup::setClusterInformation(cluster_t cluster, const 
     GetRingInfoResponse ringInfo = cluster->clusterManager->getRingInfo();
 
     cluster->partitions = std::make_shared<Partitions>(ringInfo.entries, ringInfo.nodesPerPartition, ringInfo.maxSize, configuration);
+    cluster->memDbStores = this->memDbStores;
 
     this->partitionNeighborsNodesGroupSetter.setFromOtherNodes(cluster, otherNodes);
 }

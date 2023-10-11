@@ -18,8 +18,9 @@
 #include "config/Configuration.h"
 #include "config/keys/ConfigurationKeys.h"
 
-#include "logging/Logger.h"
 #include "persistence/serializers/OperationLogDeserializer.h"
+#include "logging/Logger.h"
+#include "db/MemDbStores.h"
 
 class Cluster {
 private:
@@ -27,6 +28,7 @@ private:
     configuration_t configuration;
     clusterNodes_t clusterNodes;
     clusterManagerService_t clusterManager;
+    memDbStores_t memDbStores;
     partitions_t partitions;
     clusterdb_t clusterDb;
     node_t selfNode;
@@ -45,7 +47,7 @@ private:
 public:
     Cluster(): partitions(std::make_shared<Partitions>()), clusterNodes(std::make_shared<ClusterNodes>()) {}
 
-    Cluster(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t onGoingMultipleResponsesStore);
+    Cluster(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t onGoingMultipleResponsesStore, memDbStores_t memDbStores);
 
     auto setBooting() -> void;
 

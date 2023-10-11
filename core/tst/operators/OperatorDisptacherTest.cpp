@@ -47,7 +47,7 @@
 //public:
 //    OperatorDbMockAdapter() = default;
 //
-//    Response operate(const OperationBody& operation, const OperationOptions& operationOptions, memDbDataStore_t map) {
+//    Response operate(const OperationBody& operation, const OperationOptions& operationOptions, memDbDataStoreMap_t map) {
 //        return Response::success();
 //    }
 //
@@ -70,7 +70,7 @@
 //    MOCK_METHOD0(number, uint8_t());
 //    MOCK_METHOD0(authorizedToExecute, AuthenticationType());
 //
-//    MOCK_METHOD3(operate, Response(const OperationBody&, const OperationOptions&, memDbDataStore_t));
+//    MOCK_METHOD3(operate, Response(const OperationBody&, const OperationOptions&, memDbDataStoreMap_t));
 //};
 //
 //Request createRequest(uint8_t opNumber, AuthenticationType authType = AuthenticationType::USER, uint64_t timestamp = 0);

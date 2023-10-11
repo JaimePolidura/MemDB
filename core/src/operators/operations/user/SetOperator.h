@@ -2,7 +2,6 @@
 
 #include "operators/Operator.h"
 #include "messages/response/ErrorCode.h"
-#include "operators/DbOperatorExecutor.h"
 
 class SetOperator : public Operator {
 public:

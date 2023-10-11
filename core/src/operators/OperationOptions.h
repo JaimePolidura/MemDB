@@ -10,6 +10,7 @@ public:
     bool dontBroadcastToCluster;
     bool dontSaveInOperationLog;
     LamportClock::UpdateClockStrategy updateClockStrategy;
+    uint32_t partitionId;
 
     uint64_t requestNumber;
 

@@ -4,7 +4,6 @@
 #include "auth/AuthenticationType.h"
 #include "messages/response/Response.h"
 #include "messages/multi/Iterator.h"
-#include "utils/datastructures/map/Map.h"
 #include "shared.h"
 #include "persistence/OperationLog.h"
 #include "OperatorDependencies.h"

@@ -2,15 +2,17 @@
 
 #include "operators/Operator.h"
 #include "operators/OperatorRegistry.h"
-#include "operators/DbOperatorExecutor.h"
-#include "OperatorDependencies.h"
-#include "messages/multi/OnGoingMultipleResponsesStore.h"
+#include "operators/DelayedOperationsBuffer.h"
+#include "operators/OperatorDependencies.h"
 
+#include "messages/multi/OnGoingMultipleResponsesStore.h"
 #include "messages/response/ErrorCode.h"
+
+#include "db/MemDbStores.h"
+
 #include "persistence/SingleOperationLog.h"
 #include "utils/clock/LamportClock.h"
 #include "cluster/Cluster.h"
-#include "DelayedOperationsBuffer.h"
 
 class OperatorDispatcher {
 public: //Need it for mocking it
@@ -22,11 +24,11 @@ private:
     configuration_t configuration;
     cluster_t cluster;
     lamportClock_t clock;
-    memDbDataStore_t db;
+    memDbStores_t memDbStores;
     logger_t logger;
 
 public:
-    OperatorDispatcher(memDbDataStore_t dbCons, lamportClock_t clock, cluster_t cluster, configuration_t configuration,
+    OperatorDispatcher(memDbStores_t memDbStores, lamportClock_t clock, cluster_t cluster, configuration_t configuration,
                        logger_t logger, operationLog_t operationLog, onGoingMultipleResponsesStore_t multipleResponses);
 
     Response dispatch(const Request& request);

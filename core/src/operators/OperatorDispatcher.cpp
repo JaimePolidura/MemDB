@@ -1,8 +1,8 @@
 #include "operators/OperatorDispatcher.h"
 
-OperatorDispatcher::OperatorDispatcher(memDbDataStore_t dbCons, lamportClock_t clock, cluster_t cluster, configuration_t configuration,
+OperatorDispatcher::OperatorDispatcher(memDbStores_t memDbStores, lamportClock_t clock, cluster_t cluster, configuration_t configuration,
                                        logger_t logger, operationLog_t operationLog, onGoingMultipleResponsesStore_t multipleResponses):
-        db(dbCons),
+        memDbStores(memDbStores),
         operationLog(operationLog),
         multipleResponses(multipleResponses),
         clock(clock),
@@ -38,7 +38,7 @@ Response OperatorDispatcher::dispatch_no_applyDelayedOperationsBuffer(const Requ
     OperationOptions options = {
             .checkTimestamps = writeDbRequestFromNode,
             .updateClockStrategy = LamportClock::UpdateClockStrategy::TICK,
-            .requestNumber = request.requestNumber
+            .requestNumber = request.requestNumber,
     };
 
     this->logger->debugInfo("Received request for operator {0} from {1}", request.requestNumber, operatorToExecute->desc().name,
@@ -53,6 +53,9 @@ Response OperatorDispatcher::dispatch_no_applyDelayedOperationsBuffer(const Requ
     if(isInReplicationMode() && writeDbRequest && canAcceptRequest() && !canExecuteRequest()){
         this->delayedOperationsBuffer->add(request);
         return Response::success();
+    }
+    if(operatorToExecute->desc().type == OperatorType::DB_STORE_WRITE || operatorToExecute->desc().type == OperatorType::DB_STORE_READ){
+        options.partitionId = this->cluster->getPartitionIdByKey(request.operation.getArg(0));
     }
 
     OperationBody operationBody = request.operation;
@@ -123,7 +126,7 @@ OperatorDependencies OperatorDispatcher::getDependencies() {
     dependencies.configuration = this->configuration;
     dependencies.operationLog = this->operationLog;
     dependencies.cluster = this->cluster;
-    dependencies.dbStore = this->db;
+    dependencies.memDbStores = this->memDbStores;
     dependencies.operatorDispatcher = [this](const OperationBody& op, const OperationOptions& options) -> Response {
         return this->executeOperation(this->operatorRegistry->get(op.operatorNumber), const_cast<OperationBody&>(op), options);
     };

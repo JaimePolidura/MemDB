@@ -9,6 +9,7 @@
 #include "logging/Logger.h"
 #include "persistence/SingleOperationLog.h"
 #include "persistence/serializers/OperationLogDeserializer.h"
+#include "db/MemDbStores.h"
 
 #include "memdbtypes.h"
 
@@ -19,13 +20,13 @@ private:
     configuration_t configuration;
     operationLog_t operationLog;
     cluster_t cluster;
-    memDbDataStore_t dbMap;
+    memDbStores_t dbStores;
     tcpServer_t tcpServer;
     lamportClock_t clock;
     logger_t logger;
 
 public:
-    MemDb(logger_t logger, memDbDataStore_t map, configuration_t configuration, operatorDispatcher_t operatorDispatcher, tcpServer_t tcpServer,
+    MemDb(logger_t logger, memDbStores_t dbMaps, configuration_t configuration, operatorDispatcher_t operatorDispatcher, tcpServer_t tcpServer,
           lamportClock_t clock, cluster_t cluster, operationLog_t operationLog);
 
     void run();
@@ -39,5 +40,5 @@ private:
 
     uint64_t restoreSingleOplog();
 
-    uint64_t applyOplog(iterator_t oplogIterator, bool dontSaveInOperationLog);
+    uint64_t applyOplog(iterator_t oplogIterator, bool dontSaveInOperationLog, uint32_t partitionId);
 };

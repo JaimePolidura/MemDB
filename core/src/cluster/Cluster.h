@@ -55,6 +55,10 @@ public:
 
     auto getPartitionObject() -> partitions_t;
 
+    auto getPartitionIdByKey(SimpleString<memDbDataLength_t> key) -> uint32_t;
+
+    auto getNodesPerPartition() -> uint32_t;
+
     virtual auto broadcast(const OperationBody& operation) -> void;
 
     virtual auto getNodeState() -> NodeState;

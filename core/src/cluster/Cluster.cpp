@@ -58,6 +58,22 @@ auto Cluster::getNodeId() -> memdbNodeId_t {
     return this->selfNode->nodeId;
 }
 
+auto Cluster::getNodesPerPartition() -> uint32_t {
+    if(this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS)){
+        return this->partitions->getNodesPerPartition();
+    } else {
+        return 1;
+    }
+}
+
+auto Cluster::getPartitionIdByKey(SimpleString<memDbDataLength_t> key) -> uint32_t {
+    if(this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS)){
+        return this->partitions->getDistanceOfKey(key);
+    } else {
+        return 0;
+    }
+}
+
 auto Cluster::watchForChangesInNodesClusterDb(std::function<void(node_t nodeChanged, ClusterDbChangeType changeType)> onChangeCallback) -> void {
     this->clusterDb->watchNodeChanges([this, onChangeCallback](ClusterDbValueChanged nodeChangedEvent) {
         auto node = Node::fromJson(nodeChangedEvent.value);

@@ -18,6 +18,8 @@ public:
 
     SimpleString(uint8_t * value, StringLengthType size): value(value), size(size) {}
 
+    SimpleString() = default;
+
     uint8_t * data() const {
         return this->value.get();
     }

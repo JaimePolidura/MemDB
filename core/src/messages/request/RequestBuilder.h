@@ -3,6 +3,8 @@
 #include "shared.h"
 #include "memdbtypes.h"
 
+#include "operators/OperatorNumbers.h"
+
 #include "messages/request/Request.h"
 
 class RequestBuilder {
@@ -37,6 +39,7 @@ public:
     RequestBuilder * addArg(const SimpleString<memDbDataLength_t>& arg);
 
     Request build();
+    OperationBody buildOperationBody();
 
     static RequestBuilder builder();
 };

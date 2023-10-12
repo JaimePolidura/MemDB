@@ -6,7 +6,6 @@ Response MovePartitionOplogOperator::operate(const OperationBody& operation, con
     auto newOplogId = operation.getArg(0).to<uint32_t>();
     auto oldOplogId = operation.getArg(1).to<uint32_t>();
 
-    //Oplogs ids start with 0. 0 = self node
     if(newOplogId >= dependencies.cluster->getPartitionObject()->getNodesPerPartition()) {
         this->clearOperationLog(dependencies, newOplogId);
         return Response::success();
@@ -26,7 +25,6 @@ Response MovePartitionOplogOperator::operate(const OperationBody& operation, con
 
     dependencies.operationLog->addAll(oplog, OperationLogOptions{
             .operationLogId = newOplogId,
-            .dontUseBuffer = true,
     });
 
     dependencies.cluster->setRunning();
@@ -44,7 +42,9 @@ constexpr OperatorDescriptor MovePartitionOplogOperator::desc() {
 }
 
 void MovePartitionOplogOperator::clearOperationLog(OperatorDependencies dependencies, uint32_t operationLogId) {
-    std::vector<OperationBody> operationsCleared = dependencies.operationLog->clear(OperationLogOptions{.operationLogId = operationLogId});
-    std::vector<OperationBody> invalidationOperations = this->operationLogInvalidator.getInvalidationOperations(operationsCleared);
-    dependencies.operatorsDispatcher(invalidationOperations, {.checkTimestamps = false, .onlyExecute = true});
+    if(operationLogId > 0){
+        std::vector<OperationBody> operationsCleared = dependencies.operationLog->clear(OperationLogOptions{.operationLogId = operationLogId});
+        std::vector<OperationBody> invalidationOperations = this->operationLogInvalidator.getInvalidationOperations(operationsCleared);
+        dependencies.operatorsDispatcher(invalidationOperations, {.checkTimestamps = false, .onlyExecute = true});
+    }
 }

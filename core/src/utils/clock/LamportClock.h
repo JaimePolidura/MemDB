@@ -11,6 +11,8 @@ public:
 
     LamportClock(uint16_t nodeId, uint64_t counter);
 
+    LamportClock() = default;
+
     LamportClock& operator=(const LamportClock& other);
 
     virtual uint64_t tick(uint64_t other);

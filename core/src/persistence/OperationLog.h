@@ -6,11 +6,6 @@
 
 struct OperationLogOptions {
     uint32_t operationLogId;
-    bool dontUseBuffer;
-
-    bool operator==(const OperationLogOptions& other) const {
-        return operationLogId == other.operationLogId && dontUseBuffer == other.dontUseBuffer;
-    }
 };
 
 class OperationLog {

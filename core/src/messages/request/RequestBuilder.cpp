@@ -72,6 +72,15 @@ Request RequestBuilder::build() {
     authBody.flag1 = this->_authFlag1;
     authBody.flag2 = this->_authFlag2;
 
+    Request request{};
+    request.requestNumber = this->_requestNumber;
+    request.operation = this->buildOperationBody();
+    request.authentication = authBody;
+
+    return request;
+}
+
+OperationBody RequestBuilder::buildOperationBody() {
     OperationBody operationBody{};
     operationBody.operatorNumber = this->_operatorNumber;
     operationBody.flag1 = this->_operatorFlag1;
@@ -80,10 +89,5 @@ Request RequestBuilder::build() {
     operationBody.timestamp = this->_timestamp;
     operationBody.args = this->_args;
 
-    Request request{};
-    request.requestNumber = this->_requestNumber;
-    request.operation = operationBody;
-    request.authentication = authBody;
-
-    return request;
+    return operationBody;
 }

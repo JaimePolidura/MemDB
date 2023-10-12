@@ -34,114 +34,116 @@ void NewNodePartitionChangeHandler::handle(node_t newNode) {
 void NewNodePartitionChangeHandler::sendSelfOplogToNodes(node_t newNode) {
     uint32_t distance = cluster->partitions->getDistanceClockwise(newNode->nodeId);
     uint32_t nodesToSendNewOplog = cluster->partitions->getNodesPerPartition() - distance;
-    //+1 to getAll the last node which will contain a copy of the data. We need to delete its copy. In order to do that, we simply send a movePartitionOplogRequest
-    //of oplog nodesPerPartition + 1 to delete it.
     std::vector<RingEntry> neighbors = this->cluster->partitions->getNeighborsClockwise(this->cluster->partitions->getNodesPerPartition());
-    std::vector<OperationBody> selfOplog = this->operationLog->getAll({.operationLogId = 0});
 
-    for(int i = 0; i < nodesToSendNewOplog + 1; i++){
-        memdbNodeId_t nodeId = neighbors.at(i + nodesToSendNewOplog).nodeId;
-        this->cluster->clusterNodes->sendRequest(nodeId, createMovePartitionOplogRequest(i + nodesToSendNewOplog + 1 , selfOplog, false));
-    }
-}
-
-void NewNodePartitionChangeHandler::recomputeSelfOplogAndSendNextNode2(RingEntry newRingEntryAdded, const std::vector<RingEntry>& oldClockwiseNeighbors) {
-    uint32_t nodePositionNewNode = this->cluster->partitions->getRingPositionByNodeId(newRingEntryAdded.nodeId);
     auto bucketIterator = this->cluster->memDbStores->getByPartitionId(0)->bucketIterator();
 
-    while(bucketIterator.hasNext()){
-        std::vector<MapEntry<memDbDataLength_t>> dataInBucket = bucketIterator.next();
-        std::vector<MapEntry<memDbDataLength_t>> keysOwnedByMe{};
-        std::vector<MapEntry<memDbDataLength_t>> keysOwnedByOtherNode{};
+    while (bucketIterator.hasNext()) {
+        std::vector<MapEntry<memDbDataLength_t>> keys = bucketIterator.next();
 
-        for (const MapEntry<memDbDataLength_t>& mapEntry: dataInBucket) {
-            if(mapEntry.keyHash < nodePositionNewNode) {
-                keysOwnedByMe.push_back(mapEntry);
-            } else {
-                keysOwnedByOtherNode.push_back(mapEntry);
-            }
+        //+1 to getAll the last node which will contain a copy of the data. We need to delete its copy. In order to do that, we simply send a movePartitionOplogRequest
+        //of oplog nodesPerPartition + 1 to delete it.
+        for(int i = 0; i < nodesToSendNewOplog + 1; i++){
+            memdbNodeId_t nodeId = neighbors.at(i + nodesToSendNewOplog).nodeId;
+            this->cluster->clusterNodes->sendRequest(nodeId, createMoveOplogRequest((CreateMoveOplogReqParams{
+                    .oplog = keys,
+                    .applyNewOplog = true,
+                    .newOplogId = static_cast<int>(i + nodesToSendNewOplog + 1)
+            })));
         }
-
-        std::for_each(keysOwnedByOtherNode.begin(), keysOwnedByOtherNode.end(), [this](MapEntry<memDbDataLength_t>& keyIDontOwnAnymore) -> void {
-            this->cluster->memDbStores->getByPartitionId(0)->remove(keyIDontOwnAnymore.key, true, 0, 0);
-        });
     }
 }
 
 void NewNodePartitionChangeHandler::recomputeSelfOplogAndSendNextNode(RingEntry newRingEntryAdded, const std::vector<RingEntry>& oldClockwiseNeighbors) {
-    auto[oplogSelfNode, oplogNextNode] = this->splitSelfOplog(newRingEntryAdded);
+    auto bucketIterator = this->cluster->memDbStores->getByPartitionId(0)->bucketIterator();
 
-    //Send oplogNextNode to next node
-    if(!oplogNextNode.empty()){
-        cluster->clusterNodes->sendRequest(newRingEntryAdded.nodeId,createMovePartitionOplogRequest(0, oplogNextNode, true));
-        invalidateSelfOplogNextNode(oplogNextNode);
+    while(bucketIterator.hasNext()){
+        auto[keysStillBeingOwnedByMe, keysOwnedNowByNewNode] = this->splitSelfOplog(bucketIterator.next(), newRingEntryAdded);
+
+        this->removeKeysFromSelfNode(keysOwnedNowByNewNode);
+        this->sendNewOplogToNewNode(newRingEntryAdded.nodeId, keysOwnedNowByNewNode);
+        this->updateOplogIdOfNeighNodesPlusOne(keysStillBeingOwnedByMe, oldClockwiseNeighbors);
     }
+}
 
-    //Send oplogSelfNode to newOplog
-    if(!oplogSelfNode.empty()){
-        Request moveOplogRequest = this->createMovePartitionOplogRequest(0, oplogSelfNode, false);
+void NewNodePartitionChangeHandler::sendNewOplogToNewNode(memdbNodeId_t nodeId, std::vector<MapEntry<memDbDataLength_t>>& oplog) {
+    cluster->clusterNodes->sendRequest(nodeId, createMoveOplogRequest(CreateMoveOplogReqParams{
+            .oplog = oplog,
+            .applyNewOplog = true,
+            .newOplogId = 0
+    }));
+}
 
-        for(int i = 0; i < oldClockwiseNeighbors.size(); i++){
-            moveOplogRequest.operation.setArg(0, SimpleString<memDbDataLength_t>::fromNumber(i + 1)); //Set new oplogId
+void NewNodePartitionChangeHandler::updateOplogIdOfNeighNodesPlusOne(std::vector<MapEntry<memDbDataLength_t>> &newOplog, const std::vector<RingEntry> &neighbors) {
+    Request moveOplogRequest = this->createMoveOplogRequest(CreateMoveOplogReqParams{
+            .oplog = newOplog,
+            .applyNewOplog = true,
+            .newOplogId = 0
+    });
 
-            cluster->clusterNodes->sendRequest(oldClockwiseNeighbors.at(i).nodeId, moveOplogRequest);
+    for(int i = 0; i < neighbors.size(); i++){
+        moveOplogRequest.operation.setArg(0, SimpleString<memDbDataLength_t>::fromNumber(i + 1)); //Set new oplogId
+        cluster->clusterNodes->sendRequest(neighbors.at(i).nodeId, moveOplogRequest);
+    }
+}
+
+void NewNodePartitionChangeHandler::removeKeysFromSelfNode(const std::vector<MapEntry<memDbDataLength_t>>& keysToRemove) {
+    std::for_each(keysToRemove.begin(), keysToRemove.end(), [this](const MapEntry<memDbDataLength_t>& keyToRemove) -> void {
+        OperationBody deleteOperation = RequestBuilder::builder()
+                .operatorNumber(OperatorNumbers::DEL)
+                ->addArg(keyToRemove.key)
+                ->build()
+                .operation;
+
+        this->cluster->memDbStores->getByPartitionId(0)->remove(keyToRemove.key, true, 0, 0);
+        this->operationLog->add(deleteOperation, OperationLogOptions{.operationLogId = 0});
+    });
+}
+
+splitedSelfOplog_t NewNodePartitionChangeHandler::splitSelfOplog(std::vector<MapEntry<memDbDataLength_t>> keysSelfOplog, RingEntry newRingEntry) {
+    uint32_t nodePositionNewNode = this->cluster->partitions->getRingPositionByNodeId(newRingEntry.nodeId);
+    std::vector<MapEntry<memDbDataLength_t>> keysOwnedByMe{};
+    std::vector<MapEntry<memDbDataLength_t>> keysOwnedByOtherNode{};
+
+    for (const MapEntry<memDbDataLength_t>& mapEntry: keysSelfOplog) {
+        if(mapEntry.keyHash < nodePositionNewNode) {
+            keysOwnedByMe.push_back(mapEntry);
+        } else {
+            keysOwnedByOtherNode.push_back(mapEntry);
         }
     }
+
+    return std::make_pair(keysOwnedByMe, keysOwnedByOtherNode);
 }
 
-std::pair<std::vector<OperationBody>, std::vector<OperationBody>> NewNodePartitionChangeHandler::splitSelfOplog(RingEntry newRingEntry) {
-    std::vector<OperationBody> allActualOplogs = this->operationLog->getAll(
-            OperationLogOptions{.operationLogId = 0});
-    std::vector<OperationBody> oplogSelfNode;
-    std::vector<OperationBody> oplogNextNode;
-    oplogSelfNode.reserve(allActualOplogs.size() / 2);
-    oplogNextNode.reserve(allActualOplogs.size() / 2);
-
-    for(const OperationBody& oplog : allActualOplogs){
-        SimpleString<memDbDataLength_t> key = oplog.args->at(0);
-        bool keyBelongsToNextNode = this->cluster->partitions->getRingPositionByKey(key) >= newRingEntry.ringPosition;
-
-        if(keyBelongsToNextNode)
-            oplogNextNode.push_back(oplog);
-        else
-            oplogSelfNode.push_back(oplog);
+Request NewNodePartitionChangeHandler::createMoveOplogRequest(CreateMoveOplogReqParams request) {
+    std::vector<OperationBody> createOperations{request.oplog.size()};
+    for(int i = 0; i < request.oplog.size(); i++){
+        createOperations[i] = RequestBuilder::builder()
+                .operatorNumber(OperatorNumbers::SET)
+                ->addArg(request.oplog.at(i).key)
+                ->timestamp(request.oplog.at(i).timestamp.counter)
+                ->buildOperationBody();
     }
 
-    return std::make_pair(oplogSelfNode, oplogNextNode);
-}
+    auto serialized = this->operationLogSerializer.serializeAll(createOperations);
 
-void NewNodePartitionChangeHandler::invalidateSelfOplogNextNode(const std::vector<OperationBody>& oplogNextNode) {
-    std::vector<OperationBody> deleteOperations = this->operationLogInvalidator.getInvalidationOperations(oplogNextNode);
-
-    this->operationLog->addAll(deleteOperations, OperationLogOptions{.dontUseBuffer = true});
-
-    std::shared_ptr<Operator> deleteOperator = this->operatorDispatcher->operatorRegistry->get(0x03);
-    this->operatorDispatcher->executeOperations(deleteOperator, deleteOperations, {.checkTimestamps = false, .onlyExecute = true});
+    return RequestBuilder::builder()
+            .authKey(this->cluster->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY))
+            ->operatorNumber(OperatorNumbers::MOVE_OPLOG)
+            ->operatorFlag1(request.applyNewOplog)
+            ->operatorFlag2(true) //Clear old oplog
+            ->args({
+                SimpleString<memDbDataLength_t>::fromNumber(request.newOplogId),
+                SimpleString<memDbDataLength_t>::fromNumber(request.newOplogId - 1),
+                SimpleString<memDbDataLength_t>::fromVector(serialized)
+                   })
+            ->build();
 }
 
 void NewNodePartitionChangeHandler::updateNeighbors() {
     memdbNodeId_t selfNodeId = this->cluster->selfNode->nodeId;
     std::vector<node_t> otherNodes = cluster->clusterManager->getAllNodes(selfNodeId)
             .getAllNodesExcept(selfNodeId);
-
     this->partitionNeighborsNodesGroupSetter.setFromOtherNodes(this->cluster, otherNodes);
-}
-
-Request NewNodePartitionChangeHandler::createMovePartitionOplogRequest(int newOplogId, const std::vector<OperationBody>& oplog, bool applyNewOplog) {
-    auto serialized = operationLogSerializer.serializeAllShared(oplog);
-
-    OperationBody operationBody{};
-    operationBody.operatorNumber = 0x06; //MovePartitionOplogOperator
-    operationBody.flag1 = applyNewOplog; //applyNewOplog
-    operationBody.flag2 = true; //clearOldOplog
-
-    args_t args = OperationBody::createOperationBodyArg();
-    args->push_back(SimpleString<memDbDataLength_t>::fromNumber(newOplogId));
-    args->push_back(SimpleString<memDbDataLength_t>::fromNumber(newOplogId - 1));
-    args->push_back(SimpleString<memDbDataLength_t>::fromVector(*serialized));
-
-    Request request{};
-    request.operation = operationBody;
-
-    return request;
 }

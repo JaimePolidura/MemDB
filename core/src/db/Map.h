@@ -8,6 +8,7 @@
 #include "memdbtypes.h"
 #include "MapEntry.h"
 
+
 template<typename SizeValue>
 class Map {
 private:
@@ -142,7 +143,7 @@ std::vector<MapEntry<SizeValue>> Map<SizeValue>::all() {
 
     for (const AVLTree bucket: this->buckets){
         for (const auto node : bucket.all()){
-            all.push_back(MapEntry{node->key, node->value, node->keyHash});
+            all.push_back(MapEntry{.key = node->key, .value = node->value, .keyHash = node->keyHash, .timestamp = node->timestamp});
         }
     }
 
@@ -156,10 +157,11 @@ std::optional<MapEntry<SizeValue>> Map<SizeValue>::get(const SimpleString<SizeVa
     lockRead(hash);
 
     AVLNode<SizeValue> * node = this->getNodeByKeyHash(hash);
-    
+
     const std::optional<MapEntry<SizeValue>> response = (node != nullptr ?
-                                                         std::optional<MapEntry<SizeValue>>{MapEntry{node->key, node->value, node->keyHash}} :
-                                                         std::nullopt);
+            std::optional<MapEntry<SizeValue>>{MapEntry{.key = node->key, .value = node->value, .keyHash = node->keyHash, .timestamp = node->timestamp}} :
+            std::nullopt);
+
     unlockRead(hash);
 
     return response;

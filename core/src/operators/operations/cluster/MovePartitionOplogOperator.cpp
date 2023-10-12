@@ -42,9 +42,8 @@ constexpr OperatorDescriptor MovePartitionOplogOperator::desc() {
 }
 
 void MovePartitionOplogOperator::clearOperationLog(OperatorDependencies dependencies, uint32_t operationLogId) {
-    if(operationLogId > 0){
-        std::vector<OperationBody> operationsCleared = dependencies.operationLog->clear(OperationLogOptions{.operationLogId = operationLogId});
-        std::vector<OperationBody> invalidationOperations = this->operationLogInvalidator.getInvalidationOperations(operationsCleared);
-        dependencies.operatorsDispatcher(invalidationOperations, {.checkTimestamps = false, .onlyExecute = true});
+    if(operationLogId > 0) {
+        dependencies.operationLog->clear(OperationLogOptions{.operationLogId = operationLogId});
+        dependencies.memDbStores->removeByPartitionId(operationLogId);
     }
 }

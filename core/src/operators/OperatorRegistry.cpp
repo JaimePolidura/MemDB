@@ -3,8 +3,9 @@
 OperatorRegistry::OperatorRegistry() {
     std::vector<std::shared_ptr<Operator>> allOperators = AllOperators::list();
 
-    for (const std::shared_ptr<Operator> &item: allOperators)
-        this->operators.insert(std::make_pair(item->operatorNumber(), item));
+    for (const std::shared_ptr<Operator> &item: allOperators) {
+        this->operators.insert(std::make_pair(item->desc().number, item));
+    }
 }
 
 std::shared_ptr<Operator> OperatorRegistry::get(uint8_t operatorNumber) {

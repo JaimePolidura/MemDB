@@ -2,7 +2,7 @@
 
 OnGoingMultipleResponsesStore::OnGoingMultipleResponsesStore(memdbNodeId_t nodeId): nodeId(nodeId) {}
 
-void OnGoingMultipleResponsesStore::registerIncomingMultiInit(uint64_t multiId, iterator_t iterator) {
+void OnGoingMultipleResponsesStore::registerIncomingMultiInit(uint64_t multiId, iterator_t<std::vector<uint8_t>> iterator) {
     this->onGoingMultiResponsesById[multiId] = OnGoingMultipleResponsesSender{
         .iterator = iterator,
         .totalNFragments = iterator->totalSize(),
@@ -10,7 +10,7 @@ void OnGoingMultipleResponsesStore::registerIncomingMultiInit(uint64_t multiId, 
     };
 }
 
-iterator_t OnGoingMultipleResponsesStore::getSenderIteratorByMultiId(uint64_t multiId) {
+iterator_t<std::vector<uint8_t>> OnGoingMultipleResponsesStore::getSenderIteratorByMultiId(uint64_t multiId) {
     return this->onGoingMultiResponsesById[multiId].iterator;
 }
 

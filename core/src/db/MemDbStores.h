@@ -16,6 +16,8 @@ public:
     void initializeStoresMap(uint32_t partitionsPerNode, configuration_t configuration);
 
     memDbDataStoreMap_t getByPartitionId(uint32_t partitionId);
+
+    void removeByPartitionId(uint32_t partitionId);
 };
 
 using memDbStores_t = std::shared_ptr<MemDbStores>;

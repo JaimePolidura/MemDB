@@ -1,8 +1,8 @@
 #include "cluster/changehandler/partition/DeletionNodeChangeHandler.h"
 
-DeletionNodeChangeHandler::DeletionNodeChangeHandler(logger_t logger, cluster_t cluster, operationLog_t operationLog,
-                                                     operatorDispatcher_t operatorDispatcher): logger(logger), cluster(cluster),
-                                                     operationLog(operationLog), operatorDispatcher(operatorDispatcher) {}
+DeletionNodeChangeHandler::DeletionNodeChangeHandler(logger_t logger, cluster_t cluster, operationLog_t operationLog, operatorDispatcher_t operatorDispatcher):
+    logger(logger), cluster(cluster), operationLog(operationLog), operatorDispatcher(operatorDispatcher),
+    moveOpLogRequestCreator(cluster->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY)){}
 
 void DeletionNodeChangeHandler::handle(node_t deletedNode) {
     uint32_t distanceClockwise = this->cluster->partitions->getDistanceClockwise(deletedNode->nodeId);
@@ -31,49 +31,47 @@ void DeletionNodeChangeHandler::sendRestOplogsToNextNodes(const std::vector<Ring
     for (uint32_t actualOplogId = 1; actualOplogId < nodesPerPartition; actualOplogId++) {
         int affectedNodes = nodesPerPartition - actualOplogId;
 
-        std::vector<OperationBody> actualOplog = this->operationLog->getAll(
-                OperationLogOptions{.operationLogId = actualOplogId});
+        auto bucketIterator = this->cluster->memDbStores->getByPartitionId(actualOplogId)->bucketIterator();
 
-        for (int i = 0; i < affectedNodes; i++) {
-            int newOplogId = i + actualOplogId;
-            int oldOplog = newOplogId + 1;
-            bool nodeAlreadyHoldsOplog = oldOplog < nodesPerPartition;
+        while(bucketIterator.hasNext()){
+            auto actualOplog = bucketIterator.next();
 
-            memdbNodeId_t nodeIdToSendRequest = neighborsClockWise.at(i).nodeId;
+            for (int i = 0; i < affectedNodes; i++) {
+                int newOplogId = i + actualOplogId;
+                int oldOplog = newOplogId + 1;
+                bool nodeAlreadyHoldsOplog = oldOplog < nodesPerPartition;
 
-            bool applyNewOplog = !nodeAlreadyHoldsOplog;
-            bool clearOldOplog =  nodeAlreadyHoldsOplog;
+                memdbNodeId_t nodeIdToSendRequest = neighborsClockWise.at(i).nodeId;
 
-            this->cluster->clusterNodes->sendRequest(nodeIdToSendRequest, createMovePartitionOplogRequest(
-                    oldOplog, newOplogId, actualOplog, applyNewOplog, clearOldOplog));
+                bool applyNewOplog = !nodeAlreadyHoldsOplog;
+                bool clearOldOplog =  nodeAlreadyHoldsOplog;
+
+                this->cluster->clusterNodes->sendRequest(nodeIdToSendRequest, this->moveOpLogRequestCreator.create(CreateMoveOplogReqParams{
+                    .oplog = actualOplog,
+                    .applyNewOplog = applyNewOplog,
+                    .clearOldOplog = clearOldOplog,
+                    .oldOplogId = oldOplog,
+                    .newOplogId = newOplogId
+                }));
+            }
         }
     }
 }
 
 void DeletionNodeChangeHandler::sendSelfOplogToPrevNode(memdbNodeId_t prevNodeId) {
-    std::vector<OperationBody> selfOplog = this->operationLog->getAll(OperationLogOptions{.operationLogId = 0});
-    this->cluster->clusterNodes->sendRequest(prevNodeId, createMovePartitionOplogRequest(
-            0, 0, selfOplog, true, false));
-}
+    auto bucketIterator = this->cluster->memDbStores->getByPartitionId(0)->bucketIterator();
 
-Request DeletionNodeChangeHandler::createMovePartitionOplogRequest(int oldOplog, int newOplogId, const std::vector<OperationBody>& oplog,
-                                                                   bool applyNewOplog, bool clearOldOplog) {
-    auto serialized = operationLogSerializer.serializeAllShared(oplog);
+    while(bucketIterator.hasNext()) {
+        auto selfOplog = bucketIterator.next();
 
-    OperationBody operationBody{};
-    operationBody.operatorNumber = 0x06; //MovePartitionOplogOperator
-    operationBody.flag1 = applyNewOplog; //applyNewOplog
-    operationBody.flag2 = clearOldOplog; //clearOldOplog
-
-    args_t args = OperationBody::createOperationBodyArg();
-    args->push_back(SimpleString<memDbDataLength_t>::fromNumber(newOplogId));
-    args->push_back(SimpleString<memDbDataLength_t>::fromNumber(oldOplog));
-    args->push_back(SimpleString<memDbDataLength_t>::fromVector(*serialized));
-
-    Request request{};
-    request.operation = operationBody;
-
-    return request;
+        this->cluster->clusterNodes->sendRequest(prevNodeId, this->moveOpLogRequestCreator.create(CreateMoveOplogReqParams{
+            .oplog = selfOplog,
+            .applyNewOplog = true,
+            .clearOldOplog = false,
+            .oldOplogId = 0,
+            .newOplogId = 0
+        }));
+    }
 }
 
 void DeletionNodeChangeHandler::updateNeighbors() {

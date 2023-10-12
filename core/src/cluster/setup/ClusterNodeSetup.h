@@ -10,10 +10,12 @@ class ClusterNodeSetup {
 protected:
     onGoingMultipleResponsesStore_t multipleResponses;
     configuration_t configuration;
+    memDbStores_t memDbStores;
     logger_t logger;
 
 public:
-    ClusterNodeSetup(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t multipleResponses): logger(logger), configuration(configuration) {}
+    ClusterNodeSetup(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t multipleResponses, memDbStores_t memDbStores):
+        logger(logger), configuration(configuration), multipleResponses(multipleResponses), memDbStores(memDbStores) {}
 
     void initializeNodeInCluster(cluster_t cluster);
 

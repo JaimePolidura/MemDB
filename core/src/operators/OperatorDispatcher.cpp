@@ -136,7 +136,7 @@ OperatorDependencies OperatorDispatcher::getDependencies() {
             this->executeOperation(this->operatorRegistry->get(op.operatorNumber), const_cast<OperationBody&>(op), options);
         });
     };
-    dependencies.getMultiResponseSenderIterator = [this, dependencies](const OperationBody& operation, uint8_t operatorNumber) -> iterator_t {
+    dependencies.getMultiResponseSenderIterator = [this, dependencies](const OperationBody& operation, uint8_t operatorNumber) {
         return this->operatorRegistry->get(operatorNumber)->createMultiResponseSenderIterator(operation,
                                                                                               const_cast<OperatorDependencies &>(dependencies));
     };

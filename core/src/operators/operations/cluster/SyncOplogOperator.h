@@ -1,7 +1,7 @@
 #pragma once
 
 #include "operators/Operator.h"
-#include "operators/OperatorNumbers"
+#include "operators/OperatorNumbers.h"
 #include "messages/response/ErrorCode.h"
 #include "utils/Utils.h"
 #include "persistence/serializers/OperationLogSerializer.h"

@@ -110,10 +110,12 @@ private:
         if(node->left != nullptr){
             this->getOrderedByHashRecursive(node->left, toReturn);
         }
-        toReturn.emplace_back(node->key, node->value, node->keyHash);
+        toReturn.push_back(MapEntry<SizeValue>{node->key, node->value, node->keyHash, node->timestamp});
         if(node->right != nullptr){
             this->getOrderedByHashRecursive(node->right, toReturn);
         }
+
+        return toReturn;
     }
 
     void clearRecursive(AVLNode<SizeValue> * node) {

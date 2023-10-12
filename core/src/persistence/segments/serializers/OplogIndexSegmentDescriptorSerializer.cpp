@@ -7,7 +7,7 @@ std::vector<uint8_t> OplogIndexSegmentDescriptorSerializer::serialize(const Oplo
     Utils::appendToBuffer(descriptor.max, bytes);
     Utils::appendToBuffer(descriptor.ptr, bytes);
     Utils::appendToBuffer(descriptor.crc, bytes);
-    Utils::appendToBuffer(descriptor.flags, bytes);
+    Utils::appendToBuffer(descriptor.size, bytes);
 
     return bytes;
 }

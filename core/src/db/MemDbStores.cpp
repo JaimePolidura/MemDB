@@ -8,6 +8,10 @@ void MemDbStores::initializeStoresMap(uint32_t partitionsPerNode, configuration_
     }
 }
 
+void MemDbStores::removeByPartitionId(uint32_t partitionId) {
+    this->storesByPartitionId.erase(partitionId);
+}
+
 memDbDataStoreMap_t MemDbStores::getByPartitionId(uint32_t partitionId) {
     return this->storesByPartitionId.at(partitionId);
 }

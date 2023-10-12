@@ -1,10 +1,10 @@
 #include "operators/operations/cluster/SyncOplogOperator.h"
 
-iterator_t SyncOplogOperator::createMultiResponseSenderIterator(const OperationBody& operation, OperatorDependencies& dependencies) {
+iterator_t<std::vector<uint8_t>> SyncOplogOperator::createMultiResponseSenderIterator(const OperationBody& operation, OperatorDependencies& dependencies) {
     uint64_t lastTimestampUnsync = operation.getDoubleArgU64(1);
     uint32_t nodeOplogIdToSync = calculateSelfOplogIdFromNodeOplogId(operation, dependencies);
 
-    return std::dynamic_pointer_cast<Iterator>(dependencies.operationLog->getAfterTimestamp(lastTimestampUnsync, OperationLogOptions{
+    return std::dynamic_pointer_cast<Iterator<std::vector<uint8_t>>>(dependencies.operationLog->getAfterTimestamp(lastTimestampUnsync, OperationLogOptions{
             .operationLogId = nodeOplogIdToSync
     }));
 }

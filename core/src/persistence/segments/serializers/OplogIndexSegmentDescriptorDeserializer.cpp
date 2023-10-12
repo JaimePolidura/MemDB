@@ -22,6 +22,6 @@ OplogIndexSegmentDescriptor OplogIndexSegmentDescriptorDeserializer::deserialize
             .max = Utils::parse<uint64_t>(ptr + 8),
             .ptr = Utils::parse<uint64_t>(ptr + 16),
             .crc = Utils::parse<uint32_t>(ptr + 24),
-            .flags = Utils::parse<uint32_t>(ptr + 28),
+            .size = Utils::parse<uint32_t>(ptr + 28),
     };
 }

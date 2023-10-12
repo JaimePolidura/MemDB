@@ -89,7 +89,7 @@ public:
         BucketMapHashOrderedIterator(Map * map): map(map), actualBucket(0) {}
 
         std::vector<MapEntry<memDbDataLength_t>> next() override {
-            return this->map->buckets.at(this->actualBucket++).getOrderedByHash();
+            return this->map->buckets.at(this->actualBucket++).getOrderedByHash();;
         }
 
         bool hasNext() override {
@@ -159,7 +159,7 @@ std::optional<MapEntry<SizeValue>> Map<SizeValue>::get(const SimpleString<SizeVa
     AVLNode<SizeValue> * node = this->getNodeByKeyHash(hash);
 
     const std::optional<MapEntry<SizeValue>> response = (node != nullptr ?
-            std::optional<MapEntry<SizeValue>>{MapEntry{.key = node->key, .value = node->value, .keyHash = node->keyHash, .timestamp = node->timestamp}} :
+            std::optional<MapEntry<SizeValue>>{MapEntry{node->key, node->value, node->keyHash, node->timestamp}} :
             std::nullopt);
 
     unlockRead(hash);

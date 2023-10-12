@@ -4,6 +4,8 @@ LamportClock::LamportClock(uint16_t nodeId): nodeId(nodeId), counter(0) {}
 
 LamportClock::LamportClock(uint16_t nodeId, uint64_t counter): nodeId(nodeId), counter(counter) {}
 
+LamportClock::LamportClock(const LamportClock& other): counter(other.counter.load()), nodeId(other.nodeId) {}
+
 LamportClock& LamportClock::operator=(const LamportClock& other) {
     this->nodeId = other.nodeId;
     this->counter.store(other.counter.load(std::memory_order_acquire), std::memory_order_release);

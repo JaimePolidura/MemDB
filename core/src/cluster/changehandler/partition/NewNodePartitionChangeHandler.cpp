@@ -2,7 +2,8 @@
 
 NewNodePartitionChangeHandler::NewNodePartitionChangeHandler(logger_t logger, cluster_t cluster, operationLog_t operationLog,
                                                              operatorDispatcher_t operatorDispatcher): logger(logger), cluster(cluster),
-                                                             operationLog(operationLog), operatorDispatcher(operatorDispatcher) {}
+                                                             operationLog(operationLog), operatorDispatcher(operatorDispatcher),
+                                                             moveOpLogRequestCreator(cluster->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY)) {}
 
 void NewNodePartitionChangeHandler::handle(node_t newNode) {
     std::vector<RingEntry> oldClockwiseNeighbors = this->cluster->partitions->getNeighborsClockwise();
@@ -45,9 +46,10 @@ void NewNodePartitionChangeHandler::sendSelfOplogToNodes(node_t newNode) {
         //of oplog nodesPerPartition + 1 to delete it.
         for(int i = 0; i < nodesToSendNewOplog + 1; i++){
             memdbNodeId_t nodeId = neighbors.at(i + nodesToSendNewOplog).nodeId;
-            this->cluster->clusterNodes->sendRequest(nodeId, createMoveOplogRequest((CreateMoveOplogReqParams{
+            this->cluster->clusterNodes->sendRequest(nodeId, this->moveOpLogRequestCreator.create((CreateMoveOplogReqParams{
                     .oplog = keys,
                     .applyNewOplog = true,
+                    .clearOldOplog = true,
                     .newOplogId = static_cast<int>(i + nodesToSendNewOplog + 1)
             })));
         }
@@ -67,17 +69,19 @@ void NewNodePartitionChangeHandler::recomputeSelfOplogAndSendNextNode(RingEntry 
 }
 
 void NewNodePartitionChangeHandler::sendNewOplogToNewNode(memdbNodeId_t nodeId, std::vector<MapEntry<memDbDataLength_t>>& oplog) {
-    cluster->clusterNodes->sendRequest(nodeId, createMoveOplogRequest(CreateMoveOplogReqParams{
+    cluster->clusterNodes->sendRequest(nodeId, this->moveOpLogRequestCreator.create(CreateMoveOplogReqParams{
             .oplog = oplog,
             .applyNewOplog = true,
+            .clearOldOplog = true,
             .newOplogId = 0
     }));
 }
 
 void NewNodePartitionChangeHandler::updateOplogIdOfNeighNodesPlusOne(std::vector<MapEntry<memDbDataLength_t>> &newOplog, const std::vector<RingEntry> &neighbors) {
-    Request moveOplogRequest = this->createMoveOplogRequest(CreateMoveOplogReqParams{
+    Request moveOplogRequest = this->moveOpLogRequestCreator.create(CreateMoveOplogReqParams{
             .oplog = newOplog,
             .applyNewOplog = true,
+            .clearOldOplog = true,
             .newOplogId = 0
     });
 
@@ -114,31 +118,6 @@ splitedSelfOplog_t NewNodePartitionChangeHandler::splitSelfOplog(std::vector<Map
     }
 
     return std::make_pair(keysOwnedByMe, keysOwnedByOtherNode);
-}
-
-Request NewNodePartitionChangeHandler::createMoveOplogRequest(CreateMoveOplogReqParams request) {
-    std::vector<OperationBody> createOperations{request.oplog.size()};
-    for(int i = 0; i < request.oplog.size(); i++){
-        createOperations[i] = RequestBuilder::builder()
-                .operatorNumber(OperatorNumbers::SET)
-                ->addArg(request.oplog.at(i).key)
-                ->timestamp(request.oplog.at(i).timestamp.counter)
-                ->buildOperationBody();
-    }
-
-    auto serialized = this->operationLogSerializer.serializeAll(createOperations);
-
-    return RequestBuilder::builder()
-            .authKey(this->cluster->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY))
-            ->operatorNumber(OperatorNumbers::MOVE_OPLOG)
-            ->operatorFlag1(request.applyNewOplog)
-            ->operatorFlag2(true) //Clear old oplog
-            ->args({
-                SimpleString<memDbDataLength_t>::fromNumber(request.newOplogId),
-                SimpleString<memDbDataLength_t>::fromNumber(request.newOplogId - 1),
-                SimpleString<memDbDataLength_t>::fromVector(serialized)
-                   })
-            ->build();
 }
 
 void NewNodePartitionChangeHandler::updateNeighbors() {

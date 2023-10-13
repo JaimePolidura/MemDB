@@ -86,7 +86,7 @@ std::string FileUtils::getFileInPath(const std::string &basePath, const std::str
 #ifdef _WIN32
     return basePath + "\\" + fileName;
 #else
-    return memdDbBasePath + "/" + FILE_NAME;
+    return basePath + "/" + FILE_NAME;
 #endif
 }
 
@@ -97,11 +97,6 @@ bool FileUtils::exists(const std::string &path) {
         return false;
     }
 }
-
-//TODO Remove
-//std::string FileUtils::getSeparator() {
-//    return std::string(std::filesystem::path::preferred_separator, 1);
-//}
 
 void FileUtils::clear(const std::string &path) {
     std::ofstream myfile;

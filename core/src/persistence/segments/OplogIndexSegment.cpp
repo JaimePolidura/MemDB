@@ -1,7 +1,7 @@
 #include "OplogIndexSegment.h"
 
-const OplogIndexSegment::INDEX_FILE_NAME = "oplog-index";
-const OplogIndexSegment::DATA_FILE_NAME = "oplog-data";
+const std::string OplogIndexSegment::INDEX_FILE_NAME = "oplog-index";
+const std::string OplogIndexSegment::DATA_FILE_NAME = "oplog-data";
 
 OplogIndexSegment::OplogIndexSegment(configuration_t configuration, uint32_t oplogId):
         configuration(configuration),

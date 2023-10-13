@@ -3,7 +3,7 @@
 Response NextFragmentOperator::operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) {
     uint64_t multiId = options.requestNumber;
 
-    iterator_t senderIterator = dependencies.multipleResponses->getSenderIteratorByMultiId(multiId);
+    iterator_t<std::vector<uint8_t>> senderIterator = dependencies.multipleResponses->getSenderIteratorByMultiId(multiId);
     dependencies.multipleResponses->markFragmentSend(multiId);
 
     if(senderIterator->hasNext()) {

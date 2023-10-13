@@ -13,7 +13,7 @@ Response SetOperator::operate(const OperationBody& operation, const OperationOpt
         Response::error(ErrorCode::ALREADY_REPLICATED);
 }
 
-constexpr OperatorDescriptor SetOperator::desc() {
+OperatorDescriptor SetOperator::desc() {
     return OperatorDescriptor{
             .type = OperatorType::DB_STORE_WRITE,
             .number = OperatorNumbers::SET,

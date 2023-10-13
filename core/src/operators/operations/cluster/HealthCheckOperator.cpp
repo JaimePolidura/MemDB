@@ -4,7 +4,7 @@ Response HealthCheckOperator::operate(const OperationBody& operation, const Oper
     return Response::success();
 }
 
-constexpr OperatorDescriptor HealthCheckOperator::desc() {
+OperatorDescriptor HealthCheckOperator::desc() {
     return OperatorDescriptor{
             .type = OperatorType::NODE_MAINTENANCE,
             .number = OperatorNumbers::HEALTH_CHECK,

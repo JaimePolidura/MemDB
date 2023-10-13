@@ -13,7 +13,7 @@ Response NextFragmentOperator::operate(const OperationBody& operation, const Ope
     }
 }
 
-constexpr OperatorDescriptor NextFragmentOperator::desc() {
+OperatorDescriptor NextFragmentOperator::desc() {
     return OperatorDescriptor{
         .type = OperatorType::NODE_MAINTENANCE,
         .number = OperatorNumbers::NEXT_FRAGMENT,

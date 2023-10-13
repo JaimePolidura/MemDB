@@ -8,7 +8,7 @@ Response DeleteOperator::operate(const OperationBody& operation, const Operation
     return removed ? Response::success() : Response::error(ErrorCode::UNKNOWN_KEY);
 }
 
-constexpr OperatorDescriptor DeleteOperator::desc() {
+OperatorDescriptor DeleteOperator::desc() {
     return OperatorDescriptor{
         .type = OperatorType::DB_STORE_WRITE,
         .number = OperatorNumbers::DEL,

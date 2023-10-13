@@ -6,27 +6,27 @@ SingleOperationLog::SingleOperationLog(configuration_t configuration, uint32_t o
     memdbBasePath(configuration->get(ConfigurationKeys::MEMDB_CORE_DATA_PATH)),
     partitionPath(memdbBasePath + "/" + std::to_string(oplogId)) {
     this->operationLogBuffer->setFlushCallback([this](auto toFlush){this->intermediateOplog->addAll(toFlush);});
-    this->intermediateOplog->setOnFlushingIntermediate([this](auto bytes){this->oplogIndexSegment_t->save(bytes);;});
+    this->intermediateOplog->setOnFlushingIntermediate([this](auto bytes){this->oplogIndexSegment->save(bytes);;});
     this->initializeFiles();
 }
 
 oplogSegmentIterator_t SingleOperationLog::getAfterTimestamp(uint64_t after, const OperationLogOptions options) {
-    std::vector<OplogIndexSegmentDescriptor> desc = this->oplogIndexSegment_t->getByAfterTimestamp(after);
+    std::vector<OplogIndexSegmentDescriptor> desc = this->oplogIndexSegment->getByAfterTimestamp(after);
     std::vector<uint8_t> intermediate = this->intermediateOplog->getAllBytes();
 
-    return std::make_shared<OplogSegmentIterator>(desc, intermediate, [this](OplogIndexSegmentDescriptor desc){return this->oplogIndexSegment_t->getDataByDescriptorBytes(desc);});
+    return std::make_shared<OplogSegmentIterator>(desc, intermediate, [this](OplogIndexSegmentDescriptor desc){return this->oplogIndexSegment->getDataByDescriptorBytes(desc);});
 }
 
 oplogSegmentIterator_t SingleOperationLog::getAll(const OperationLogOptions option) {
-    std::vector<OplogIndexSegmentDescriptor> desc = this->oplogIndexSegment_t->getAll();
+    std::vector<OplogIndexSegmentDescriptor> desc = this->oplogIndexSegment->getAll();
     std::vector<uint8_t> intermediate = this->intermediateOplog->getAllBytes();
 
-    return std::make_shared<OplogSegmentIterator>(desc, intermediate, [this](OplogIndexSegmentDescriptor desc){return this->oplogIndexSegment_t->getDataByDescriptorBytes(desc);});
+    return std::make_shared<OplogSegmentIterator>(desc, intermediate, [this](OplogIndexSegmentDescriptor desc){return this->oplogIndexSegment->getDataByDescriptorBytes(desc);});
 }
 
 void SingleOperationLog::clear(const OperationLogOptions options) {
     this->operationLogBuffer->stopFlushing();
-    this->oplogIndexSegment_t->clearAll();
+    this->oplogIndexSegment->clearAll();
     this->intermediateOplog->clearAll();
 }
 

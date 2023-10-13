@@ -32,7 +32,7 @@ Response MovePartitionOplogOperator::operate(const OperationBody& operation, con
     return Response::success();
 }
 
-constexpr OperatorDescriptor MovePartitionOplogOperator::desc() {
+OperatorDescriptor MovePartitionOplogOperator::desc() {
     return OperatorDescriptor{
             .type = OperatorType::NODE_MAINTENANCE,
             .number = OperatorNumbers::MOVE_OPLOG,

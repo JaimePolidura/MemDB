@@ -23,7 +23,7 @@ public:
 
     iterator_t<std::vector<uint8_t>> createMultiResponseSenderIterator(const OperationBody& operation, OperatorDependencies& dependencies) override;
 
-    constexpr OperatorDescriptor desc() override;
+    OperatorDescriptor desc() override;
 private:
     uint32_t calculateSelfOplogIdFromNodeOplogId(const OperationBody &body, OperatorDependencies dependencies);
 };

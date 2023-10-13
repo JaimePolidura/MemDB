@@ -29,7 +29,7 @@ private:
 public:
     Response operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies& dependencies) override;
     
-    constexpr OperatorDescriptor desc() override;
+    OperatorDescriptor desc() override;
 
 private:
     void clearOperationLog(OperatorDependencies dependencies, uint32_t operationLogId);

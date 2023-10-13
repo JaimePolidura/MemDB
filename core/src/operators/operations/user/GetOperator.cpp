@@ -9,7 +9,7 @@ Response GetOperator::operate(const OperationBody& operation, const OperationOpt
         Response::error(ErrorCode::UNKNOWN_KEY); //No successful
 }
 
-constexpr OperatorDescriptor GetOperator::desc() {
+OperatorDescriptor GetOperator::desc() {
     return OperatorDescriptor{
             .type = OperatorType::DB_STORE_READ,
             .number = OperatorNumbers::GET,

@@ -8,5 +8,5 @@ class GetOperator : public Operator {
 public:
     Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) override;
 
-    constexpr OperatorDescriptor desc() override;
+    OperatorDescriptor desc() override;
 };

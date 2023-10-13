@@ -5,8 +5,9 @@
 #include "messages/request/Request.h"
 
 #include "persistence/compaction/OperationLogCompacter.h"
+#include "persistence/segments/OplogIndexSegment.h"
 #include "persistence/buffer/OperationLogBuffer.h"
-#include "OperationLog.h"
+#include "persistence/OperationLog.h"
 
 #include "persistence/intermediate/IntermediateOplog.h"
 #include "persistence/segments/OplogIndexSegment.h"
@@ -22,7 +23,7 @@ private:
     const std::string partitionPath;
 
     operationLogBuffer_t operationLogBuffer;
-    oplogIndexSegment_t oplogIndexSegment_t;
+    oplogIndexSegment_t oplogIndexSegment;
     intermediateOplog_t intermediateOplog;
 
 public:

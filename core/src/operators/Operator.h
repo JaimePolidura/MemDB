@@ -25,7 +25,7 @@ public:
 
     virtual iterator_t<std::vector<uint8_t>> createMultiResponseSenderIterator(const OperationBody& operation, OperatorDependencies& dependencies);
 
-    virtual constexpr OperatorDescriptor desc() = 0;
+    virtual OperatorDescriptor desc() = 0;
 };
 
 using operator_t = std::shared_ptr<Operator>;

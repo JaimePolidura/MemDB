@@ -13,7 +13,7 @@ Response SyncOplogOperator::operate(const OperationBody& operation, const Operat
     return Response::error(ErrorCode::INVALID_CALL);
 }
 
-constexpr OperatorDescriptor SyncOplogOperator::desc() {
+OperatorDescriptor SyncOplogOperator::desc() {
     return OperatorDescriptor{
             .type = OperatorType::NODE_MAINTENANCE,
             .number = OperatorNumbers::SYNC_OPLOG,

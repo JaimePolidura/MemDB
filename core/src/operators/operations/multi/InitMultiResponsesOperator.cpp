@@ -12,7 +12,7 @@ Response InitMultiResponsesOperator::operate(const OperationBody &operation,
     return Response::success(iterator->totalSize());
 }
 
-constexpr OperatorDescriptor InitMultiResponsesOperator::desc() {
+OperatorDescriptor InitMultiResponsesOperator::desc() {
     return OperatorDescriptor{
         .type = OperatorType::NODE_MAINTENANCE,
         .number = OperatorNumbers::INIT_MULTI,

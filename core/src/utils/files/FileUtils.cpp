@@ -86,7 +86,7 @@ std::string FileUtils::getFileInPath(const std::string &basePath, const std::str
 #ifdef _WIN32
     return basePath + "\\" + fileName;
 #else
-    return basePath + "/" + FILE_NAME;
+    return basePath + "/" + fileName;
 #endif
 }
 

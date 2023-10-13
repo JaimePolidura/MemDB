@@ -25,7 +25,7 @@ OperatorDescriptor SyncOplogOperator::desc() {
 uint32_t SyncOplogOperator::calculateSelfOplogIdFromNodeOplogId(const OperationBody &body, OperatorDependencies dependencies) {
     auto nodeOplogId = body.getArg(3).to<uint32_t>();
 
-    if(!dependencies.configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS)){
+    if(!dependencies.configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS)){
         return nodeOplogId;
     }
 

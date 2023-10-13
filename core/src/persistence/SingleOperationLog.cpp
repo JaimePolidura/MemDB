@@ -1,9 +1,9 @@
 #include "SingleOperationLog.h"
 
 SingleOperationLog::SingleOperationLog(configuration_t configuration, uint32_t oplogId): OperationLog(configuration),
-    operationLogBuffer(std::make_shared<OperationLogBuffer>(configuration->get<int>(ConfigurationKeys::MEMDB_CORE_SERVER_THREADS) + 1)),
+    operationLogBuffer(std::make_shared<OperationLogBuffer>(configuration->get<int>(ConfigurationKeys::SERVER_THREADS) + 1)),
     intermediateOplog(std::make_shared<IntermediateOplog>(configuration, oplogId)),
-    memdbBasePath(configuration->get(ConfigurationKeys::MEMDB_CORE_DATA_PATH)),
+    memdbBasePath(configuration->get(ConfigurationKeys::DATA_PATH)),
     partitionPath(memdbBasePath + "/" + std::to_string(oplogId)) {
     this->operationLogBuffer->setFlushCallback([this](auto toFlush){this->intermediateOplog->addAll(toFlush);});
     this->intermediateOplog->setOnFlushingIntermediate([this](auto bytes){this->oplogIndexSegment->save(bytes);;});

@@ -20,22 +20,20 @@ cd ..
 cd ./core
 
 sudo ./linux-build.sh
-sudo ./run.sh MEMDB_CORE_USE_REPLICATION=true \
-        MEMDB_CORE_SHOW_DEBUG_LOG=true \
-        MEMDB_CORE_PORT=10000 \
-        MEMDB_CORE_PERSISTANCE_WRITE_EVERY=1 \
-        MEMDB_CORE_CLUSTER_MANAGER_ADDRESS=127.0.0.1:8080 \
-        MEMDB_CORE_ETCD_ADDRESSES=127.0.0.1:2379 \
-        MEMDB_CORE_DATA_PATH=/etc/memdb1 \
-        MEMDB_CORE_NODE_ID=1 &
+sudo ./run.sh USE_REPLICATION=true \
+        SHOW_DEBUG_LOG=true \
+        SERVER_PORT=10000 \
+        CLUSTER_MANAGER_ADDRESS=127.0.0.1:8080 \
+        ETCD_ADDRESSES=127.0.0.1:2379 \
+        DATA_PATH=/etc/memdb1 \
+        NODE_ID=1 &
 
 sleep 10s
 
-sudo gdb --args ./src/build/src/memdb_run MEMDB_CORE_USE_REPLICATION=true \
-        MEMDB_CORE_SHOW_DEBUG_LOG=true \
-        MEMDB_CORE_PORT=10000 \
-        MEMDB_CORE_PERSISTANCE_WRITE_EVERY=1 \
-        MEMDB_CORE_CLUSTER_MANAGER_ADDRESS=127.0.0.1:8080 \
-        MEMDB_CORE_ETCD_ADDRESSES=127.0.0.1:2379 \
-        MEMDB_CORE_DATA_PATH=/etc/memdb2 \
-        MEMDB_CORE_NODE_ID=1
+sudo gdb --args ./src/build/src/memdb_run USE_REPLICATION=true \
+        SHOW_DEBUG_LOG=true \
+        SERVER_PORT=10002 \
+        CLUSTER_MANAGER_ADDRESS=127.0.0.1:8080 \
+        ETCD_ADDRESSES=127.0.0.1:2379 \
+        DATA_PATH=/etc/memdb2 \
+        NODE_ID=2

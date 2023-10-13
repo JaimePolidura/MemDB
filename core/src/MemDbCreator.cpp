@@ -3,7 +3,7 @@
 std::shared_ptr<MemDb> MemDbCreator::create(int nArgs, char ** args) {
     configuration_t configuration = ConfiguartionLoader::load(nArgs, args);
     logger_t logger = std::make_shared<Logger>(configuration, "Starting memdb");
-    onGoingMultipleResponsesStore_t multipleResponses = std::make_shared<OnGoingMultipleResponsesStore>(configuration->get<memdbNodeId_t >(ConfigurationKeys::MEMDB_CORE_NODE_ID));
+    onGoingMultipleResponsesStore_t multipleResponses = std::make_shared<OnGoingMultipleResponsesStore>(configuration->get<memdbNodeId_t >(ConfigurationKeys::NODE_ID));
     memDbStores_t memDbStores = std::make_shared<MemDbStores>();
 
     cluster_t cluster = createClusterObject(logger, configuration, multipleResponses, memDbStores);
@@ -21,7 +21,7 @@ std::shared_ptr<MemDb> MemDbCreator::create(int nArgs, char ** args) {
 }
 
 operationLog_t MemDbCreator::createOperationLogObject(configuration_t configuration, cluster_t cluster) {
-    if(configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS)){
+    if(configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS)){
         return setupMultipleOplogConfiguration(configuration, cluster);
     }else{
         return std::make_shared<SingleOperationLog>(configuration, 0);
@@ -29,7 +29,7 @@ operationLog_t MemDbCreator::createOperationLogObject(configuration_t configurat
 }
 
 cluster_t MemDbCreator::createClusterObject(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t multipleResponses, memDbStores_t memDbStores) {
-    if(configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION)){
+    if(configuration->getBoolean(ConfigurationKeys::USE_REPLICATION)){
         return ClusterCreator::setup(configuration, logger, multipleResponses, memDbStores);
     }else{
         return std::make_shared<Cluster>();
@@ -50,7 +50,7 @@ operationLog_t MemDbCreator::setupMultipleOplogConfiguration(configuration_t con
 
 void MemDbCreator::setupClusterChangeWatcher(cluster_t cluster, operationLog_t operationLog, configuration_t configuration,
                                              logger_t logger, operatorDispatcher_t operatorDispatcher, onGoingMultipleResponsesStore_t multipleResponses, memDbStores_t memDbStores) {
-    if(!configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION)){
+    if(!configuration->getBoolean(ConfigurationKeys::USE_REPLICATION)){
         return;
     }
 

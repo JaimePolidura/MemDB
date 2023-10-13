@@ -5,7 +5,7 @@ const std::string OplogIndexSegment::DATA_FILE_NAME = "oplog-data";
 
 OplogIndexSegment::OplogIndexSegment(configuration_t configuration, uint32_t oplogId):
         configuration(configuration),
-        memdDbBasePath(configuration->get(ConfigurationKeys::MEMDB_CORE_DATA_PATH)),
+        memdDbBasePath(configuration->get(ConfigurationKeys::DATA_PATH)),
         partitionPath(memdDbBasePath + "/" + std::to_string(oplogId)),
         fullPathIndex(partitionPath + "/" + INDEX_FILE_NAME),
         fullPathData(partitionPath + "/" + DATA_FILE_NAME),

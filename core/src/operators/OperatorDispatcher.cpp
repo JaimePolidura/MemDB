@@ -155,11 +155,11 @@ bool OperatorDispatcher::isAuthorizedToExecute(std::shared_ptr<Operator> operato
 }
 
 bool OperatorDispatcher::isInReplicationMode() {
-    return this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION);
+    return this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION);
 }
 
 bool OperatorDispatcher::isInPartitionMode() {
-    return this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS);
+    return this->configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS);
 }
 
 bool OperatorDispatcher::canHoldKey(arg_t arg) {

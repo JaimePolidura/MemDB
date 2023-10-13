@@ -10,7 +10,7 @@ cluster_t ClusterCreator::setup(configuration_t configuration, logger_t logger, 
 
 clusterNodeSetup_t ClusterCreator::getClusterNodeSetupObject(configuration_t configuration, logger_t logger,
                                                              onGoingMultipleResponsesStore_t multipleResponses, memDbStores_t memDbStores) {
-    if(!configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS)){
+    if(!configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS)){
         return std::make_shared<SimpleClusterNodeSetup>(logger, configuration, multipleResponses, memDbStores);
     }else{
         return std::make_shared<PartitionsClusterNodeSetup>(logger, configuration, multipleResponses, memDbStores);

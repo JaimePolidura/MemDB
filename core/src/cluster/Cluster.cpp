@@ -60,7 +60,7 @@ auto Cluster::getNodeId() -> memdbNodeId_t {
 }
 
 auto Cluster::getNodesPerPartition() -> uint32_t {
-    if(this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS)){
+    if(this->configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS)){
         return this->partitions->getNodesPerPartition();
     } else {
         return 1;
@@ -68,7 +68,7 @@ auto Cluster::getNodesPerPartition() -> uint32_t {
 }
 
 auto Cluster::getPartitionIdByKey(SimpleString<memDbDataLength_t> key) -> uint32_t {
-    if(this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS)){
+    if(this->configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS)){
         return this->partitions->getDistanceOfKey(key);
     } else {
         return 0;
@@ -78,7 +78,7 @@ auto Cluster::getPartitionIdByKey(SimpleString<memDbDataLength_t> key) -> uint32
 auto Cluster::watchForChangesInNodesClusterDb(std::function<void(node_t nodeChanged, ClusterDbChangeType changeType)> onChangeCallback) -> void {
     this->clusterDb->watchNodeChanges([this, onChangeCallback](ClusterDbValueChanged nodeChangedEvent) {
         auto node = Node::fromJson(nodeChangedEvent.value);
-        auto selfNodeChanged = node->nodeId == this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
+        auto selfNodeChanged = node->nodeId == this->configuration->get<memdbNodeId_t>(ConfigurationKeys::NODE_ID);
 
         if (!selfNodeChanged) {
             onChangeCallback(node, nodeChangedEvent.changeType);
@@ -92,13 +92,13 @@ auto Cluster::watchForChangesInNodesClusterDb(std::function<void(node_t nodeChan
 auto Cluster::createSyncOplogRequestInitMultiResponse(uint64_t timestamp, uint32_t selfOplogId, memdbNodeId_t nodeIdToSendRequest) -> Request {
     uint32_t part1 = timestamp >> 32;
     uint32_t part2 = (uint32_t) timestamp & 0xFFFFFFFF;
-    uint32_t nodeOplogId = this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS) ?
+    uint32_t nodeOplogId = this->configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS) ?
                            (this->partitions->isClockwiseNeighbor(nodeIdToSendRequest) ?
                             selfOplogId + this->partitions->getDistanceClockwise(nodeIdToSendRequest) :
                             selfOplogId - this->partitions->getDistanceCounterClockwise(nodeIdToSendRequest)) : 0;
 
     return RequestBuilder::builder()
-            .authKey(this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY))
+            .authKey(this->configuration->get(ConfigurationKeys::AUTH_NODE_KEY))
             ->args({
                 SimpleString<memDbDataLength_t>::fromNumber(OperatorNumbers::SYNC_OPLOG),
                 SimpleString<memDbDataLength_t>::fromNumber(part1),
@@ -112,7 +112,7 @@ auto Cluster::createSyncOplogRequestInitMultiResponse(uint64_t timestamp, uint32
 
 auto Cluster::createNextFragmentMultiResponseRequest(uint64_t multiResponseId) -> Request {
     return RequestBuilder::builder()
-            .authKey(this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY))
+            .authKey(this->configuration->get(ConfigurationKeys::AUTH_NODE_KEY))
             ->operatorNumber(OperatorNumbers::NEXT_FRAGMENT)
             ->requestNumber(multiResponseId)
             ->build();

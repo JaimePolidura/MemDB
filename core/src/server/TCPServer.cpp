@@ -3,9 +3,9 @@
 TCPServer::TCPServer(logger_t logger, configuration_t configuration, Authenticator authenticator, operatorDispatcher_t operatorDispatcher):
     configuration(configuration),
     logger(logger),
-    port(configuration->get<uint16_t>(ConfigurationKeys::MEMDB_CORE_PORT)),
+    port(configuration->get<uint16_t>(ConfigurationKeys::SERVER_PORT)),
     authenicator(std::move(authenticator)),
-    connectionThreadPool(configuration->get<int>(ConfigurationKeys::MEMDB_CORE_SERVER_THREADS)),
+    connectionThreadPool(configuration->get<int>(ConfigurationKeys::SERVER_THREADS)),
     operatorDispatcher(operatorDispatcher),
     acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}) {};
 

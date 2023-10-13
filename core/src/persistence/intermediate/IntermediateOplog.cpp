@@ -4,7 +4,7 @@ const std::string IntermediateOplog::FILE_NAME = "oplog-intermediate";
 
 IntermediateOplog::IntermediateOplog(configuration_t configuration, uint32_t oplogId):
     configuration(configuration),
-    memdDbBasePath(configuration->get(ConfigurationKeys::MEMDB_CORE_DATA_PATH)),
+    memdDbBasePath(configuration->get(ConfigurationKeys::DATA_PATH)),
     partitionPath(memdDbBasePath + "/" + std::to_string(oplogId)),
     fullPath(partitionPath + "/" + FILE_NAME) {
     this->initializeFiles();

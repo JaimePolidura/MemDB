@@ -35,14 +35,13 @@ services:
     ports:
       - "10000:10000"
     environment:
-      - MEMDB_CORE_SHOW_DEBUG_LOG=true
-      - MEMDB_CORE_PORT=10000
-      - MEMDB_CORE_PERSISTANCE_WRITE_EVERY=1
-      - MEMDB_CORE_USE_REPLICATION=true
-      - MEMDB_CORE_CLUSTER_MANAGER_ADDRESS=memdb-clustermanager:8080
-      - MEMDB_CORE_ETCD_ADDRESSES=memdb-clusterdb:2379
-      - MEMDB_CORE_NODE_ID=1
-      - MEMDB_CORE_USE_PARTITIONS=true
+      - SHOW_DEBUG_LOG=true
+      - SERVER_PORT=10000
+      - USE_REPLICATION=true
+      - CLUSTER_MANAGER_ADDRESS=memdb-clustermanager:8080
+      - ETCD_ADDRESSES=memdb-clusterdb:2379
+      - NODE_ID=1
+      - USE_PARTITIONS=true
 
   memdb-clusternode-2:
     image: jaimetruman/memdb-core:1.0
@@ -52,14 +51,13 @@ services:
     ports:
       - "10001:10001"
     environment:
-      - MEMDB_CORE_SHOW_DEBUG_LOG=true
-      - MEMDB_CORE_PORT=10001
-      - MEMDB_CORE_PERSISTANCE_WRITE_EVERY=1
-      - MEMDB_CORE_USE_REPLICATION=true
-      - MEMDB_CORE_CLUSTER_MANAGER_ADDRESS=memdb-clustermanager:8080
-      - MEMDB_CORE_ETCD_ADDRESSES=memdb-clusterdb:2379
-      - MEMDB_CORE_NODE_ID=2
-      - MEMDB_CORE_USE_PARTITIONS=true
+      - SHOW_DEBUG_LOG=true
+      - SERVER_PORT=10001
+      - USE_REPLICATION=true
+      - CLUSTER_MANAGER_ADDRESS=memdb-clustermanager:8080
+      - ETCD_ADDRESSES=memdb-clusterdb:2379
+      - NODE_ID=2
+      - USE_PARTITIONS=true
 
   memdb-clusternode-3:
     image: jaimetruman/memdb-core:1.0
@@ -69,14 +67,13 @@ services:
     ports:
       - "10002:10002"
     environment:
-      - MEMDB_CORE_SHOW_DEBUG_LOG=true
-      - MEMDB_CORE_PORT=10002
-      - MEMDB_CORE_PERSISTANCE_WRITE_EVERY=1
-      - MEMDB_CORE_USE_REPLICATION=true
-      - MEMDB_CORE_CLUSTER_MANAGER_ADDRESS=memdb-clustermanager:8080
-      - MEMDB_CORE_ETCD_ADDRESSES=memdb-clusterdb:2379
-      - MEMDB_CORE_NODE_ID=3
-      - MEMDB_CORE_USE_PARTITIONS=true
+      - SHOW_DEBUG_LOG=true
+      - SERVER_PORT=10002
+      - USE_REPLICATION=true
+      - CLUSTER_MANAGER_ADDRESS=memdb-clustermanager:8080
+      - ETCD_ADDRESSES=memdb-clusterdb:2379
+      - NODE_ID=3
+      - USE_PARTITIONS=true
 
   memdb-clusternode-4:
     image: jaimetruman/memdb-core:1.0
@@ -86,11 +83,10 @@ services:
     ports:
       - "10003:10003"
     environment:
-      - MEMDB_CORE_SHOW_DEBUG_LOG=true
-      - MEMDB_CORE_PORT=10003
-      - MEMDB_CORE_PERSISTANCE_WRITE_EVERY=1
-      - MEMDB_CORE_USE_REPLICATION=true
-      - MEMDB_CORE_CLUSTER_MANAGER_ADDRESS=memdb-clustermanager:8080
-      - MEMDB_CORE_ETCD_ADDRESSES=memdb-clusterdb:2379
-      - MEMDB_CORE_NODE_ID=4
-      - MEMDB_CORE_USE_PARTITIONS=true
+      - SHOW_DEBUG_LOG=true
+      - SERVER_PORT=10003
+      - USE_REPLICATION=true
+      - CLUSTER_MANAGER_ADDRESS=memdb-clustermanager:8080
+      - ETCD_ADDRESSES=memdb-clusterdb:2379
+      - NODE_ID=4
+      - USE_PARTITIONS=true

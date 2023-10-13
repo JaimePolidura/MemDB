@@ -7,8 +7,7 @@ services:
     ports:
       - "10000:10000"
     environment:
-      - MEMDB_CORE_SHOW_DEBUG_LOG=true
-      - MEMDB_CORE_PORT=10000
-      - MEMDB_CORE_PERSISTANCE_WRITE_EVERY=1
-      - MEMDB_CORE_USE_REPLICATION=false
-      - MEMDB_CORE_USE_PARTITIONS=false
+      - SHOW_DEBUG_LOG=true
+      - SERVER_PORT=10000
+      - USE_REPLICATION=false
+      - USE_PARTITIONS=false

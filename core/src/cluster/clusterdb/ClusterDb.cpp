@@ -1,7 +1,7 @@
 #include "cluster/clusterdb/ClusterDb.h"
 
 ClusterDb::ClusterDb(configuration_t configuration, logger_t logger) :
-    client(configuration->get(ConfigurationKeys::MEMDB_CORE_ETCD_ADDRESSES)),
+    client(configuration->get(ConfigurationKeys::ETCD_ADDRESSES)),
     configuration(configuration),
     logger(logger) {}
 

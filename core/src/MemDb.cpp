@@ -11,8 +11,8 @@ MemDb::MemDb(logger_t logger, memDbStores_t dbStores, configuration_t configurat
 void MemDb::run() {
     std::vector<uint64_t> lastTimestampStored = this->restoreDataFromOplogFromDisk();
 
-    if(this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION)){
-        this->clock->nodeId = this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
+    if(this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION)){
+        this->clock->nodeId = this->configuration->get<memdbNodeId_t>(ConfigurationKeys::NODE_ID);
 
         this->syncOplogFromCluster(lastTimestampStored);
     }
@@ -49,8 +49,8 @@ void MemDb::syncOplogFromCluster(std::vector<uint64_t> lastTimestampProcessedFro
 std::vector<uint64_t> MemDb::restoreDataFromOplogFromDisk() {
     this->logger->info("Applying logs from disk...");
 
-    bool usingReplication = this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_REPLICATION);
-    bool usingPartitions = this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS);
+    bool usingReplication = this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION);
+    bool usingPartitions = this->configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS);
 
     if(usingReplication && usingPartitions){
         return restoreMultipleOplog();

@@ -26,7 +26,7 @@ public:
         logger(logger),
         nodesById(std::map<memdbNodeId_t, node_t>{}),
         configuration(configuration),
-        requestPool(configuration->get<int>(ConfigurationKeys::MEMDB_CORE_SERVER_THREADS)) {}
+        requestPool(configuration->get<int>(ConfigurationKeys::SERVER_THREADS)) {}
         
     ClusterNodes(): nodesById() {}
 

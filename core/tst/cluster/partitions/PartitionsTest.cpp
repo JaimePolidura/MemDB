@@ -137,7 +137,7 @@ TEST(Partitions, getRingPositionByKey){
 }
 
 partitions_t setup() {
-    std::map<std::string, std::string> configValues = {{ConfigurationKeys::MEMDB_CORE_NODE_ID, "1"}};
+    std::map<std::string, std::string> configValues = {{ConfigurationKeys::NODE_ID, "1"}};
     configuration_t configuration = std::make_shared<Configuration>(configValues);
 
     int maxSize = 64;

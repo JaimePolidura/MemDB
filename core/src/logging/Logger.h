@@ -30,21 +30,21 @@ public:
 
     template<typename... Args>
     inline void debugInfo(fmt::format_string<Args...> fmt, Args &&... args) {
-        if(this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_SHOW_DEBUG_LOG)){
+        if(this->configuration->getBoolean(ConfigurationKeys::SHOW_DEBUG_LOG)){
             this->debugLogger->info(fmt, std::forward<Args>(args)...);
         }
     }
 
     template<typename... Args>
     inline void errorInfo(fmt::format_string<Args...> fmt, Args &&... args) {
-        if(this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_SHOW_DEBUG_LOG)){
+        if(this->configuration->getBoolean(ConfigurationKeys::SHOW_DEBUG_LOG)){
             this->debugLogger->error(fmt, std::forward<Args>(args)...);
         }
     }
 
     template<typename... Args>
     inline void warnInfo(fmt::format_string<Args...> fmt, Args &&... args) {
-        if(this->configuration->getBoolean(ConfigurationKeys::MEMDB_CORE_SHOW_DEBUG_LOG)){
+        if(this->configuration->getBoolean(ConfigurationKeys::SHOW_DEBUG_LOG)){
             this->debugLogger->warn(fmt, std::forward<Args>(args)...);
         }
     }

@@ -33,7 +33,7 @@ MATCHER_P(operatorLogOptionsEquals, expected, "") { return arg.operationLogId ==
  */
 TEST(SyncDataOperator, PartitionClusterSyncOplog) {
     configuration_t configuration = std::make_shared<Configuration>(std::map<std::string, std::string>{
-            {ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS, "true"}
+            {ConfigurationKeys::USE_PARTITIONS, "true"}
     });
     std::shared_ptr<OperationLogMock> operationLogMock = std::make_shared<OperationLogMock>();
     SyncOplogOperator syncOplogOperator{};
@@ -70,7 +70,7 @@ TEST(SyncDataOperator, PartitionClusterSyncOplog) {
 
 TEST(SyncDataOperator, SimpleClusterSyncOplog) {
     configuration_t configuration = std::make_shared<Configuration>(std::map<std::string, std::string>{
-        {ConfigurationKeys::MEMDB_CORE_USE_PARTITIONS, "false"}
+        {ConfigurationKeys::USE_PARTITIONS, "false"}
     });
     std::shared_ptr<OperationLogMock> operationLogMock = std::make_shared<OperationLogMock>();
     SyncOplogOperator syncOplogOperator{};

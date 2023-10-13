@@ -19,19 +19,19 @@ This is the main component. This stores the data and handles request & replicati
 
 ### Configuration
 Configuration keys are stored in environtment variables:
-- MEMDB_CORE_AUTH_NODE_KEY. Used by nodes to authenticate to each other. Example: sync their oplog, replicate etc. Default: 123
-- MEMDB_CORE_AUTH_MAINTENANCE_KEY. Used to authenticate the cluster manager. Example: health checks. Default: 456
-- MEMDB_CORE_AUTH_API_KEY. Used by external users to authenticate, this will be used on your app to connect to the database. Default: 789
+- AUTH_NODE_KEY. Used by nodes to authenticate to each other. Example: sync their oplog, replicate etc. Default: 123
+- MAINTENANCE_KEY. Used to authenticate the cluster manager. Example: health checks. Default: 456
+- AUTH_API_KEY. Used by external users to authenticate, this will be used on your app to connect to the database. Default: 789
 - MEMDB_CORE_SERVER_MIN_THREADS. Min nº of allocated threads that will handle request. Default: 20
-- MEMDB_CORE_SERVER_THREADS. Max nº of allocated threads that will handle request. Default: 100
-- MEMDB_CORE_PORT. Default: 10000
-- MEMDB_CORE_NUMBER_BUCKETS. Internal hashmap number of buckets, each bucket will contain a shared exclusiveLock and AVL Tree. Default: 64
+- SERVER_THREADS. Max nº of allocated threads that will handle request. Default: 100
+- SERVER_PORT. Default: 10000
+- NUMBER_BUCKETS. Internal hashmap number of buckets, each bucket will contain a shared exclusiveLock and AVL Tree. Default: 64
 - MEMDB_CORE_PERSISTANCE_WRITE_EVERY. Threshold of the wrrites operation log buffer used for persistence. Default: 50
-- MEMDB_CORE_USE_REPLICATION. Default: false.
-- MEMDB_CORE_ETCD_ADDRESSES. Etcd addresses. Default: 127.0.0.1:2379. Exmaple <address1>,<address2> etc.
-- MEMDB_CORE_CLUSTER_MANAGER_ADDRESS. Default: 127.0.0.1:8080
-- MEMDB_CORE_NODE_ID. The actual node id for the node itself. Default: 1.
-- MEMDB_CORE_SHOW_DEBUG_LOG. Default false
+- USE_REPLICATION. Default: false.
+- ETCD_ADDRESSES. Etcd addresses. Default: 127.0.0.1:2379. Exmaple <address1>,<address2> etc.
+- CLUSTER_MANAGER_ADDRESS. Default: 127.0.0.1:8080
+- NODE_ID. The actual node id for the node itself. Default: 1.
+- SHOW_DEBUG_LOG. Default false
 
 ### Operations
 ## Available operators
@@ -40,8 +40,8 @@ Configuration keys are stored in environtment variables:
 | SET         | 0x01                | Key, value | AUTH_NODE_KEY, AUTH_API_KEY     |
 | GET         | 0x02                | Key        | AUTH_API_KEY                    |
 | DELETE      | 0x03                | Key        | AUTH_NODE_KEY, AUTH_API_KEY     |
-| HEATH_CHECK | 0x04                |            | MEMDB_CORE_AUTH_MAINTENANCE_KEY |
-| SYNC_OPLOG  | 0x05                | Timestamp  | MEMDB_CORE_AUTH_NODE_KEY        |
+| HEATH_CHECK | 0x04                |            | MAINTENANCE_KEY |
+| SYNC_OPLOG  | 0x05                | Timestamp  | AUTH_NODE_KEY        |
 
 ## Error codes
 | **Name**           | **Error code** | **Desc**                                                                                                 |

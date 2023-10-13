@@ -3,7 +3,7 @@
 void ClusterNodeSetup::initializeNodeInCluster(cluster_t cluster) {
     this->logger->info("Setting up node in the cluster");
 
-    memdbNodeId_t selfNodeId = this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
+    memdbNodeId_t selfNodeId = this->configuration->get<memdbNodeId_t>(ConfigurationKeys::NODE_ID);
     AllNodesResponse allNodes = cluster->clusterManager->getAllNodes(selfNodeId);
     cluster->selfNode = allNodes.getNodeById(selfNodeId);
     std::vector<node_t> otherNodes = allNodes.getAllNodesExcept(selfNodeId);

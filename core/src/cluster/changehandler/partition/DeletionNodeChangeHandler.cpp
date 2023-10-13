@@ -2,7 +2,7 @@
 
 DeletionNodeChangeHandler::DeletionNodeChangeHandler(logger_t logger, cluster_t cluster, operationLog_t operationLog, operatorDispatcher_t operatorDispatcher):
     logger(logger), cluster(cluster), operationLog(operationLog), operatorDispatcher(operatorDispatcher),
-    moveOpLogRequestCreator(cluster->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY)){}
+    moveOpLogRequestCreator(cluster->configuration->get(ConfigurationKeys::AUTH_NODE_KEY)){}
 
 void DeletionNodeChangeHandler::handle(node_t deletedNode) {
     uint32_t distanceClockwise = this->cluster->partitions->getDistanceClockwise(deletedNode->nodeId);

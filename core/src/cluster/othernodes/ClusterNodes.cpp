@@ -114,10 +114,10 @@ Request ClusterNodes::prepareRequest(const OperationBody& operation) {
     Request request{};
 
     AuthenticationBody authenticationBody{};
-    authenticationBody.authKey = this->configuration->get(ConfigurationKeys::MEMDB_CORE_AUTH_NODE_KEY);
+    authenticationBody.authKey = this->configuration->get(ConfigurationKeys::AUTH_NODE_KEY);
     authenticationBody.flag1 = true;
 
-    const_cast<OperationBody&>(operation).nodeId = this->configuration->get<memdbNodeId_t>(ConfigurationKeys::MEMDB_CORE_NODE_ID);
+    const_cast<OperationBody&>(operation).nodeId = this->configuration->get<memdbNodeId_t>(ConfigurationKeys::NODE_ID);
 
     request.operation = operation;
     request.authentication = authenticationBody;

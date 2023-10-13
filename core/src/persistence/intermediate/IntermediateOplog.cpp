@@ -39,12 +39,6 @@ void IntermediateOplog::clearAll() {
 }
 
 void IntermediateOplog::initializeFiles() {
-    if(!FileUtils::exists(memdDbBasePath)){
-        FileUtils::createDirectory(memdDbBasePath);
-    }
-    if(!FileUtils::exists(partitionPath)){
-        FileUtils::createDirectory(partitionPath);
-    }
     if(!FileUtils::exists(fullPath)){
         FileUtils::createFile(partitionPath, IntermediateOplog::FILE_NAME);
     }

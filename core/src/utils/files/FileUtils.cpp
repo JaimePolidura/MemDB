@@ -26,7 +26,7 @@ void FileUtils::createDirectory(const std::string &path) {
 #ifdef _WIN32
     CreateDirectoryA(path.c_str(), NULL);
 #else
-    mkdir(path.c_str(), 0700);
+    mkdir(path.c_str(), 0777);
 #endif
 }
 
@@ -66,7 +66,12 @@ void FileUtils::createFile(const std::string &path, const std::string &name) {
 
     CloseHandle(handle);
 #else
-    int fd = open(path.c_str(), O_CREAT | O_WRONLY | O_TRUNC, 0600);
+    std::string fullPath = path + "/" + name;
+    int fd = open(fullPath.c_str(), O_CREAT | O_WRONLY | O_TRUNC, 0666);
+    if(fd < 0){
+        throw std::runtime_error("Error when creating file: " + path + "/" + name + " Got return error: " + std::to_string(fd));
+    }
+
     close(fd);
 #endif
 }

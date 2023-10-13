@@ -8,6 +8,7 @@ IntermediateOplog::IntermediateOplog(configuration_t configuration, uint32_t opl
     partitionPath(memdDbBasePath + "/" + std::to_string(oplogId)),
     fullPath(partitionPath + "/" + FILE_NAME) {
     this->initializeFiles();
+    this->bytesWritten = FileUtils::size(this->partitionPath, FILE_NAME);
 }
 
 void IntermediateOplog::add(const OperationBody& operation) {

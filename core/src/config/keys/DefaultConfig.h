@@ -21,7 +21,7 @@ public:
                 {ConfigurationKeys::SERVER_THREADS,                     "64"},
                 {ConfigurationKeys::SERVER_PORT,                        "10000"},
                 {ConfigurationKeys::NUMBER_BUCKETS,                     "64"},
-                {ConfigurationKeys::PERSISTENCE_SEGMENT_SIZE_MB,        "512"},
+                {ConfigurationKeys::PERSISTENCE_SEGMENT_SIZE_MB,        "100"},
                 {ConfigurationKeys::USE_REPLICATION,                    "false"},
                 {ConfigurationKeys::ETCD_ADDRESSES,                     "127.0.0.1:2379"},
                 {ConfigurationKeys::CLUSTER_MANAGER_ADDRESS,            "127.0.0.1:8080"},

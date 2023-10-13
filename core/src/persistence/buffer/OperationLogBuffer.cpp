@@ -1,7 +1,7 @@
 #include "OperationLogBuffer.h"
 
 OperationLogBuffer::OperationLogBuffer(int number_threads):
-    buffer(std::make_shared<jaime::lock_free::ordered_mpsc_queue<OperationBody>>(number_threads)),
+    buffer(std::make_shared<jaime::unordered_mpsc_queue<OperationBody>>(number_threads)),
     flusher(buffer) {}
 
 void OperationLogBuffer::add(const OperationBody &operation) {

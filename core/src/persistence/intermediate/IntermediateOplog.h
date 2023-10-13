@@ -13,7 +13,7 @@ private:
     OperationLogSerializer operationLogSerializer;
 
     configuration_t configuration;
-    uint32_t bytesWritten;
+    uint64_t bytesWritten;
 
     std::function<void(const std::vector<uint8_t>&)> onFlushingIntermediate;
 

@@ -5,7 +5,7 @@ OperationLogBufferFlusher::OperationLogBufferFlusher(operationsBufferQueue_t buf
 void OperationLogBufferFlusher::startFlushing(flushCallback_t flushCallback) {
     this->flusherThread = std::thread([this, flushCallback]() {
         while(!this->stopFlushingFlag.load(std::memory_order_acquire)) {
-            std::vector<OperationBody> operations = this->buffer->dequeue_all_or_sleep_for(std::chrono::milliseconds(100));
+            std::vector<OperationBody> operations = this->buffer->dequeue_or_sleep_for(std::chrono::milliseconds(100));
             flushCallback(operations);
         }
 

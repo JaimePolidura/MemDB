@@ -3,7 +3,7 @@
 #include "wait-free-queues/wait-free-queues.h"
 #include "messages/request/Request.h"
 
-using operationsBufferQueue_t = std::shared_ptr<jaime::lock_free::ordered_mpsc_queue<OperationBody>>;
+using operationsBufferQueue_t = std::shared_ptr<jaime::unordered_mpsc_queue<OperationBody>>;
 using flushCallback_t = std::function<void(const std::vector<OperationBody>&)>;
 
 class OperationLogBufferFlusher {

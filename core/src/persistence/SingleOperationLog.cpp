@@ -8,7 +8,7 @@ SingleOperationLog::SingleOperationLog(configuration_t configuration, uint32_t o
     partitionPath(memdbBasePath + "/" + std::to_string(oplogId)) {
     this->initializeFiles();
     this->operationLogBuffer->setFlushCallback([this](auto toFlush){this->intermediateOplog->addAll(toFlush);});
-    this->intermediateOplog->setOnFlushingIntermediate([this](auto bytes){this->oplogIndexSegment->save(bytes);;});
+    this->intermediateOplog->setOnFlushingIntermediate([this](auto bytes){this->oplogIndexSegment->save(bytes);});
 }
 
 oplogSegmentIterator_t SingleOperationLog::getAfterTimestamp(uint64_t after, const OperationLogOptions options) {

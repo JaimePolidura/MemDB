@@ -4,7 +4,7 @@
 #include "OperationLogBufferFlusher.h"
 #include "messages/request/Request.h"
 
-using operationsBufferQueue_t = std::shared_ptr<jaime::lock_free::ordered_mpsc_queue<OperationBody>>;
+using operationsBufferQueue_t = std::shared_ptr<jaime::unordered_mpsc_queue<OperationBody>>;
 
 class OperationLogBuffer {
 private:

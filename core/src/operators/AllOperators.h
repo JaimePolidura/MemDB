@@ -8,6 +8,8 @@
 #include "operators/operations/user/DeleteOperator.h"
 #include "operators/operations/cluster/HealthCheckOperator.h"
 #include "operators/operations/cluster/SyncOplogOperator.h"
+#include "operators/operations/multi/InitMultiResponsesOperator.h"
+#include "operators/operations/multi/NextFragmentOperator.h"
 
 class AllOperators {
 public:

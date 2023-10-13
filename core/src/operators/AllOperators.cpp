@@ -7,5 +7,7 @@ std::vector<std::shared_ptr<Operator>> AllOperators::list() {
             std::make_shared<DeleteOperator>(),
             std::make_shared<SyncOplogOperator>(),
             std::make_shared<HealthCheckOperator>(),
+            std::make_shared<InitMultiResponsesOperator>(),
+            std::make_shared<NextFragmentOperator>()
     };
 }

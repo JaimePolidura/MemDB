@@ -8,7 +8,7 @@
 
 using descriptorDataFetcher_t = std::function<std::vector<uint8_t>(OplogIndexSegmentDescriptor)>;
 
-class OplogSegmentIterator : public Iterator<std::vector<uint8_t>> {
+class OplogIterator : public Iterator<std::vector<uint8_t>> {
 private:
     std::vector<OplogIndexSegmentDescriptor> descriptors;
     descriptorDataFetcher_t descriptorDataFetcher;
@@ -17,9 +17,9 @@ private:
     int actualIndexDescriptor;
 
 public:
-    OplogSegmentIterator(const std::vector<OplogIndexSegmentDescriptor>& descriptors,
-                         const std::vector<uint8_t>& intermediate,
-                         descriptorDataFetcher_t descriptorDataFetcher);
+    OplogIterator(const std::vector<OplogIndexSegmentDescriptor>& descriptors,
+                  const std::vector<uint8_t>& intermediate,
+                  descriptorDataFetcher_t descriptorDataFetcher);
 
     bool hasNext() override;
 
@@ -28,4 +28,4 @@ public:
     uint64_t totalSize() override;
 };
 
-using oplogSegmentIterator_t = std::shared_ptr<OplogSegmentIterator>;
+using oplogSegmentIterator_t = std::shared_ptr<OplogIterator>;

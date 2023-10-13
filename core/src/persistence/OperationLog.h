@@ -2,7 +2,7 @@
 
 #include "messages/request/Request.h"
 #include "config/Configuration.h"
-#include "persistence/OplogSegmentIterator.h"
+#include "persistence/OplogIterator.h"
 
 struct OperationLogOptions {
     uint32_t operationLogId;

@@ -39,10 +39,10 @@ public final class MemDbStressTest {
 
         for (int j = 0; j < numberThreads.length; j++) {
             List<StressTestOperatorAverageResult> resultMemDb = runAndPrintAverage(10_000, numberThreads[j], memDbExecutorProvider(), "MemDb");
-            List<StressTestOperatorAverageResult> resultRedis = runAndPrintAverage(10_000, numberThreads[j], redisExecutorProvider(), "Redis");
+//            List<StressTestOperatorAverageResult> resultRedis = runAndPrintAverage(10_000, numberThreads[j], redisExecutorProvider(), "Redis");
 
             results.addAll(resultMemDb);
-            results.addAll(resultRedis);
+//            results.addAll(resultRedis);
 
             System.out.println();
             System.out.println();
@@ -134,7 +134,7 @@ public final class MemDbStressTest {
 
     @SneakyThrows
     private static MemDb getMemDbObject() {
-        return new MemDb(MemDbConnections.async("127.0.0.1", 10000), "123");
+        return new MemDb(MemDbConnections.async("192.168.1.159", 10000), "789");
     }
 
     private static Supplier<String> argGenerator() {

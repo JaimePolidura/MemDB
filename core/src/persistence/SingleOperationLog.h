@@ -11,7 +11,7 @@
 
 #include "persistence/intermediate/IntermediateOplog.h"
 #include "persistence/segments/OplogIndexSegment.h"
-#include "persistence/OplogSegmentIterator.h"
+#include "persistence/OplogIterator.h"
 #include "persistence/segments/OplogIndexSegmentDescriptor.h"
 
 #include "config/Configuration.h"

@@ -13,9 +13,9 @@ public final class RedisStressTestOperationExecuter implements StressTestOperati
     @Override
     public void execute(StressTestOperation stressTestOperation, Supplier<String> argGenerator) {
         switch (stressTestOperation) {
-            case SET -> this.jedis.set(argGenerator.get(), argGenerator.get());
-            case GET -> this.jedis.get(argGenerator.get());
-            case DELETE -> this.jedis.del(argGenerator.get());
+            case SET -> jedis.set(argGenerator.get(), argGenerator.get());
+            case GET -> jedis.get(argGenerator.get());
+            case DELETE -> jedis.del(argGenerator.get());
         }
     }
 }

@@ -49,6 +49,12 @@ void OplogIndexSegment::clearAll() {
 }
 
 void OplogIndexSegment::initializeFiles() {
+    if(!FileUtils::exists(memdDbBasePath)){
+        FileUtils::createDirectory(memdDbBasePath);
+    }
+    if(!FileUtils::exists(partitionPath)){
+        FileUtils::createDirectory(partitionPath);
+    }
     if(!FileUtils::exists(fullPathIndex)){
         FileUtils::createFile(partitionPath, OplogIndexSegment::INDEX_FILE_NAME);
     }

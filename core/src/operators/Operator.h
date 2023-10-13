@@ -23,7 +23,9 @@ class Operator {
 public:
     virtual Response operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies& dependencies) = 0;
 
-    virtual iterator_t<std::vector<uint8_t>> createMultiResponseSenderIterator(const OperationBody& operation, OperatorDependencies& dependencies);
+    virtual iterator_t<std::vector<uint8_t>> createMultiResponseSenderIterator(const OperationBody& operation, OperatorDependencies& dependencies) {
+        return std::make_shared<NullIterator<std::vector<uint8_t>>>();
+    }
 
     virtual OperatorDescriptor desc() = 0;
 };

@@ -12,3 +12,19 @@ public:
 
 template<typename T>
 using iterator_t = std::shared_ptr<Iterator<T>>;
+
+template<typename T>
+class NullIterator : public Iterator<T> {
+public:
+    bool hasNext() override {
+        return false;
+    }
+    
+    T next() override {
+        throw std::runtime_error("Iterator is emtpy. Execute hasNext() first");
+    }
+
+    uint64_t totalSize() override {
+        return 0;
+    }
+};

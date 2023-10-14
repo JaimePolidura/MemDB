@@ -8,6 +8,8 @@ std::vector<OperationBody> OperationLogDeserializer::deserializeAll(const std::v
 
     for(const uint8_t * bytesPtr = firstElementPtr; bytesPtr < (lastElementPtr + 1);) {
         uint64_t initialOffset = bytesPtr - firstElementPtr;
+        std::cout << initialOffset << std::endl;
+
         OperationBody operationDeserialized = this->requestDeserializer.deserializeOperation(bytes, initialOffset);
 
         logs.push_back(operationDeserialized);

@@ -1,6 +1,7 @@
 package es.memdb.stresstest;
 
 import es.memdb.stresstest.executer.StressTestOperationExecuter;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +12,7 @@ import java.util.function.Supplier;
 public final class StressTestThread extends Thread {
     private final StressTestOperationExecuter stressTestOperationExecuter;
     private final Supplier<String> argGenerator;
-    private final List<StressTestResult> results;
+    @Getter private final List<StressTestResult> results;
     private final int numberOperations;
 
     public StressTestThread(int numberOperations, Supplier<String> argGenerator, StressTestOperationExecuter stressTestExecuter) {
@@ -44,9 +45,5 @@ public final class StressTestThread extends Thread {
         long b = System.currentTimeMillis();
 
         return b - a;
-    }
-
-    public List<StressTestResult> getResults() {
-        return results;
     }
 }

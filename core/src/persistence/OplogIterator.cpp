@@ -10,11 +10,13 @@ OplogIterator::OplogIterator(const std::vector<OplogIndexSegmentDescriptor>& des
 }
 
 bool OplogIterator::hasNext() {
-    return this->actualIndexDescriptor < this->descriptors.size();
+    return (this->intermediateIterated && this->actualIndexDescriptor < this->descriptors.size() ||
+            (!this->intermediateIterated && this->intermediate.size() > 0));
 }
 
 std::vector<uint8_t> OplogIterator::next() {
     if(this->actualIndexDescriptor++ == -1){
+        this->intermediateIterated = true;
         return this->intermediate;
     } else {
         return this->descriptorDataFetcher(this->descriptors.at(this->actualIndexDescriptor));

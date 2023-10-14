@@ -8,7 +8,7 @@ OplogIndexSegmentWriter::OplogIndexSegmentWriter(const std::string& partitionPat
 void OplogIndexSegmentWriter::write(const std::vector<uint8_t> &toWrite) {
     std::vector<OperationBody> operations = this->deserializer.deserializeAll(toWrite);
     std::vector<OperationBody> compacted = this->compacter.compact(operations);
-    std::sort(compacted.begin(), compacted.end(), [](const OperationBody& a, const OperationBody& b){return a.timestamp - b.timestamp;});
+    std::sort(compacted.begin(), compacted.end(), [](const OperationBody& a, const OperationBody& b){return a.timestamp < b.timestamp;});
     std::vector<uint8_t> compactedSerialized = this->oplogSerializer.serializeAll(compacted);
 
     writeLock.lock();

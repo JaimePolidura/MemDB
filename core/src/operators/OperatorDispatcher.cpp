@@ -79,9 +79,11 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
     OperatorDependencies dependencies = this->getDependencies();
     Response result = operatorToExecute->operate(operation, options, dependencies);
 
-    this->logger->debugInfo("Executed {0} append request for operator {1} from {2}",
-                            result.isSuccessful ? "successfully" : "unsuccessfully",
-                            operatorToExecute->desc().name, options.checkTimestamps ? "node" : "user");
+    if(!options.dontDebugLog) {
+        this->logger->debugInfo("Executed {0} append request for operator {1} from {2}",
+                                result.isSuccessful ? "successfully" : "unsuccessfully",
+                                operatorToExecute->desc().name, options.checkTimestamps ? "node" : "user");
+    }
 
     if(operatorToExecute->desc().type == DB_STORE_WRITE && result.isSuccessful && !options.onlyExecute) {
         uint64_t newTimestamp = this->updateClock(options.updateClockStrategy, operation.timestamp);

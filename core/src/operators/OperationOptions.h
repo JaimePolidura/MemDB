@@ -9,6 +9,7 @@ public:
     bool onlyExecute;
     bool dontBroadcastToCluster;
     bool dontSaveInOperationLog;
+    bool dontDebugLog;
     LamportClock::UpdateClockStrategy updateClockStrategy;
     uint32_t partitionId;
 

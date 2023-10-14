@@ -47,7 +47,7 @@ void MemDb::syncOplogFromCluster(std::vector<uint64_t> lastTimestampProcessedFro
 }
 
 std::vector<uint64_t> MemDb::restoreDataFromOplogFromDisk() {
-    this->logger->info("Applying logs from disk...");
+    this->logger->info("Restoring logs from disk...");
 
     bool usingReplication = this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION);
     bool usingPartitions = this->configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS);
@@ -87,6 +87,7 @@ uint64_t MemDb::restoreSingleOplog() {
 uint64_t MemDb::applyOplog(iterator_t<std::vector<uint8_t>> oplogIterator, bool dontSaveInOperationLog, uint32_t partitionId) {
     OperationLogDeserializer operationLogDeserializer{};
     uint64_t latestTimestampApplied = 0;
+    uint64_t numberOplogsApplied = 0;
 
     while(oplogIterator->hasNext()) {
         std::vector<uint8_t> serializedOplog = oplogIterator->next();
@@ -94,6 +95,7 @@ uint64_t MemDb::applyOplog(iterator_t<std::vector<uint8_t>> oplogIterator, bool 
 
         for(OperationBody& operationLogInDisk : deserializedOplog) {
             latestTimestampApplied = operationLogInDisk.timestamp;
+            numberOplogsApplied++;
 
             this->operatorDispatcher->executeOperation(
                     this->operatorRegistry->get(operationLogInDisk.operatorNumber),
@@ -102,10 +104,13 @@ uint64_t MemDb::applyOplog(iterator_t<std::vector<uint8_t>> oplogIterator, bool 
                             .checkTimestamps = true,
                             .dontBroadcastToCluster = true,
                             .dontSaveInOperationLog = dontSaveInOperationLog,
+                            .dontDebugLog = true,
                             .updateClockStrategy = LamportClock::UpdateClockStrategy::SET,
                             .partitionId = partitionId });
         }
     }
+
+    this->logger->info("Applied {0} number of entries of oplog {1}", numberOplogsApplied, partitionId);
 
     this->operatorDispatcher->applyDelayedOperationsBuffer();
 

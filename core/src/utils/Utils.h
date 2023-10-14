@@ -122,7 +122,7 @@ public:
     }
 
     template<typename T>
-    static T parseFromBuffer(const std::vector<uint8_t>& buffer, const uint8_t initialPosition = 0) {
+    static T parseFromBuffer(const std::vector<uint8_t>& buffer, const uint64_t initialPosition = 0) {
         T result = 0;
         for(int i = sizeof(T) - 1; i >= 0; i--){
             size_t toMove = ((sizeof(T) - 1) - i) * 8;
@@ -142,9 +142,9 @@ public:
         return vectorOut;
     }
 
-    static auto copyFromBuffer(const std::vector<uint8_t>& buffer, const uint8_t initialPosition, const uint8_t endPosition) -> uint8_t *;
+    static auto copyFromBuffer(const std::vector<uint8_t>& buffer, const uint64_t initialPosition, const uint64_t endPosition) -> uint8_t *;
 
-    static std::vector<uint8_t> appendToBuffer(const uint8_t * toAppendPtr, const uint8_t totalToAppend, std::vector<uint8_t>& vectorOut);
+    static std::vector<uint8_t> appendToBuffer(const uint8_t * toAppendPtr, const uint64_t totalToAppend, std::vector<uint8_t>& vectorOut);
 
     static uint32_t crc(const std::vector<uint8_t>& values);
 };

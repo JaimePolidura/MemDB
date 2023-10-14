@@ -28,7 +28,7 @@ public:
                 {ConfigurationKeys::NODE_ID,                            "1"},
                 {ConfigurationKeys::SHOW_DEBUG_LOG,                     "false"},
                 {ConfigurationKeys::USE_PARTITIONS,                     "false"},
-                {ConfigurationKeys::DATA_PATH, FILEPATH}
+                {ConfigurationKeys::DATA_PATH,                          FILEPATH}
         };
     }
 };

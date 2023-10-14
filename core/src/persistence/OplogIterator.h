@@ -15,6 +15,7 @@ private:
     std::vector<uint8_t> intermediate;
 
     int actualIndexDescriptor;
+    bool intermediateIterated;
 
 public:
     OplogIterator(const std::vector<OplogIndexSegmentDescriptor>& descriptors,

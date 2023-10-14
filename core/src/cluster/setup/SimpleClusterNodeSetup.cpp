@@ -4,6 +4,7 @@ void SimpleClusterNodeSetup::setCustomClusterInformation(cluster_t cluster) {
     auto allNodes = cluster->clusterDb->getAllNodes()
             .getAllNodesExcept(cluster->getNodeId());
 
+    cluster->clusterNodes->setNumberGroups(1);
     cluster->clusterNodes->setOtherNodes(allNodes, NodeGroupOptions{.nodeGroupId = 0});
 }
 

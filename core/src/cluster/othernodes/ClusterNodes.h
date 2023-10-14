@@ -16,7 +16,7 @@ class ClusterNodes {
 private:
     std::map<memdbNodeId_t, node_t> nodesById;
     std::vector<NodeGroup> groups;
-    
+
     configuration_t configuration;
     ThreadPool requestPool;
     logger_t logger;
@@ -29,6 +29,8 @@ public:
         requestPool(configuration->get<int>(ConfigurationKeys::SERVER_THREADS)) {}
         
     ClusterNodes(): nodesById() {}
+
+    void setNumberGroups(uint32_t numberGroups);
 
     void setOtherNodes(const std::vector<node_t>& otherNodesToSet, const NodeGroupOptions options = {});
 

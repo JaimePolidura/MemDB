@@ -16,6 +16,12 @@ void ClusterNodes::setOtherNodes(const std::vector<node_t>& otherNodesToSet, con
     }
 }
 
+void ClusterNodes::setNumberGroups(uint32_t numberGroups) {
+    for (int i = 0; i < numberGroups; ++i) {
+        this->groups.push_back(NodeGroup{});
+    }
+}
+
 std::vector<NodeGroup> ClusterNodes::getGroups() {
     return this->groups;
 }
@@ -29,7 +35,8 @@ void ClusterNodes::setNodeState(memdbNodeId_t nodeId, const NodeState newState) 
 }
 
 void ClusterNodes::addNode(node_t node, const NodeGroupOptions options) {
-    this->groups[options.nodeGroupId].add(node->nodeId);
+    NodeGroup& nodeGroup = this->groups[options.nodeGroupId];
+    nodeGroup.add(node->nodeId);
     this->nodesById[node->nodeId] = node;
 }
 

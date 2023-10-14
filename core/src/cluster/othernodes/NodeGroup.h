@@ -5,9 +5,11 @@
 
 struct NodeGroup {
 private:
-    std::set<memdbNodeId_t> nodes;
+    std::set<memdbNodeId_t> nodes{};
 
 public:
+    NodeGroup() = default;
+
     std::set<memdbNodeId_t> getAll();
 
     void add(memdbNodeId_t nodeId);

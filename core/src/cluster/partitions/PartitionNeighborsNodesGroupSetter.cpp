@@ -1,5 +1,14 @@
 #include "cluster/partitions/PartitionNeighborsNodesGroupSetter.h"
 
+void PartitionNeighborsNodesGroupSetter::setFromNewRingEntriesNeighbors(cluster_t cluster, const std::vector<RingEntry>& otherNodes) {
+    std::vector<node_t> nodesNeighbors{};
+    std::for_each(otherNodes.begin(), otherNodes.end(), [&](const RingEntry& ringEntryNeighbor) {
+        nodesNeighbors.push_back(cluster->clusterNodes->getByNodeId(ringEntryNeighbor.nodeId));
+    });
+
+    this->setFromOtherNodes(cluster, nodesNeighbors);
+}
+
 void PartitionNeighborsNodesGroupSetter::setFromOtherNodes(cluster_t cluster, const std::vector<node_t>& otherNodes) {
     uint32_t nodesPerPartition = cluster->partitions->getNodesPerPartition();
     RingEntry actualEntry = cluster->partitions->getSelfEntry();

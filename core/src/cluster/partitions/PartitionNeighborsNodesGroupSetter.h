@@ -6,6 +6,8 @@ class PartitionNeighborsNodesGroupSetter {
 public:
     PartitionNeighborsNodesGroupSetter() = default;
 
+    void setFromNewRingEntriesNeighbors(cluster_t cluster, const std::vector<RingEntry>& otherNodes);
+
     void setFromOtherNodes(cluster_t cluster, const std::vector<node_t>& otherNodes);
 
 private:

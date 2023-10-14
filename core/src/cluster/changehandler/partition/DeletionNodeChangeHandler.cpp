@@ -75,9 +75,5 @@ void DeletionNodeChangeHandler::sendSelfOplogToPrevNode(memdbNodeId_t prevNodeId
 }
 
 void DeletionNodeChangeHandler::updateNeighbors() {
-    memdbNodeId_t selfNodeId = this->cluster->selfNode->nodeId;
-    std::vector<node_t> otherNodes = cluster->clusterManager->getAllNodes(selfNodeId)
-            .getAllNodesExcept(selfNodeId);
-
-    this->partitionNeighborsNodesGroupSetter.setFromOtherNodes(this->cluster, otherNodes);
+    this->partitionNeighborsNodesGroupSetter.setFromNewRingEntriesNeighbors(this->cluster, cluster->partitions->getNeighbors());
 }

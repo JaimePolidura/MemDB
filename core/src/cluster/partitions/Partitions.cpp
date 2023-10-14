@@ -22,6 +22,17 @@ std::vector<RingEntry> Partitions::getNeighborsClockwiseByNodeId(memdbNodeId_t n
     return this->ringEntries.getNeighborsClockwise(nodeId, this->nodesPerPartition - 1);
 }
 
+std::vector<RingEntry> Partitions::getNeighborsCounterClockwiseByNodeId(memdbNodeId_t nodeId) {
+    return this->ringEntries.getNeighborsCounterClockwise(nodeId, this->nodesPerPartition);
+}
+
+std::vector<RingEntry> Partitions::getNeighbors() {
+    std::vector<RingEntry> neighboursCounterClockwise = this->getNeighborsCounterClockwiseByNodeId(this->selfEntry.nodeId);
+    std::vector<RingEntry> neighboursClockWise = this->getNeighborsClockwise();
+
+    return Utils::concat(neighboursCounterClockwise, neighboursClockWise);
+}
+
 RingEntry Partitions::getNeighborCounterClockwiseByNodeId(memdbNodeId_t nodeId) {
     return this->ringEntries.getNeighborCounterClockwise(nodeId);
 }

@@ -1,4 +1,4 @@
-#include "cluster/clustermanager/responses/AllNodesResponse.h"
+#include "AllNodesResponse.h"
 
 std::vector<node_t> AllNodesResponse::getAllNodesExcept(memdbNodeId_t nodeIdExcept) {
     return Utils::filter<node_t>(this->nodes, [nodeIdExcept](const node_t& it) -> bool {

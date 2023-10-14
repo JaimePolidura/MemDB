@@ -1,4 +1,4 @@
-#include "cluster/clustermanager/responses/GetRingNeighborsResponse.h"
+#include "GetRingNeighborsResponse.h"
 
 GetRingNeighborsResponse GetRingNeighborsResponse::fromJson(const nlohmann::json& json) {
     std::vector<node_t> neighbors;

@@ -71,6 +71,23 @@ std::vector<RingEntry> RingEntries::getNeighborsClockwise(memdbNodeId_t nodeId, 
     return neighbors;
 }
 
+std::vector<RingEntry> RingEntries::getNeighborsCounterClockwise(memdbNodeId_t nodeId, uint32_t numberNeighbors) {
+    std::vector<RingEntry> neighbors{};
+    RingEntryNode * initialNodePtr = this->indexByNodeId.at(nodeId);
+    RingEntryNode * startedNodePtr = initialNodePtr;
+
+    for(int i = 0; i < numberNeighbors; i++){
+        if(i > 0 && initialNodePtr->back == startedNodePtr){
+            break;
+        }
+
+        initialNodePtr = initialNodePtr->back;
+        neighbors.push_back(initialNodePtr->entry);
+    }
+
+    return neighbors;
+}
+
 RingEntry RingEntries::getNeighborCounterClockwise(memdbNodeId_t nodeId) {
     return this->indexByNodeId.at(nodeId)->back->entry;
 }

@@ -37,6 +37,10 @@ public:
 
     std::vector<RingEntry> getNeighborsClockwiseByNodeId(memdbNodeId_t nodeId);
 
+    std::vector<RingEntry> getNeighborsCounterClockwiseByNodeId(memdbNodeId_t nodeId);
+
+    std::vector<RingEntry> getNeighbors();
+
     RingEntry getNeighborCounterClockwiseByNodeId(memdbNodeId_t nodeId);
 
     uint32_t getDistanceOfKey(SimpleString<memDbDataLength_t> key);

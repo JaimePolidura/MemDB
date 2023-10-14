@@ -32,7 +32,7 @@ cluster_t MemDbCreator::createClusterObject(logger_t logger, configuration_t con
     if(configuration->getBoolean(ConfigurationKeys::USE_REPLICATION)){
         return ClusterCreator::setup(configuration, logger, multipleResponses, memDbStores);
     }else{
-        return std::make_shared<Cluster>(logger, configuration, multipleResponses, memDbStores);
+        return std::make_shared<Cluster>(configuration);
     }
 }
 

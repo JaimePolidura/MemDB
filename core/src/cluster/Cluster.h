@@ -2,7 +2,6 @@
 
 #include "shared.h"
 
-#include "cluster/clustermanager/ClusterManagerService.h"
 #include "cluster/partitions/Partitions.h"
 #include "cluster/NodeState.h"
 #include "cluster/othernodes/ClusterNodes.h"
@@ -30,7 +29,6 @@ private:
     onGoingMultipleResponsesStore_t onGoingMultipleResponsesStore;
     configuration_t configuration;
     clusterNodes_t clusterNodes;
-    clusterManagerService_t clusterManager;
     memDbStores_t memDbStores;
     partitions_t partitions;
     clusterdb_t clusterDb;
@@ -48,9 +46,10 @@ private:
     friend class ClusterTest;
 
 public:
-    Cluster(): partitions(std::make_shared<Partitions>()), clusterNodes(std::make_shared<ClusterNodes>()) {}
+    Cluster(configuration_t configuration);
 
-    Cluster(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t onGoingMultipleResponsesStore, memDbStores_t memDbStores);
+    Cluster(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t onGoingMultipleResponsesStore,
+            memDbStores_t memDbStores, clusterdb_t clusterDb);
 
     auto setBooting() -> void;
 

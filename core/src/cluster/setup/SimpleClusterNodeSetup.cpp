@@ -1,7 +1,10 @@
 #include "cluster/setup/SimpleClusterNodeSetup.h"
 
-void SimpleClusterNodeSetup::setClusterInformation(cluster_t cluster, const std::vector<node_t>& otherNodes) {
-    cluster->clusterNodes->setOtherNodes(otherNodes, NodeGroupOptions{.nodeGroupId = 0});
+void SimpleClusterNodeSetup::setCustomClusterInformation(cluster_t cluster) {
+    auto allNodes = cluster->clusterDb->getAllNodes()
+            .getAllNodesExcept(cluster->getNodeId());
+
+    cluster->clusterNodes->setOtherNodes(allNodes, NodeGroupOptions{.nodeGroupId = 0});
 }
 
 clusterDbNodeChangeHandler_t SimpleClusterNodeSetup::getClusterDbChangeNodeHandler(cluster_t cluster, operationLog_t operationLog, operatorDispatcher_t operatorDispatcher) {

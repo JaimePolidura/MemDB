@@ -34,6 +34,8 @@ public:
 
     std::vector<RingEntry> getNeighborsClockwise(memdbNodeId_t nodeId, uint32_t numberNeighbors);
 
+    std::vector<RingEntry> getNeighborsCounterClockwise(memdbNodeId_t nodeId, uint32_t numberNeighbors);
+
     RingEntry getNeighborCounterClockwise(memdbNodeId_t nodeId);
 
     RingEntry getRingEntryBelongsToPosition(uint32_t ringPosition);

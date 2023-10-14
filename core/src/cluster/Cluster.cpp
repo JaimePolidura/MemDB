@@ -1,12 +1,13 @@
 #include "cluster/Cluster.h"
 
-Cluster::Cluster(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t onGoingMultipleResponsesStore, memDbStores_t memDbStores) :
+Cluster::Cluster(configuration_t configuration): configuration(configuration) {}
+
+Cluster::Cluster(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t onGoingMultipleResponsesStore, memDbStores_t memDbStores, clusterdb_t clusterDb) :
     configuration(configuration),
     memDbStores(memDbStores),
-    clusterDb(std::make_shared<ClusterDb>(configuration, logger)),
+    clusterDb(clusterDb),
     onGoingMultipleResponsesStore(onGoingMultipleResponsesStore),
     clusterNodes(std::make_shared<ClusterNodes>(configuration, logger)),
-    clusterManager(std::make_shared<ClusterManagerService>(configuration, logger)),
     logger(logger)
 {}
 
@@ -56,7 +57,7 @@ auto Cluster::getNodeState() -> NodeState {
 }
 
 auto Cluster::getNodeId() -> memdbNodeId_t {
-    return this->selfNode->nodeId;
+    return this->configuration->get<memdbNodeId_t>(ConfigurationKeys::NODE_ID);
 }
 
 auto Cluster::getNodesPerPartition() -> uint32_t {

@@ -17,6 +17,7 @@ void ClusterDb::setNode(memdbNodeId_t nodeId, node_t node) {
 
 node_t ClusterDb::getByNodeId(memdbNodeId_t nodeId) {
     etcd::Value responseValue = this->client.get("/nodes/" + std::to_string(nodeId)).get().value();
+        
     return Node::fromJson(nlohmann::json::parse(responseValue.as_string()));
 }
 

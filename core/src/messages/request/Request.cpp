@@ -121,3 +121,21 @@ memDbDataLength_t Request::getTotalLength() const {
 
     return length;
 }
+
+std::string Request::toString() const {
+    std::string text = "Request{\n";
+    text.append("\tReqNum: " + std::to_string(this->requestNumber) + ",\n");
+    text.append("\tAuthKey: " + this->authentication.authKey + " " + std::to_string(this->authentication.flag1) + std::to_string(this->authentication.flag2) + ",\n");
+    text.append("\tOpNum: " + std::to_string(this->operation.operatorNumber) + " " + std::to_string(this->operation.flag1) + std::to_string(this->operation.flag2) + ",\n");
+    text.append("\tNodeId(Optional): " + std::to_string(this->operation.nodeId) + ",\n");
+    text.append("\tTimestamp: " + std::to_string(this->operation.timestamp) + ",\n");
+
+    text.append("\tArgs: [");
+    std::for_each(this->operation.args->begin(), this->operation.args->end(), [&text](const arg_t arg){
+        text.append(arg.toString() + ", ");
+    });
+    text.append("]\n");
+    text.append("}");
+
+    return text;
+}

@@ -106,6 +106,7 @@ auto Cluster::createSyncOplogRequestInitMultiResponse(uint64_t timestamp, uint32
                 SimpleString<memDbDataLength_t>::fromNumber(part2),
                 SimpleString<memDbDataLength_t>::fromNumber(nodeOplogId)
             })
+            ->selfNode(this->selfNode->nodeId)
             ->operatorNumber(OperatorNumbers::INIT_MULTI)
             ->requestNumber(this->onGoingMultipleResponsesStore->nextMultiResponseId()) // Used as multi-response Id
             ->build();

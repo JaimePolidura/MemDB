@@ -9,11 +9,6 @@ RequestBuilder *RequestBuilder::authKey(const std::string authKey) {
     return this;
 }
 
-RequestBuilder *RequestBuilder::authFlag1(bool value) {
-    this->_authFlag1 = value;
-    return this;
-}
-
 RequestBuilder *RequestBuilder::authFlag2(bool value) {
     this->_authFlag2 = value;
     return this;
@@ -51,7 +46,8 @@ RequestBuilder *RequestBuilder::timestamp(uint64_t timestamp) {
     return this;
 }
 
-RequestBuilder *RequestBuilder::nodeId(memdbNodeId_t nodeId) {
+RequestBuilder *RequestBuilder::selfNode(memdbNodeId_t nodeId) {
+    this->_authFlag1 = true; //Indicates if is node
     this->_nodeId = nodeId;
     return this;
 }

@@ -10,23 +10,22 @@
 class RequestBuilder {
 private:
     std::string _authKey;
-    bool _authFlag1;
-    bool _authFlag2;
+    bool _authFlag1{false};
+    bool _authFlag2{false};
 
-    memdbRequestNumber_t _requestNumber;
+    memdbRequestNumber_t _requestNumber{0};
 
     uint8_t _operatorNumber;
-    bool _operatorFlag1;
-    bool _operatorFlag2;
-    memdbNodeId_t _nodeId;
-    uint64_t _timestamp;
+    bool _operatorFlag1{false};
+    bool _operatorFlag2{false};
+    memdbNodeId_t _nodeId{0};
+    uint64_t _timestamp{0};
     args_t _args;
 
 public:
     RequestBuilder(): _args(std::make_shared<std::vector<SimpleString<memDbDataLength_t>>>()) {}
 
     RequestBuilder * authKey(const std::string authKey);
-    RequestBuilder * authFlag1(bool value);
     RequestBuilder * authFlag2(bool value);
     RequestBuilder * auth(const std::string authKey, bool flag1, bool flag2);
     RequestBuilder * requestNumber(memdbRequestNumber_t requestNumber);
@@ -34,7 +33,7 @@ public:
     RequestBuilder * operatorFlag1(bool flag1);
     RequestBuilder * operatorFlag2(bool flag2);
     RequestBuilder * timestamp(uint64_t timestamp);
-    RequestBuilder * nodeId(memdbNodeId_t nodeId);
+    RequestBuilder * selfNode(memdbNodeId_t nodeId);
     RequestBuilder * args(const std::vector<SimpleString<memDbDataLength_t>>& args);
     RequestBuilder * addArg(const SimpleString<memDbDataLength_t>& arg);
 

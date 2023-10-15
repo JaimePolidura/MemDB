@@ -63,6 +63,8 @@ public:
 
     static void printVector(const std::vector<uint8_t>& toPrint);
 
+    static void printVectorHex(const std::vector<uint8_t>& toPrint);
+
     template<typename T, typename B>
     static T retryUntilSuccessAndGet(const std::chrono::duration<int64_t, B> backoffMillis, std::function<T(void)> toRetry) {
         while(true) {

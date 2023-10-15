@@ -9,7 +9,7 @@ MemDb::MemDb(logger_t logger, memDbStores_t dbStores, configuration_t configurat
     operatorRegistry(std::make_shared<OperatorRegistry>()) {}
 
 void MemDb::run() {
-    std::vector<uint64_t> lastTimestampStored = this->restoreDataFromOplogFromDisk();
+    std::vector<uint64_t> lastTimestampStored = this->restoreOplogFromDisk();
 
     if(this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION)){
         this->clock->nodeId = this->configuration->get<memdbNodeId_t>(ConfigurationKeys::NODE_ID);
@@ -20,6 +20,25 @@ void MemDb::run() {
     this->tcpServer->run();
 
     listenCtrlCSignal(this->operationLog);
+}
+
+std::vector<uint64_t> MemDb::restoreOplogFromDisk() {
+    this->logger->info("Restoring logs from disk...");
+
+    uint32_t numberOplogs = this->operationLog->getNumberOplogFiles();
+    std::vector<uint64_t> lastRestoredTimestamps{};
+
+    for (uint32_t i = 0; i < numberOplogs; i++) {
+        oplogSegmentIterator_t oplogIterator = this->operationLog->getAll(OperationLogOptions{
+                .operationLogId = i
+        });
+
+        uint64_t lastAppliedTimestamp = this->applyOplog(oplogIterator, true, i);
+
+        lastRestoredTimestamps.push_back(lastAppliedTimestamp);
+    }
+
+    return lastRestoredTimestamps;
 }
 
 void MemDb::syncOplogFromCluster(std::vector<uint64_t> lastTimestampProcessedFromOpLog) {
@@ -44,44 +63,6 @@ void MemDb::syncOplogFromCluster(std::vector<uint64_t> lastTimestampProcessedFro
         future.wait();
 
     this->cluster->setRunning();
-}
-
-std::vector<uint64_t> MemDb::restoreDataFromOplogFromDisk() {
-    this->logger->info("Restoring logs from disk...");
-
-    bool usingReplication = this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION);
-    bool usingPartitions = this->configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS);
-
-    if(usingReplication && usingPartitions){
-        return restoreMultipleOplog();
-    }else{
-        return std::vector<uint64_t>{restoreSingleOplog()};
-    }
-}
-
-std::vector<uint64_t> MemDb::restoreMultipleOplog() {
-    uint32_t numberOplogs = this->operationLog->getNumberOplogFiles();
-    std::vector<uint64_t> lastRestoredTimestamps{};
-
-    for (uint32_t i = 0; i < numberOplogs; i++) {
-        oplogSegmentIterator_t oplogIterator = this->operationLog->getAll(OperationLogOptions{
-                .operationLogId = i
-        });
-
-        uint64_t lastAppliedTimestamp = this->applyOplog(oplogIterator, true, i);
-
-        lastRestoredTimestamps.push_back(lastAppliedTimestamp);
-    }
-
-    return lastRestoredTimestamps;
-}
-
-uint64_t MemDb::restoreSingleOplog() {
-    oplogSegmentIterator_t opLogsFromDisk = this->operationLog->getAll();
-
-    uint64_t latestApplied = this->applyOplog(opLogsFromDisk, true, 0);
-
-    return latestApplied;
 }
 
 uint64_t MemDb::applyOplog(iterator_t<std::vector<uint8_t>> oplogIterator, bool dontSaveInOperationLog, uint32_t partitionId) {

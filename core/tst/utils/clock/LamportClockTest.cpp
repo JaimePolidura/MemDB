@@ -2,13 +2,13 @@
 #include "utils/clock/LamportClock.h"
 
 TEST(LamportClock, Comparation) {
-    LamportClock a{2, 2}; //nodeId - count
+    LamportClock a{2, 2}; //selfNode - count
     LamportClock b{2, 1};
 
     ASSERT_TRUE(a > b);
     ASSERT_FALSE(b > a);
 
-    LamportClock c{1, 1}; //nodeId - count
+    LamportClock c{1, 1}; //selfNode - count
     LamportClock d{2, 1};
 
     ASSERT_TRUE(d > c);

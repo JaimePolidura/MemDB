@@ -21,7 +21,7 @@ node_t ClusterDb::getByNodeId(memdbNodeId_t nodeId) {
 }
 
 AllNodesResponse ClusterDb::getAllNodes() {
-    std::vector<etcd::Value> values = client.get("/nodes").get().values();
+    std::vector<etcd::Value> values = client.ls("/nodes").get().values();
     std::vector<node_t> nodes{};
 
     std::for_each(values.begin(), values.end(), [&](const etcd::Value& value) {
@@ -48,7 +48,7 @@ RingEntry ClusterDb::getRingEntryByNodeId(memdbNodeId_t nodeId) {
 }
 
 std::vector<RingEntry> ClusterDb::getRingEntries() {
-    std::vector<etcd::Value> values = client.get("/partitions/ring").get().values();
+    std::vector<etcd::Value> values = client.ls("/partitions/ring").get().values();
     std::vector<RingEntry> entries{};
 
     std::for_each(values.begin(), values.end(), [&entries](const etcd::Value& value) {

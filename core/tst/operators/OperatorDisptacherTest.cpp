@@ -26,7 +26,7 @@
 //
 //class LamportClockMock : public LamportClock {
 //public:
-//    LamportClockMock(uint16_t nodeId) : LamportClock(nodeId) {}
+//    LamportClockMock(uint16_t nodeId) : LamportClock(selfNode) {}
 //
 //    MOCK_METHOD1(tick, uint64_t(uint64_t));
 //};

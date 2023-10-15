@@ -71,5 +71,7 @@ struct Request {
     Request() = default;
 
     memDbDataLength_t getTotalLength() const;
+
+    std::string toString() const;
 };
 

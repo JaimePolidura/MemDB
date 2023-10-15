@@ -55,7 +55,7 @@ Configuration keys are stored in environtment variables:
 
 ## Request format
 - The binary format is bigendian
-- If flag1 is 1 in Auth byte, the request has a nodeId
+- If flag1 is 1 in Auth byte, the request has a selfNode
 
 ````
                  1 byte

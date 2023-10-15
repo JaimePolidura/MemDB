@@ -34,11 +34,7 @@ public:
 private:
     void syncOplogFromCluster(std::vector<uint64_t> lastTimestampProcessedFromOpLog);
 
-    std::vector<uint64_t> restoreDataFromOplogFromDisk();
-
-    std::vector<uint64_t> restoreMultipleOplog();
-
-    uint64_t restoreSingleOplog();
+    std::vector<uint64_t> restoreOplogFromDisk();
 
     uint64_t applyOplog(iterator_t<std::vector<uint8_t>> oplogIterator, bool dontSaveInOperationLog, uint32_t partitionId);
 };

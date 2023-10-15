@@ -35,7 +35,7 @@ TEST(AVLTree, ShouldReplaceKeys) {
     auto replacedNode = avlTree.get(1);
     ASSERT_TRUE(replacedNode->keyHash == 1 &&
         *replacedNode->key.data() == 'B' &&
-        replacedNode->timestamp.nodeId == 1 &&
+                        replacedNode->timestamp.selfNode == 1 &&
         replacedNode->timestamp.counter == 2);
 }
 
@@ -49,7 +49,7 @@ TEST(AVLTree, ShouldReplaceKeysEventDifferentTimestampCounter) {
     ASSERT_TRUE(replaced);
     ASSERT_TRUE(addedNode->keyHash == 1 &&
                 *addedNode->key.data() == 'B' &&
-                addedNode->timestamp.nodeId == 1 &&
+                        addedNode->timestamp.selfNode == 1 &&
                 addedNode->timestamp.counter == 1);
 }
 
@@ -64,7 +64,7 @@ TEST(AVLTree, ShouldntReplaceKeysDifferentTimestampCounter) {
     ASSERT_FALSE(replaced);
     ASSERT_TRUE(addedNode->keyHash == 1 &&
                 *addedNode->key.data() == 'A' &&
-                addedNode->timestamp.nodeId == 1 &&
+                        addedNode->timestamp.selfNode == 1 &&
                 addedNode->timestamp.counter == 2);
 }
 
@@ -79,7 +79,7 @@ TEST(AVLTree, ShouldntReplaceKeysDifferentTimestampNodeId) {
     ASSERT_FALSE(replaced);
     ASSERT_TRUE(addedNode->keyHash == 1 &&
                 *addedNode->key.data() == 'A' &&
-                addedNode->timestamp.nodeId == 2 &&
+                        addedNode->timestamp.selfNode == 2 &&
                 addedNode->timestamp.counter == 1);
 }
 

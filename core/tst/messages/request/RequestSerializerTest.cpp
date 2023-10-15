@@ -10,7 +10,7 @@ Request createRequestNodeId(std::shared_ptr<std::vector<SimpleString<memDbDataLe
 
 /**
  * Authkey: 123
- * nodeId: 1
+ * selfNode: 1
  * opNumber: 5
  * timestamp: 511,
  * reqNumber: 2

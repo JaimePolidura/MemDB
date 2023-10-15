@@ -6,7 +6,7 @@ public final class Other {
     @SneakyThrows
     public static void main(String[] args) {
         MemDb memDb = new MemDb(MemDbConnections.sync("192.168.1.159", 10000), "789");
-        
+
 //        memDb.set("dinero", "poco");
 //        memDb.set("trabajo", "no tengo");
 //        memDb.set("novia", "ninguna");

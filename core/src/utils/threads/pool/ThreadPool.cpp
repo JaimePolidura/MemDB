@@ -2,8 +2,8 @@
 
 thread_local uint64_t memdb_thread_pool_counter;
 
-ThreadPool::ThreadPool(int threads) {
-    this->createWorkers(threads);
+ThreadPool::ThreadPool(uint64_t numberThreads) {
+    this->createWorkers(Utils::roundUpPowerOfTwo(numberThreads));
 }
 
 void ThreadPool::submit(Task task) {
@@ -11,7 +11,7 @@ void ThreadPool::submit(Task task) {
         memdb_thread_pool_counter = std::hash<std::thread::id>{}(std::this_thread::get_id());
     }
 
-    auto workerIndex = ++memdb_thread_pool_counter % this->workers.size();
+    auto workerIndex = Utils::optimizedModulePowerOfTwo(this->workers.size(), ++memdb_thread_pool_counter);
     auto worker = this->workers[workerIndex];
 
     worker->enqueue(task);

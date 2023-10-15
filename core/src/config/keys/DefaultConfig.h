@@ -18,7 +18,7 @@ public:
                 {ConfigurationKeys::AUTH_NODE_KEY,                      "123",},
                 {ConfigurationKeys::MAINTENANCE_KEY,                    "456",},
                 {ConfigurationKeys::AUTH_API_KEY,                       "789",},
-                {ConfigurationKeys::SERVER_THREADS,                     "64"},
+                {ConfigurationKeys::SERVER_THREADS,                     "63"},
                 {ConfigurationKeys::SERVER_PORT,                        "10000"},
                 {ConfigurationKeys::NUMBER_BUCKETS,                     "64"},
                 {ConfigurationKeys::PERSISTENCE_SEGMENT_SIZE_MB,        "100"},

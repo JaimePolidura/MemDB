@@ -15,11 +15,11 @@ private:
     std::atomic_uint32_t size;
     std::vector<AVLTree<SizeValue>> buckets;
     std::vector<SharedLock *> locks;
-    uint16_t numberBuckets;
+    uint32_t numberBuckets;
     friend class BucketMapHashOrderedIterator;
 
 public:
-    Map(uint16_t numberBuckets);
+    Map(uint32_t numberBuckets);
 
     /**
      * Returns true if operation was successful
@@ -60,23 +60,23 @@ private:
     }
 
     AVLTree<SizeValue> * getBucket(uint32_t keyHash) const {
-        return const_cast<AVLTree<SizeValue> *>(this->buckets.data()) + (keyHash % numberBuckets);
+        return const_cast<AVLTree<SizeValue> *>(this->buckets.data()) + Utils::optimizedModulePowerOfTwo(numberBuckets, keyHash);
     }
 
     void lockRead(uint32_t hashCode) const {
-        const_cast<SharedLock *>(this->locks.at(hashCode % numberBuckets))->lockShared();
+        const_cast<SharedLock *>(this->locks.at(Utils::optimizedModulePowerOfTwo(numberBuckets, hashCode)))->lockShared();
     }
 
     void unlockRead(uint32_t hashCode) const {
-        const_cast<SharedLock *>(this->locks.at(hashCode % numberBuckets))->unlockShared();
+        const_cast<SharedLock *>(this->locks.at(Utils::optimizedModulePowerOfTwo(numberBuckets, hashCode)))->unlockShared();
     }
 
     void lockWrite(uint32_t hashCode) const {
-        const_cast<SharedLock *>(this->locks.at(hashCode % numberBuckets))->lockExclusive();
+        const_cast<SharedLock *>(this->locks.at(Utils::optimizedModulePowerOfTwo(numberBuckets, hashCode)))->lockExclusive();
     }
 
     void unlockWrite(uint32_t hashCode) const {
-        const_cast<SharedLock *>(this->locks.at(hashCode % numberBuckets))->unlockExclusive();
+        const_cast<SharedLock *>(this->locks.at(Utils::optimizedModulePowerOfTwo(numberBuckets, hashCode)))->unlockExclusive();
     }
 
 public:
@@ -109,10 +109,10 @@ public:
 using memDbDataStoreMap_t = std::shared_ptr<Map<memDbDataLength_t>>;
 
 template<typename SizeValue>
-Map<SizeValue>::Map(uint16_t numberBuckets): numberBuckets(numberBuckets) {
-    buckets.reserve(numberBuckets);
+Map<SizeValue>::Map(uint32_t numberBuckets): numberBuckets(Utils::roundUpPowerOfTwo(numberBuckets)) {
+    buckets.reserve(this->numberBuckets);
 
-    for (int i = 0; i < numberBuckets; i++) {
+    for (int i = 0; i < this->numberBuckets; i++) {
         buckets.emplace_back();
         locks.push_back(new SharedLock());
     }

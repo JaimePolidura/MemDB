@@ -59,6 +59,28 @@ public:
         return concatenated;
     }
 
+    template<typename T>
+    inline static T optimizedModulePowerOfTwo(T powerOfTwo, T num) {
+        return (powerOfTwo - 1) & num;
+    }
+
+    template<typename T>
+    static T roundUpPowerOfTwo(T initial) {
+        if(initial <= 1){
+            return 1;
+        }
+
+        initial--;
+        initial |= initial >> 1;
+        initial |= initial >> 2;
+        initial |= initial >> 4;
+        initial |= initial >> 8;
+        initial |= initial >> 16;
+        initial++;
+
+        return initial;
+    }
+
     static bool tryOnce(std::function<void(void)> toTry);
 
     static void printVector(const std::vector<uint8_t>& toPrint);

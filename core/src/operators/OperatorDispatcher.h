@@ -27,6 +27,8 @@ private:
     memDbStores_t memDbStores;
     logger_t logger;
 
+    OperatorDependencies dependencies;
+
 public:
     OperatorDispatcher(memDbStores_t memDbStores, lamportClock_t clock, cluster_t cluster, configuration_t configuration,
                        logger_t logger, operationLog_t operationLog, onGoingMultipleResponsesStore_t multipleResponses);

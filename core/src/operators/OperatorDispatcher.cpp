@@ -11,7 +11,9 @@ OperatorDispatcher::OperatorDispatcher(memDbStores_t memDbStores, lamportClock_t
         cluster(cluster),
         configuration(configuration),
         delayedOperationsBuffer(std::make_shared<DelayedOperationsBuffer>())
-{}
+{
+    this->dependencies = this->getDependencies();
+}
 
 Response OperatorDispatcher::dispatch(const Request& request) {
     if(canExecuteRequest()){
@@ -76,8 +78,7 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
                           OperationBody& operation,
                           const OperationOptions& options) {
 
-    OperatorDependencies dependencies = this->getDependencies();
-    Response result = operatorToExecute->operate(operation, options, dependencies);
+    Response result = operatorToExecute->operate(operation, options, this->dependencies);
 
     if(!options.dontDebugLog) {
         this->logger->debugInfo("Executed {0} append request for operator {1} from {2}",
@@ -123,27 +124,27 @@ void OperatorDispatcher::applyDelayedOperationsBuffer() {
 }
 
 OperatorDependencies OperatorDispatcher::getDependencies() {
-    OperatorDependencies dependencies;
+    OperatorDependencies dependenciesToReturn{};
 
-    dependencies.multipleResponses = this->multipleResponses;
-    dependencies.configuration = this->configuration;
-    dependencies.operationLog = this->operationLog;
-    dependencies.cluster = this->cluster;
-    dependencies.memDbStores = this->memDbStores;
-    dependencies.operatorDispatcher = [this](const OperationBody& op, const OperationOptions& options) -> Response {
+    dependenciesToReturn.multipleResponses = this->multipleResponses;
+    dependenciesToReturn.configuration = this->configuration;
+    dependenciesToReturn.operationLog = this->operationLog;
+    dependenciesToReturn.cluster = this->cluster;
+    dependenciesToReturn.memDbStores = this->memDbStores;
+    dependenciesToReturn.operatorDispatcher = [this](const OperationBody& op, const OperationOptions& options) -> Response {
         return this->executeOperation(this->operatorRegistry->get(op.operatorNumber), const_cast<OperationBody&>(op), options);
     };
-    dependencies.operatorsDispatcher = [this](const std::vector<OperationBody>& ops, const OperationOptions& options) -> void {
+    dependenciesToReturn.operatorsDispatcher = [this](const std::vector<OperationBody>& ops, const OperationOptions& options) -> void {
         std::for_each(ops.begin(), ops.end(), [this, options](const OperationBody &op) -> void {
             this->executeOperation(this->operatorRegistry->get(op.operatorNumber), const_cast<OperationBody&>(op), options);
         });
     };
-    dependencies.getMultiResponseSenderIterator = [this, dependencies](const OperationBody& operation, uint8_t operatorNumber) {
+    dependenciesToReturn.getMultiResponseSenderIterator = [this, dependenciesToReturn](const OperationBody& operation, uint8_t operatorNumber) {
         return this->operatorRegistry->get(operatorNumber)->createMultiResponseSenderIterator(operation,
-                                                                                              const_cast<OperatorDependencies &>(dependencies));
+                                                                                              const_cast<OperatorDependencies &>(dependenciesToReturn));
     };
 
-    return dependencies;
+    return dependenciesToReturn;
 }
 
 bool OperatorDispatcher::isAuthorizedToExecute(std::shared_ptr<Operator> operatorToExecute, AuthenticationType authenticationOfUser) {

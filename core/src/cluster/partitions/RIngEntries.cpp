@@ -1,6 +1,11 @@
 #include "cluster/partitions/RingEntries.h"
 
+//TODO Review, possible bug
 void RingEntries::add(RingEntry ringEntryToAdd) {
+    if(this->indexByNodeId.contains(ringEntryToAdd.nodeId)){
+        return;
+    }
+
     uint32_t size = this->indexByNodeId.size();
     RingEntryNode * newRingEntry = new RingEntryNode(ringEntryToAdd);
     this->indexByNodeId[ringEntryToAdd.nodeId] = newRingEntry;
@@ -193,5 +198,5 @@ RingEntries RingEntries::fromEntries(std::vector<RingEntry> entries) {
         prev = ringEntryNode;
     }
 
-    return RingEntries{head, indexByNodeId};
+    return RingEntries{head, std::move(indexByNodeId)};
 }

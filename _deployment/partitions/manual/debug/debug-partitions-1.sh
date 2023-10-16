@@ -11,10 +11,10 @@ etcdctl put /partitions/ring/4 "{\"nodeId\":\"4\",\"ringPosition\": 29}"
 etcdctl put /partitions/ring/2 "{\"nodeId\":\"2\",\"ringPosition\": 35}"
 etcdctl put /partitions/ring/3 "{\"nodeId\":\"3\",\"ringPosition\": 62}"
 
-etcdctl put /nodes/1 "{\"nodeId\":\"1\",\"address\":\"memdb-clusternode-1:10000\",\"state\":\"BOOTING\"}"
-etcdctl put /nodes/2 "{\"nodeId\":\"2\",\"address\":\"memdb-clusternode-2:10001\",\"state\":\"BOOTING\"}"
-etcdctl put /nodes/3 "{\"nodeId\":\"3\",\"address\":\"memdb-clusternode-3:10002\",\"state\":\"BOOTING\"}"
-etcdctl put /nodes/4 "{\"nodeId\":\"4\",\"address\":\"memdb-clusternode-4:10003\",\"state\":\"BOOTING\"}"
+etcdctl put /nodes/1 "{\"nodeId\":\"1\",\"address\":\"127.0.0.1:10000\",\"state\":\"BOOTING\"}"
+etcdctl put /nodes/2 "{\"nodeId\":\"2\",\"address\":\"127.0.0.1:10001\",\"state\":\"BOOTING\"}"
+etcdctl put /nodes/3 "{\"nodeId\":\"3\",\"address\":\"127.0.0.1:10002\",\"state\":\"BOOTING\"}"
+etcdctl put /nodes/4 "{\"nodeId\":\"4\",\"address\":\"127.0.0.1:10003\",\"state\":\"BOOTING\"}"
 
 # CLUSTER MANAGER
 cd ./clustermanager

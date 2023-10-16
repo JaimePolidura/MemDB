@@ -28,10 +28,10 @@ auto Cluster::syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodeGrou
         return MultiResponseReceiverIterator::emtpy();
     }
 
-    int selfOplogIdToSync = options.nodeGroupId;
-    memdbNodeId_t nodeIdToSendRequest = this->clusterNodes->getRandomNode({}, NodeGroupOptions{.nodeGroupId = selfOplogIdToSync})->nodeId;
+    int oplogIdToSync = options.nodeGroupId;
+    memdbNodeId_t nodeIdToSendRequest = this->clusterNodes->getRandomNode({}, NodeGroupOptions{.nodeGroupId = oplogIdToSync})->nodeId;
 
-    Request initMultiSyncOplogReq = createSyncOplogRequestInitMultiResponse(lastTimestampProcessedFromOpLog, selfOplogIdToSync, nodeIdToSendRequest); //SyncOplog
+    Request initMultiSyncOplogReq = createSyncOplogRequestInitMultiResponse(lastTimestampProcessedFromOpLog, oplogIdToSync, nodeIdToSendRequest); //SyncOplog
     Response initMultiSyncOplogRes = clusterNodes->sendRequest(nodeIdToSendRequest, initMultiSyncOplogReq);
     uint64_t nFragments = initMultiSyncOplogRes.responseValue.to<uint64_t>();
     uint64_t multiResponseId = initMultiSyncOplogReq.requestNumber;

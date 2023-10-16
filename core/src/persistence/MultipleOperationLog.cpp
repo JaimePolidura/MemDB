@@ -32,6 +32,10 @@ void MultipleOperationLog::clear(const OperationLogOptions options) {
 }
 
 oplogSegmentIterator_t MultipleOperationLog::getAfterTimestamp(uint64_t timestamp, OperationLogOptions options) {
+    if(options.operationLogId >= this->operationLogs.size()){
+        return nullptr;
+    }
+
     singleOperationLog_t oplog = this->operationLogs[options.operationLogId];
 
     return oplog->getAfterTimestamp(timestamp, options);

@@ -16,6 +16,8 @@ void ClusterNodes::setOtherNodes(const std::vector<node_t>& otherNodesToSet, con
 
 void ClusterNodes::setNumberGroups(uint32_t numberGroups) {
     for (int i = 0; i < numberGroups; ++i) {
+        this->nodesById.size();
+
         this->groups.push_back(NodeGroup{});
     }
 }

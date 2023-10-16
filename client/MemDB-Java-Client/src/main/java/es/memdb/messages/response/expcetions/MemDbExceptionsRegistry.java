@@ -19,7 +19,9 @@ public final class MemDbExceptionsRegistry {
         UNKNOWN_OPERATOR(0x02, UnknownOperator.class),
         ALREADY_REPLICATED(0x03, AlreadyReplicated.class),
         NOT_AUTHORIZED(0x04, NotAuthorized.class),
-        INVALID_NODE_STATE(0x05, InvalidNodeState.class);
+        INVALID_NODE_STATE(0x05, InvalidNodeState.class),
+        INVALID_PARTITION(0x06, InvalidPartition.class),
+        INVALID_CALL(0x07, InvalidCall.class);
 
         public final int code;
         public final Class<? extends MemDbException> clazz;

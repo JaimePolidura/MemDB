@@ -13,9 +13,9 @@
  * Invoked by InitMultiResponse
  * Args:
  * - Operator number of syncOplog
- * - Timestamp to sync
- * - Timestamp to sync
- * - Node id: nodeOplogIdToSync
+ * - Timestamp to sync (part1)
+ * - Timestamp to sync (part2)
+ * - OpLog id to sync of self node
  */
 class SyncOplogOperator : public Operator {
 public:
@@ -24,6 +24,4 @@ public:
     iterator_t<std::vector<uint8_t>> createMultiResponseSenderIterator(const OperationBody& operation, OperatorDependencies& dependencies) override;
 
     OperatorDescriptor desc() override;
-private:
-    uint32_t calculateSelfOplogIdFromNodeOplogId(const OperationBody &body, OperatorDependencies dependencies);
 };

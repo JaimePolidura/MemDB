@@ -11,14 +11,14 @@ SingleOperationLog::SingleOperationLog(configuration_t configuration, uint32_t o
     this->intermediateOplog->setOnFlushingIntermediate([this](auto bytes){this->oplogIndexSegment->save(bytes);});
 }
 
-oplogSegmentIterator_t SingleOperationLog::getAfterTimestamp(uint64_t after, const OperationLogOptions options) {
+iterator_t<std::vector<uint8_t>> SingleOperationLog::getAfterTimestamp(uint64_t after, const OperationLogOptions options) {
     std::vector<OplogIndexSegmentDescriptor> desc = this->oplogIndexSegment->getByAfterTimestamp(after);
     std::vector<uint8_t> intermediate = this->intermediateOplog->getAllBytes();
 
     return std::make_shared<OplogIterator>(desc, intermediate, [this](OplogIndexSegmentDescriptor desc){return this->oplogIndexSegment->getDataByDescriptorBytes(desc);});
 }
 
-oplogSegmentIterator_t SingleOperationLog::getAll(const OperationLogOptions option) {
+iterator_t<std::vector<uint8_t>> SingleOperationLog::getAll(const OperationLogOptions option) {
     std::vector<OplogIndexSegmentDescriptor> desc = this->oplogIndexSegment->getAll();
     std::vector<uint8_t> intermediate = this->intermediateOplog->getAllBytes();
 

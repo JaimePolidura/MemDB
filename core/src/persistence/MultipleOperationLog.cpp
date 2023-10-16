@@ -31,20 +31,20 @@ void MultipleOperationLog::clear(const OperationLogOptions options) {
     this->operationLogs.at(options.operationLogId)->clear(options);
 }
 
-oplogSegmentIterator_t MultipleOperationLog::getAfterTimestamp(uint64_t timestamp, OperationLogOptions options) {
+iterator_t<std::vector<uint8_t>> MultipleOperationLog::getAfterTimestamp(uint64_t timestamp, OperationLogOptions options) {
     if(options.operationLogId >= this->operationLogs.size()){
-        return nullptr;
+        return std::make_shared<NullIterator<std::vector<uint8_t>>>();
     }
 
-    singleOperationLog_t oplog = this->operationLogs[options.operationLogId];
-
-    return oplog->getAfterTimestamp(timestamp, options);
+    return this->operationLogs[options.operationLogId]->getAfterTimestamp(timestamp, options);
 }
 
-oplogSegmentIterator_t MultipleOperationLog::getAll(const OperationLogOptions options) {
-    std::vector<OperationBody> totalFromDisk{};
+iterator_t<std::vector<uint8_t>> MultipleOperationLog::getAll(const OperationLogOptions options) {
+    if(options.operationLogId >= this->operationLogs.size()){
+        return std::make_shared<NullIterator<std::vector<uint8_t>>>();
+    }
 
-    return this->operationLogs.at(options.operationLogId)->getAll(options);
+    return this->operationLogs[options.operationLogId]->getAll(options);
 }
 
 uint32_t MultipleOperationLog::getNumberOplogFiles() {

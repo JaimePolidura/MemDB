@@ -25,9 +25,9 @@ public:
 
     virtual void clear(const OperationLogOptions options = {}) = 0;
 
-    virtual oplogSegmentIterator_t getAfterTimestamp(uint64_t timestamp, const OperationLogOptions options = {}) = 0;
+    virtual iterator_t<std::vector<uint8_t>> getAfterTimestamp(uint64_t timestamp, const OperationLogOptions options = {}) = 0;
 
-    virtual oplogSegmentIterator_t getAll(const OperationLogOptions options = {}) = 0;
+    virtual iterator_t<std::vector<uint8_t>> getAll(const OperationLogOptions options = {}) = 0;
 
     virtual uint32_t getNumberOplogFiles() = 0;
 };

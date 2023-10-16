@@ -35,7 +35,6 @@ func (controller *CreateNodeController) CreateNode(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	//TODO Add transactions to etcdclient
 	if controller.Configuration.GetBoolean(configuration_keys.MEMDB_CLUSTERMANAGER_USE_PARTITIONS) {
 		if !controller.RingNodeAllocator.CanAllocateNode(request.NodeId) {
 			return context.JSON(http.StatusBadRequest, "All neighbor nodes have to be in RUNNING state")

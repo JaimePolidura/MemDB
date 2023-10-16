@@ -16,3 +16,4 @@ const std::string ConfigurationKeys::USE_REPLICATION = "USE_REPLICATION";
 const std::string ConfigurationKeys::ETCD_ADDRESSES = "ETCD_ADDRESSES";
 const std::string ConfigurationKeys::NODE_ID = "NODE_ID";
 const std::string ConfigurationKeys::USE_PARTITIONS = "USE_PARTITIONS";
+const std::string ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS = "NODE_REQUEST_TIMEOUT_MS";

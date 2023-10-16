@@ -37,9 +37,9 @@ public:
 
     void clear(const OperationLogOptions options) override;
 
-    oplogSegmentIterator_t getAfterTimestamp(uint64_t since, const OperationLogOptions options) override; //Implemented
+    iterator_t<std::vector<uint8_t>> getAfterTimestamp(uint64_t since, const OperationLogOptions options) override; //Implemented
 
-    oplogSegmentIterator_t getAll(const OperationLogOptions option) override; //Implemented
+    iterator_t<std::vector<uint8_t>> getAll(const OperationLogOptions option) override; //Implemented
 
     uint32_t getNumberOplogFiles() override; //Implemented
 

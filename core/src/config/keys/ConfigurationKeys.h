@@ -21,4 +21,5 @@ public:
     static const std::string NODE_ID;
     static const std::string USE_PARTITIONS;
     static const std::string NODE_REQUEST_TIMEOUT_MS;
+    static const std::string NODE_REQUEST_N_RETRIES;
 };

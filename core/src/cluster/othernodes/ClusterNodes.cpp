@@ -67,9 +67,10 @@ auto ClusterNodes::sendRequest(memdbNodeId_t nodeId, const Request& request) -> 
 
 auto ClusterNodes::sendRequestToRandomNode(const Request& request, const NodeGroupOptions options) -> std::optional<Response> {
     int timeout = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS);
+    int nRetries = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_N_RETRIES);
     std::set<memdbNodeId_t> alreadyCheckedNodesId = {};
 
-    return Utils::retryUntilAndGet<Response, std::milli>(10, std::chrono::milliseconds(timeout), [this, &request, &alreadyCheckedNodesId, options]() -> Response {
+    return Utils::retryUntilAndGet<Response, std::milli>(nRetries, std::chrono::milliseconds(timeout), [this, &request, &alreadyCheckedNodesId, options]() -> Response {
         node_t nodeToSendRequest = this->getRandomNode(alreadyCheckedNodesId, options);
 
         return nodeToSendRequest->sendRequest(this->prepareRequest(request.operation), true).value();
@@ -79,6 +80,7 @@ auto ClusterNodes::sendRequestToRandomNode(const Request& request, const NodeGro
 auto ClusterNodes::broadcast(const OperationBody& operation, const NodeGroupOptions options) -> void {
     std::set<memdbNodeId_t> allNodesIdInGroup = this->groups[options.nodeGroupId].getAll();
     int timeout = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS);
+    int nRetries = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_N_RETRIES);
 
     for(memdbNodeId_t nodeId : allNodesIdInGroup){
         node_t node = this->nodesById.at(nodeId);
@@ -87,8 +89,8 @@ auto ClusterNodes::broadcast(const OperationBody& operation, const NodeGroupOpti
             continue;
         }
 
-        this->requestPool.submit([node, operation, timeout, this]() mutable -> void {
-            Utils::retryUntil(10, std::chrono::milliseconds(timeout), [this, &node, &operation]() -> void{
+        this->requestPool.submit([node, operation, timeout, nRetries, this]() mutable -> void {
+            Utils::retryUntil(nRetries, std::chrono::milliseconds(timeout), [this, &node, &operation]() -> void{
                 node->sendRequest(this->prepareRequest(operation), false);
             });
         });

@@ -9,6 +9,10 @@ private:
 public:
     PartitionNeighborsNodesGroupSetter(cluster_t cluster);
 
+    PartitionNeighborsNodesGroupSetter() = default;
+
+    void setClusterObject(cluster_t cluster);
+
     void updateNeighborsWithNewNode(node_t newNode);
 
     void addAllNeighborsInPartitions();

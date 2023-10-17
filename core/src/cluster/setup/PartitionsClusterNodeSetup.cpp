@@ -1,6 +1,8 @@
 #include "cluster/setup/PartitionsClusterNodeSetup.h"
 
 void PartitionsClusterNodeSetup::setCustomClusterInformation(cluster_t cluster) {
+    this->partitionNeighborsNodesGroupSetter.setClusterObject(cluster);
+
     auto partitionConfiguration = cluster->clusterDb->getPartitionsConfiguration();
     auto ringEntries = cluster->clusterDb->getRingEntries();
 

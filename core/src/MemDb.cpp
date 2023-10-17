@@ -47,7 +47,7 @@ void MemDb::syncOplogFromCluster(std::vector<uint64_t> lastTimestampProcessedFro
     for(int i = 0; i < lastTimestampProcessedFromOpLog.size(); i++){
         std::future<void> syncOplogFuture = std::async(std::launch::async, [this, lastTimestampProcessedFromOpLog, i]() -> void{
             int oplogId = i;
-            
+
             auto unsyncedOplog = this->cluster->syncOplog(lastTimestampProcessedFromOpLog[i], NodePartitionOptions{
                     .partitionId = oplogId
             });

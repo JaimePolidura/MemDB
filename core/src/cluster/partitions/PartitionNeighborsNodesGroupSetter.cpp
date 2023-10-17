@@ -2,6 +2,10 @@
 
 PartitionNeighborsNodesGroupSetter::PartitionNeighborsNodesGroupSetter(cluster_t cluster): cluster(cluster) {}
 
+void PartitionNeighborsNodesGroupSetter::setClusterObject(cluster_t clusterParam) {
+    this->cluster = clusterParam;
+}
+
 void PartitionNeighborsNodesGroupSetter::updateNeighborsWithNewNode(node_t newNode) {
     uint32_t nodesPerPartition = cluster->getNodesPerPartition();
     RingEntry actualHeadPartition = cluster->partitions->getSelfEntry();

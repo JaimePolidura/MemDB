@@ -5,7 +5,7 @@ void SimpleClusterNodeSetup::setCustomClusterInformation(cluster_t cluster) {
             .getAllNodesExcept(cluster->getNodeId());
 
     cluster->clusterNodes->setNumberPartitions(1);
-    cluster->clusterNodes->setOtherNodes(allNodes, NodeGroupOptions{.partitionId = 0});
+    cluster->clusterNodes->setOtherNodes(allNodes, NodePartitionOptions{.partitionId = 0});
 }
 
 clusterDbNodeChangeHandler_t SimpleClusterNodeSetup::getClusterDbChangeNodeHandler(cluster_t cluster, operationLog_t operationLog, operatorDispatcher_t operatorDispatcher) {

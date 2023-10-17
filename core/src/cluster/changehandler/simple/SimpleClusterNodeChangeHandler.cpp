@@ -15,7 +15,7 @@ void SimpleClusterNodeChangeHandler::updateNodes(node_t node, cluster_t cluster)
         cluster->clusterNodes->setNodeState(node->nodeId, node->state);
     }else{
         this->logger->debugInfo("Detected new node {0}", node->nodeId);
-        cluster->clusterNodes->addNode(node, NodeGroupOptions{.partitionId = 0});
+        cluster->clusterNodes->addNode(node, NodePartitionOptions{.partitionId = 0});
     }
 }
 

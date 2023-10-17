@@ -29,7 +29,7 @@ auto Cluster::syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodePart
     }
 
     int oplogIdToSync = options.partitionId;
-    memdbNodeId_t nodeIdToSendRequest = this->clusterNodes->getRandomNode({}, NodeGroupOptions{.partitionId = oplogIdToSync})->nodeId;
+    memdbNodeId_t nodeIdToSendRequest = this->clusterNodes->getRandomNode({}, NodePartitionOptions{.partitionId = oplogIdToSync})->nodeId;
 
     Request initMultiSyncOplogReq = createSyncOplogRequestInitMultiResponse(lastTimestampProcessedFromOpLog, oplogIdToSync, nodeIdToSendRequest); //SyncOplog
     Response initMultiSyncOplogRes = clusterNodes->sendRequest(nodeIdToSendRequest, initMultiSyncOplogReq);

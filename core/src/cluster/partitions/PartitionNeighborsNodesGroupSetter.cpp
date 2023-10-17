@@ -72,7 +72,7 @@ std::vector<node_t> PartitionNeighborsNodesGroupSetter::toNodesFromRingEntries(c
     nodesToReturn.reserve(ringEntries.size());
 
     for (const RingEntry& entry : ringEntries) {
-        nodesToReturn.push_back(cluster->clusterNodes->getByNodeId(entry.nodeId));
+        nodesToReturn.push_back(cluster->clusterDb->getByNodeId(entry.nodeId));;
     }
 
     return nodesToReturn;

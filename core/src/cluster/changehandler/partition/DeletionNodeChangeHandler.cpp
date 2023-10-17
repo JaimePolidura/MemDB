@@ -29,6 +29,8 @@ void DeletionNodeChangeHandler::handle(node_t deletedNode) {
         this->sendSelfOplogToPrevNode(prevNodeId);
         this->sendRestOplogsToNextNodes(neighborsClockWise);
     }
+
+    cluster->setRunning();
 }
 
 void DeletionNodeChangeHandler::sendRestOplogsToNextNodes(const std::vector<RingEntry>& neighborsClockWise) {

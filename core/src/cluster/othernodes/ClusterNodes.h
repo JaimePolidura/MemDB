@@ -16,8 +16,8 @@
 
 class ClusterNodes {
 private:
-    std::map<memdbNodeId_t, node_t> nodesById;
-    std::vector<NodesInPartition> nodesInPartitions;
+    std::map<memdbNodeId_t, node_t> nodesById{};
+    std::vector<NodesInPartition> nodesInPartitions{};
 
     configuration_t configuration;
     ThreadPool requestPool;

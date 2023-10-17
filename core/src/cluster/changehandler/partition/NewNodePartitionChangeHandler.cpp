@@ -31,6 +31,8 @@ void NewNodePartitionChangeHandler::handle(node_t newNode) {
         cluster->setRunning();
         return;
     }
+
+    cluster->setRunning();
 }
 
 void NewNodePartitionChangeHandler::sendSelfOplogToNodes(node_t newNode) {

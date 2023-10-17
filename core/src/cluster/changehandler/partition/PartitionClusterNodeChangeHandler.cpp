@@ -13,7 +13,6 @@ void PartitionClusterNodeChangeHandler::handleChange(node_t nodeChanged, const C
     }else if(cluster->clusterNodes->existsByNodeId(nodeChanged->nodeId)) {
         cluster->clusterNodes->setNodeState(nodeChanged->nodeId, nodeChanged->state);
     }else {
-        this->logger->debugInfo("Detected new node {0} in the cluster", nodeChanged->nodeId);
         this->newNodePartitionChangeHandler.handle(nodeChanged);
     }
 }

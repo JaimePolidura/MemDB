@@ -1,21 +1,23 @@
 #pragma once
 
 #include "shared.h"
-
+#include "cluster/othernodes/NodePartitionOptions.h"
+#include "cluster/othernodes/NodesInPartition.h"
 #include "cluster/Node.h"
+
 #include "utils/strings/StringUtils.h"
 #include "utils/threads/pool/ThreadPool.h"
+
 #include "messages/request/Request.h"
 #include "messages/request/RequestSerializer.h"
 #include "messages/response/ResponseDeserializer.h"
+
 #include "logging/Logger.h"
-#include "cluster/othernodes/NodeGroup.h"
-#include "cluster/othernodes/NodeGroupOptions.h"
 
 class ClusterNodes {
 private:
     std::map<memdbNodeId_t, node_t> nodesById;
-    std::vector<NodeGroup> groups;
+    std::vector<NodesInPartition> nodesInPartitions;
 
     configuration_t configuration;
     ThreadPool requestPool;
@@ -30,17 +32,17 @@ public:
         
     ClusterNodes(): nodesById() {}
 
-    void setNumberGroups(uint32_t numberGroups);
+    void setNumberPartitions(uint32_t numberPartitions);
 
-    void setOtherNodes(const std::vector<node_t>& otherNodesToSet, const NodeGroupOptions options = {});
+    void setOtherNodes(const std::vector<node_t>& otherNodesToSet, const NodePartitionOptions options = {});
 
-    std::vector<NodeGroup> getGroups();
+    std::vector<NodesInPartition> getNodesInPartitions();
 
-    bool isEmtpy(const NodeGroupOptions options = {});
+    bool isEmtpy(const NodePartitionOptions options = {});
 
     void setNodeState(memdbNodeId_t nodeId, const NodeState newState);
 
-    void addNode(node_t node, const NodeGroupOptions options = {});
+    void addNode(node_t node, const NodePartitionOptions options = {});
 
     bool existsByNodeId(memdbNodeId_t nodeId);
 
@@ -50,11 +52,13 @@ public:
 
     Response sendRequest(memdbNodeId_t nodeId, const Request& request);
 
-    std::optional<Response> sendRequestToRandomNode(const Request& request, const NodeGroupOptions options = {});
+    std::optional<Response> sendRequestToRandomNode(const Request& request, const NodePartitionOptions options = {});
 
-    void broadcast(const OperationBody& operation, const NodeGroupOptions options = {});
+    void broadcast(const OperationBody& operation, const NodePartitionOptions options = {});
 
-    node_t getRandomNode(std::set<memdbNodeId_t> alreadyCheckedNodesId = {}, const NodeGroupOptions options = {});
+    void removeNodeFromPartition(memdbNodeId_t nodeId, const NodePartitionOptions options);
+
+    node_t getRandomNode(std::set<memdbNodeId_t> alreadyCheckedNodesId = {}, const NodePartitionOptions options = {});
 private:
     Request prepareRequest(const OperationBody& operation);
 };

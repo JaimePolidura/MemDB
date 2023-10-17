@@ -5,6 +5,12 @@ DeletionNodeChangeHandler::DeletionNodeChangeHandler(logger_t logger, cluster_t 
     moveOpLogRequestCreator(cluster->configuration->get(ConfigurationKeys::AUTH_NODE_KEY)){}
 
 void DeletionNodeChangeHandler::handle(node_t deletedNode) {
+    this->logger->debugInfo("Detected deletion of node {0}", deletedNode->nodeId);
+
+    if(!this->cluster->clusterNodes->existsByNodeId(deletedNode->nodeId)){
+        return;
+    }
+
     uint32_t distanceClockwise = this->cluster->partitions->getDistanceClockwise(deletedNode->nodeId);
     std::vector<RingEntry> neighborsClockWise = this->cluster->partitions->getNeighborsClockwise();
     memdbNodeId_t prevNodeId = this->cluster->partitions->getNeighborCounterClockwiseByNodeId(deletedNode->nodeId).nodeId;
@@ -75,5 +81,5 @@ void DeletionNodeChangeHandler::sendSelfOplogToPrevNode(memdbNodeId_t prevNodeId
 }
 
 void DeletionNodeChangeHandler::updateNeighbors() {
-    this->partitionNeighborsNodesGroupSetter.setFromNewRingEntriesNeighbors(this->cluster, cluster->partitions->getNeighbors());
+//    this->partitionNeighborsNodesGroupSetter.setFromNewRingEntriesNeighbors(this->cluster);
 }

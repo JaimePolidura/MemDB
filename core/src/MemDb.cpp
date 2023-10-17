@@ -49,7 +49,7 @@ void MemDb::syncOplogFromCluster(std::vector<uint64_t> lastTimestampProcessedFro
             int oplogId = i;
 
             auto unsyncedOplog = this->cluster->syncOplog(lastTimestampProcessedFromOpLog[i], NodeGroupOptions{
-                    .nodeGroupId = oplogId
+                    .partitionId = oplogId
             });
 
             this->applyOplog(unsyncedOplog, false, oplogId);

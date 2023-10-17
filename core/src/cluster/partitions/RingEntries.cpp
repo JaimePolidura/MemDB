@@ -1,6 +1,5 @@
 #include "cluster/partitions/RingEntries.h"
 
-//TODO Review, possible bug
 void RingEntries::add(RingEntry ringEntryToAdd) {
     if(this->indexByNodeId.contains(ringEntryToAdd.nodeId)){
         return;
@@ -95,6 +94,10 @@ std::vector<RingEntry> RingEntries::getNeighborsCounterClockwise(memdbNodeId_t n
 
 RingEntry RingEntries::getNeighborCounterClockwise(memdbNodeId_t nodeId) {
     return this->indexByNodeId.at(nodeId)->back->entry;
+}
+
+RingEntry RingEntries::getNeighborClockwise(memdbNodeId_t nodeId) {
+    return this->indexByNodeId.at(nodeId)->next->entry;
 }
 
 RingEntry RingEntries::getRingEntryBelongsToPosition(uint32_t ringPosition) {

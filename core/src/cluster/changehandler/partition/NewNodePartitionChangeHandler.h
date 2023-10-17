@@ -41,8 +41,6 @@ private:
 
     void invalidateSelfOplogNextNode(const std::vector<OperationBody>& oplogNextNode);
 
-    void updateNeighbors();
-
     void removeKeysFromSelfNode(const std::vector<MapEntry<memDbDataLength_t>>& keysSelfOplog);
     void updateOplogIdOfNeighNodesPlusOne(std::vector<MapEntry<memDbDataLength_t>>& newOplog, const std::vector<RingEntry>& neighbors);
     void sendNewOplogToNewNode(memdbNodeId_t nodeId, std::vector<MapEntry<memDbDataLength_t>>& oplog);

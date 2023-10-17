@@ -43,6 +43,8 @@ public:
 
     RingEntry getNeighborCounterClockwiseByNodeId(memdbNodeId_t nodeId);
 
+    RingEntry getNeighborClockwiseByNodeId(memdbNodeId_t nodeId);
+
     uint32_t getDistanceOfKey(SimpleString<memDbDataLength_t> key);
 
     bool canHoldKey(SimpleString<memDbDataLength_t> key);

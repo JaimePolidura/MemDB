@@ -38,6 +38,8 @@ public:
 
     RingEntry getNeighborCounterClockwise(memdbNodeId_t nodeId);
 
+    RingEntry getNeighborClockwise(memdbNodeId_t nodeId);
+
     RingEntry getRingEntryBelongsToPosition(uint32_t ringPosition);
 
     // nodeA --> nodeB -> positive

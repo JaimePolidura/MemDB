@@ -3,17 +3,24 @@
 #include "cluster/Cluster.h"
 
 class PartitionNeighborsNodesGroupSetter {
+private:
+    cluster_t cluster;
+
 public:
-    PartitionNeighborsNodesGroupSetter() = default;
+    PartitionNeighborsNodesGroupSetter(cluster_t cluster);
 
-    void setFromNewRingEntriesNeighbors(cluster_t cluster, const std::vector<RingEntry>& otherNodes);
+    void updateNeighborsWithNewNode(node_t newNode);
 
-    void setFromOtherNodes(cluster_t cluster, const std::vector<node_t>& otherNodes);
+    void addAllNeighborsInPartitions();
 
 private:
-    std::vector<RingEntry> getRingEntriesGroupExceptSelf(cluster_t cluster, RingEntry actualEntry);
+    std::vector<RingEntry> getRingEntriesGroupExceptSelf(RingEntry actualEntry);
 
-    std::vector<node_t> toNodesFromRingEntries(const std::vector<node_t>& allNodes, const std::vector<RingEntry>& ringEntries);
+    std::vector<node_t> toNodesFromRingEntries(const std::vector<RingEntry>& ringEntries);
 
-    node_t getNodeByEntryRing(const std::vector<node_t>& nodes, RingEntry entry);
+    bool containsNodeId(const std::vector<RingEntry>& entries, memdbNodeId_t nodeId);
+
+    memdbNodeId_t getOldNodeIdPartitionMember(RingEntry headPartitionNode);
+
+    memdbNodeId_t getOldNodeIdPartitionMember(const std::vector<RingEntry>& actualNeighbors);
 };

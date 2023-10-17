@@ -15,7 +15,7 @@ bool Partitions::isClockwiseNeighbor(memdbNodeId_t nodeB) {
 }
 
 std::vector<RingEntry> Partitions::getNeighborsClockwise(int numberNeighbors) {
-    return this->ringEntries.getNeighborsClockwise(this->selfEntry.nodeId,numberNeighbors == -1 ? this->nodesPerPartition - 1 : numberNeighbors);
+    return this->ringEntries.getNeighborsClockwise(this->selfEntry.nodeId, numberNeighbors == -1 ? this->nodesPerPartition - 1 : numberNeighbors);
 }
 
 std::vector<RingEntry> Partitions::getNeighborsClockwiseByNodeId(memdbNodeId_t nodeId) {
@@ -23,7 +23,7 @@ std::vector<RingEntry> Partitions::getNeighborsClockwiseByNodeId(memdbNodeId_t n
 }
 
 std::vector<RingEntry> Partitions::getNeighborsCounterClockwiseByNodeId(memdbNodeId_t nodeId) {
-    return this->ringEntries.getNeighborsCounterClockwise(nodeId, this->nodesPerPartition);
+    return this->ringEntries.getNeighborsCounterClockwise(nodeId, this->nodesPerPartition - 1);
 }
 
 std::vector<RingEntry> Partitions::getNeighbors() {
@@ -35,6 +35,10 @@ std::vector<RingEntry> Partitions::getNeighbors() {
 
 RingEntry Partitions::getNeighborCounterClockwiseByNodeId(memdbNodeId_t nodeId) {
     return this->ringEntries.getNeighborCounterClockwise(nodeId);
+}
+
+RingEntry Partitions::getNeighborClockwiseByNodeId(memdbNodeId_t nodeId) {
+    return this->ringEntries.getNeighborClockwise(nodeId);
 }
 
 uint32_t Partitions::getRingPositionByNodeId(memdbNodeId_t nodeId) {

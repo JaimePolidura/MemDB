@@ -23,13 +23,13 @@ auto Cluster::setRunning() -> void {
     this->logger->info("Changed cluster node state to RUNNING");
 }
 
-auto Cluster::syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodeGroupOptions options) -> multiResponseReceiverIterator_t {
+auto Cluster::syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodePartitionOptions options) -> multiResponseReceiverIterator_t {
     if(this->clusterNodes->isEmtpy(options)) {
         return MultiResponseReceiverIterator::emtpy();
     }
 
-    int oplogIdToSync = options.nodeGroupId;
-    memdbNodeId_t nodeIdToSendRequest = this->clusterNodes->getRandomNode({}, NodeGroupOptions{.nodeGroupId = oplogIdToSync})->nodeId;
+    int oplogIdToSync = options.partitionId;
+    memdbNodeId_t nodeIdToSendRequest = this->clusterNodes->getRandomNode({}, NodeGroupOptions{.partitionId = oplogIdToSync})->nodeId;
 
     Request initMultiSyncOplogReq = createSyncOplogRequestInitMultiResponse(lastTimestampProcessedFromOpLog, oplogIdToSync, nodeIdToSendRequest); //SyncOplog
     Response initMultiSyncOplogRes = clusterNodes->sendRequest(nodeIdToSendRequest, initMultiSyncOplogReq);

@@ -1,29 +1,50 @@
 #include "cluster/partitions/PartitionNeighborsNodesGroupSetter.h"
 
-void PartitionNeighborsNodesGroupSetter::setFromNewRingEntriesNeighbors(cluster_t cluster, const std::vector<RingEntry>& otherNodes) {
-    std::vector<node_t> nodesNeighbors{};
-    std::for_each(otherNodes.begin(), otherNodes.end(), [&](const RingEntry& ringEntryNeighbor) {
-        nodesNeighbors.push_back(cluster->clusterNodes->getByNodeId(ringEntryNeighbor.nodeId));
-    });
+PartitionNeighborsNodesGroupSetter::PartitionNeighborsNodesGroupSetter(cluster_t cluster): cluster(cluster) {}
 
-    this->setFromOtherNodes(cluster, nodesNeighbors);
+void PartitionNeighborsNodesGroupSetter::updateNeighborsWithNewNode(node_t newNode) {
+    uint32_t nodesPerPartition = cluster->getNodesPerPartition();
+    RingEntry actualHeadPartition = cluster->partitions->getSelfEntry();
+
+    for (int actualPartitionId = 0; actualPartitionId < nodesPerPartition; ++actualPartitionId) {
+        std::vector<RingEntry> neighborsActualPartition = cluster->partitions->getNeighborsClockwiseByNodeId(actualHeadPartition.nodeId);
+
+        if(this->containsNodeId(neighborsActualPartition, newNode->nodeId)){
+            cluster->clusterNodes->addNode(newNode, {.partitionId = actualPartitionId});
+
+            memdbNodeId_t oldMemberGroupNodeId = this->getOldNodeIdPartitionMember(neighborsActualPartition);
+            cluster->clusterNodes->removeNodeFromPartition(oldMemberGroupNodeId, {.partitionId = actualPartitionId});
+        }
+
+        actualHeadPartition = cluster->partitions->getNeighborCounterClockwiseByNodeId(actualHeadPartition.nodeId);
+    }
 }
 
-void PartitionNeighborsNodesGroupSetter::setFromOtherNodes(cluster_t cluster, const std::vector<node_t>& otherNodes) {
+void PartitionNeighborsNodesGroupSetter::addAllNeighborsInPartitions() {
     uint32_t nodesPerPartition = cluster->partitions->getNodesPerPartition();
     RingEntry actualEntry = cluster->partitions->getSelfEntry();
 
     for (int i = 0; i < nodesPerPartition; ++i) {
-        std::vector<RingEntry> ringEntries = getRingEntriesGroupExceptSelf(cluster, actualEntry);
-        std::vector<node_t> nodes = this->toNodesFromRingEntries(otherNodes, ringEntries);
+        std::vector<RingEntry> ringEntriesActualPartition = this->getRingEntriesGroupExceptSelf(actualEntry);
+        std::vector<node_t> nodesActualPartition = this->toNodesFromRingEntries(ringEntriesActualPartition);
 
-        cluster->clusterNodes->setOtherNodes(nodes, NodeGroupOptions {.nodeGroupId = i});
+        cluster->clusterNodes->setOtherNodes(nodesActualPartition, {.partitionId = i});
 
         actualEntry = cluster->partitions->getNeighborCounterClockwiseByNodeId(actualEntry.nodeId);
     }
 }
 
-std::vector<RingEntry> PartitionNeighborsNodesGroupSetter::getRingEntriesGroupExceptSelf(cluster_t cluster, RingEntry actualEntry) {
+memdbNodeId_t PartitionNeighborsNodesGroupSetter::getOldNodeIdPartitionMember(const std::vector<RingEntry>& nodesInPartition) {
+    RingEntry tailPartitionNode = nodesInPartition.at(nodesInPartition.size() - 1);
+    RingEntry headPartitionNode = nodesInPartition.at(nodesInPartition.size() - 1);
+    int distanceToHeadFromSelf = cluster->partitions->getDistance(headPartitionNode.nodeId);
+
+    return distanceToHeadFromSelf >= 0 ?
+           cluster->partitions->getNeighborClockwiseByNodeId(tailPartitionNode.nodeId).nodeId :
+           cluster->partitions->getNeighborCounterClockwiseByNodeId(headPartitionNode.nodeId).nodeId;
+}
+
+std::vector<RingEntry> PartitionNeighborsNodesGroupSetter::getRingEntriesGroupExceptSelf(RingEntry actualEntry) {
     std::vector<RingEntry> ringEntries = cluster->partitions->getNeighborsClockwiseByNodeId(actualEntry.nodeId);
     ringEntries.push_back(cluster->partitions->getByNodeId(actualEntry.nodeId));
     std::vector<RingEntry> ringEntriesWithoutSelfNodeId{};
@@ -31,28 +52,24 @@ std::vector<RingEntry> PartitionNeighborsNodesGroupSetter::getRingEntriesGroupEx
     std::copy_if(ringEntries.begin(),
                  ringEntries.end(),
                  std::back_inserter(ringEntriesWithoutSelfNodeId),
-                 [cluster](RingEntry ringEntry){return cluster->selfNode->nodeId != ringEntry.nodeId;});
+                 [this](RingEntry ringEntry){return this->cluster->selfNode->nodeId != ringEntry.nodeId;});
 
     return ringEntriesWithoutSelfNodeId;
 }
 
-std::vector<node_t> PartitionNeighborsNodesGroupSetter::toNodesFromRingEntries(const std::vector<node_t>& allNodes, const std::vector<RingEntry>& ringEntries) {
+bool PartitionNeighborsNodesGroupSetter::containsNodeId(const std::vector<RingEntry>& entries, memdbNodeId_t nodeId) {
+    return std::any_of(entries.begin(), entries.end(), [nodeId](const RingEntry& it){
+        return it.nodeId == nodeId;
+    });
+}
+
+std::vector<node_t> PartitionNeighborsNodesGroupSetter::toNodesFromRingEntries(const std::vector<RingEntry>& ringEntries) {
     std::vector<node_t> nodesToReturn{};
     nodesToReturn.reserve(ringEntries.size());
 
     for (const RingEntry& entry : ringEntries) {
-        nodesToReturn.push_back(getNodeByEntryRing(allNodes, entry));
+        nodesToReturn.push_back(cluster->clusterNodes->getByNodeId(entry.nodeId));
     }
 
     return nodesToReturn;
-}
-
-node_t PartitionNeighborsNodesGroupSetter::getNodeByEntryRing(const std::vector<node_t>& nodes, RingEntry entry) {
-    for (const auto& node: nodes) {
-        if(node->nodeId == entry.nodeId){
-            return node;
-        }
-    }
-
-    throw std::runtime_error("Cannot find node when setting up the cluster on PartitionNeighborsNodesGroupSetter");
 }

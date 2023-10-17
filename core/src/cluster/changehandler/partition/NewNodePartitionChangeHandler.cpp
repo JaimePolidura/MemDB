@@ -2,7 +2,8 @@
 
 NewNodePartitionChangeHandler::NewNodePartitionChangeHandler(logger_t logger, cluster_t cluster, operationLog_t operationLog,
                                                              operatorDispatcher_t operatorDispatcher): logger(logger), cluster(cluster),
-                                                             operationLog(operationLog), operatorDispatcher(operatorDispatcher),
+                                                             partitionNeighborsNodesGroupSetter(cluster), operationLog(operationLog),
+                                                             operatorDispatcher(operatorDispatcher),
                                                              moveOpLogRequestCreator(cluster->configuration->get(ConfigurationKeys::AUTH_NODE_KEY)) {}
 
 void NewNodePartitionChangeHandler::handle(node_t newNode) {
@@ -16,7 +17,7 @@ void NewNodePartitionChangeHandler::handle(node_t newNode) {
 
     cluster->setBooting();
 
-    updateNeighbors();
+    this->partitionNeighborsNodesGroupSetter.updateNeighborsWithNewNode(newNode);
 
     if(cluster->partitions->getDistanceClockwise(newNode->nodeId) == 1){
         recomputeSelfOplogAndSendNextNode(ringEntryAdded, oldClockwiseNeighbors);
@@ -118,8 +119,4 @@ splitedSelfOplog_t NewNodePartitionChangeHandler::splitSelfOplog(std::vector<Map
     }
 
     return std::make_pair(keysOwnedByMe, keysOwnedByOtherNode);
-}
-
-void NewNodePartitionChangeHandler::updateNeighbors() {
-    this->partitionNeighborsNodesGroupSetter.setFromNewRingEntriesNeighbors(this->cluster, this->cluster->partitions->getNeighbors());
 }

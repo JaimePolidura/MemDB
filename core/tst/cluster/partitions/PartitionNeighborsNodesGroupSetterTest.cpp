@@ -29,7 +29,7 @@ TEST(PartitionNeighborsNodesGroupSetter, setFromOtherNodes){
         std::make_shared<Node>(3, "192.168.1.5", NodeState::RUNNING)
     });
 
-    std::vector<NodeGroup> groups = clusterTest.getClusterNodes()->getGroups();
+    std::vector<NodesInPartition> groups = clusterTest.getClusterNodes()->getNodesInPartitions();
 
     ASSERT_EQ(groups.size(), 2);
 

@@ -6,11 +6,9 @@ void PartitionsClusterNodeSetup::setCustomClusterInformation(cluster_t cluster) 
 
     cluster->partitions = std::make_shared<Partitions>(ringEntries, partitionConfiguration.nodesPerPartition, partitionConfiguration.maxSize, configuration);
     cluster->memDbStores = this->memDbStores;
-    cluster->clusterNodes->setNumberGroups(partitionConfiguration.nodesPerPartition);
+    cluster->clusterNodes->setNumberPartitions(partitionConfiguration.nodesPerPartition);
 
-    auto neighborsNodes = this->neighborsRingEntriesToNodes(cluster->partitions->getNeighbors());
-
-    this->partitionNeighborsNodesGroupSetter.setFromOtherNodes(cluster, neighborsNodes);
+    this->partitionNeighborsNodesGroupSetter.addAllNeighborsInPartitions();
 }
 
 clusterDbNodeChangeHandler_t PartitionsClusterNodeSetup::getClusterDbChangeNodeHandler(cluster_t cluster, operationLog_t operationLog, operatorDispatcher_t operatorDispatcher) {

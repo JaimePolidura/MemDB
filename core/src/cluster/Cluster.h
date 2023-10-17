@@ -6,7 +6,7 @@
 #include "cluster/NodeState.h"
 #include "cluster/othernodes/ClusterNodes.h"
 #include "cluster/clusterdb/ClusterDb.h"
-#include "cluster/othernodes/NodeGroupOptions.h"
+#include "cluster/othernodes/NodePartitionOptions.h"
 
 #include "utils/clock/LamportClock.h"
 #include "utils/strings/StringUtils.h"
@@ -55,7 +55,7 @@ public:
 
     auto setRunning() -> void;
 
-    auto syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodeGroupOptions options = {}) -> multiResponseReceiverIterator_t;
+    auto syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodePartitionOptions options = {}) -> multiResponseReceiverIterator_t;
 
     auto getPartitionObject() -> partitions_t;
 

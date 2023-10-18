@@ -1,10 +1,10 @@
 #include "operators/OperatorDispatcher.h"
 
 OperatorDispatcher::OperatorDispatcher(memDbStores_t memDbStores, lamportClock_t clock, cluster_t cluster, configuration_t configuration,
-                                       logger_t logger, operationLog_t operationLog, onGoingMultipleResponsesStore_t multipleResponses):
+                                       logger_t logger, operationLog_t operationLog, onGoingSyncOplogs_t onGoingSyncOplogs):
         memDbStores(memDbStores),
         operationLog(operationLog),
-        multipleResponses(multipleResponses),
+        onGoingSyncOplogs(onGoingSyncOplogs),
         clock(clock),
         operatorRegistry(std::make_shared<OperatorRegistry>()),
         logger(logger),
@@ -126,10 +126,11 @@ void OperatorDispatcher::applyDelayedOperationsBuffer() {
 OperatorDependencies OperatorDispatcher::getDependencies() {
     OperatorDependencies dependenciesToReturn{};
 
-    dependenciesToReturn.multipleResponses = this->multipleResponses;
+    dependenciesToReturn.onGoingSyncOplogs = this->onGoingSyncOplogs;
     dependenciesToReturn.configuration = this->configuration;
     dependenciesToReturn.operationLog = this->operationLog;
     dependenciesToReturn.cluster = this->cluster;
+    dependenciesToReturn.logger = this->logger;
     dependenciesToReturn.memDbStores = this->memDbStores;
     dependenciesToReturn.operatorDispatcher = [this](const OperationBody& op, const OperationOptions& options) -> Response {
         return this->executeOperation(this->operatorRegistry->get(op.operatorNumber), const_cast<OperationBody&>(op), options);
@@ -138,10 +139,6 @@ OperatorDependencies OperatorDispatcher::getDependencies() {
         std::for_each(ops.begin(), ops.end(), [this, options](const OperationBody &op) -> void {
             this->executeOperation(this->operatorRegistry->get(op.operatorNumber), const_cast<OperationBody&>(op), options);
         });
-    };
-    dependenciesToReturn.getMultiResponseSenderIterator = [this, dependenciesToReturn](const OperationBody& operation, uint8_t operatorNumber) {
-        return this->operatorRegistry->get(operatorNumber)->createMultiResponseSenderIterator(operation,
-                                                                                              const_cast<OperatorDependencies &>(dependenciesToReturn));
     };
 
     return dependenciesToReturn;

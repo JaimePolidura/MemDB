@@ -10,14 +10,14 @@
 
 class ClusterNodeSetup {
 protected:
-    onGoingMultipleResponsesStore_t multipleResponses;
+    onGoingSyncOplogs_t multipleResponses;
     configuration_t configuration;
     memDbStores_t memDbStores;
     clusterdb_t clusterDb;
     logger_t logger;
 
 public:
-    ClusterNodeSetup(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t multipleResponses, memDbStores_t memDbStores):
+    ClusterNodeSetup(logger_t logger, configuration_t configuration, onGoingSyncOplogs_t multipleResponses, memDbStores_t memDbStores):
         logger(logger), configuration(configuration), multipleResponses(multipleResponses), memDbStores(memDbStores),
         clusterDb(std::make_shared<ClusterDb>(configuration, logger)) {}
 

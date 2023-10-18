@@ -5,7 +5,7 @@
 #include "operators/DelayedOperationsBuffer.h"
 #include "operators/OperatorDependencies.h"
 
-#include "messages/multi/OnGoingMultipleResponsesStore.h"
+#include "operators/operations/cluster/syncoplog/OnGoingSyncOplogsStore.h"
 #include "messages/response/ErrorCode.h"
 
 #include "db/MemDbStores.h"
@@ -19,7 +19,7 @@ public: //Need it for mocking it
     operatorRegistry_t operatorRegistry;
 private:
     delayedOperationsBuffer_t delayedOperationsBuffer;
-    onGoingMultipleResponsesStore_t multipleResponses;
+    onGoingSyncOplogs_t onGoingSyncOplogs;
     operationLog_t operationLog;
     configuration_t configuration;
     cluster_t cluster;
@@ -31,7 +31,7 @@ private:
 
 public:
     OperatorDispatcher(memDbStores_t memDbStores, lamportClock_t clock, cluster_t cluster, configuration_t configuration,
-                       logger_t logger, operationLog_t operationLog, onGoingMultipleResponsesStore_t multipleResponses);
+                       logger_t logger, operationLog_t operationLog, onGoingSyncOplogs_t onGoingSyncOplogs);
 
     Response dispatch(const Request& request);
 

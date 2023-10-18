@@ -3,17 +3,18 @@
 #include "persistence/OperationLog.h"
 #include "cluster/Cluster.h"
 #include "operators/OperationOptions.h"
-#include "messages/multi/OnGoingMultipleResponsesStore.h"
+#include "operators/operations/cluster/syncoplog/OnGoingSyncOplogsStore.h"
 #include "db/MemDbStores.h"
+#include "logging/Logger.h"
 
 struct OperatorDependencies {
-    onGoingMultipleResponsesStore_t multipleResponses;
+    onGoingSyncOplogs_t onGoingSyncOplogs;
     configuration_t configuration;
     operationLog_t operationLog;
     memDbStores_t memDbStores;
     cluster_t cluster;
+    logger_t logger;
 
     std::function<void(const std::vector<OperationBody>&, const OperationOptions&)> operatorsDispatcher;
     std::function<Response(const OperationBody&, const OperationOptions&)> operatorDispatcher;
-    std::function<iterator_t<std::vector<uint8_t>>(const OperationBody&, uint8_t)> getMultiResponseSenderIterator;
 };

@@ -1,27 +1,32 @@
 #include "operators/operations/cluster/MovePartitionOplogOperator.h"
 
 Response MovePartitionOplogOperator::operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies& dependencies) {
+    std::lock_guard<std::mutex> guard(this->moveOplogMutex);
+
     bool applyNewOplog = operation.flag1;
     bool clearOldOplog = operation.flag2;
     auto newOplogId = operation.getArg(0).to<uint32_t>();
     auto oldOplogId = operation.getArg(1).to<uint32_t>();
 
     if(newOplogId >= dependencies.cluster->getPartitionObject()->getNodesPerPartition()) {
-        this->clearOperationLog(dependencies, newOplogId);
+        this->clearOperationLog(dependencies, oldOplogId);
         return Response::success();
     }
 
     std::vector<uint8_t> oplogRaw = operation.getArg(2).toVector();
     std::vector<OperationBody> oplog = this->operationLogDeserializer.deserializeAll(oplogRaw);
 
-    //Doest have data stored
     if(applyNewOplog || !dependencies.operationLog->hasOplogFile({.operationLogId = newOplogId})) {
+        dependencies.logger->debugInfo("MovePartitionOplogOperator Applying {0} entries from oplog id {1}", oplog.size(), newOplogId);
         dependencies.operatorsDispatcher(oplog, {.checkTimestamps = true, .onlyExecute = true});
     }
 
     if(clearOldOplog){
+        dependencies.logger->debugInfo("MovePartitionOplogOperator Clearing oplog {0}", oldOplogId);
         this->clearOperationLog(dependencies, oldOplogId);
     }
+
+    dependencies.logger->debugInfo("MovePartitionOplogOperator Adding {0} oplog entries to oplog id {1} ", oplog.size(), newOplogId);
 
     dependencies.operationLog->addAll(oplog, OperationLogOptions{
             .operationLogId = newOplogId,

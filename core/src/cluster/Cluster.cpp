@@ -2,7 +2,7 @@
 
 Cluster::Cluster(configuration_t configuration): configuration(configuration) {}
 
-Cluster::Cluster(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t onGoingMultipleResponsesStore, memDbStores_t memDbStores, clusterdb_t clusterDb) :
+Cluster::Cluster(logger_t logger, configuration_t configuration, onGoingSyncOplogs_t onGoingMultipleResponsesStore, memDbStores_t memDbStores, clusterdb_t clusterDb) :
     configuration(configuration),
     memDbStores(memDbStores),
     clusterDb(clusterDb),
@@ -23,25 +23,9 @@ auto Cluster::setRunning() -> void {
     this->logger->info("Changed cluster node state to RUNNING");
 }
 
-auto Cluster::syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodePartitionOptions options) -> multiResponseReceiverIterator_t {
-    if(this->clusterNodes->isEmtpy(options)) {
-        return MultiResponseReceiverIterator::emtpy();
-    }
-
-    int oplogIdToSync = options.partitionId;
-    memdbNodeId_t nodeIdToSendRequest = this->clusterNodes->getRandomNode({}, NodePartitionOptions{.partitionId = oplogIdToSync})->nodeId;
-
-    Request initMultiSyncOplogReq = createSyncOplogRequestInitMultiResponse(lastTimestampProcessedFromOpLog, oplogIdToSync, nodeIdToSendRequest); //SyncOplog
-    Response initMultiSyncOplogRes = clusterNodes->sendRequest(nodeIdToSendRequest, initMultiSyncOplogReq);
-    uint64_t nFragments = initMultiSyncOplogRes.responseValue.to<uint64_t>();
-    uint64_t multiResponseId = initMultiSyncOplogReq.requestNumber;
-
-    return std::make_shared<MultiResponseReceiverIterator>(multiResponseId, nFragments, [this, nodeIdToSendRequest](uint64_t multiResponseId, uint64_t nFragmentId) {
-        Request request = this->createNextFragmentMultiResponseRequest(multiResponseId);
-        Response response = this->clusterNodes->sendRequest(nodeIdToSendRequest, request);
-
-        return response.responseValue.toVector();
-    });
+auto Cluster::syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodePartitionOptions options) -> iterator_t<std::vector<uint8_t>> {
+    return std::make_shared<SyncOplogReceiverIterator>(this->configuration, this->clusterNodes, this->partitions, lastTimestampProcessedFromOpLog,
+        options.partitionId, [this](){return this->onGoingMultipleResponsesStore->nextSyncOplogId();});
 }
 
 auto Cluster::getPartitionObject() -> partitions_t {
@@ -88,34 +72,4 @@ auto Cluster::watchForChangesInNodesClusterDb(std::function<void(node_t nodeChan
             this->setRunning();
         }
     });
-}
-
-auto Cluster::createSyncOplogRequestInitMultiResponse(uint64_t timestamp, uint32_t selfOplogId, memdbNodeId_t nodeIdToSendRequest) -> Request {
-    uint32_t part1 = timestamp >> 32;
-    uint32_t part2 = (uint32_t) timestamp & 0xFFFFFFFF;
-    uint32_t nodeOplogId = this->configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS) ?
-                           (this->partitions->isClockwiseNeighbor(nodeIdToSendRequest) ?
-                            selfOplogId + this->partitions->getDistanceClockwise(nodeIdToSendRequest) :
-                            selfOplogId - this->partitions->getDistanceCounterClockwise(nodeIdToSendRequest)) : 0;
-
-    return RequestBuilder::builder()
-            .authKey(this->configuration->get(ConfigurationKeys::AUTH_NODE_KEY))
-            ->args({
-                SimpleString<memDbDataLength_t>::fromNumber(OperatorNumbers::SYNC_OPLOG),
-                SimpleString<memDbDataLength_t>::fromNumber(part1),
-                SimpleString<memDbDataLength_t>::fromNumber(part2),
-                SimpleString<memDbDataLength_t>::fromNumber(nodeOplogId)
-            })
-            ->selfNode(this->selfNode->nodeId)
-            ->operatorNumber(OperatorNumbers::INIT_MULTI)
-            ->requestNumber(this->onGoingMultipleResponsesStore->nextMultiResponseId()) // Used as multi-response Id
-            ->build();
-}
-
-auto Cluster::createNextFragmentMultiResponseRequest(uint64_t multiResponseId) -> Request {
-    return RequestBuilder::builder()
-            .authKey(this->configuration->get(ConfigurationKeys::AUTH_NODE_KEY))
-            ->operatorNumber(OperatorNumbers::NEXT_FRAGMENT)
-            ->requestNumber(multiResponseId)
-            ->build();
 }

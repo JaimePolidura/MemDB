@@ -9,8 +9,8 @@
 
 class ClusterCreator {
 public:
-    static cluster_t setup(configuration_t configuration, logger_t logger, onGoingMultipleResponsesStore_t multipleResponses, memDbStores_t memDbStores);
+    static cluster_t setup(configuration_t configuration, logger_t logger, onGoingSyncOplogs_t multipleResponses, memDbStores_t memDbStores);
 
     static clusterNodeSetup_t getClusterNodeSetupObject(configuration_t configuration, logger_t logger,
-                                                        onGoingMultipleResponsesStore_t multipleResponses, memDbStores_t memDbStores);
+                                                        onGoingSyncOplogs_t multipleResponses, memDbStores_t memDbStores);
 };

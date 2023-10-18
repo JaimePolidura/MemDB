@@ -19,10 +19,19 @@ std::vector<uint8_t> OplogIterator::next() {
         this->intermediateIterated = true;
         return this->intermediate;
     } else {
-        return this->descriptorDataFetcher(this->descriptors.at(this->actualIndexDescriptor));
+        OplogIndexSegmentDescriptor actualDescriptor = this->descriptors.at(this->actualIndexDescriptor);
+        std::vector<uint8_t> toReturn = this->descriptorDataFetcher(actualDescriptor);
+
+        this->lastTimestampOfLastNext = actualDescriptor.max;
+
+        return toReturn;
     }
 }
 
 uint64_t OplogIterator::totalSize() {
     return this->descriptors.size() + 1;
+}
+
+uint32_t OplogIterator::getLastTimestampOfLastNext() {
+    return this->lastTimestampOfLastNext;
 }

@@ -50,6 +50,8 @@ public:
 
     void deleteNodeById(const memdbNodeId_t nodeId);
 
+    std::optional<Response> sendRequestToAnyNode(const Request& request, const NodePartitionOptions options = {});
+
     Response sendRequest(memdbNodeId_t nodeId, const Request& request);
 
     std::optional<Response> sendRequestToRandomNode(const Request& request, const NodePartitionOptions options = {});
@@ -58,7 +60,7 @@ public:
 
     void removeNodeFromPartition(memdbNodeId_t nodeId, const NodePartitionOptions options);
 
-    node_t getRandomNode(std::set<memdbNodeId_t> alreadyCheckedNodesId = {}, const NodePartitionOptions options = {});
+    std::optional<node_t> getRandomNode(std::set<memdbNodeId_t> alreadyCheckedNodesId = {}, const NodePartitionOptions options = {});
 private:
     Request prepareRequest(const OperationBody& operation);
 };

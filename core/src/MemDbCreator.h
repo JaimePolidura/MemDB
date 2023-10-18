@@ -18,10 +18,10 @@ public:
 private:
     static operationLog_t createOperationLogObject(configuration_t configuration, cluster_t cluster);
 
-    static cluster_t createClusterObject(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t multipleResponses, memDbStores_t memDbStores);
+    static cluster_t createClusterObject(logger_t logger, configuration_t configuration, onGoingSyncOplogs_t multipleResponses, memDbStores_t memDbStores);
 
     static operationLog_t setupMultipleOplogConfiguration(configuration_t configuration, cluster_t cluster);
 
     static void setupClusterChangeWatcher(cluster_t cluster, operationLog_t operationLog, configuration_t configuration, logger_t logger,
-                                     operatorDispatcher_t operatorDispatcher, onGoingMultipleResponsesStore_t multipleResponses, memDbStores_t memDbStores);
+                                          operatorDispatcher_t operatorDispatcher, onGoingSyncOplogs_t multipleResponses, memDbStores_t memDbStores);
 };

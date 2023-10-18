@@ -14,6 +14,9 @@ private:
     descriptorDataFetcher_t descriptorDataFetcher;
     std::vector<uint8_t> intermediate;
 
+    //TODO Not being updated when doing next() on intermediate
+    uint32_t lastTimestampOfLastNext;
+
     int actualIndexDescriptor;
     bool intermediateIterated;
 
@@ -27,6 +30,8 @@ public:
     std::vector<uint8_t> next() override;
 
     uint64_t totalSize() override;
+
+    uint32_t getLastTimestampOfLastNext();
 };
 
 using oplogSegmentIterator_t = std::shared_ptr<OplogIterator>;

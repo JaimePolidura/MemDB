@@ -12,4 +12,5 @@ public:
     static const constexpr uint8_t INVALID_NODE_STATE = 0x05;
     static const constexpr uint8_t INVALID_PARTITION = 0x06;
     static const constexpr uint8_t INVALID_CALL = 0x07;
+    static const constexpr uint8_t SYNC_OP_LOG_EOF = 0x08;
 };

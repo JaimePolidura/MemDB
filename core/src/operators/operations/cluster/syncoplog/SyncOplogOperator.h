@@ -8,6 +8,7 @@
 #include "persistence/compaction/OperationLogCompacter.h"
 #include "config/keys/ConfigurationKeys.h"
 #include "operators/OperatorDependencies.h"
+#include "messages/response/ResponseBuilder.h"
 
 /**
  * Invoked by InitMultiResponse
@@ -20,8 +21,6 @@
 class SyncOplogOperator : public Operator {
 public:
     Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) override;
-
-    iterator_t<std::vector<uint8_t>> createMultiResponseSenderIterator(const OperationBody& operation, OperatorDependencies& dependencies) override;
-
+    
     OperatorDescriptor desc() override;
 };

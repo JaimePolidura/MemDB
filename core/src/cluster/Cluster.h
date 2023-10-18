@@ -11,8 +11,8 @@
 #include "utils/clock/LamportClock.h"
 #include "utils/strings/StringUtils.h"
 
-#include "messages/multi/MultiResponseReceiverIterator.h"
-#include "messages/multi/OnGoingMultipleResponsesStore.h"
+#include "operators/operations/cluster/syncoplog/SyncOplogReceiverIterator.h"
+#include "operators/operations/cluster/syncoplog/OnGoingSyncOplogsStore.h"
 #include "messages/request/RequestBuilder.h"
 
 #include "config/Configuration.h"
@@ -26,7 +26,7 @@
 
 class Cluster {
 private:
-    onGoingMultipleResponsesStore_t onGoingMultipleResponsesStore;
+    onGoingSyncOplogs_t onGoingMultipleResponsesStore;
     configuration_t configuration;
     clusterNodes_t clusterNodes;
     memDbStores_t memDbStores;
@@ -48,14 +48,14 @@ private:
 public:
     Cluster(configuration_t configuration);
 
-    Cluster(logger_t logger, configuration_t configuration, onGoingMultipleResponsesStore_t onGoingMultipleResponsesStore,
+    Cluster(logger_t logger, configuration_t configuration, onGoingSyncOplogs_t onGoingMultipleResponsesStore,
             memDbStores_t memDbStores, clusterdb_t clusterDb);
 
     auto setBooting() -> void;
 
     auto setRunning() -> void;
 
-    auto syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodePartitionOptions options = {}) -> multiResponseReceiverIterator_t;
+    auto syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodePartitionOptions options = {}) -> iterator_t<std::vector<uint8_t>>;
 
     auto getPartitionObject() -> partitions_t;
 
@@ -70,11 +70,6 @@ public:
     auto getNodeId() -> memdbNodeId_t;
 
     auto watchForChangesInNodesClusterDb(std::function<void(node_t nodeChanged, ClusterDbChangeType changeType)> onChangeCallback) -> void;
-
-private:
-    auto createSyncOplogRequestInitMultiResponse(uint64_t timestamp, uint32_t selfOplogId, memdbNodeId_t nodeIdToSendRequest) -> Request;
-
-    auto createNextFragmentMultiResponseRequest(uint64_t multiResponseId) -> Request;
 };
 
 using cluster_t = std::shared_ptr<Cluster>;

@@ -3,6 +3,10 @@
 std::vector<OperationBody> OperationLogDeserializer::deserializeAll(const std::vector<uint8_t>& bytes) {
     std::vector<OperationBody> logs{};
 
+    if(bytes.empty()){
+        return logs;
+    }
+
     const uint8_t * firstElementPtr = bytes.data();
     const uint8_t * lastElementPtr = &bytes.back();
 

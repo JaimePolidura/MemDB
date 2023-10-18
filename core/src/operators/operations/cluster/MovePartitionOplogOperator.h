@@ -22,9 +22,7 @@ private:
     OperationLogDeserializer operationLogDeserializer{};
     OperationLogInvalidator operationLogInvalidator;
 
-    uint8_t _clearOldOplog;
-    uint8_t _applyNewOplog;
-    uint8_t _renameOldOplogToNewOplog;
+    std::mutex moveOplogMutex{};
 
 public:
     Response operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies& dependencies) override;

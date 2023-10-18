@@ -82,14 +82,14 @@ bool Node::canSendRequestUnicast(NodeState state) {
 }
 
 std::string Node::toJson(std::shared_ptr<Node> node) {
-    return "{\"nodeId\": \""+std::to_string(node->nodeId)+"\", \"address\": \""+node->address+"\", \"state\": \""+NodeStates::parseNodeStateToString(node->state)+"\"}";
+    return "{\"selfNodeId\": \""+std::to_string(node->nodeId)+"\", \"address\": \""+node->address+"\", \"state\": \""+NodeStates::parseNodeStateToString(node->state)+"\"}";
 }
 
 std::shared_ptr<Node> Node::fromJson(const nlohmann::json& json) {
     std::shared_ptr<Node> node = std::make_shared<Node>();
     node->address = json["address"].get<std::string>();
     node->state = NodeStates::parseNodeStateFromString(json["state"].get<std::string>());
-    node->nodeId = (memdbNodeId_t) std::stoi(json["nodeId"].get<std::string>());
+    node->nodeId = (memdbNodeId_t) std::stoi(json["selfNodeId"].get<std::string>());
 
     return node;
 }

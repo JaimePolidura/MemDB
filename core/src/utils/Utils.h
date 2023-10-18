@@ -99,6 +99,15 @@ public:
         }
     }
 
+    template<typename T>
+    static std::optional<T> tryOnceAndGetOptional(std::function<std::optional<T>()> toRetry) {
+        try{
+            return toRetry();
+        }catch(const std::exception& e) {
+            return std::nullopt;
+        }
+    }
+
     template<typename T, typename B>
     static std::optional<T> retryUntilAndGet(int numberAttempts, const std::chrono::duration<int64_t, B> backoffMillis, std::function<T(void)> toRetry) {
         while(numberAttempts > 0) {
@@ -113,6 +122,15 @@ public:
         }
 
         return std::nullopt;
+    }
+
+    template<typename T>
+    static T getOptionalOrThrow(const std::optional<T>& optional, const std::string& exceptionMessage = "No value for optional") {
+        if(optional.has_value()) {
+            return optional.value();
+        } else {
+            throw std::runtime_error(exceptionMessage);
+        }
     }
 
     template<typename R, typename P>

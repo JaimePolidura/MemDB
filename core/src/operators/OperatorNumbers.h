@@ -10,7 +10,6 @@ public:
     static const constexpr uint8_t HEALTH_CHECK = 0x04;
     static const constexpr uint8_t SYNC_OPLOG = 0x05;
     static const constexpr uint8_t MOVE_OPLOG = 0x06;
-    static const constexpr uint8_t INIT_MULTI = 0x07;
-    static const constexpr uint8_t NEXT_FRAGMENT = 0x08;
+    static const constexpr uint8_t NEXT_SYNC_OPLOG_SEGMENT = 0x07;
 };
 

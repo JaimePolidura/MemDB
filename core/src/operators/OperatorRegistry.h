@@ -2,16 +2,15 @@
 
 #include "shared.h"
 
-#include "operators/Operator.h"
-#include "OperatorNumbers.h"
+#include "operators/operations/cluster/syncoplog/NextSegmentOplogOperator.h"
+#include "operators/operations/cluster/syncoplog/SyncOplogOperator.h"
+#include "operators/operations/cluster/MovePartitionOplogOperator.h"
+#include "operators/operations/cluster/HealthCheckOperator.h"
+#include "operators/operations/user/DeleteOperator.h"
 #include "operators/operations/user/GetOperator.h"
 #include "operators/operations/user/SetOperator.h"
-#include "operators/operations/user/DeleteOperator.h"
-#include "operators/operations/cluster/HealthCheckOperator.h"
-#include "operators/operations/cluster/SyncOplogOperator.h"
-#include "operators/operations/cluster/MovePartitionOplogOperator.h"
-#include "operators/operations/multi/InitMultiResponsesOperator.h"
-#include "operators/operations/multi/NextFragmentOperator.h"
+#include "operators/Operator.h"
+#include "OperatorNumbers.h"
 
 class OperatorRegistry {
 private:

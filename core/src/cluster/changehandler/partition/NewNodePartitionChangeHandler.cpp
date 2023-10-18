@@ -53,18 +53,20 @@ void NewNodePartitionChangeHandler::sendSelfOplogToNodes(node_t newNode) {
             continue;
         }
 
-        //+1 to getAll the last node which will contain a copy of the data. We need to delete its copy. In order to do that, we simply send a movePartitionOplogRequest
-        //of oplog nodesPerPartition + 1 to delete it.
         for(int i = 0; i < nodesToSendNewOplog + 1; i++) {
-            memdbNodeId_t nodeId = neighbors.at(i + nodesToSendNewOplog).nodeId;
-            this->logger->debugInfo("Sending self oplog MOVE_OPLOG(newOplogId = {0}, applyNewOplog = true, clearOldOplog = true) to node {1}",
-                                    static_cast<int>(i + nodesToSendNewOplog + 1), nodeId);
+            auto nodeId = neighbors.at(distance + 1 + i).nodeId;
+            auto oldOplog = this->cluster->partitions->getDistance(nodeId) - 1;
+            auto newOplog = oldOplog + 1;
+
+            this->logger->debugInfo("Sending self oplog MOVE_OPLOG(newOplogId = {0}, oldOplogId = {1} applyNewOplog = true, clearOldOplog = true) to node {2}",
+                                    newOplog, oldOplog, nodeId);
 
             this->cluster->clusterNodes->sendRequest(nodeId, this->moveOpLogRequestCreator.create((CreateMoveOplogReqParams{
                     .oplog = keys,
                     .applyNewOplog = true,
                     .clearOldOplog = true,
-                    .newOplogId = static_cast<int>(i + nodesToSendNewOplog + 1)
+                    .oldOplogId =  oldOplog,
+                    .newOplogId = newOplog,
             })));
         }
     }

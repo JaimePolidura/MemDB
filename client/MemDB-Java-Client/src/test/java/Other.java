@@ -5,10 +5,10 @@ import lombok.SneakyThrows;
 public final class Other {
     @SneakyThrows
     public static void main(String[] args) {
-//        node1_write();
+        node1_write();
 //        node4_read();
 //        node1_read();
-        node5_read();
+//        node5_read();
     }
 
     @SneakyThrows

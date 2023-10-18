@@ -61,6 +61,26 @@ void ClusterNodes::deleteNodeById(const memdbNodeId_t nodeId) {
     }
 }
 
+std::optional<Response> ClusterNodes::sendRequestToAnyNode(const Request& request, const NodePartitionOptions options) {
+    std::set<memdbNodeId_t> alreadyCheckedNodeId{};
+
+    while(true) {
+        std::optional<node_t> node = this->getRandomNode(alreadyCheckedNodeId, options);
+
+        if(!node.has_value()){
+            return std::nullopt;
+        }
+
+        std::optional<Response> responseOptional = Utils::tryOnceAndGetOptional<Response>([&request, &node](){
+            return node.value()->sendRequest(request, false);
+        });
+
+        if(responseOptional.has_value()){
+            return responseOptional.value();
+        }
+    }
+}
+
 auto ClusterNodes::sendRequest(memdbNodeId_t nodeId, const Request& request) -> Response {
     int timeout = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS);
     node_t node = this->nodesById.at(nodeId);
@@ -76,7 +96,7 @@ auto ClusterNodes::sendRequestToRandomNode(const Request& request, const NodePar
     std::set<memdbNodeId_t> alreadyCheckedNodesId = {};
 
     return Utils::retryUntilAndGet<Response, std::milli>(nRetries, std::chrono::milliseconds(timeout), [this, &request, &alreadyCheckedNodesId, options]() -> Response {
-        node_t nodeToSendRequest = this->getRandomNode(alreadyCheckedNodesId, options);
+        node_t nodeToSendRequest = Utils::getOptionalOrThrow<node_t>(this->getRandomNode(alreadyCheckedNodesId, options));
 
         return nodeToSendRequest->sendRequest(this->prepareRequest(request.operation), true).value();
     });
@@ -102,7 +122,7 @@ auto ClusterNodes::broadcast(const OperationBody& operation, const NodePartition
     }
 }
 
-node_t ClusterNodes::getRandomNode(std::set<memdbNodeId_t> alreadyCheckedNodesId, const NodePartitionOptions options) {
+std::optional<node_t> ClusterNodes::getRandomNode(std::set<memdbNodeId_t> alreadyCheckedNodesId, const NodePartitionOptions options) {
     std::srand(std::time(nullptr));
     NodesInPartition nodesInPartition = this->nodesInPartitions[options.partitionId];
     std::set<memdbNodeId_t> nodesIdInPartition = nodesInPartition.getAll();
@@ -125,7 +145,7 @@ node_t ClusterNodes::getRandomNode(std::set<memdbNodeId_t> alreadyCheckedNodesId
         alreadyCheckedNodesId.insert(randomNode->nodeId);
     }
 
-    throw std::runtime_error("No node available for selecting");
+    return std::nullopt;
 }
 
 Request ClusterNodes::prepareRequest(const OperationBody& operation) {

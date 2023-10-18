@@ -7,8 +7,7 @@ OperatorRegistry::OperatorRegistry() {
     this->operators[OperatorNumbers::HEALTH_CHECK] = std::make_shared<HealthCheckOperator>();
     this->operators[OperatorNumbers::SYNC_OPLOG] = std::make_shared<SyncOplogOperator>();
     this->operators[OperatorNumbers::MOVE_OPLOG] = std::make_shared<MovePartitionOplogOperator>();
-    this->operators[OperatorNumbers::NEXT_FRAGMENT] = std::make_shared<NextFragmentOperator>();
-    this->operators[OperatorNumbers::INIT_MULTI] = std::make_shared<InitMultiResponsesOperator>();
+    this->operators[OperatorNumbers::NEXT_SYNC_OPLOG_SEGMENT] = std::make_shared<NextSegmentOplogOperator>();
 }
 
 std::shared_ptr<Operator> OperatorRegistry::get(uint8_t operatorNumber) {

@@ -102,7 +102,7 @@ public:
     std::vector<MapEntry<SizeValue>> getOrderedByHash() const {
         std::vector<MapEntry<SizeValue>> toReturn{};
 
-        return this->getOrderedByHashRecursive(this->root, toReturn);
+        return this->root != nullptr ? this->getOrderedByHashRecursive(this->root, toReturn) : toReturn;
     }
     
 private:

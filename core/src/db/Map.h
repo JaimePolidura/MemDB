@@ -93,7 +93,7 @@ public:
         }
 
         bool hasNext() override {
-            return this->actualBucket >= this->map->numberBuckets;
+            return this->actualBucket < this->map->numberBuckets;
         }
 
         uint64_t totalSize() override {

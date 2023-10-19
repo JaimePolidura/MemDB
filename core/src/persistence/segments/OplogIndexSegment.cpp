@@ -19,7 +19,12 @@ void OplogIndexSegment::save(const std::vector<uint8_t>& toSave) {
 }
 
 std::vector<OplogIndexSegmentDescriptor> OplogIndexSegment::getByAfterTimestamp(uint64_t timestamp) {
-    uint32_t actualPtr = FileUtils::size(partitionPath, INDEX_FILE_NAME) / 2 - 1;
+    uint64_t indexFileSize = FileUtils::size(partitionPath, INDEX_FILE_NAME);
+    if(indexFileSize == 0){
+        return {};
+    }
+
+    uint32_t actualPtr = indexFileSize / 2 - 1;
     OplogIndexSegmentDescriptor actualDesc = this->oplogIndexSegmentReader.readIndexAt(actualPtr);
 
     while(actualDesc.min < timestamp) {

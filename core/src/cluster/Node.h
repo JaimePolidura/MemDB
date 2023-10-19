@@ -27,7 +27,7 @@ public:
 
     Node(const Node& other);
 
-    auto sendRequest(const Request& request, const bool waitForResponse) -> std::optional<Response>;
+    auto sendRequest(const Request &request) -> std::optional<Response>;
 
     void closeConnection();
 

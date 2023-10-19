@@ -2,18 +2,19 @@
 
 Response NextSegmentOplogOperator::operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) {
     oplogSegmentIterator_t oplogSenderIterator = this->getOplogSegmentIterator(operation, options, dependencies);
-    uint64_t syncOplogId = options.requestNumber;
+    uint64_t syncId = options.requestNumber;
 
-    if(!oplogSenderIterator->hasNext()){
+    if(!oplogSenderIterator->hasNext()) {
+        dependencies.onGoingSyncOplogs->removeBySyncId(syncId);
         return Response::error(ErrorCode::SYNC_OP_LOG_EOF);
     }
 
-    dependencies.onGoingSyncOplogs->markSegmentAsSent(syncOplogId);
+    dependencies.onGoingSyncOplogs->markSegmentAsSent(syncId);
 
     return ResponseBuilder::builder()
             .value(SimpleString<memDbDataLength_t>::fromVector(oplogSenderIterator->next()))
             ->timestamp(oplogSenderIterator->getLastTimestampOfLastNext())
-            ->requestNumber(syncOplogId)
+            ->requestNumber(syncId)
             ->success()
             ->build();
 }
@@ -33,7 +34,7 @@ oplogSegmentIterator_t NextSegmentOplogOperator::getOplogSegmentIterator(const O
 
     if(!senderIteratorOptional.has_value()) {
         uint64_t lastTimestampUnsync = operation.getDoubleArgU64(0);
-        uint32_t nodeOplogIdToSync = operation.getArg(1).to<uint32_t>();
+        uint32_t nodeOplogIdToSync = operation.getArg(2).to<uint32_t>();
 
         dependencies.operatorDispatcher(RequestBuilder::builder()
             .operatorNumber(OperatorNumbers::SYNC_OPLOG)

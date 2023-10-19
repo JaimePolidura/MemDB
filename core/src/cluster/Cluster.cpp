@@ -24,7 +24,7 @@ auto Cluster::setRunning() -> void {
 }
 
 auto Cluster::syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodePartitionOptions options) -> iterator_t<std::vector<uint8_t>> {
-    return std::make_shared<SyncOplogReceiverIterator>(this->configuration, this->clusterNodes, this->partitions, lastTimestampProcessedFromOpLog,
+    return std::make_shared<SyncOplogReceiverIterator>(this->configuration, this->clusterNodes, this->partitions, this->logger, lastTimestampProcessedFromOpLog,
         options.partitionId, [this](){return this->onGoingMultipleResponsesStore->nextSyncOplogId();});
 }
 

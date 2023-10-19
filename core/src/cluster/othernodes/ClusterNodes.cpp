@@ -72,7 +72,7 @@ std::optional<Response> ClusterNodes::sendRequestToAnyNode(const Request& reques
         }
 
         std::optional<Response> responseOptional = Utils::tryOnceAndGetOptional<Response>([&request, &node](){
-            return node.value()->sendRequest(request, false);
+            return node.value()->sendRequest(request);
         });
 
         if(responseOptional.has_value()){
@@ -86,7 +86,7 @@ auto ClusterNodes::sendRequest(memdbNodeId_t nodeId, const Request& request) -> 
     node_t node = this->nodesById.at(nodeId);
 
     return Utils::retryUntilSuccessAndGet<Response, std::milli>(std::chrono::milliseconds(timeout), [node, &request]() -> Response {
-        return node->sendRequest(request, true).value();
+        return node->sendRequest(request).value();
     });
 }
 
@@ -98,7 +98,7 @@ auto ClusterNodes::sendRequestToRandomNode(const Request& request, const NodePar
     return Utils::retryUntilAndGet<Response, std::milli>(nRetries, std::chrono::milliseconds(timeout), [this, &request, &alreadyCheckedNodesId, options]() -> Response {
         node_t nodeToSendRequest = Utils::getOptionalOrThrow<node_t>(this->getRandomNode(alreadyCheckedNodesId, options));
 
-        return nodeToSendRequest->sendRequest(this->prepareRequest(request.operation), true).value();
+        return nodeToSendRequest->sendRequest(this->prepareRequest(request.operation)).value();
     });
 }
 
@@ -116,7 +116,7 @@ auto ClusterNodes::broadcast(const OperationBody& operation, const NodePartition
 
         this->requestPool.submit([node, operation, timeout, nRetries, this]() mutable -> void {
             Utils::retryUntil(nRetries, std::chrono::milliseconds(timeout), [this, &node, &operation]() -> void{
-                node->sendRequest(this->prepareRequest(operation), false);
+                node->sendRequest(this->prepareRequest(operation));
             });
         });
     }

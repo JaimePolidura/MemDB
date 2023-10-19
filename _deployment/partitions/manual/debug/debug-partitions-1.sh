@@ -14,7 +14,7 @@ docker run -d \
   --restart always \
   bitnami/etcd:latest
 
-sleep 4s
+sleep 5s
 
 docker exec -it memdb-clusterdb etcdctl put /partitions/config/nodesPerPartition "2"
 docker exec -it memdb-clusterdb etcdctl put /partitions/config/ringSize "64"

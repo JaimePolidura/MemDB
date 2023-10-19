@@ -25,11 +25,13 @@ private:
 public:
     explicit OnGoingSyncOplogsStore(memdbNodeId_t nodeId);
 
-    void registerSyncOplogIterator(uint64_t multiId, oplogSegmentIterator_t segmentIterator);
+    void registerSyncOplogIterator(uint64_t syncId, oplogSegmentIterator_t segmentIterator);
 
     std::optional<oplogSegmentIterator_t> getSenderIteratorById(uint64_t id);
 
-    void markSegmentAsSent(uint64_t multiId);
+    void markSegmentAsSent(uint64_t syncId);
+
+    void removeBySyncId(uint64_t syncId);
 
     uint64_t nextSyncOplogId();
 };

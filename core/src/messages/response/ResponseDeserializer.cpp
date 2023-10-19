@@ -1,7 +1,7 @@
 #include "messages/response/ResponseDeserializer.h"
 
 Response ResponseDeserializer::deserialize(const std::vector<uint8_t>& buffer) {
-    auto requestNumber = Utils::parseFromBuffer<memdbRequestNumber_t>(buffer);
+    auto requestNumber = Utils::parseFromBuffer<memdbRequestNumber_t>(buffer, 0);
     auto timestamp = Utils::parseFromBuffer<uint64_t>(buffer, sizeof(memdbRequestNumber_t));
     auto success = ((uint8_t) (buffer[8 + sizeof(memdbRequestNumber_t)] << 7)) != 0;
     auto errorCode = static_cast<uint8_t>(buffer[8 + sizeof(memdbRequestNumber_t)] >> 1);

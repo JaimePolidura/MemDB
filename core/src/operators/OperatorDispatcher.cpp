@@ -43,7 +43,7 @@ Response OperatorDispatcher::dispatch_no_applyDelayedOperationsBuffer(const Requ
             .requestNumber = request.requestNumber,
     };
 
-    this->logger->debugInfo("Received request for operator {0} from {1}", request.requestNumber, operatorToExecute->desc().name,
+    this->logger->debugInfo("Received request for operator {0} of request number {1} from {2}", operatorToExecute->desc().name, request.requestNumber,
                             options.checkTimestamps ? "node" : "user");
 
     if(isInReplicationMode() && (!canAcceptRequest() || (readDbRequest && !canExecuteRequest()))) {

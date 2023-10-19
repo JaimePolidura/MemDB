@@ -10,7 +10,7 @@ TCPServer::TCPServer(logger_t logger, configuration_t configuration, Authenticat
     acceptator(ioContext, ip::tcp::endpoint{ip::tcp::v4(), this->port}) {};
 
 void TCPServer::run() {
-    this->logger->info("Listening for conenctions...");
+    this->logger->info("Listening for connections...");
 
     try{
         this->acceptNewConnections();

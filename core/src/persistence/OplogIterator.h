@@ -17,7 +17,7 @@ private:
     //TODO Not being updated when doing next() on intermediate
     uint32_t lastTimestampOfLastNext;
 
-    int actualIndexDescriptor;
+    uint32_t actualIndexDescriptor;
     bool intermediateIterated;
 
 public:

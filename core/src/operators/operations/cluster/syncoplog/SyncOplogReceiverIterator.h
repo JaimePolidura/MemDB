@@ -15,21 +15,22 @@ private:
     configuration_t configuration;
     clusterNodes_t clusterNodes;
     partitions_t partitions;
+    logger_t logger;
 
     uint64_t timestampToSync;
-    uint32_t oplogIdToSync;
-    std::function<uint32_t()> nextSyncOplogId;
+    uint32_t selfOplogIdToSync;
+    std::function<uint32_t()> nextSyncId;
 
-    uint32_t syncOplogId;
+    uint32_t syncId;
     node_t nodeSender;
-    uint32_t nSegmentsRemaining;
-    bool eofReached{false};
+    uint64_t nSegmentsRemaining;
+    uint32_t nodeOplogIdToSync;
 
     std::set<memdbNodeId_t> alreadyCheckedNodeIds{};
 
 public:
-    SyncOplogReceiverIterator(configuration_t configuration, clusterNodes_t clusterNodes, partitions_t partitions,
-                              uint64_t timestampToSync, uint32_t oplogIdToSync, std::function<uint32_t()> nextSyncOplogId);
+    SyncOplogReceiverIterator(configuration_t configuration, clusterNodes_t clusterNodes, partitions_t partitions, logger_t logger,
+                              uint64_t timestampToSync, uint32_t selfOplogIdToSync, std::function<uint32_t()> nextSyncOplogId);
 
     bool hasNext() override;
 

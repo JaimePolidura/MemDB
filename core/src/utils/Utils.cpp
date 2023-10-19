@@ -13,6 +13,7 @@ void Utils::printVectorHex(const std::vector<uint8_t>& toPrint) {
     for (const uint8_t byte : toPrint) {
         std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << " ";
     }
+
     std::cout << std::dec << std::endl;
 }
 
@@ -23,6 +24,10 @@ void Utils::printVector(const std::vector<uint8_t>& toPrint) {
         std::cout << static_cast<unsigned>(toPrint[i]);
         if (i != toPrint.size() - 1)
             std::cout << ", ";
+        if(i >= 512) {
+            std::cout << ", ... " << toPrint.size() - i << " more";
+            break;
+        }
     }
     std::cout << "]" << std::endl;
 }

@@ -15,14 +15,15 @@ Node::Node(const Node& other) {
     this->requestSerializer = other.requestSerializer;
 }
 
-auto Node::sendRequest(const Request& request, const bool waitForResponse) -> std::optional<Response> {
+auto Node::sendRequest(const Request &request) -> std::optional<Response> {
     this->openConnectionIfClosedOrThrow();
 
     std::vector<uint8_t> serializedRequest = this->requestSerializer.serialize(request);
-    this->connection->writeSync(serializedRequest);
+    std::size_t bytesWritten = this->connection->writeSync(serializedRequest);
 
-    if(!waitForResponse)
+    if(bytesWritten == 0){
         return std::nullopt;
+    }
 
     std::vector<uint8_t> serializedResponse = this->connection->readSync();
     Response deserializedResponse = this->responseDeserializer.deserialize(serializedResponse);
@@ -82,14 +83,14 @@ bool Node::canSendRequestUnicast(NodeState state) {
 }
 
 std::string Node::toJson(std::shared_ptr<Node> node) {
-    return "{\"selfNodeId\": \""+std::to_string(node->nodeId)+"\", \"address\": \""+node->address+"\", \"state\": \""+NodeStates::parseNodeStateToString(node->state)+"\"}";
+    return "{\"nodeId\": \""+std::to_string(node->nodeId)+"\", \"address\": \""+node->address+"\", \"state\": \""+NodeStates::parseNodeStateToString(node->state)+"\"}";
 }
 
 std::shared_ptr<Node> Node::fromJson(const nlohmann::json& json) {
     std::shared_ptr<Node> node = std::make_shared<Node>();
     node->address = json["address"].get<std::string>();
     node->state = NodeStates::parseNodeStateFromString(json["state"].get<std::string>());
-    node->nodeId = (memdbNodeId_t) std::stoi(json["selfNodeId"].get<std::string>());
+    node->nodeId = (memdbNodeId_t) std::stoi(json["nodeId"].get<std::string>());
 
     return node;
 }

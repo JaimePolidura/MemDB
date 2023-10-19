@@ -10,7 +10,7 @@ public final class Other {
 //        node4_read();
 //        node5_read();
     }
-    
+
     @SneakyThrows
     static void node1_write() {
         MemDb memDb = new MemDb(MemDbConnections.sync("192.168.1.159", 10000), "789");

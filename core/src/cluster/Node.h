@@ -12,6 +12,7 @@
 struct Node {
 public:
     io_context ioContext;
+    logger_t logger;
 
     mutable connection_t connection;
     std::string address;
@@ -34,6 +35,8 @@ public:
     bool isConnectionOpened() const;
 
     bool openConnection();
+
+    void setLogger(logger_t logger);
 
 private:
     void openConnectionIfClosedOrThrow();

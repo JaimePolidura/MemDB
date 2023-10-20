@@ -1,8 +1,6 @@
 #pragma once
 
 #include "cluster/clusterdb/responses/PartitionConfigurationResponse.h"
-#include "cluster/clusterdb/responses/GetRingNeighborsResponse.h"
-#include "cluster/clusterdb/responses/GetRingInfoResponse.h"
 #include "cluster/clusterdb/responses/AllNodesResponse.h"
 #include "cluster/clusterdb/ClusterDbValueChanged.h"
 #include "cluster/partitions/RingEntry.h"

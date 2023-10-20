@@ -63,7 +63,7 @@ bool Node::openConnection() {
     if(!success)
         return false;
 
-    this->connection = std::make_shared<Connection>(std::move(socket));
+    this->connection = std::make_shared<Connection>(std::move(socket), this->logger);
 
     return true;
 }

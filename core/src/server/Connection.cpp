@@ -1,6 +1,6 @@
 #include "server/Connection.h"
 
-Connection::Connection(ip::tcp::socket socket) : socket{std::move(socket)} {}
+Connection::Connection(ip::tcp::socket socket, logger_t logger) : socket{std::move(socket)}, logger(logger) {}
 
 void Connection::onRequest(std::function<void(const std::vector<uint8_t>&)> onRequestCallbackParam) {
     this->onRequestCallback = onRequestCallbackParam;
@@ -28,21 +28,6 @@ void Connection::readAsync() {
 std::vector<uint8_t> Connection::readSync() {
     boost::asio::read(this->socket, boost::asio::buffer(this->typePacketHeaderBuffer));
     return this->readPacket(this->typePacketHeaderBuffer[0]);
-}
-
-std::vector<uint8_t> Connection::readFragmentedPacket() {
-    std::vector<uint8_t> result{};
-
-    while(true) {
-        boost::asio::read(this->socket, boost::asio::buffer(this->fragmentationHeaderBuffer));
-        if(Utils::parse<int>(this->fragmentationHeaderBuffer) < 0){ //nFragment
-            return result;
-        }
-
-        std::vector<uint8_t> packet = this->readPacketContent();
-        result.insert(result.begin(), packet.begin(), packet.end());
-        boost::asio::read(this->socket, boost::asio::buffer(this->typePacketHeaderBuffer));
-    }
 }
 
 void Connection::writeAsync(std::vector<uint8_t>& toWrite) {
@@ -79,11 +64,34 @@ std::vector<uint8_t> Connection::addNoFragmentationHeader(std::vector<uint8_t>& 
     return vec;
 }
 
+std::vector<uint8_t> Connection::readFragmentedPacket() {
+    std::vector<uint8_t> result{};
+
+    this->logger->debugInfo("Received fragmented packet, starting to read");
+
+    while(true) {
+        boost::asio::read(this->socket, boost::asio::buffer(this->fragmentationHeaderBuffer));
+        int nFragment = Utils::parse<int>(this->fragmentationHeaderBuffer);
+        std::vector<uint8_t> packet = this->readPacketContent();
+        result.insert(result.begin(), packet.begin(), packet.end());
+        boost::asio::read(this->socket, boost::asio::buffer(this->typePacketHeaderBuffer));
+
+        this->logger->debugInfo("Received fragment packet {0} of {1} kb", nFragment, packet.size() / 1024);
+
+        if(nFragment == 0){ //nFragment
+            this->logger->debugInfo("All fragments have been read, returning total packet of {0} mb", (result.size() / 1024) / 1024);
+            return result;
+        }
+    }
+}
+
 std::size_t Connection::fragmentPacketAndSend(std::vector<uint8_t>& initialPacket, std::function<std::size_t(std::vector<uint8_t>&)> sender) {
     int nFragments = initialPacket.size() / FRAGMENT_MIN_SIZE + (initialPacket.size() % FRAGMENT_MIN_SIZE == 0 ? 0 : 1);
     uint8_t * start = (uint8_t *) initialPacket.data();
     int offset = initialPacket.size() < FRAGMENT_MIN_SIZE ? initialPacket.size() : FRAGMENT_MIN_SIZE;
     size_t written = 0;
+
+    this->logger->debugInfo("Starting fragmentation to send a packet of {0} kb with {1} fragments", initialPacket.size() / 1024, nFragments);
 
     for(int i = 0; i < nFragments; i++){
         std::vector<uint8_t> fragmentedPacket{};
@@ -95,6 +103,7 @@ std::size_t Connection::fragmentPacketAndSend(std::vector<uint8_t>& initialPacke
 
         fragmentedPacket.insert(fragmentedPacket.begin() + sizeof(int) + 1, start, start + offset);
 
+        this->logger->debugInfo("Sending fragment packet {0} of {1} kb", nFragment, fragmentedPacket.size() / 1024);
         written += sender(fragmentedPacket);
 
         offset = initialPacket.size() < FRAGMENT_MIN_SIZE ? initialPacket.size() : FRAGMENT_MIN_SIZE;

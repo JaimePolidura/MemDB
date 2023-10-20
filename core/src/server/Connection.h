@@ -3,6 +3,7 @@
 #include "shared.h"
 #include "memdbtypes.h"
 #include "utils/Utils.h"
+#include "logging/Logger.h"
 
 #define FRAGMENT_MIN_SIZE 65536
 
@@ -12,13 +13,14 @@ class Connection : public std::enable_shared_from_this<Connection> {
 private:
     std::function<void(const std::vector<uint8_t>&)> onRequestCallback;
     ip::tcp::socket socket;
+    logger_t logger;
 
     uint8_t messageLengthHeaderBuffer[sizeof(memDbDataLength_t)];
     uint8_t fragmentationHeaderBuffer[4];
     uint8_t typePacketHeaderBuffer[1];
     
 public:
-    Connection(ip::tcp::socket socket);
+    Connection(ip::tcp::socket socket, logger_t logger);
 
     void onRequest(std::function<void(const std::vector<uint8_t>&)> onRequestCallbackParam);
 

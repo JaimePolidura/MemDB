@@ -18,7 +18,9 @@ void ClusterDb::setNode(memdbNodeId_t nodeId, node_t node) {
 node_t ClusterDb::getByNodeId(memdbNodeId_t nodeId) {
     etcd::Value responseValue = this->client.get("/nodes/" + std::to_string(nodeId)).get().value();
         
-    return Node::fromJson(nlohmann::json::parse(responseValue.as_string()));
+    node_t node = Node::fromJson(nlohmann::json::parse(responseValue.as_string()));
+    node->setLogger(this->logger);
+    return node;
 }
 
 AllNodesResponse ClusterDb::getAllNodes() {
@@ -26,7 +28,9 @@ AllNodesResponse ClusterDb::getAllNodes() {
     std::vector<node_t> nodes{};
 
     std::for_each(values.begin(), values.end(), [&](const etcd::Value& value) {
-        nodes.push_back(Node::fromJson(nlohmann::json::parse(value.as_string())));
+        node_t node = Node::fromJson(nlohmann::json::parse(value.as_string()));
+        node->setLogger(this->logger);
+        nodes.push_back(node);
     });
 
     return AllNodesResponse{.nodes = nodes};

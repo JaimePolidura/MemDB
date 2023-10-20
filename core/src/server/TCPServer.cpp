@@ -23,7 +23,7 @@ void TCPServer::run() {
 
 void TCPServer::acceptNewConnections() {
     this->acceptator.async_accept([this](std::error_code ec, ip::tcp::socket socket) {
-        std::shared_ptr<Connection> connection = std::make_shared<Connection>(std::move(socket));
+        std::shared_ptr<Connection> connection = std::make_shared<Connection>(std::move(socket), this->logger);
 
         this->logger->debugInfo("Accepted TCP Connection {0}", connection->getAddress());
 

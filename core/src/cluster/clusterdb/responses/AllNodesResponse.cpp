@@ -15,17 +15,3 @@ node_t AllNodesResponse::getNodeById(memdbNodeId_t nodeId) {
 
     throw std::runtime_error("Node not found in AllNodesResponse");
 }
-
-AllNodesResponse AllNodesResponse::fromJson(const nlohmann::json& json) {
-    std::vector<node_t> nodes;
-    auto jsonOtherNodes = json["nodes"];
-    
-    for (const auto& otherNodeJson : jsonOtherNodes) {
-        auto node = Node::fromJson(otherNodeJson);
-        nodes.push_back(node);
-    }
-
-    return AllNodesResponse{
-        .nodes = nodes,
-    };
-}

@@ -63,6 +63,7 @@ auto Cluster::getPartitionIdByKey(SimpleString<memDbDataLength_t> key) -> uint32
 auto Cluster::watchForChangesInNodesClusterDb(std::function<void(node_t nodeChanged, ClusterDbChangeType changeType)> onChangeCallback) -> void {
     this->clusterDb->watchNodeChanges([this, onChangeCallback](ClusterDbValueChanged nodeChangedEvent) {
         node_t node = Node::fromJson(nodeChangedEvent.value);
+        node->setLogger(this->logger);
         bool selfNodeChanged = node->nodeId == this->configuration->get<memdbNodeId_t>(ConfigurationKeys::NODE_ID);
 
         if (!selfNodeChanged) {

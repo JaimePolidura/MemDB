@@ -13,6 +13,4 @@ struct AllNodesResponse {
     std::vector<node_t> getAllNodesExcept(memdbNodeId_t nodeIdExcept);
 
     node_t getNodeById(memdbNodeId_t nodeId);
-    
-    static AllNodesResponse fromJson(const nlohmann::json& json);
 };

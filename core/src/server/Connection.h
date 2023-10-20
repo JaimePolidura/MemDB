@@ -28,18 +28,22 @@ public:
 
     std::vector<uint8_t> readSync();
 
-    void writeAsync(const std::vector<uint8_t>& toWrite);
+    void writeAsync(std::vector<uint8_t>& toWrite);
 
-    size_t writeSync(const std::vector<uint8_t>& toWrite);
+    std::size_t writeSync(std::vector<uint8_t>& toWrite);
 
     bool isOpen();
 
     void close();
 
 private:
-    size_t writeSyncFragmented(const std::vector<uint8_t>& bytes);
+    std::size_t writeSyncFragmented(std::vector<uint8_t>& bytes);
 
     std::vector<uint8_t> readPacket(uint8_t packetType);
+
+    std::size_t fragmentPacketAndSend(std::vector<uint8_t>& packet, std::function<std::size_t(std::vector<uint8_t>&)> sender);
+
+    std::vector<uint8_t> addNoFragmentationHeader(std::vector<uint8_t>& vec);
 
     memDbDataLength_t readPacketLength();
 

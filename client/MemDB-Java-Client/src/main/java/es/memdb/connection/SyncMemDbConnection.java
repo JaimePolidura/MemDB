@@ -74,7 +74,7 @@ public final class SyncMemDbConnection implements MemDbConnection {
     public byte[] read(int requestNumber) {
         try{
             return this.responseReader.read(this.input);
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }finally {

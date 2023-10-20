@@ -45,35 +45,49 @@ std::vector<uint8_t> Connection::readFragmentedPacket() {
     }
 }
 
-void Connection::writeAsync(const std::vector<uint8_t>& toWrite) {
-    this->socket.async_write_some(boost::asio::buffer(toWrite), [&](const boost::system::error_code& error, std::size_t bytes_transferred){});
+void Connection::writeAsync(std::vector<uint8_t>& toWrite) {
+    if(toWrite.size() < FRAGMENT_MIN_SIZE){
+        this->socket.async_write_some(boost::asio::buffer(addNoFragmentationHeader(toWrite)), [](const boost::system::error_code& error, std::size_t bytes_transferred){});
+    } else {
+        this->fragmentPacketAndSend(toWrite, [this](std::vector<uint8_t>& fragmentedPacket){
+            this->socket.async_write_some(boost::asio::buffer(fragmentedPacket), [](const boost::system::error_code& error, std::size_t bytes_transferred){});
+            return 0;
+        });
+    }
 }
 
-size_t Connection::writeSync(const std::vector<uint8_t>& toWrite) {
-    if(toWrite.size() < 65536){
-        return this->socket.write_some(boost::asio::buffer(toWrite));
+size_t Connection::writeSync(std::vector<uint8_t>& toWrite) {
+    if(toWrite.size() < FRAGMENT_MIN_SIZE){
+        return this->socket.write_some(boost::asio::buffer(addNoFragmentationHeader(toWrite)));
     } else {
-        return this->writeSyncFragmented(toWrite);
+        return this->fragmentPacketAndSend(toWrite, [this](std::vector<uint8_t>& fragmentedPacket){
+            return this->socket.write_some(boost::asio::buffer(fragmentedPacket));
+        });
     }
 }
 
 std::vector<uint8_t> Connection::readPacket(uint8_t packetType) {
     if(this->isFragmentPacket(packetType)){
-        return readFragmentedPacket();
+        return this->readFragmentedPacket();
     } else {
         return this->readPacketContent();
     }
 }
 
-size_t Connection::writeSyncFragmented(const std::vector<uint8_t>& bytes) {
-    int nFragments = bytes.size() / FRAGMENT_MIN_SIZE + (bytes.size() % FRAGMENT_MIN_SIZE == 0 ? 0 : 1);
-    uint8_t * start = (uint8_t *) bytes.data();
-    int offset = bytes.size() < FRAGMENT_MIN_SIZE ? bytes.size() : FRAGMENT_MIN_SIZE;
+std::vector<uint8_t> Connection::addNoFragmentationHeader(std::vector<uint8_t>& vec) {
+    vec.insert(vec.begin(), 0x00);
+    return vec;
+}
+
+std::size_t Connection::fragmentPacketAndSend(std::vector<uint8_t>& initialPacket, std::function<std::size_t(std::vector<uint8_t>&)> sender) {
+    int nFragments = initialPacket.size() / FRAGMENT_MIN_SIZE + (initialPacket.size() % FRAGMENT_MIN_SIZE == 0 ? 0 : 1);
+    uint8_t * start = (uint8_t *) initialPacket.data();
+    int offset = initialPacket.size() < FRAGMENT_MIN_SIZE ? initialPacket.size() : FRAGMENT_MIN_SIZE;
     size_t written = 0;
-    
+
     for(int i = 0; i < nFragments; i++){
         std::vector<uint8_t> fragmentedPacket{};
-        fragmentedPacket.reserve(sizeof(int) + bytes.size() + 1);
+        fragmentedPacket.reserve(sizeof(int) + initialPacket.size() + 1);
         int nFragment = nFragments - i - 1;
 
         Utils::appendToBuffer<uint8_t>(0x01, fragmentedPacket); //Is fragmented flag
@@ -81,9 +95,9 @@ size_t Connection::writeSyncFragmented(const std::vector<uint8_t>& bytes) {
 
         fragmentedPacket.insert(fragmentedPacket.begin() + sizeof(int) + 1, start, start + offset);
 
-        written += this->socket.write_some(boost::asio::buffer(fragmentedPacket));
+        written += sender(fragmentedPacket);
 
-        offset = bytes.size() < 65536 ? bytes.size() : 65536;
+        offset = initialPacket.size() < FRAGMENT_MIN_SIZE ? initialPacket.size() : FRAGMENT_MIN_SIZE;
         start += offset;
     }
 
@@ -103,7 +117,7 @@ bool Connection::isOpen() {
 }
 
 bool Connection::isFragmentPacket(uint8_t packetTypeHeader) {
-    return (packetTypeHeader & 0x01) == 0;
+    return (packetTypeHeader & 0x01) != 0;
 }
 
 void Connection::close() {

@@ -5,7 +5,7 @@ import (
 )
 
 func Desrialize(rawResponse []byte) Response {
-	resultByte := rawResponse[16]
+	resultByte := rawResponse[16+1]
 	success := (resultByte & 0x01) == 1
 	errorCode := resultByte >> 1
 	responseBody := getResponseBodyString(rawResponse)
@@ -14,7 +14,7 @@ func Desrialize(rawResponse []byte) Response {
 }
 
 func getResponseBodyString(rawResponse []byte) string {
-	responseLengthRaw := rawResponse[17:21] //Inclusive - exclusive
+	responseLengthRaw := rawResponse[18:22] //Inclusive - exclusive
 	ressponseLength := binary.BigEndian.Uint32(responseLengthRaw)
 
 	if ressponseLength > 0 {

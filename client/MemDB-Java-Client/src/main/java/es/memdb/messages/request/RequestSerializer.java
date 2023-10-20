@@ -16,18 +16,19 @@ public final class RequestSerializer {
         List<Byte> operation = this.getOperations(request, timestamp);
         int totalSize = requestNumber.size() + auth.size() + operation.size();
 
-        byte[] serialized = new byte[4 + requestNumber.size() + auth.size() + operation.size()];
+        byte[] serialized = new byte[1 + 4 + requestNumber.size() + auth.size() + operation.size()];
 
+        serialized[0] = 0x00; //Fragmentation header
         serialized = ByteBuffer.wrap(serialized)
                 .order(ByteOrder.BIG_ENDIAN)
-                .putInt(totalSize)
+                .putInt(1, totalSize)
                 .array();
         for (int i = 0; i < requestNumber.size(); i++)
-            serialized[i + 4] = requestNumber.get(i);
+            serialized[i + 4 + 1] = requestNumber.get(i);
         for (int i = 0; i < auth.size(); i++)
-            serialized[i + 4 + requestNumber.size()] = auth.get(i);
+            serialized[i + 4 + 1 + requestNumber.size()] = auth.get(i);
         for (int i = 0; i < operation.size(); i++)
-            serialized[i + 4 + requestNumber.size() + auth.size()] = operation.get(i);
+            serialized[i + 4 + 1 + requestNumber.size() + auth.size()] = operation.get(i);
 
         return serialized;
     }

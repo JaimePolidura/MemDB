@@ -78,6 +78,10 @@ void Node::openConnectionIfClosedOrThrow() {
     }
 }
 
+void Node::setLogger(logger_t loggerP) {
+    this->logger = loggerP;
+}
+
 bool Node::canSendRequestUnicast(NodeState state) {
     return state == NodeState::RUNNING;
 }

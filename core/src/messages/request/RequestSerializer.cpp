@@ -3,7 +3,6 @@
 std::vector<uint8_t> RequestSerializer::serialize(const Request& request) {
     std::vector<uint8_t> bytes{};
 
-    Utils::appendToBuffer(request.getTotalLength(), bytes);
     Utils::appendToBuffer(request.requestNumber, bytes);
 
     bytes.push_back(request.authentication.authKey.size() << 2 | request.authentication.flag1 << 1 | request.authentication.flag2);

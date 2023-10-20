@@ -184,6 +184,16 @@ public:
         return vectorOut;
     }
 
+    template<typename T>
+    static std::vector<uint8_t> appendBeginningToBuffer(const T& toParse, std::vector<uint8_t>& vectorOut) {
+        for(int i = 0; i < sizeof(T); i++){
+            size_t toMove = ((sizeof(T) - 1) - i) * 8;
+            vectorOut.insert(vectorOut.begin() + i, static_cast<uint8_t>(toParse >> toMove));
+        }
+
+        return vectorOut;
+    }
+
     static auto copyFromBuffer(const std::vector<uint8_t>& buffer, const uint64_t initialPosition, const uint64_t endPosition) -> uint8_t *;
 
     static std::vector<uint8_t> appendToBuffer(const uint8_t * toAppendPtr, const uint64_t totalToAppend, std::vector<uint8_t>& vectorOut);

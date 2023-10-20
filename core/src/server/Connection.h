@@ -46,6 +46,7 @@ private:
     std::size_t fragmentPacketAndSend(std::vector<uint8_t>& packet, std::function<std::size_t(std::vector<uint8_t>&)> sender);
 
     std::vector<uint8_t> addNoFragmentationHeader(std::vector<uint8_t>& vec);
+    std::vector<uint8_t> addContentLengthHeader(std::vector<uint8_t>& vec, memDbDataLength_t contentLength);
 
     memDbDataLength_t readPacketLength();
 

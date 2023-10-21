@@ -55,7 +55,7 @@ void OplogIndexSegment::initializeFiles() {
 
 OplogSegmentBinarySearchResult OplogIndexSegment::binarySearchByTimestamp(uint64_t timestamp) {
     uint64_t indexFileSize = FileUtils::size(partitionPath, INDEX_FILE_NAME);
-    if(indexFileSize == 0){
+    if(indexFileSize == 0 || timestamp == 0){
         return OplogSegmentBinarySearchResult{.found = false};
     }
 
@@ -64,8 +64,8 @@ OplogSegmentBinarySearchResult OplogIndexSegment::binarySearchByTimestamp(uint64
 
     uint64_t actual = nDescriptorHalf * sizeof(OplogIndexSegmentDescriptor) - sizeof(OplogIndexSegmentDescriptor);
     uint64_t low = 0;
-    uint64_t high = indexFileSize - 1;
-    
+    uint64_t high = indexFileSize;
+
     OplogIndexSegmentDescriptor actualDesc = this->oplogIndexSegmentReader.readIndexAt(actual);
 
     while(high != low && ((timestamp > actualDesc.min && timestamp > actualDesc.max) || (timestamp < actualDesc.min && timestamp < actualDesc.max))){
@@ -77,7 +77,7 @@ OplogSegmentBinarySearchResult OplogIndexSegment::binarySearchByTimestamp(uint64
             high = actual;
 
         nDescriptors = (high - low) / sizeof(OplogIndexSegmentDescriptor);
-        nDescriptorHalf = (low / sizeof(OplogIndexSegmentDescriptor)) + (nDescriptors % 2 == 0 ? nDescriptors / 2 : (nDescriptors / 2) + 1);
+        nDescriptorHalf = (low / sizeof(OplogIndexSegmentDescriptor)) + (nDescriptors == 1 ? 0 : (nDescriptors % 2 == 0 ? nDescriptors / 2 : (nDescriptors / 2) + 1));
         actual = nDescriptorHalf * sizeof(OplogIndexSegmentDescriptor);
         actualDesc = this->oplogIndexSegmentReader.readIndexAt(actual);
     }

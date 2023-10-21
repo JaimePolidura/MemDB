@@ -7,6 +7,11 @@
 #include "config/Configuration.h"
 #include "utils/files/FileUtils.h"
 
+struct OplogSegmentBinarySearchResult {
+    bool found;
+    uint64_t ptr;
+};
+
 class OplogIndexSegment {
 private:
     configuration_t configuration;
@@ -37,6 +42,8 @@ public:
 
 private:
     void initializeFiles();
+
+    OplogSegmentBinarySearchResult binarySearchByTimestamp(uint64_t timestamp);
 };
 
 using oplogIndexSegment_t = std::shared_ptr<OplogIndexSegment>;

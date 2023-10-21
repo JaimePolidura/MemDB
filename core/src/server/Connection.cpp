@@ -78,7 +78,7 @@ std::vector<uint8_t> Connection::readFragmentedPacket() {
 
     this->logger->debugInfo("Received fragmented packet, starting to read");
 
-    this->setTCPReceiveBufferSize(FRAGMENT_MIN_SIZE * 8);
+    this->setTCPReceiveBufferSize(65536 * 8);
 
     while(true) {
         boost::asio::read(this->socket, boost::asio::buffer(this->fragmentationHeaderBuffer));
@@ -106,8 +106,6 @@ std::size_t Connection::fragmentPacketAndSend(std::vector<uint8_t>& initialPacke
 
     this->logger->debugInfo("Starting fragmentation to send a packet of {0} kb with {1} fragments", initialPacket.size() / 1024, nFragments);
 
-
-
     for(int i = 0; i < nFragments; i++){
         std::vector<uint8_t> fragmentedPacket{};
         int nFragment = nFragments - i - 1;
@@ -120,6 +118,7 @@ std::size_t Connection::fragmentPacketAndSend(std::vector<uint8_t>& initialPacke
 
         this->logger->debugInfo("Sending fragment packet {0} of {1} kb", nFragment, fragmentedPacket.size() / 1024);
         written += sender(fragmentedPacket);
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
         contentSizeInFragment = initialPacket.size() < FRAGMENT_MIN_SIZE ? initialPacket.size() : FRAGMENT_MIN_SIZE;
         startFromInitialPacket += contentSizeInFragment;
@@ -132,12 +131,6 @@ std::vector<uint8_t> Connection::readPacketContent() {
     boost::asio::read(this->socket, boost::asio::buffer(this->messageLengthHeaderBuffer));
     std::vector<uint8_t> messageBuffer(Utils::parse<memDbDataLength_t>(messageLengthHeaderBuffer));
     this->socket.read_some(boost::asio::buffer(messageBuffer));
-
-    for (const uint8_t item: messageBuffer) {
-        std::cout << static_cast<unsigned>(item);
-    }
-    std::cout << std::endl;
-    std::cout << std::endl;
 
     return messageBuffer;
 }
@@ -159,4 +152,9 @@ bool Connection::isFragmentPacket(uint8_t packetTypeHeader) {
 void Connection::setTCPReceiveBufferSize(std::size_t size) {
     boost::asio::socket_base::receive_buffer_size receiveBufferSize(size);
     this->socket.set_option(receiveBufferSize);
+}
+
+void Connection::setTCPSendBufferSize(std::size_t size) {
+    boost::asio::socket_base::send_buffer_size sendBuffer(size);
+    this->socket.set_option(sendBuffer);
 }

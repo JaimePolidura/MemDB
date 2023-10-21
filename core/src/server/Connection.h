@@ -5,7 +5,7 @@
 #include "utils/Utils.h"
 #include "logging/Logger.h"
 
-#define FRAGMENT_MIN_SIZE 65400
+#define FRAGMENT_MIN_SIZE 32768
 
 using namespace boost::asio;
 
@@ -57,6 +57,8 @@ private:
     bool isFragmentPacket(uint8_t packetTypeHeader);
 
     void setTCPReceiveBufferSize(std::size_t size);
+
+    void setTCPSendBufferSize(std::size_t size);
 };
 
 using connection_t = std::shared_ptr<Connection>;

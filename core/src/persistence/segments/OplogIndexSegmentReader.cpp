@@ -15,7 +15,6 @@ OplogIndexSegmentDescriptor OplogIndexSegmentReader::readIndexAt(uint64_t ptr) {
 }
 
 std::vector<OplogIndexSegmentDescriptor> OplogIndexSegmentReader::readAllIndexFrom(uint64_t ptr) {
-    std::vector<OplogIndexSegmentDescriptor> descriptorsIndex{};
     uint64_t totalToRead = FileUtils::size(this->partitionPath, this->indexFileName) - ptr;
     std::vector<uint8_t> bytes = FileUtils::seekBytes(this->fullPathIndex, ptr, totalToRead);
 

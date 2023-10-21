@@ -78,19 +78,23 @@ std::vector<uint8_t> Connection::readFragmentedPacket() {
 
     this->logger->debugInfo("Received fragmented packet, starting to read");
 
+    this->setTCPReceiveBufferSize(FRAGMENT_MIN_SIZE * 8);
+
     while(true) {
         boost::asio::read(this->socket, boost::asio::buffer(this->fragmentationHeaderBuffer));
         int nFragment = Utils::parse<int>(this->fragmentationHeaderBuffer);
         std::vector<uint8_t> packet = this->readPacketContent();
         result.insert(result.begin(), packet.begin(), packet.end());
-        boost::asio::read(this->socket, boost::asio::buffer(this->typePacketHeaderBuffer));
 
         this->logger->debugInfo("Received fragment packet {0} of {1} kb", nFragment, packet.size() / 1024);
 
         if(nFragment == 0){ //nFragment
             this->logger->debugInfo("All fragments have been read, returning total packet of {0} kb", result.size() / 1024);
+            this->setTCPReceiveBufferSize(65536);
             return result;
         }
+
+        boost::asio::read(this->socket, boost::asio::buffer(this->typePacketHeaderBuffer));
     }
 }
 
@@ -101,6 +105,8 @@ std::size_t Connection::fragmentPacketAndSend(std::vector<uint8_t>& initialPacke
     size_t written = 0;
 
     this->logger->debugInfo("Starting fragmentation to send a packet of {0} kb with {1} fragments", initialPacket.size() / 1024, nFragments);
+
+
 
     for(int i = 0; i < nFragments; i++){
         std::vector<uint8_t> fragmentedPacket{};
@@ -127,6 +133,12 @@ std::vector<uint8_t> Connection::readPacketContent() {
     std::vector<uint8_t> messageBuffer(Utils::parse<memDbDataLength_t>(messageLengthHeaderBuffer));
     this->socket.read_some(boost::asio::buffer(messageBuffer));
 
+    for (const uint8_t item: messageBuffer) {
+        std::cout << static_cast<unsigned>(item);
+    }
+    std::cout << std::endl;
+    std::cout << std::endl;
+
     return messageBuffer;
 }
 
@@ -142,4 +154,9 @@ std::vector<uint8_t> Connection::addNoFragmentationHeader(std::vector<uint8_t>& 
 
 bool Connection::isFragmentPacket(uint8_t packetTypeHeader) {
     return (packetTypeHeader & 0x01) != 0;
+}
+
+void Connection::setTCPReceiveBufferSize(std::size_t size) {
+    boost::asio::socket_base::receive_buffer_size receiveBufferSize(size);
+    this->socket.set_option(receiveBufferSize);
 }

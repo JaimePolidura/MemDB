@@ -37,7 +37,7 @@ Response SyncOplogReceiverIterator::sendNextSegment() {
             this->logger->debugInfo("Restarting SYNC_OPLOG at timestamp {0}", this->timestampToSync);
             this->initSyncOplog();
         }
-    }while(responseOptional.has_value());
+    }while(!responseOptional.has_value());
 
     return responseOptional.value();
 }

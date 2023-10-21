@@ -33,6 +33,8 @@ oplogSegmentIterator_t NextSegmentOplogOperator::getOplogSegmentIterator(const O
     std::optional<oplogSegmentIterator_t> senderIteratorOptional = dependencies.onGoingSyncOplogs->getSenderIteratorById(options.requestNumber);
 
     if(!senderIteratorOptional.has_value()) {
+        dependencies.logger->debugInfo("Received a NEXT_SYNC_OPLOG_SEGMENT at requestNumber {0} without having an iterator registered. Restarting SYNC_OPLOG", options.requestNumber);
+
         uint64_t lastTimestampUnsync = operation.getDoubleArgU64(0);
         uint32_t nodeOplogIdToSync = operation.getArg(2).to<uint32_t>();
 

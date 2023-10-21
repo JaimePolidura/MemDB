@@ -81,7 +81,7 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
     Response result = operatorToExecute->operate(operation, options, this->dependencies);
 
     if(!options.dontDebugLog) {
-        this->logger->debugInfo("Executed {0} append request for operator {1} from {2}",
+        this->logger->debugInfo("Executed {0} request for operator {1} from {2}",
                                 result.isSuccessful ? "successfully" : "unsuccessfully",
                                 operatorToExecute->desc().name, options.checkTimestamps ? "node" : "user");
     }

@@ -5,11 +5,13 @@ OnGoingSyncOplogsStore::OnGoingSyncOplogsStore(memdbNodeId_t nodeId): selfNodeId
 void OnGoingSyncOplogsStore::registerSyncOplogIterator(uint64_t syncId, oplogSegmentIterator_t segmentIterator) {
     std::lock_guard<std::mutex> guard(this->onGoingSyncOplogsByIdLock);
 
-    this->onGoingSyncOplogsById[syncId] = OnGoingSyncOplog{
-        .iterator = segmentIterator,
-        .totalNFragments = segmentIterator->totalSize(),
-        .nFragmentsSent = 0,
-    };
+    if(!this->onGoingSyncOplogsById.contains(syncId)){
+        this->onGoingSyncOplogsById[syncId] = OnGoingSyncOplog{
+                .iterator = segmentIterator,
+                .totalNFragments = segmentIterator->totalSize(),
+                .nFragmentsSent = 0,
+        };
+    }
 }
 
 std::optional<oplogSegmentIterator_t> OnGoingSyncOplogsStore::getSenderIteratorById(uint64_t syncOplogId) {

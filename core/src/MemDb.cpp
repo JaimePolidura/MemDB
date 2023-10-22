@@ -33,7 +33,7 @@ std::vector<uint64_t> MemDb::restoreOplogFromDisk() {
                 .operationLogId = i
         });
 
-        uint64_t lastAppliedTimestamp = this->applyOplog(oplogIterator, true, i);
+        uint64_t lastAppliedTimestamp = this->applyOplog(oplogIterator, false, i);
 
         lastRestoredTimestamps.push_back(lastAppliedTimestamp);
     }
@@ -52,7 +52,7 @@ void MemDb::syncOplogFromCluster(std::vector<uint64_t> lastTimestampProcessedFro
                     .partitionId = oplogId
             });
 
-            this->applyOplog(unsyncedOplog, false, oplogId);
+            this->applyOplog(unsyncedOplog, true, oplogId);
             this->logger->info("Synchronized {0} oplog entries with the cluster", unsyncedOplog->totalSize());
         });
 
@@ -65,7 +65,7 @@ void MemDb::syncOplogFromCluster(std::vector<uint64_t> lastTimestampProcessedFro
     this->cluster->setRunning();
 }
 
-uint64_t MemDb::applyOplog(iterator_t<std::vector<uint8_t>> oplogIterator, bool dontSaveInOperationLog, uint32_t partitionId) {
+uint64_t MemDb::applyOplog(iterator_t<std::vector<uint8_t>> oplogIterator, bool saveInOperationLog, uint32_t partitionId) {
     OperationLogDeserializer operationLogDeserializer{};
     uint64_t latestTimestampApplied = 0;
     uint64_t numberOplogsApplied = 0;
@@ -84,7 +84,7 @@ uint64_t MemDb::applyOplog(iterator_t<std::vector<uint8_t>> oplogIterator, bool 
                     OperationOptions{
                             .checkTimestamps = true,
                             .dontBroadcastToCluster = true,
-                            .dontSaveInOperationLog = dontSaveInOperationLog,
+                            .dontSaveInOperationLog = !saveInOperationLog,
                             .dontDebugLog = true,
                             .updateClockStrategy = LamportClock::UpdateClockStrategy::SET,
                             .partitionId = partitionId });

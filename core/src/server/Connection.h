@@ -5,7 +5,7 @@
 #include "utils/Utils.h"
 #include "logging/Logger.h"
 
-#define FRAGMENT_MIN_SIZE 32768
+#define FRAGMENT_MIN_SIZE 1024
 
 using namespace boost::asio;
 
@@ -16,7 +16,6 @@ private:
     logger_t logger;
 
     uint8_t messageLengthHeaderBuffer[sizeof(memDbDataLength_t)];
-    uint8_t fragmentationHeaderBuffer[4];
     uint8_t typePacketHeaderBuffer[1];
     
 public:
@@ -55,10 +54,11 @@ private:
     std::vector<uint8_t> readFragmentedPacket();
 
     bool isFragmentPacket(uint8_t packetTypeHeader);
+    bool isLastFragmentPacket(uint8_t packetTypeHeader);
 
-    void setTCPReceiveBufferSize(std::size_t size);
-
-    void setTCPSendBufferSize(std::size_t size);
+    void enableTcpNoDelay();
+    void setTcpReceiveBufferSize(std::size_t size);
+    void setTcpSendBufferSize(std::size_t size);
 };
 
 using connection_t = std::shared_ptr<Connection>;

@@ -65,7 +65,7 @@ OplogSegmentBinarySearchResult OplogIndexSegment::binarySearchByTimestamp(uint64
     uint64_t actual = nDescriptorHalf * sizeof(OplogIndexSegmentDescriptor) - sizeof(OplogIndexSegmentDescriptor);
     uint64_t low = 0;
     uint64_t high = indexFileSize;
-
+    
     OplogIndexSegmentDescriptor actualDesc = this->oplogIndexSegmentReader.readIndexAt(actual);
 
     while(high != low && ((timestamp > actualDesc.min && timestamp > actualDesc.max) || (timestamp < actualDesc.min && timestamp < actualDesc.max))){

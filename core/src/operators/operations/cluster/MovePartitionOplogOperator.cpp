@@ -18,7 +18,7 @@ Response MovePartitionOplogOperator::operate(const OperationBody& operation, con
 
     if(applyNewOplog || !dependencies.operationLog->hasOplogFile({.operationLogId = newOplogId})) {
         dependencies.logger->debugInfo("MovePartitionOplogOperator Applying {0} entries from oplog id {1}", oplog.size(), newOplogId);
-        dependencies.operatorsDispatcher(oplog, {.checkTimestamps = true, .onlyExecute = true});
+        dependencies.operatorsDispatcher(oplog, {.checkTimestamps = true, .onlyExecute = true, .partitionId = newOplogId});
     }
 
     if(clearOldOplog){

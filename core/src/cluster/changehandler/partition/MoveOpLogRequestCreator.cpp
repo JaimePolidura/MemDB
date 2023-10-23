@@ -8,6 +8,7 @@ Request MoveOpLogRequestCreator::create(CreateMoveOplogReqParams params) {
         createOperations[i] = RequestBuilder::builder()
                 .operatorNumber(OperatorNumbers::SET)
                 ->addArg(params.oplog.at(i).key)
+                ->addArg(params.oplog.at(i).value)
                 ->timestamp(params.oplog.at(i).timestamp.counter)
                 ->buildOperationBody();
     }

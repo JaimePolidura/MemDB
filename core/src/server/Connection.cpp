@@ -124,6 +124,7 @@ std::size_t Connection::fragmentPacketAndSend(std::vector<uint8_t>& initialPacke
         fragmentedPacket.insert(fragmentedPacket.begin() + 1 + sizeof(memDbDataLength_t), startFromInitialPacket, startFromInitialPacket + contentSizeInFragment);
 
         this->logger->debugInfo("Sending fragment packet {0} of {1} kb", i + 1, fragmentedPacket.size() / 1024);
+        std::this_thread::sleep_for(std::chrono::milliseconds(25)); //TODO Fix TCP Windows issue
         written += sender(fragmentedPacket);
 
         if(!lastPacket) {

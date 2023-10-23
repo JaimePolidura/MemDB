@@ -105,7 +105,8 @@ std::tuple<uint32_t, uint32_t, uint32_t> SyncOplogReceiverIterator::createReques
     uint32_t nodeOplogId = this->configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS) ?
                            (this->partitions->isClockwiseNeighbor(this->nodeSender->nodeId) ?
                             this->selfOplogIdToSync + this->partitions->getDistanceClockwise(nodeIdToSendRequest) :
-                            this->selfOplogIdToSync - this->partitions->getDistanceCounterClockwise(nodeIdToSendRequest)) : 0;
+                            this->selfOplogIdToSync - this->partitions->getDistanceCounterClockwise(nodeIdToSendRequest))
+                            : 0;
 
     return std::make_tuple(part1, part2, nodeOplogId);
 }

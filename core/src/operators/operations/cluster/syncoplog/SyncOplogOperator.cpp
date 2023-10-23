@@ -2,7 +2,7 @@
 
 Response SyncOplogOperator::operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) {
     uint64_t lastTimestampUnsync = operation.getDoubleArgU64(0);
-    uint32_t nodeOplogIdToSync = operation.getArg(1).to<uint32_t>();
+    uint32_t nodeOplogIdToSync = operation.getArg(2).to<uint32_t>();
     uint64_t syncId = options.requestNumber;
 
     oplogSegmentIterator_t segmentIterator = std::dynamic_pointer_cast<OplogIterator>(

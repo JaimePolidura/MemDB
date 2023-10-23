@@ -32,6 +32,4 @@ private:
     void sendRestOplogsToNextNodes(const std::vector<RingEntry>& neighborsClockWise);
 
     void sendSelfOplogToPrevNode(memdbNodeId_t prevNodeId);
-
-    void updateNeighbors();
 };

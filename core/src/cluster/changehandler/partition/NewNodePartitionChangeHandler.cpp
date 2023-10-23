@@ -15,11 +15,12 @@ void NewNodePartitionChangeHandler::handle(node_t newNode) {
     if(cluster->selfNode->nodeId == newNode->nodeId || !cluster->partitions->isNeighbor(newNode->nodeId))
         return;
 
-    cluster->setBooting();
 
     this->partitionNeighborsNodesGroupSetter.updateNeighborsWithNewNode(newNode);
 
     if(cluster->partitions->getDistanceClockwise(newNode->nodeId) == 1) {
+        cluster->setBooting();
+
         this->logger->debugInfo("Detected new node {0} next to me in the ring", newNode->nodeId);
 
         recomputeSelfOplogAndSendNextNode(ringEntryAdded, oldClockwiseNeighbors);
@@ -28,6 +29,8 @@ void NewNodePartitionChangeHandler::handle(node_t newNode) {
         return;
     }
     if(cluster->partitions->isClockwiseNeighbor(newNode->nodeId)){
+        cluster->setBooting();
+
         this->logger->debugInfo("Detected new node {0} clockwise neighbor", newNode->nodeId);
 
         sendSelfOplogToNodes(newNode);
@@ -35,8 +38,6 @@ void NewNodePartitionChangeHandler::handle(node_t newNode) {
         cluster->setRunning();
         return;
     }
-
-    cluster->setRunning();
 }
 
 void NewNodePartitionChangeHandler::sendSelfOplogToNodes(node_t newNode) {

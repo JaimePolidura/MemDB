@@ -15,6 +15,8 @@ public:
 
     void updateNeighborsWithNewNode(node_t newNode);
 
+    void updateNeighborsWithDeletedNode(node_t deletedNode);
+
     void addAllNeighborsInPartitions();
 
 private:

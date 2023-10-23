@@ -11,26 +11,15 @@ void DeletionNodeChangeHandler::handle(node_t deletedNode) {
         return;
     }
 
-    uint32_t distanceClockwise = this->cluster->partitions->getDistanceClockwise(deletedNode->nodeId);
-    std::vector<RingEntry> neighborsClockWise = this->cluster->partitions->getNeighborsClockwise();
-    memdbNodeId_t prevNodeId = this->cluster->partitions->getNeighborCounterClockwiseByNodeId(deletedNode->nodeId).nodeId;
-
-    this->cluster->partitions->deleteByNodeId(deletedNode->nodeId);
-    this->cluster->clusterNodes->deleteNodeById(deletedNode->nodeId);
-    this->updateNeighbors();
-
-    if(!this->cluster->partitions->isClockwiseNeighbor(deletedNode->nodeId) && distanceClockwise > 1){
-        return;
-    }
-
-    cluster->setBooting();
+    this->partitionNeighborsNodesGroupSetter.updateNeighborsWithDeletedNode(deletedNode);
 
     if(this->cluster->selfNode->nodeId == deletedNode->nodeId){
+        std::vector<RingEntry> neighborsClockWise = this->cluster->partitions->getNeighborsClockwise();
+        memdbNodeId_t prevNodeId = this->cluster->partitions->getNeighborCounterClockwiseByNodeId(deletedNode->nodeId).nodeId;
+
         this->sendSelfOplogToPrevNode(prevNodeId);
         this->sendRestOplogsToNextNodes(neighborsClockWise);
     }
-
-    cluster->setRunning();
 }
 
 void DeletionNodeChangeHandler::sendRestOplogsToNextNodes(const std::vector<RingEntry>& neighborsClockWise) {
@@ -52,7 +41,7 @@ void DeletionNodeChangeHandler::sendRestOplogsToNextNodes(const std::vector<Ring
                 memdbNodeId_t nodeIdToSendRequest = neighborsClockWise.at(i).nodeId;
 
                 bool applyNewOplog = !nodeAlreadyHoldsOplog;
-                bool clearOldOplog =  nodeAlreadyHoldsOplog;
+                bool clearOldOplog = nodeAlreadyHoldsOplog;
 
                 this->cluster->clusterNodes->sendRequest(nodeIdToSendRequest, this->moveOpLogRequestCreator.create(CreateMoveOplogReqParams{
                     .oplog = actualOplog,
@@ -80,8 +69,4 @@ void DeletionNodeChangeHandler::sendSelfOplogToPrevNode(memdbNodeId_t prevNodeId
             .newOplogId = 0
         }));
     }
-}
-
-void DeletionNodeChangeHandler::updateNeighbors() {
-//    this->partitionNeighborsNodesGroupSetter.setFromNewRingEntriesNeighbors(this->cluster);
 }

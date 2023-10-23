@@ -6,6 +6,11 @@ void PartitionNeighborsNodesGroupSetter::setClusterObject(cluster_t clusterParam
     this->cluster = clusterParam;
 }
 
+void PartitionNeighborsNodesGroupSetter::updateNeighborsWithDeletedNode(node_t deletedNode) {
+    cluster->clusterNodes->deleteNodeById(deletedNode->nodeId);
+    cluster->partitions->deleteByNodeId(deletedNode->nodeId);
+}
+
 void PartitionNeighborsNodesGroupSetter::updateNeighborsWithNewNode(node_t newNode) {
     uint32_t nodesPerPartition = cluster->getNodesPerPartition();
     RingEntry actualHeadPartition = cluster->partitions->getSelfEntry();

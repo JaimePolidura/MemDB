@@ -39,7 +39,9 @@ public:
 
     //TODO Avoid copy. See std::span
     std::vector<uint8_t> toVector() const {
-        return std::vector<uint8_t>(this->value.get(), this->value.get() + this->size);
+        return this->size > 0 ?
+         std::vector<uint8_t>(this->value.get(), this->value.get() + this->size) :
+         std::vector<uint8_t>{};
     }
 
     uint8_t * operator[](int index) const {
@@ -89,7 +91,7 @@ public:
 
     static SimpleString<StringLengthType> fromVector(const std::vector<uint8_t>& values) {
         if(values.empty()){
-            return SimpleString<StringLengthType>{nullptr, 0};
+            return SimpleString<StringLengthType>{new uint8_t(0x00), 0};
         }
 
         uint8_t * valuePtr = new uint8_t[values.size()];

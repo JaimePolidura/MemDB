@@ -21,9 +21,9 @@ Request MoveOpLogRequestCreator::create(CreateMoveOplogReqParams params) {
             ->operatorFlag1(params.applyNewOplog)
             ->operatorFlag2(params.clearOldOplog) //Clear old oplog
             ->args({
-                           SimpleString<memDbDataLength_t>::fromNumber(params.newOplogId),
-                           SimpleString<memDbDataLength_t>::fromNumber(params.oldOplogId),
-                           SimpleString<memDbDataLength_t>::fromVector(serialized)
-                   })
+                SimpleString<uint32_t>::fromNumber(params.newOplogId),
+                SimpleString<uint32_t>::fromNumber(params.oldOplogId),
+                SimpleString<memDbDataLength_t>::fromVector(serialized)
+            })
             ->build();
 }

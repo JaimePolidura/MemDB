@@ -1,19 +1,21 @@
 #include "cluster/changehandler/partition/DeletionNodeChangeHandler.h"
 
 DeletionNodeChangeHandler::DeletionNodeChangeHandler(logger_t logger, cluster_t cluster, operationLog_t operationLog, operatorDispatcher_t operatorDispatcher):
-    logger(logger), cluster(cluster), operationLog(operationLog), operatorDispatcher(operatorDispatcher),
-    moveOpLogRequestCreator(cluster->configuration->get(ConfigurationKeys::AUTH_NODE_KEY)){}
+    logger(logger),
+    cluster(cluster),
+    operationLog(operationLog),
+    operatorDispatcher(operatorDispatcher),
+    moveOpLogRequestCreator(cluster->configuration->get(ConfigurationKeys::AUTH_NODE_KEY)),
+    partitionNeighborsNodesGroupSetter(cluster) {}
 
 void DeletionNodeChangeHandler::handle(node_t deletedNode) {
     this->logger->debugInfo("Detected deletion of node {0}", deletedNode->nodeId);
 
-    if(!this->cluster->clusterNodes->existsByNodeId(deletedNode->nodeId)){
-        return;
+    if(this->cluster->clusterNodes->existsByNodeId(deletedNode->nodeId)) {
+        this->partitionNeighborsNodesGroupSetter.updateNeighborsWithDeletedNode(deletedNode);
     }
 
-    this->partitionNeighborsNodesGroupSetter.updateNeighborsWithDeletedNode(deletedNode);
-
-    if(this->cluster->selfNode->nodeId == deletedNode->nodeId){
+    if(this->cluster->selfNode->nodeId == deletedNode->nodeId) {
         std::vector<RingEntry> neighborsClockWise = this->cluster->partitions->getNeighborsClockwise();
         memdbNodeId_t prevNodeId = this->cluster->partitions->getNeighborCounterClockwiseByNodeId(deletedNode->nodeId).nodeId;
 

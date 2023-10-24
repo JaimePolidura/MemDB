@@ -8,7 +8,6 @@ PartitionClusterNodeChangeHandler::PartitionClusterNodeChangeHandler(logger_t lo
 
 void PartitionClusterNodeChangeHandler::handleChange(node_t nodeChanged, const ClusterDbChangeType changeType) {
     if(changeType == ClusterDbChangeType::DELETED) {
-        this->logger->debugInfo("Detected deletion of node {0} in the cluster", nodeChanged->nodeId);
         this->deletionNodeChangeHandler.handle(nodeChanged);
     }else if(cluster->clusterNodes->existsByNodeId(nodeChanged->nodeId)) {
         cluster->clusterNodes->setNodeState(nodeChanged->nodeId, nodeChanged->state);

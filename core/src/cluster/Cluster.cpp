@@ -66,11 +66,8 @@ auto Cluster::watchForChangesInNodesClusterDb(std::function<void(node_t nodeChan
         node->setLogger(this->logger);
         bool selfNodeChanged = node->nodeId == this->configuration->get<memdbNodeId_t>(ConfigurationKeys::NODE_ID);
 
-        if (!selfNodeChanged) {
+        if (!selfNodeChanged || nodeChangedEvent.changeType == ClusterDbChangeType::DELETED) {
             onChangeCallback(node, nodeChangedEvent.changeType);
-        }
-        if (selfNodeChanged && node->state == NodeState::SHUTDOWN) { //Reload
-            this->setRunning();
         }
     });
 }

@@ -30,6 +30,8 @@ struct OperationBody {
 
     arg_t getArg(int position) const;
 
+    arg_t getArgOr(int position, SimpleString<memDbDataLength_t> other) const;
+
     uint64_t getDoubleArgU64(int start) const;
 
     void setArg(int position, arg_t newArg);

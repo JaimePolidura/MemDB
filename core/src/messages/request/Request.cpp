@@ -43,6 +43,13 @@ arg_t OperationBody::getArg(int position) const {
     return this->args->at(position);
 }
 
+
+arg_t OperationBody::getArgOr(int position, SimpleString<memDbDataLength_t> other) const {
+    return position < this->args->size() ?
+           this->args->at(position) :
+           other;
+}
+
 uint64_t OperationBody::getDoubleArgU64(int start) const {
     uint64_t part1 = this->getArg(start).to<uint64_t>();
     uint64_t part2 = this->getArg(start + 1).to<uint64_t>();

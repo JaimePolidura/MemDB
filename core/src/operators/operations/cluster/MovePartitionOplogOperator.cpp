@@ -13,7 +13,7 @@ Response MovePartitionOplogOperator::operate(const OperationBody& operation, con
         return Response::success();
     }
 
-    std::vector<uint8_t> oplogRaw = operation.getArg(2).toVector();
+    std::vector<uint8_t> oplogRaw =  operation.getArgOr(2, SimpleString<memDbDataLength_t>::fromVector({})).toVector();
     std::vector<OperationBody> oplog = this->operationLogDeserializer.deserializeAll(oplogRaw);
 
     if(applyNewOplog || !dependencies.operationLog->hasOplogFile({.operationLogId = newOplogId})) {

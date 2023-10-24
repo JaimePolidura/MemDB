@@ -29,7 +29,7 @@ std::vector<uint8_t> OplogIterator::next() {
 }
 
 uint64_t OplogIterator::totalSize() {
-    return this->descriptors.size() + 1;
+    return this->descriptors.size() + (this->intermediate.empty() ? 0 : 1);
 }
 
 uint32_t OplogIterator::getLastTimestampOfLastNext() {

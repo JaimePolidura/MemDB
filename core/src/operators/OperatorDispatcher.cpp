@@ -97,7 +97,6 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
 
         if(isInReplicationMode() && options.fromClient() && !options.dontBroadcastToCluster){
             this->cluster->broadcast(operation);
-
             this->logger->debugInfo("Broadcast request for operator {0} from {1}",
                                     operatorToExecute->desc().name, options.checkTimestamps ? "node" : "user");
         }

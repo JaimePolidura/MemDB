@@ -5,7 +5,7 @@ DeletionNodeChangeHandler::DeletionNodeChangeHandler(logger_t logger, cluster_t 
     cluster(cluster),
     operationLog(operationLog),
     operatorDispatcher(operatorDispatcher),
-    moveOpLogRequestCreator(cluster->configuration->get(ConfigurationKeys::AUTH_NODE_KEY)),
+    moveOpLogRequestCreator(cluster->configuration->get(ConfigurationKeys::AUTH_NODE_KEY), cluster->getNodeId()),
     partitionNeighborsNodesGroupSetter(cluster) {}
 
 void DeletionNodeChangeHandler::handle(node_t deletedNode) {
@@ -23,7 +23,7 @@ void DeletionNodeChangeHandler::handle(node_t deletedNode) {
 
         this->sendSelfOplogToPrevNode(prevNodeId);
         this->sendRestOplogsToNextNodes(neighborsClockWise);
-        
+
         exit(-1);
     }
 }
@@ -31,7 +31,7 @@ void DeletionNodeChangeHandler::handle(node_t deletedNode) {
 void DeletionNodeChangeHandler::sendRestOplogsToNextNodes(const std::vector<RingEntry>& neighborsClockWise) {
     uint32_t nodesPerPartition = this->cluster->partitions->getNodesPerPartition();
 
-    this->logger->debugInfo("Sending rest oplogs to old neighbors clockwise {0} nodes", neighborsClockWise.size());
+    this->logger->debugInfo("Sending rest oplogs to old neighbors clockwise. In total {0} nodes", neighborsClockWise.size());
 
     for (uint32_t actualOplogId = 1; actualOplogId < nodesPerPartition; actualOplogId++) {
         int affectedNodes = nodesPerPartition - actualOplogId;
@@ -42,6 +42,9 @@ void DeletionNodeChangeHandler::sendRestOplogsToNextNodes(const std::vector<Ring
 
         while(bucketIterator.hasNext()){
             auto actualOplog = bucketIterator.next();
+            if(actualOplog.empty()){
+                continue;
+            }
 
             for (int i = 0; i < affectedNodes; i++) {
                 int newOplogId = i + actualOplogId;
@@ -75,6 +78,10 @@ void DeletionNodeChangeHandler::sendSelfOplogToPrevNode(memdbNodeId_t prevNodeId
 
     while(bucketIterator.hasNext()) {
         auto selfOplog = bucketIterator.next();
+
+        if(selfOplog.empty()){
+            continue;
+        }
 
         this->logger->debugInfo(" Sending self oplog bucket to prev node {0} MOVE_OPLOG(newOplogId = {1}, oldOplogId = {2} applyNewOplog = true, clearOldOplog = false)",
                                 prevNodeId, 0, 0);

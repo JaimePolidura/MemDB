@@ -4,7 +4,7 @@ NewNodePartitionChangeHandler::NewNodePartitionChangeHandler(logger_t logger, cl
                                                              operatorDispatcher_t operatorDispatcher): logger(logger), cluster(cluster),
                                                              partitionNeighborsNodesGroupSetter(cluster), operationLog(operationLog),
                                                              operatorDispatcher(operatorDispatcher),
-                                                             moveOpLogRequestCreator(cluster->configuration->get(ConfigurationKeys::AUTH_NODE_KEY)) {}
+                                                             moveOpLogRequestCreator(cluster->configuration->get(ConfigurationKeys::AUTH_NODE_KEY), cluster->getNodeId()) {}
 
 void NewNodePartitionChangeHandler::handle(node_t newNode) {
     std::vector<RingEntry> oldClockwiseNeighbors = this->cluster->partitions->getNeighborsClockwise();

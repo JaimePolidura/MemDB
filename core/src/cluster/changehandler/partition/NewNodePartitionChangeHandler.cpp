@@ -15,7 +15,6 @@ void NewNodePartitionChangeHandler::handle(node_t newNode) {
     if(cluster->selfNode->nodeId == newNode->nodeId || !cluster->partitions->isNeighbor(newNode->nodeId))
         return;
 
-
     this->partitionNeighborsNodesGroupSetter.updateNeighborsWithNewNode(newNode);
 
     if(cluster->partitions->getDistanceClockwise(newNode->nodeId) == 1) {

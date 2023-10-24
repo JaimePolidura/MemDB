@@ -9,26 +9,34 @@ DeletionNodeChangeHandler::DeletionNodeChangeHandler(logger_t logger, cluster_t 
     partitionNeighborsNodesGroupSetter(cluster) {}
 
 void DeletionNodeChangeHandler::handle(node_t deletedNode) {
-    this->logger->debugInfo("Detected deletion of node {0}", deletedNode->nodeId);
-
     if(this->cluster->clusterNodes->existsByNodeId(deletedNode->nodeId)) {
+        this->logger->debugInfo("Detected deletion of node {0}", deletedNode->nodeId);
+
         this->partitionNeighborsNodesGroupSetter.updateNeighborsWithDeletedNode(deletedNode);
     }
 
     if(this->cluster->selfNode->nodeId == deletedNode->nodeId) {
+        this->logger->debugInfo("Detected self deletion in the cluster", deletedNode->nodeId);
+
         std::vector<RingEntry> neighborsClockWise = this->cluster->partitions->getNeighborsClockwise();
         memdbNodeId_t prevNodeId = this->cluster->partitions->getNeighborCounterClockwiseByNodeId(deletedNode->nodeId).nodeId;
 
         this->sendSelfOplogToPrevNode(prevNodeId);
         this->sendRestOplogsToNextNodes(neighborsClockWise);
+        
+        exit(-1);
     }
 }
 
 void DeletionNodeChangeHandler::sendRestOplogsToNextNodes(const std::vector<RingEntry>& neighborsClockWise) {
     uint32_t nodesPerPartition = this->cluster->partitions->getNodesPerPartition();
 
+    this->logger->debugInfo("Sending rest oplogs to old neighbors clockwise {0} nodes", neighborsClockWise.size());
+
     for (uint32_t actualOplogId = 1; actualOplogId < nodesPerPartition; actualOplogId++) {
         int affectedNodes = nodesPerPartition - actualOplogId;
+
+        this->logger->debugInfo(" Affected nodes in oplogId {0}: {1}", actualOplogId, affectedNodes);
 
         auto bucketIterator = this->cluster->memDbStores->getByPartitionId(actualOplogId)->bucketIterator();
 
@@ -45,6 +53,9 @@ void DeletionNodeChangeHandler::sendRestOplogsToNextNodes(const std::vector<Ring
                 bool applyNewOplog = !nodeAlreadyHoldsOplog;
                 bool clearOldOplog = nodeAlreadyHoldsOplog;
 
+                this->logger->debugInfo(" Sending {0} MOVE_OPLOG(newOplogId = {1}, oldOplogId = {2} applyNewOplog = {3}, clearOldOplog = {4}) Does node already hold that oplog? {5}",
+                                        nodeIdToSendRequest, newOplogId, oldOplog, applyNewOplog, clearOldOplog, nodeAlreadyHoldsOplog);
+
                 this->cluster->clusterNodes->sendRequest(nodeIdToSendRequest, this->moveOpLogRequestCreator.create(CreateMoveOplogReqParams{
                     .oplog = actualOplog,
                     .applyNewOplog = applyNewOplog,
@@ -60,8 +71,13 @@ void DeletionNodeChangeHandler::sendRestOplogsToNextNodes(const std::vector<Ring
 void DeletionNodeChangeHandler::sendSelfOplogToPrevNode(memdbNodeId_t prevNodeId) {
     auto bucketIterator = this->cluster->memDbStores->getByPartitionId(0)->bucketIterator();
 
+    this->logger->debugInfo("Sending self oplog to prev node {0}", prevNodeId);
+
     while(bucketIterator.hasNext()) {
         auto selfOplog = bucketIterator.next();
+
+        this->logger->debugInfo(" Sending self oplog bucket to prev node {0} MOVE_OPLOG(newOplogId = {1}, oldOplogId = {2} applyNewOplog = true, clearOldOplog = false)",
+                                prevNodeId, 0, 0);
 
         this->cluster->clusterNodes->sendRequest(prevNodeId, this->moveOpLogRequestCreator.create(CreateMoveOplogReqParams{
             .oplog = selfOplog,

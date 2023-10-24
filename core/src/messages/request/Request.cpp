@@ -43,7 +43,6 @@ arg_t OperationBody::getArg(int position) const {
     return this->args->at(position);
 }
 
-
 arg_t OperationBody::getArgOr(int position, SimpleString<memDbDataLength_t> other) const {
     return position < this->args->size() ?
            this->args->at(position) :

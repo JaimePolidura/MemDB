@@ -30,7 +30,7 @@ std::vector<OplogIndexSegmentDescriptor> OplogIndexSegmentReader::readAllIndex()
 std::vector<uint8_t> OplogIndexSegmentReader::readBytesDataByDescriptor(OplogIndexSegmentDescriptor descriptor, bool compressed) {
     std::vector<uint8_t> bytesFromDisk = FileUtils::seekBytes(this->fullPathData, descriptor.ptr, descriptor.size);
 
-    if(compressed || descriptor.hasFlag(OplogIndexSegmentDescriptorFlag::UNCOMPRESSED)){
+    if(compressed || descriptor.hasFlag(OplogIndexSegmentDescriptorFlag::UNCOMPRESSED)) {
         return bytesFromDisk;
     }
 

@@ -15,11 +15,11 @@ void OplogIndexSegmentWriter::write(const std::vector<uint8_t> &toWrite) {
     std::result<std::vector<uint8_t>, int> compressionResult = this->oplogCompressor.compressOplog(compactedSerialized);
     std::vector<uint8_t> compactedCompressedSerialized = compressionResult.get_or_else(compactedSerialized);
     if(compressionResult.has_error()){
-        this->logger->error("Impossible to compress oplog in OplogIndexSegmentWriter::write. Error code", compressionResult.has_error());
+        this->logger->error("Impossible to compress oplog in OplogIndexSegmentWriter::write. Error code {0}", compressionResult.get_error());
     }
 
     writeLock.lock();
-
+    
     std::vector<uint8_t> descriptorSerialized = this->indexSegmentDescSerializer.serialize(OplogIndexSegmentDescriptor{
             .min = compacted.at(0).timestamp,
             .max = compacted.at(compacted.size() - 1).timestamp,
@@ -27,7 +27,7 @@ void OplogIndexSegmentWriter::write(const std::vector<uint8_t> &toWrite) {
             .crc = Utils::crc(compactedCompressedSerialized),
             .size = static_cast<uint32_t>(compactedCompressedSerialized.size()),
             .originalSize = static_cast<uint32_t>(compactedSerialized.size()),
-            .flags = compressionResult.has_error() ? OplogIndexSegmentDescriptorFlag::COMPRESSED : OplogIndexSegmentDescriptorFlag::UNCOMPRESSED
+            .flags = compressionResult.has_error() ? OplogIndexSegmentDescriptorFlag::UNCOMPRESSED : OplogIndexSegmentDescriptorFlag::COMPRESSED
     });
 
     FileUtils::appendBytes(this->partitionPath + "/" + this->dataFileName, compactedCompressedSerialized);

@@ -43,7 +43,7 @@ namespace std {
         }
 
         bool has_error() {
-            return this->_error;
+            return !this->success;
         }
 
         static result ok(V value) {

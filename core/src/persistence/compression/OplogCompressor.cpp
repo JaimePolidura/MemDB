@@ -8,9 +8,10 @@ std::result<std::vector<uint8_t>, int> OplogCompressor::compressOplog(const std:
 
     uLong compressedSize = compressBound(uncompressedSize);
     std::vector<uint8_t> compressed(compressedSize);
-    compressed.resize(compressedSize);
 
     int ret = compress(compressed.data(), &compressedSize, uncompressedDataPtr, uncompressedSize);
+
+    compressed.resize(compressedSize);
 
     if(ret == Z_OK){
         this->logger->debugInfo("Compressed oplog from {0} bytes to {1} bytes", uncompressed.size(), compressedSize);

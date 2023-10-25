@@ -77,6 +77,16 @@ public:
         return SimpleString<StringLengthType>{valuePtr, static_cast<StringLengthType>(sizeof(T))};
     }
 
+    template<typename T>
+    static SimpleString<StringLengthType> fromPointer(T * ptr, std::size_t size) {
+        uint8_t * ptrCastedU8 = static_cast<uint8_t *>(ptr);
+        uint8_t * result = new uint8_t[size];
+
+        std::copy(result, ptrCastedU8, ptrCastedU8 + size);
+    
+        return SimpleString<StringLengthType>{result, static_cast<StringLengthType>(size)};
+    }
+
     static SimpleString<StringLengthType> fromString(std::string&& string) {
         uint8_t * valuePtr = new uint8_t[string.size()];
         for (int i = 0; i < string.size(); ++i)
@@ -87,6 +97,24 @@ public:
 
     static SimpleString<StringLengthType> fromArray(std::initializer_list<uint8_t> values) {
         return fromVector(values);
+    }
+
+    static SimpleString<StringLengthType> fromSimpleStrings(const std::vector<SimpleString<StringLengthType>>& values) {
+        memDbDataLength_t totalSize = std::reduce(values.begin(), values.end(), 0, [](int acc, const SimpleString<StringLengthType>& it){
+            return acc + it.size;
+        });
+        uint8_t * result = new uint8_t[totalSize];
+
+        int lastCopiedOffset = 0;
+
+        for(const SimpleString<StringLengthType>& value : values){
+            for(int i = 0; i < value.size; i++){
+                *(result + lastCopiedOffset + i) = *(value.data() + i);
+            }
+            lastCopiedOffset += value.size;
+        }        
+
+        return SimpleString<StringLengthType>{result, totalSize};
     }
 
     static SimpleString<StringLengthType> fromVector(const std::vector<uint8_t>& values) {
@@ -112,7 +140,7 @@ public:
 template <typename StringLengthType>
 struct SimpleStringHash {
     std::size_t operator()(const SimpleString<StringLengthType>& str) const {
-        // Compute a hash value for the string
+        // Compute a hash _value for the string
         std::size_t seed = 0;
         for (StringLengthType i = 0; i < str.size; ++i) {
             seed ^= *(str.data() + i) + 0x9e3779b9 + (seed << 6) + (seed >> 2);

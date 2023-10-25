@@ -27,10 +27,11 @@ std::vector<uint64_t> MemDb::restoreOplogFromDisk() {
 
     uint32_t numberOplogs = this->operationLog->getNumberOplogFiles();
     std::vector<uint64_t> lastRestoredTimestamps{};
-
+    
     for (uint32_t i = 0; i < numberOplogs; i++) {
         iterator_t<std::vector<uint8_t>> oplogIterator = this->operationLog->getAll(OperationLogOptions{
-                .operationLogId = i
+                .operationLogId = i,
+                .compressed = false,
         });
 
         uint64_t lastAppliedTimestamp = this->applyOplog(oplogIterator, false, i);

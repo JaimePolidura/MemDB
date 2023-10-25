@@ -1,8 +1,15 @@
 #include "SyncOplogReceiverIterator.h"
 
-SyncOplogReceiverIterator::SyncOplogReceiverIterator(configuration_t configuration, clusterNodes_t clusterNodes, partitions_t partitions, logger_t logger,
-        uint64_t timestampToSync, uint32_t selfOplogIdToSync, std::function<uint32_t()> nextSyncOplogId): selfOplogIdToSync(selfOplogIdToSync),
-        configuration(configuration), partitions(partitions), nextSyncId(nextSyncOplogId), clusterNodes(clusterNodes), logger(logger), timestampToSync(timestampToSync) {
+SyncOplogReceiverIterator::SyncOplogReceiverIterator(configuration_t configuration, clusterNodes_t clusterNodes, partitions_t partitions, logger_t loggerCons,
+        uint64_t timestampToSync, uint32_t selfOplogIdToSync, std::function<uint32_t()> nextSyncOplogId): 
+        selfOplogIdToSync(selfOplogIdToSync),
+        compressor(loggerCons),
+        configuration(configuration), 
+        partitions(partitions), 
+        nextSyncId(nextSyncOplogId), 
+        clusterNodes(clusterNodes), 
+        logger(loggerCons), 
+        timestampToSync(timestampToSync) {
     this->initSyncOplog();
 }
 
@@ -44,6 +51,17 @@ Response SyncOplogReceiverIterator::sendNextSegment() {
 
 uint64_t SyncOplogReceiverIterator::totalSize() {
     return this->nSegmentsRemaining;
+}
+
+std::vector<uint8_t> SyncOplogReceiverIterator::getOplogFromResponse(Response& response) {
+    auto oplog = response.getResponseValueAtOffset(response.responseValue.size - 4, 4).toVector();
+    auto originalSize = response.getResponseValueAtOffset(4).to<uint32_t>();
+    bool isCompressed = originalSize > 0;
+    
+    return isCompressed ?
+        this->compressor.uncompressOplog(oplog, originalSize)
+            .get_or_throw("Unable to uncompress oplog in SyncOplogReceiverIterator::getOplogFromResponse") : 
+        oplog;
 }
 
 void SyncOplogReceiverIterator::initSyncOplog() {

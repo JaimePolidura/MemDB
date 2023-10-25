@@ -9,6 +9,7 @@
 #include "config/Configuration.h"
 #include "cluster/partitions/Partitions.h"
 #include "operators/OperatorNumbers.h"
+#include "persistence/compression/OplogCompressor.h"
 
 class SyncOplogReceiverIterator : public Iterator<std::vector<uint8_t>> {
 private:
@@ -16,6 +17,8 @@ private:
     clusterNodes_t clusterNodes;
     partitions_t partitions;
     logger_t logger;
+
+    OplogCompressor compressor;
 
     uint64_t timestampToSync;
     uint32_t selfOplogIdToSync;
@@ -47,6 +50,8 @@ private:
     Request createNextSegmnentRequest();
 
     std::tuple<uint32_t, uint32_t, uint32_t> createRequestSyncOplogArgs(memdbNodeId_t nodeIdToSendRequest);
+    
+    std::vector<uint8_t> getOplogFromResponse(Response& response);
 };
 
 using syncOplogReceiverIterator_t = std::shared_ptr<SyncOplogReceiverIterator>;

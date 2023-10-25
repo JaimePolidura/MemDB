@@ -3,14 +3,15 @@
 const std::string OplogIndexSegment::INDEX_FILE_NAME = "oplog-index";
 const std::string OplogIndexSegment::DATA_FILE_NAME = "oplog-data";
 
-OplogIndexSegment::OplogIndexSegment(configuration_t configuration, uint32_t oplogId):
+OplogIndexSegment::OplogIndexSegment(configuration_t configuration, logger_t loggerCons, uint32_t oplogId):
         configuration(configuration),
+        logger(loggerCons),
         memdDbBasePath(configuration->get(ConfigurationKeys::DATA_PATH)),
         partitionPath(memdDbBasePath + "/" + std::to_string(oplogId)),
         fullPathIndex(partitionPath + "/" + INDEX_FILE_NAME),
         fullPathData(partitionPath + "/" + DATA_FILE_NAME),
-        oplogIndexSegmentReader(fullPathIndex, fullPathData, INDEX_FILE_NAME, partitionPath),
-        oplogIndexSegmentWriter(partitionPath, DATA_FILE_NAME, INDEX_FILE_NAME) {
+        oplogIndexSegmentReader(fullPathIndex, fullPathData, INDEX_FILE_NAME, partitionPath, logger),
+        oplogIndexSegmentWriter(partitionPath, DATA_FILE_NAME, INDEX_FILE_NAME, logger) {
     this->initializeFiles();
 }
 
@@ -29,8 +30,8 @@ std::vector<OplogIndexSegmentDescriptor> OplogIndexSegment::getAll() {
     return this->oplogIndexSegmentReader.readAllIndex();
 }
 
-std::vector<uint8_t> OplogIndexSegment::getDataByDescriptorBytes(OplogIndexSegmentDescriptor descriptor) {
-    return this->oplogIndexSegmentReader.readBytesDataByDescriptor(descriptor);
+std::vector<uint8_t> OplogIndexSegment::getDataByDescriptorBytes(OplogIndexSegmentDescriptor descriptor, bool compressed) {
+    return this->oplogIndexSegmentReader.readBytesDataByDescriptor(descriptor, compressed);
 }
 
 void OplogIndexSegment::clearAll() {

@@ -4,8 +4,8 @@ OplogIterator::OplogIterator(const std::vector<OplogIndexSegmentDescriptor>& des
                              const std::vector<uint8_t>& intermediate,
                              descriptorDataFetcher_t descriptorDataFetcher):
         descriptorDataFetcher(descriptorDataFetcher),
-        actualIndexDescriptor(0),
         intermediate(intermediate),
+        actualIndexDescriptor(0),
         descriptors(descriptors) {
 }
 
@@ -26,6 +26,19 @@ std::vector<uint8_t> OplogIterator::next() {
     this->lastTimestampOfLastNext = actualDescriptor.max;
 
     return this->descriptorDataFetcher(actualDescriptor);
+}
+
+OplogIndexSegmentDescriptor OplogIterator::getNextOplogDescriptor() {
+    if(!this->intermediateIterated){
+        throw std::runtime_error("Invalid use of OplogIndexSegmentDescriptor::getNextOplogDescriptor() Intermediate no iterated yet");
+    }
+
+    return this->descriptors.at(this->actualIndexDescriptor);
+}
+
+bool OplogIterator::isNextCompressed() {
+    return this->intermediateIterated && 
+        this->descriptors.at(this->actualIndexDescriptor).hasFlag(OplogIndexSegmentDescriptorFlag::COMPRESSED);
 }
 
 uint64_t OplogIterator::totalSize() {

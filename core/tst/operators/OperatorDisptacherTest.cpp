@@ -153,7 +153,7 @@
 //    std::shared_ptr<OperatorDbMock> operatorMock = std::make_shared<OperatorDbMock>();
 //
 //    ON_CALL(* operatorRegistryMock, getAll(testing::Eq(1))).WillByDefault(testing::Return(operatorMock));
-//    ON_CALL(* operatorMock, operate(_, _, _)).WillByDefault(testing::Return(Response::error(ErrorCode::UNKNOWN_KEY)));
+//    ON_CALL(* operatorMock, operate(_, _, _)).WillByDefault(testing::Return(Response::_error(ErrorCode::UNKNOWN_KEY)));
 //    ON_CALL(* configuration, getBoolean(testing::Eq(ConfigurationKeys::USE_REPLICATION))).WillByDefault(testing::Return(false));
 //
 //    OperatorDispatcher dispatcher{
@@ -168,7 +168,7 @@
 //    auto response = dispatcher.dispatch(createRequest(1));
 //
 //    ASSERT_FALSE(response.isSuccessful);
-//    ASSERT_EQ(response.errorCode, ErrorCode::UNKNOWN_KEY); //Random error
+//    ASSERT_EQ(response.errorCode, ErrorCode::UNKNOWN_KEY); //Random _error
 //    EXPECT_CALL(* operationLogBufferMock, add(_)).Times(0);
 //    EXPECT_CALL(* lamportClockMock, tick(_)).Times(0);
 //}

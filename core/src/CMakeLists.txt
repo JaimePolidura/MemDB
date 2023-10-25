@@ -41,7 +41,7 @@ if(NOT UNIX)
     target_link_libraries(${BINARY}_run PRIVATE ws2_32 wsock32)
 else()
     target_link_libraries(${BINARY}_run PRIVATE pthread)
-    add_compile_options(-pthread -lboost_thread -lboost_thread-mt)
+    add_compile_options(-pthread -lboost_thread -lboost_thread-mt -lz)
 endif()
 
 target_link_libraries(${BINARY}_run PRIVATE ${BINARY}_lib)

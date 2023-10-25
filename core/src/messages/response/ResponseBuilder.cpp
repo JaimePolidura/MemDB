@@ -1,6 +1,6 @@
 #include "messages/response/ResponseBuilder.h"
 
-ResponseBuilder::ResponseBuilder(): _responseValue(SimpleString<memDbDataLength_t>::fromNumber(0)) {}
+ResponseBuilder::ResponseBuilder() {}
 
 ResponseBuilder ResponseBuilder::builder() {
     return ResponseBuilder{}; 
@@ -27,11 +27,17 @@ ResponseBuilder * ResponseBuilder::requestNumber(memdbRequestNumber_t requestNum
     return this;
 }
 
-ResponseBuilder * ResponseBuilder::value(const SimpleString<memDbDataLength_t>& value) {
-    this->_responseValue = value;
+ResponseBuilder * ResponseBuilder::value(const SimpleString<memDbDataLength_t>& valueParam) {
+    this->_responseValue.push_back(valueParam);
+    return this;
+}
+
+ResponseBuilder * ResponseBuilder::values(const std::vector<SimpleString<memDbDataLength_t>>& values) {
+    this->_responseValue.insert(this->_responseValue.begin(), values.begin(), values.end());
     return this;
 }
 
 Response ResponseBuilder::build() {
-    return Response{this->_isSuccessful, this->_errorCode, this->_timestamp, this->_requestNumber, this->_responseValue};
+    return Response{this->_isSuccessful, this->_errorCode, this->_timestamp, this->_requestNumber, 
+        SimpleString<memDbDataLength_t >::fromSimpleStrings(this->_responseValue)};
 }

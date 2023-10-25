@@ -2,6 +2,7 @@
 
 #include "OperationLog.h"
 #include "SingleOperationLog.h"
+#include "logging/Logger.h"
 
 class MultipleOperationLog : public OperationLog {
 private:
@@ -9,9 +10,11 @@ private:
 
     std::function<int(const OperationBody&)> oplogResolver;
 
+    logger_t logger;
+
 public:
     MultipleOperationLog(configuration_t configuration, std::function<int(const OperationBody&)> oplogResolver,
-                         std::function<std::string(int)> oplogFileNameResolver, uint32_t numberOplogs);
+                         std::function<std::string(int)> oplogFileNameResolver, uint32_t numberOplogs, logger_t loggerCons);
 
     void add(const OperationBody& operation, const OperationLogOptions options = {}) override;
 

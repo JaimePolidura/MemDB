@@ -39,7 +39,7 @@ class BufferOneConsumer {
             //Wait
         }
 
-        T value = this->head->value;
+        T value = this->head->_value;
         this->head = this->head->next;
 
         return value;

@@ -143,7 +143,7 @@ std::vector<MapEntry<SizeValue>> Map<SizeValue>::all() {
 
     for (const AVLTree bucket: this->buckets){
         for (const auto node : bucket.all()){
-            all.push_back(MapEntry{.key = node->key, .value = node->value, .keyHash = node->keyHash, .timestamp = node->timestamp});
+            all.push_back(MapEntry{.key = node->key, .value = node->_value, .keyHash = node->keyHash, .timestamp = node->timestamp});
         }
     }
 

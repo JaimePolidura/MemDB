@@ -18,7 +18,7 @@ TEST(Map, ShouldPut) {
     std::string expectedValue = "pedro";
     ASSERT_TRUE(mapEntryNombre.has_value());
     ASSERT_TRUE(expectedValue.compare(
-            std::string((char *) mapEntryNombre.value().value.data(), mapEntryNombre.value().value.totalSize)) == 0);
+            std::string((char *) mapEntryNombre._value()._value.data(), mapEntryNombre._value()._value.totalSize)) == 0);
 }
 
 TEST(Map, ShouldntPut) {

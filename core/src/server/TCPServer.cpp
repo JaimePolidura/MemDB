@@ -17,7 +17,7 @@ void TCPServer::run() {
 
         this->ioContext.run();
     }catch (const std::exception& e) {
-        this->logger->error("Fatal error in TCP Server {0}", e.what());
+        this->logger->error("Fatal _error in TCP Server {0}", e.what());
     }
 }
 

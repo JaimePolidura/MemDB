@@ -37,7 +37,7 @@ Configuration keys are stored in environtment variables:
 ## Available operators
 | **Name**    | **Operator number** | **Args**   | **Auth key type required**      |
 |-------------|---------------------|------------|---------------------------------|
-| SET         | 0x01                | Key, value | AUTH_NODE_KEY, AUTH_API_KEY     |
+| SET         | 0x01                | Key, _value | AUTH_NODE_KEY, AUTH_API_KEY     |
 | GET         | 0x02                | Key        | AUTH_API_KEY                    |
 | DELETE      | 0x03                | Key        | AUTH_NODE_KEY, AUTH_API_KEY     |
 | HEATH_CHECK | 0x04                |            | MAINTENANCE_KEY |

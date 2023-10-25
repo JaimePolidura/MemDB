@@ -6,6 +6,7 @@
 
 struct OperationLogOptions {
     uint32_t operationLogId;
+    bool compressed;
 };
 
 class OperationLog {

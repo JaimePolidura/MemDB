@@ -6,6 +6,7 @@
 #include "OplogIndexSegmentReader.h"
 #include "config/Configuration.h"
 #include "utils/files/FileUtils.h"
+#include "logging/Logger.h"
 
 struct OplogSegmentBinarySearchResult {
     bool found;
@@ -15,6 +16,7 @@ struct OplogSegmentBinarySearchResult {
 class OplogIndexSegment {
 private:
     configuration_t configuration;
+    logger_t logger;
 
     const std::string memdDbBasePath;
     const std::string partitionPath;
@@ -28,13 +30,13 @@ public:
     static const std::string INDEX_FILE_NAME;
     static const std::string DATA_FILE_NAME;
 
-    OplogIndexSegment(configuration_t configuration, uint32_t oplogId);
+    OplogIndexSegment(configuration_t configuration, logger_t logger, uint32_t oplogId);
 
     std::vector<OplogIndexSegmentDescriptor> getByAfterTimestamp(uint64_t timestamp);
 
     std::vector<OplogIndexSegmentDescriptor> getAll();
 
-    std::vector<uint8_t> getDataByDescriptorBytes(OplogIndexSegmentDescriptor descriptor);
+    std::vector<uint8_t> getDataByDescriptorBytes(OplogIndexSegmentDescriptor descriptor, bool compressed);
 
     void save(const std::vector<uint8_t>& toSave);
 

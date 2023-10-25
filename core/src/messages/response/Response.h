@@ -12,11 +12,13 @@ public:
     uint64_t timestamp;
     uint8_t errorCode;
     bool isSuccessful;
-
+    
     Response(bool isSuccessful, uint8_t errorCode, uint64_t timestamp, memdbRequestNumber_t reqNumber, const SimpleString<memDbDataLength_t> &response);
     
     memDbDataLength_t getTotalLength() const;
 
+    SimpleString<memDbDataLength_t> getResponseValueAtOffset(std::size_t size, uint32_t initOffset = 0) const;
+    
     static Response success(const SimpleString<memDbDataLength_t> &response, uint64_t timestamp = 0);
 
     static Response success(uint64_t timestamp = 0);

@@ -16,6 +16,7 @@
 
 #include "config/Configuration.h"
 #include "utils/Utils.h"
+#include "logging/Logger.h"
 
 class SingleOperationLog : public OperationLog {
 private:
@@ -25,9 +26,10 @@ private:
     operationLogBuffer_t operationLogBuffer;
     oplogIndexSegment_t oplogIndexSegment;
     intermediateOplog_t intermediateOplog;
+    logger_t logger;
 
 public:
-    SingleOperationLog(configuration_t configuration, uint32_t oplogId);
+    SingleOperationLog(configuration_t configuration, uint32_t oplogId, logger_t logger);
 
     void addAll(const std::vector<OperationBody>& operations, const OperationLogOptions options) override; //Implemented
 

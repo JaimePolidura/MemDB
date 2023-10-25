@@ -1,9 +1,10 @@
 #include "SingleOperationLog.h"
 
-SingleOperationLog::SingleOperationLog(configuration_t configuration, uint32_t oplogId): OperationLog(configuration),
+SingleOperationLog::SingleOperationLog(configuration_t configuration, uint32_t oplogId, logger_t loggerCons): OperationLog(configuration),
+    logger(loggerCons),
     operationLogBuffer(std::make_shared<OperationLogBuffer>(configuration->get<int>(ConfigurationKeys::SERVER_THREADS) + 1)),
     intermediateOplog(std::make_shared<IntermediateOplog>(configuration, oplogId)),
-    oplogIndexSegment(std::make_shared<OplogIndexSegment>(configuration, oplogId)),
+    oplogIndexSegment(std::make_shared<OplogIndexSegment>(configuration, loggerCons, oplogId)),
     memdbBasePath(configuration->get(ConfigurationKeys::DATA_PATH)),
     partitionPath(memdbBasePath + "/" + std::to_string(oplogId)) {
     this->initializeFiles();
@@ -15,14 +16,16 @@ iterator_t<std::vector<uint8_t>> SingleOperationLog::getAfterTimestamp(uint64_t 
     std::vector<OplogIndexSegmentDescriptor> desc = this->oplogIndexSegment->getByAfterTimestamp(after);
     std::vector<uint8_t> intermediate = this->intermediateOplog->getAllBytes();
 
-    return std::make_shared<OplogIterator>(desc, intermediate, [this](OplogIndexSegmentDescriptor desc){return this->oplogIndexSegment->getDataByDescriptorBytes(desc);});
+    return std::make_shared<OplogIterator>(desc, intermediate, 
+        [this, options](OplogIndexSegmentDescriptor desc){return this->oplogIndexSegment->getDataByDescriptorBytes(desc, options.compressed);});
 }
 
 iterator_t<std::vector<uint8_t>> SingleOperationLog::getAll(const OperationLogOptions option) {
     std::vector<OplogIndexSegmentDescriptor> desc = this->oplogIndexSegment->getAll();
     std::vector<uint8_t> intermediate = this->intermediateOplog->getAllBytes();
-
-    return std::make_shared<OplogIterator>(desc, intermediate, [this](OplogIndexSegmentDescriptor desc){return this->oplogIndexSegment->getDataByDescriptorBytes(desc);});
+    
+    return std::make_shared<OplogIterator>(desc, intermediate, 
+        [this, option](OplogIndexSegmentDescriptor desc){return this->oplogIndexSegment->getDataByDescriptorBytes(desc, option.compressed);});
 }
 
 void SingleOperationLog::clear(const OperationLogOptions options) {

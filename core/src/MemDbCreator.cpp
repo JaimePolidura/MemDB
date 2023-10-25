@@ -9,7 +9,7 @@ std::shared_ptr<MemDb> MemDbCreator::create(int nArgs, char ** args) {
     cluster_t cluster = createClusterObject(logger, configuration, syncOplogsStore, memDbStores);
     memDbStores->initializeStoresMap(cluster->getNodesPerPartition(), configuration);
 
-    operationLog_t operationLog = createOperationLogObject(configuration, cluster);
+    operationLog_t operationLog = createOperationLogObject(configuration, cluster, logger);
 
     lamportClock_t clock = std::make_shared<LamportClock>(1);
     operatorDispatcher_t operatorDispatcher = std::make_shared<OperatorDispatcher>(memDbStores, clock, cluster, configuration, logger, operationLog, syncOplogsStore);
@@ -20,11 +20,11 @@ std::shared_ptr<MemDb> MemDbCreator::create(int nArgs, char ** args) {
     return std::make_shared<MemDb>(logger, memDbStores, configuration, operatorDispatcher, tcpServer, clock, cluster, operationLog);
 }
 
-operationLog_t MemDbCreator::createOperationLogObject(configuration_t configuration, cluster_t cluster) {
+operationLog_t MemDbCreator::createOperationLogObject(configuration_t configuration, cluster_t cluster, logger_t logger) {
     if(configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS)){
-        return setupMultipleOplogConfiguration(configuration, cluster);
+        return setupMultipleOplogConfiguration(configuration, cluster, logger);
     }else{
-        return std::make_shared<SingleOperationLog>(configuration, 0);
+        return std::make_shared<SingleOperationLog>(configuration, 0, logger);
     }
 }
 
@@ -36,7 +36,7 @@ cluster_t MemDbCreator::createClusterObject(logger_t logger, configuration_t con
     }
 }
 
-operationLog_t MemDbCreator::setupMultipleOplogConfiguration(configuration_t configuration, cluster_t cluster) {
+operationLog_t MemDbCreator::setupMultipleOplogConfiguration(configuration_t configuration, cluster_t cluster, logger_t logger) {
     auto fileNameResolver = [](int iterations) -> std::string{
         return "oplog-" + iterations;
     };
@@ -45,7 +45,7 @@ operationLog_t MemDbCreator::setupMultipleOplogConfiguration(configuration_t con
     };
 
     return std::make_shared<MultipleOperationLog>(configuration, oplogResolver, fileNameResolver,
-                                                  cluster->getPartitionObject()->getNodesPerPartition());
+                                                  cluster->getPartitionObject()->getNodesPerPartition(), logger);
 }
 
 void MemDbCreator::setupClusterChangeWatcher(cluster_t cluster, operationLog_t operationLog, configuration_t configuration,

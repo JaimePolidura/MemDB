@@ -31,7 +31,11 @@ public:
 
     uint64_t totalSize() override;
 
+    OplogIndexSegmentDescriptor getNextOplogDescriptor();
+
     uint32_t getLastTimestampOfLastNext();
+
+    bool isNextCompressed();
 };
 
 using oplogSegmentIterator_t = std::shared_ptr<OplogIterator>;

@@ -125,7 +125,7 @@ public:
     }
 
     template<typename T>
-    static T getOptionalOrThrow(const std::optional<T>& optional, const std::string& exceptionMessage = "No value for optional") {
+    static T getOptionalOrThrow(const std::optional<T>& optional, const std::string& exceptionMessage = "No _value for optional") {
         if(optional.has_value()) {
             return optional.value();
         } else {

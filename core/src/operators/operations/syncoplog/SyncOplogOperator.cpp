@@ -7,7 +7,8 @@ Response SyncOplogOperator::operate(const OperationBody& operation, const Operat
 
     oplogSegmentIterator_t segmentIterator = std::dynamic_pointer_cast<OplogIterator>(
             dependencies.operationLog->getAfterTimestamp(lastTimestampUnsync, OperationLogOptions{
-                .operationLogId = nodeOplogIdToSync
+                .operationLogId = nodeOplogIdToSync,
+                .compressed = true,
             })
     );
 

@@ -5,14 +5,18 @@
 #include "persistence/segments/serializers/OplogIndexSegmentDescriptorDeserializer.h"
 #include "persistence/serializers/OperationLogDeserializer.h"
 #include "persistence/segments/OplogIndexSegmentDescriptor.h"
+#include "persistence/compression/OplogCompressor.h"
 
 #include "utils/files/FileUtils.h"
 #include "messages/request/Request.h"
+#include "logging/Logger.h"
 
 class OplogIndexSegmentReader {
 private:
     OplogIndexSegmentDescriptorDeserializer oplogIndexSegmentDescriptorDeserializer{};
     OperationLogDeserializer operationLogDeserializer{};
+    OplogCompressor oplogCompressor;
+    logger_t logger;
 
     const std::string fullPathIndex;
     const std::string fullPathData;
@@ -23,7 +27,8 @@ public:
     OplogIndexSegmentReader(const std::string& fullPathIndex,
                             const std::string& fullPathData,
                             const std::string& indexFileName,
-                            const std::string& partitionPath);
+                            const std::string& partitionPath,
+                            logger_t logger);
 
     OplogIndexSegmentDescriptor readIndexAt(uint64_t ptr);
 
@@ -31,5 +36,5 @@ public:
 
     std::vector<OplogIndexSegmentDescriptor> readAllIndex();
 
-    std::vector<uint8_t> readBytesDataByDescriptor(OplogIndexSegmentDescriptor descriptor);
+    std::vector<uint8_t> readBytesDataByDescriptor(OplogIndexSegmentDescriptor descriptor, bool compressed);
 };

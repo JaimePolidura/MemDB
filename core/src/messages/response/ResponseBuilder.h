@@ -6,7 +6,7 @@
 
 class ResponseBuilder {
 private:
-    SimpleString<memDbDataLength_t> _responseValue;
+    std::vector<SimpleString<memDbDataLength_t>> _responseValue{};
     memdbRequestNumber_t _requestNumber{};
     uint64_t _timestamp{};
     uint8_t _errorCode{};
@@ -20,6 +20,7 @@ public:
     ResponseBuilder * success();
     ResponseBuilder * requestNumber(memdbRequestNumber_t requestNumber);
     ResponseBuilder * value(const SimpleString<memDbDataLength_t>& value);
+    ResponseBuilder * values(const std::vector<SimpleString<memDbDataLength_t>>& values);
 
     Response build();
 

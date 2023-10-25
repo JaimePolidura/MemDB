@@ -100,9 +100,11 @@ public:
     }
 
     static SimpleString<StringLengthType> fromSimpleStrings(const std::vector<SimpleString<StringLengthType>>& values) {
-        memDbDataLength_t totalSize = std::reduce(values.begin(), values.end(), 0, [](int acc, const SimpleString<StringLengthType>& it){
-            return acc + it.size;
-        });
+        memDbDataLength_t totalSize = 0;
+        for (const SimpleString<StringLengthType>& value: values) {
+            totalSize += value.size;
+        }
+
         uint8_t * result = new uint8_t[totalSize];
 
         int lastCopiedOffset = 0;
@@ -140,7 +142,7 @@ public:
 template <typename StringLengthType>
 struct SimpleStringHash {
     std::size_t operator()(const SimpleString<StringLengthType>& str) const {
-        // Compute a hash _value for the string
+        // Compute a hash value for the string
         std::size_t seed = 0;
         for (StringLengthType i = 0; i < str.size; ++i) {
             seed ^= *(str.data() + i) + 0x9e3779b9 + (seed << 6) + (seed >> 2);

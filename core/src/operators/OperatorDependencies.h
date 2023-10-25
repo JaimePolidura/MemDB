@@ -3,7 +3,7 @@
 #include "persistence/OperationLog.h"
 #include "cluster/Cluster.h"
 #include "operators/OperationOptions.h"
-#include "operators/operations/cluster/syncoplog/OnGoingSyncOplogsStore.h"
+#include "operators/operations/syncoplog/OnGoingSyncOplogsStore.h"
 #include "db/MemDbStores.h"
 #include "logging/Logger.h"
 

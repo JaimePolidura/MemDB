@@ -6,6 +6,9 @@ std::shared_ptr<MemDb> MemDbCreator::create(int nArgs, char ** args) {
     onGoingSyncOplogs_t syncOplogsStore = std::make_shared<OnGoingSyncOplogsStore>(configuration->get<memdbNodeId_t >(ConfigurationKeys::NODE_ID));
     memDbStores_t memDbStores = std::make_shared<MemDbStores>();
 
+    //TODO Fix. If I dont put this, DelayedOperationBuffer will segfault at initialization
+    std::queue<Request> req{};
+
     cluster_t cluster = createClusterObject(logger, configuration, syncOplogsStore, memDbStores);
     memDbStores->initializeStoresMap(cluster->getNodesPerPartition(), configuration);
 

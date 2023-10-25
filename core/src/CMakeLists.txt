@@ -31,7 +31,7 @@ if(UNIX)
     target_link_libraries(${BINARY}_lib PRIVATE cpprest etcd-cpp-api)
     target_link_directories(${BINARY}_lib PRIVATE /usr/local/lib)
     target_compile_options(${BINARY}_lib PRIVATE -I/usr/local/include/etcd)
-    target_link_libraries(${BINARY}_lib PRIVATE -letcd-cpp-api -lcpprest -lcrypto -lcpprest)
+    target_link_libraries(${BINARY}_lib PRIVATE -letcd-cpp-api -lcpprest -lcrypto -lcpprest -lz)
     target_link_libraries(${BINARY}_run PRIVATE ${BINARY}_lib)
 endif()
 

@@ -5,7 +5,7 @@
 #include "operators/DelayedOperationsBuffer.h"
 #include "operators/OperatorDependencies.h"
 
-#include "operators/operations/cluster/syncoplog/OnGoingSyncOplogsStore.h"
+#include "operators/operations/syncoplog/OnGoingSyncOplogsStore.h"
 #include "messages/response/ErrorCode.h"
 
 #include "db/MemDbStores.h"
@@ -18,7 +18,7 @@ class OperatorDispatcher {
 public: //Need it for mocking it
     operatorRegistry_t operatorRegistry;
 private:
-    delayedOperationsBuffer_t delayedOperationsBuffer;
+    DelayedOperationsBuffer delayedOperationsBuffer{};
     onGoingSyncOplogs_t onGoingSyncOplogs;
     operationLog_t operationLog;
     configuration_t configuration;

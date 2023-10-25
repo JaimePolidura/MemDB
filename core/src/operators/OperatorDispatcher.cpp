@@ -9,9 +9,7 @@ OperatorDispatcher::OperatorDispatcher(memDbStores_t memDbStores, lamportClock_t
         operatorRegistry(std::make_shared<OperatorRegistry>()),
         logger(logger),
         cluster(cluster),
-        configuration(configuration),
-        delayedOperationsBuffer(std::make_shared<DelayedOperationsBuffer>())
-{
+        configuration(configuration) {
     this->dependencies = this->getDependencies();
 }
 
@@ -53,7 +51,7 @@ Response OperatorDispatcher::dispatch_no_applyDelayedOperationsBuffer(const Requ
         return Response::error(ErrorCode::INVALID_PARTITION);
     }
     if(isInReplicationMode() && writeDbRequest && canAcceptRequest() && !canExecuteRequest()){
-        this->delayedOperationsBuffer->add(request);
+        this->delayedOperationsBuffer.add(request);
         return Response::success();
     }
     if(operatorToExecute->desc().type == OperatorType::DB_STORE_WRITE || operatorToExecute->desc().type == OperatorType::DB_STORE_READ){
@@ -116,8 +114,8 @@ uint64_t OperatorDispatcher::updateClock(LamportClock::UpdateClockStrategy strat
 }
 
 void OperatorDispatcher::applyDelayedOperationsBuffer() {
-    while(!this->delayedOperationsBuffer->isEmpty()){
-        Request operation = this->delayedOperationsBuffer->get();
+    while(!this->delayedOperationsBuffer.isEmpty()){
+        Request operation = this->delayedOperationsBuffer.get();
         this->dispatch_no_applyDelayedOperationsBuffer(operation); //Avoid recursive call
     }
 }

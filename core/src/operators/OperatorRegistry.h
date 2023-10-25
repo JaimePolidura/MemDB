@@ -2,8 +2,8 @@
 
 #include "shared.h"
 
-#include "operators/operations/cluster/syncoplog/NextSegmentOplogOperator.h"
-#include "operators/operations/cluster/syncoplog/SyncOplogOperator.h"
+#include "operators/operations/syncoplog/NextSegmentOplogOperator.h"
+#include "operators/operations/syncoplog/SyncOplogOperator.h"
 #include "operators/operations/cluster/MovePartitionOplogOperator.h"
 #include "operators/operations/cluster/HealthCheckOperator.h"
 #include "operators/operations/user/DeleteOperator.h"

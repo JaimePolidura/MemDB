@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "operators/operations/cluster/syncoplog/SyncOplogOperator.h"
+#include "operators/operations/syncoplog/SyncOplogOperator.h"
 #include "persistence/SingleOperationLog.h"
 #include "../../cluster/ClusterTest.h"
 

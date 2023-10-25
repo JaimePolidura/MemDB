@@ -11,8 +11,8 @@
 #include "utils/clock/LamportClock.h"
 #include "utils/strings/StringUtils.h"
 
-#include "operators/operations/cluster/syncoplog/SyncOplogReceiverIterator.h"
-#include "operators/operations/cluster/syncoplog/OnGoingSyncOplogsStore.h"
+#include "operators/operations/syncoplog/SyncOplogReceiverIterator.h"
+#include "operators/operations/syncoplog/OnGoingSyncOplogsStore.h"
 #include "messages/request/RequestBuilder.h"
 
 #include "config/Configuration.h"

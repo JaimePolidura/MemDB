@@ -17,6 +17,6 @@ struct OplogIndexSegmentDescriptor {
     uint32_t flags;
 
     bool hasFlag(OplogIndexSegmentDescriptorFlag flag) {
-        return this->flags & flag == flag;
+        return (this->flags & flag) == flag;
     }
 };

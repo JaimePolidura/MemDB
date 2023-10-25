@@ -61,16 +61,16 @@ public:
 struct Request {
     AuthenticationBody authentication;
     OperationBody operation;
-    memdbRequestNumber_t requestNumber;
-    AuthenticationType authenticationType; //Not in serializetion
+    memdbRequestNumber_t requestNumber{};
+    AuthenticationType authenticationType{}; //Not in serializetion
+
+    Request() = default;
 
     Request(const Request& other);
 
     Request(Request&& other) noexcept;
 
     Request& operator=(Request&& other) noexcept;
-
-    Request() = default;
 
     memDbDataLength_t getTotalLength() const;
 

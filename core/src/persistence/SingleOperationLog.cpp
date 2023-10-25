@@ -16,16 +16,16 @@ iterator_t<std::vector<uint8_t>> SingleOperationLog::getAfterTimestamp(uint64_t 
     std::vector<OplogIndexSegmentDescriptor> desc = this->oplogIndexSegment->getByAfterTimestamp(after);
     std::vector<uint8_t> intermediate = this->intermediateOplog->getAllBytes();
 
-    return std::make_shared<OplogIterator>(desc, intermediate, 
-        [this, options](OplogIndexSegmentDescriptor desc){return this->oplogIndexSegment->getDataByDescriptorBytes(desc, options.compressed);});
+    return std::make_shared<OplogIterator>(desc, intermediate, options.compressed,
+        [this](OplogIndexSegmentDescriptor desc){return this->oplogIndexSegment->getDataByDescriptorBytes(desc);});
 }
 
 iterator_t<std::vector<uint8_t>> SingleOperationLog::getAll(const OperationLogOptions option) {
     std::vector<OplogIndexSegmentDescriptor> desc = this->oplogIndexSegment->getAll();
     std::vector<uint8_t> intermediate = this->intermediateOplog->getAllBytes();
-    
-    return std::make_shared<OplogIterator>(desc, intermediate, 
-        [this, option](OplogIndexSegmentDescriptor desc){return this->oplogIndexSegment->getDataByDescriptorBytes(desc, option.compressed);});
+
+    return std::make_shared<OplogIterator>(desc, intermediate, option.compressed,
+        [this](OplogIndexSegmentDescriptor desc){return this->oplogIndexSegment->getDataByDescriptorBytes(desc);});
 }
 
 void SingleOperationLog::clear(const OperationLogOptions options) {

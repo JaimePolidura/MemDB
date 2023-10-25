@@ -4,10 +4,11 @@
 #include "persistence/compaction/OperationLogCompacter.h"
 #include "persistence/serializers/OperationLogDeserializer.h"
 #include "persistence/serializers/OperationLogSerializer.h"
-#include "persistence/compression/OplogCompressor.h"
 #include "OplogIndexSegmentDescriptor.h"
+
 #include "messages/request/Request.h"
 #include "utils/files/FileUtils.h"
+#include "utils/compression/Compressor.h"
 #include "logging/Logger.h"
 
 class OplogIndexSegmentWriter {
@@ -20,7 +21,7 @@ private:
     OperationLogDeserializer deserializer;
     OperationLogSerializer oplogSerializer;
     OperationLogCompacter compacter;
-    OplogCompressor oplogCompressor;
+    Compressor compressor;
     logger_t logger;
 
     std::mutex writeLock;

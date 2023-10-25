@@ -30,8 +30,8 @@ std::vector<OplogIndexSegmentDescriptor> OplogIndexSegment::getAll() {
     return this->oplogIndexSegmentReader.readAllIndex();
 }
 
-std::vector<uint8_t> OplogIndexSegment::getDataByDescriptorBytes(OplogIndexSegmentDescriptor descriptor, bool compressed) {
-    return this->oplogIndexSegmentReader.readBytesDataByDescriptor(descriptor, compressed);
+std::vector<uint8_t> OplogIndexSegment::getDataByDescriptorBytes(OplogIndexSegmentDescriptor descriptor) {
+    return this->oplogIndexSegmentReader.readBytesDataByDescriptor(descriptor);
 }
 
 void OplogIndexSegment::clearAll() {

@@ -5,9 +5,9 @@
 #include "persistence/segments/serializers/OplogIndexSegmentDescriptorDeserializer.h"
 #include "persistence/serializers/OperationLogDeserializer.h"
 #include "persistence/segments/OplogIndexSegmentDescriptor.h"
-#include "persistence/compression/OplogCompressor.h"
 
 #include "utils/files/FileUtils.h"
+#include "utils/compression/Compressor.h"
 #include "messages/request/Request.h"
 #include "logging/Logger.h"
 
@@ -15,7 +15,7 @@ class OplogIndexSegmentReader {
 private:
     OplogIndexSegmentDescriptorDeserializer oplogIndexSegmentDescriptorDeserializer{};
     OperationLogDeserializer operationLogDeserializer{};
-    OplogCompressor oplogCompressor;
+    Compressor compressor{};
     logger_t logger;
 
     const std::string fullPathIndex;
@@ -36,5 +36,5 @@ public:
 
     std::vector<OplogIndexSegmentDescriptor> readAllIndex();
 
-    std::vector<uint8_t> readBytesDataByDescriptor(OplogIndexSegmentDescriptor descriptor, bool compressed);
+    std::vector<uint8_t> readBytesDataByDescriptor(OplogIndexSegmentDescriptor descriptor);
 };

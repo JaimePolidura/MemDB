@@ -3,8 +3,6 @@
 #include "shared.h"
 
 enum OplogIndexSegmentDescriptorFlag : uint8_t {
-    COMPRESSED = 0x02,
-    UNCOMPRESSED = 0x01,
 };
 
 struct OplogIndexSegmentDescriptor {

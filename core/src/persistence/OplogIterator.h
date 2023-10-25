@@ -4,6 +4,7 @@
 
 #include "persistence/segments/OplogIndexSegmentDescriptor.h"
 #include "messages/request/Request.h"
+#include "utils/compression/Compressor.h"
 #include "utils/Iterator.h"
 
 using descriptorDataFetcher_t = std::function<std::vector<uint8_t>(OplogIndexSegmentDescriptor)>;
@@ -14,6 +15,10 @@ private:
     descriptorDataFetcher_t descriptorDataFetcher;
     std::vector<uint8_t> intermediate;
 
+    Compressor compressor;
+
+    bool compressed;
+
     //TODO Not being updated when doing next() on intermediate
     uint32_t lastTimestampOfLastNext;
 
@@ -23,6 +28,7 @@ private:
 public:
     OplogIterator(const std::vector<OplogIndexSegmentDescriptor>& descriptors,
                   const std::vector<uint8_t>& intermediate,
+                  bool compressed,
                   descriptorDataFetcher_t descriptorDataFetcher);
 
     bool hasNext() override;
@@ -31,11 +37,13 @@ public:
 
     uint64_t totalSize() override;
 
-    OplogIndexSegmentDescriptor getNextOplogDescriptor();
+    uint32_t getActualSize();
+
+    uint32_t getNextSize();
 
     uint32_t getLastTimestampOfLastNext();
 
-    bool isNextCompressed();
+    bool isCompressingRequired();
 };
 
 using oplogSegmentIterator_t = std::shared_ptr<OplogIterator>;

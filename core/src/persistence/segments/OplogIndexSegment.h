@@ -36,7 +36,7 @@ public:
 
     std::vector<OplogIndexSegmentDescriptor> getAll();
 
-    std::vector<uint8_t> getDataByDescriptorBytes(OplogIndexSegmentDescriptor descriptor, bool compressed);
+    std::vector<uint8_t> getDataByDescriptorBytes(OplogIndexSegmentDescriptor descriptor);
 
     void save(const std::vector<uint8_t>& toSave);
 

@@ -11,10 +11,13 @@ Response NextSegmentOplogOperator::operate(const OperationBody& operation, const
 
     dependencies.onGoingSyncOplogs->markSegmentAsSent(syncId);
 
+    auto uncompressSize = oplogSenderIterator->getNextSize();
+    auto compressedOplog = oplogSenderIterator->next();
+
     return ResponseBuilder::builder()
             .values({
-                oplogSenderIterator->getNextSize(),
-                SimpleString<memDbDataLength_t>::fromVector(oplogSenderIterator->next()),
+                SimpleString<memDbDataLength_t>::fromNumber(uncompressSize),
+                SimpleString<memDbDataLength_t>::fromVector(compressedOplog),
             })
             ->timestamp(oplogSenderIterator->getLastTimestampOfLastNext())
             ->requestNumber(syncId)

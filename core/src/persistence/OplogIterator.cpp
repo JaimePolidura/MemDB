@@ -7,7 +7,6 @@ OplogIterator::OplogIterator(const std::vector<OplogIndexSegmentDescriptor>& des
         compressed(compressed),
         descriptorDataFetcher(descriptorDataFetcher),
         intermediate(intermediate),
-        actualIndexDescriptor(0),
         descriptors(descriptors) {
 }
 
@@ -20,7 +19,7 @@ std::vector<uint8_t> OplogIterator::next() {
     if(!this->intermediateIterated) {
         this->intermediateIterated = true;
 
-        return !this->compressed ?
+        return this->compressed ?
             this->compressor.compressBytes(this->intermediate)
                 .get_or_throw_with([](const int errorCode){return "Impossible to compress intermediate. Return code: " + errorCode;}) :
             this->intermediate;

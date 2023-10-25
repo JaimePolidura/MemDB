@@ -12,8 +12,8 @@ memDbDataLength_t Response::getTotalLength() const {
     return sizeof(memdbRequestNumber_t) + sizeof(uint64_t) + 1 + (responseValue.size > 0 ? (sizeof(memDbDataLength_t) + responseValue.size) : sizeof(memDbDataLength_t));
 }
 
-SimpleString<memDbDataLength_t> Response::getResponseValueAtOffset(std::size_t size, uint32_t initOffset) const {
-    return SimpleString<memDbDataLength_t>::fromPointer(this->responseValue.data() + static_cast<uint8_t>(initOffset), size);
+SimpleString<memDbDataLength_t> Response::getResponseValueAtOffset(uint32_t initOffset, std::size_t size) const {
+    return SimpleString<memDbDataLength_t>::fromPointer(this->responseValue.data() + initOffset, size);
 }
 
 Response Response::success(const SimpleString<memDbDataLength_t> &response, uint64_t timestamp) {

@@ -47,21 +47,26 @@ void MemDb::syncOplogFromCluster(std::vector<uint64_t> lastTimestampProcessedFro
 
     for(int i = 0; i < lastTimestampProcessedFromOpLog.size(); i++){
         std::future<void> syncOplogFuture = std::async(std::launch::async, [this, lastTimestampProcessedFromOpLog, i]() -> void {
-            int oplogId = i;
+            try {
+                int oplogId = i;
 
-            auto unsyncedOplog = this->cluster->syncOplog(lastTimestampProcessedFromOpLog[i], NodePartitionOptions{
-                    .partitionId = oplogId
-            });
+                auto unsyncedOplog = this->cluster->syncOplog(lastTimestampProcessedFromOpLog[i], NodePartitionOptions{
+                        .partitionId = oplogId
+                });
 
-            this->applyOplog(unsyncedOplog, true, oplogId);
-            this->logger->info("Synchronized {0} oplog entries with the cluster", unsyncedOplog->totalSize());
+                this->applyOplog(unsyncedOplog, true, oplogId);
+                this->logger->info("Synchronized {0} oplog entries with the cluster", unsyncedOplog->totalSize());
+            }catch (const std::exception& e) {
+                std::cout << e.what() << std::endl;
+            }
         });
 
         syncOplogFutures.push_back(std::move(syncOplogFuture));
     }
 
-    for (const std::future<void>& future : syncOplogFutures)
+    for (const std::future<void>& future : syncOplogFutures) {
         future.wait();
+    }
 
     this->cluster->setRunning();
 }

@@ -38,6 +38,8 @@ ResponseBuilder * ResponseBuilder::values(const std::vector<SimpleString<memDbDa
 }
 
 Response ResponseBuilder::build() {
-    return Response{this->_isSuccessful, this->_errorCode, this->_timestamp, this->_requestNumber, 
-        SimpleString<memDbDataLength_t >::fromSimpleStrings(this->_responseValue)};
+    return Response{this->_isSuccessful, this->_errorCode, this->_timestamp, this->_requestNumber,
+                    _responseValue.size() > 1 ?
+                        SimpleString<memDbDataLength_t >::fromSimpleStrings(this->_responseValue) :
+                        _responseValue.at(0)};
 }

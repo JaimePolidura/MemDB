@@ -22,8 +22,8 @@ private:
     //TODO Not being updated when doing next() on intermediate
     uint32_t lastTimestampOfLastNext;
 
-    uint32_t actualIndexDescriptor;
-    bool intermediateIterated;
+    uint32_t actualIndexDescriptor{0};
+    bool intermediateIterated{false};
 
 public:
     OplogIterator(const std::vector<OplogIndexSegmentDescriptor>& descriptors,

@@ -17,7 +17,7 @@ public:
     
     memDbDataLength_t getTotalLength() const;
 
-    SimpleString<memDbDataLength_t> getResponseValueAtOffset(std::size_t size, uint32_t initOffset = 0) const;
+    SimpleString<memDbDataLength_t> getResponseValueAtOffset(uint32_t initOffset, std::size_t size) const;
     
     static Response success(const SimpleString<memDbDataLength_t> &response, uint64_t timestamp = 0);
 

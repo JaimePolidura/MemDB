@@ -82,8 +82,10 @@ public:
         uint8_t * ptrCastedU8 = static_cast<uint8_t *>(ptr);
         uint8_t * result = new uint8_t[size];
 
-        std::copy(result, ptrCastedU8, ptrCastedU8 + size);
-    
+        for (int i = 0; i < size; ++i) {
+            result[i] = *(ptrCastedU8 + i);
+        }
+
         return SimpleString<StringLengthType>{result, static_cast<StringLengthType>(size)};
     }
 

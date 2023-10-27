@@ -1,7 +1,7 @@
 #include "NextSegmentOplogOperator.h"
 
 Response NextSegmentOplogOperator::operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) {
-    oplogSegmentIterator_t oplogSenderIterator = this->getOplogSegmentIterator(operation, options, dependencies);
+    oplogIterator_t oplogSenderIterator = this->getOplogSegmentIterator(operation, options, dependencies);
     uint64_t syncId = options.requestNumber;
 
     if(!oplogSenderIterator->hasNext()) {
@@ -11,7 +11,7 @@ Response NextSegmentOplogOperator::operate(const OperationBody& operation, const
 
     dependencies.onGoingSyncOplogs->markSegmentAsSent(syncId);
 
-    auto uncompressSize = oplogSenderIterator->getNextSize();
+    auto uncompressSize = oplogSenderIterator->getNextUncompressedSize();
     auto compressedOplog = oplogSenderIterator->next();
 
     return ResponseBuilder::builder()
@@ -34,9 +34,9 @@ OperatorDescriptor NextSegmentOplogOperator::desc() {
     };
 }
 
-oplogSegmentIterator_t NextSegmentOplogOperator::getOplogSegmentIterator(const OperationBody &operation, const OperationOptions options,
-                                                  OperatorDependencies &dependencies) {
-    std::optional<oplogSegmentIterator_t> senderIteratorOptional = dependencies.onGoingSyncOplogs->getSenderIteratorById(options.requestNumber);
+oplogIterator_t NextSegmentOplogOperator::getOplogSegmentIterator(const OperationBody &operation, const OperationOptions options,
+                                                                  OperatorDependencies &dependencies) {
+    std::optional<oplogIterator_t> senderIteratorOptional = dependencies.onGoingSyncOplogs->getSenderIteratorById(options.requestNumber);
 
     if(!senderIteratorOptional.has_value()) {
         dependencies.logger->debugInfo("Received a NEXT_SYNC_OPLOG_SEGMENT at requestNumber {0} without having an iterator registered. Restarting SYNC_OPLOG", options.requestNumber);

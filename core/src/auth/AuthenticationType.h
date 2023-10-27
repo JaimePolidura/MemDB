@@ -1,5 +1,5 @@
 #pragma once
 
 enum AuthenticationType {
-    API, NODE, MAINTENANCE
+    API, NODE, CLUSTER_MANAGER
 };

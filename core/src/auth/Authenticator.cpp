@@ -11,7 +11,7 @@ AuthenticationType Authenticator::getAuthenticationType(const std::string& authK
 }
 
 bool Authenticator::isKeyFromMaintenance(const std::string& authKey) {
-    return this->getAuthenticationTypeFromConfiguration(authKey) == AuthenticationType::MAINTENANCE;  
+    return this->getAuthenticationTypeFromConfiguration(authKey) == AuthenticationType::CLUSTER_MANAGER;
 }
 
 bool Authenticator::isKeyFromNode(const std::string& authKey) {
@@ -26,7 +26,7 @@ AuthenticationType Authenticator::getAuthenticationTypeFromConfiguration(const s
     if(this->configuration->get(ConfigurationKeys::AUTH_API_KEY) == authKey) {
         return AuthenticationType::API;
     }else if (this->configuration->get(ConfigurationKeys::MAINTENANCE_KEY) == authKey) {
-        return AuthenticationType::MAINTENANCE;
+        return AuthenticationType::CLUSTER_MANAGER;
     }else if (this->configuration->get(ConfigurationKeys::AUTH_NODE_KEY) == authKey) {
         return AuthenticationType::NODE;
     }

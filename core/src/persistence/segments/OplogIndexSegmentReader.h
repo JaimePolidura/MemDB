@@ -8,6 +8,7 @@
 
 #include "utils/files/FileUtils.h"
 #include "utils/compression/Compressor.h"
+#include "utils/std/Result.h"
 #include "messages/request/Request.h"
 #include "logging/Logger.h"
 
@@ -32,9 +33,11 @@ public:
 
     OplogIndexSegmentDescriptor readIndexAt(uint64_t ptr);
 
+    std::vector<OplogIndexSegmentDescriptor> readAllIndexBetween(uint64_t fromPtr, uint64_t toPtr);
+
     std::vector<OplogIndexSegmentDescriptor> readAllIndexFrom(uint64_t ptr);
 
     std::vector<OplogIndexSegmentDescriptor> readAllIndex();
-
-    std::vector<uint8_t> readBytesDataByDescriptor(OplogIndexSegmentDescriptor descriptor);
+    
+    std::result<std::vector<uint8_t>> readBytesDataByDescriptor(OplogIndexSegmentDescriptor descriptor);
 };

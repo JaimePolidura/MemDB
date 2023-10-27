@@ -31,22 +31,26 @@ private:
 public:
     SingleOperationLog(configuration_t configuration, uint32_t oplogId, logger_t logger);
 
-    void addAll(const std::vector<OperationBody>& operations, const OperationLogOptions options) override; //Implemented
+    void addAll(const std::vector<OperationBody>& operations, const OperationLogOptions options) override;
 
-    void add(const OperationBody& operation, const OperationLogOptions options) override; //Implemented
+    void add(const OperationBody& operation, const OperationLogOptions options) override;
 
-    bool hasOplogFile(const OperationLogOptions options) override; //Implemented
+    bool hasOplogFile(const OperationLogOptions options) override;
 
     void clear(const OperationLogOptions options) override;
 
-    iterator_t<std::vector<uint8_t>> getAfterTimestamp(uint64_t since, const OperationLogOptions options) override; //Implemented
+    iterator_t<std::vector<uint8_t>> getBetweenTimestamps(uint64_t fromTimestamp, uint64_t toTimestamp, const OperationLogOptions options) override;
 
-    iterator_t<std::vector<uint8_t>> getAll(const OperationLogOptions option) override; //Implemented
+    iterator_t<std::vector<uint8_t>> getAfterTimestamp(uint64_t since, const OperationLogOptions options) override;
 
-    uint32_t getNumberOplogFiles() override; //Implemented
+    iterator_t<std::vector<uint8_t>> getAll(const OperationLogOptions option) override;
+
+    uint32_t getNumberOplogFiles() override;
 
 private:
-    void initializeFiles();  //Implemented
+    void initializeFiles();
+
+    std::vector<uint8_t> readBytesByIndexSegmentDescriptor(OplogIndexSegmentDescriptor descriptor);
 };
 
 using singleOperationLog_t = std::shared_ptr<SingleOperationLog>;

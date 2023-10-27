@@ -8,6 +8,13 @@
 #include "utils/files/FileUtils.h"
 #include "logging/Logger.h"
 
+struct OplogSegmentBetweenTimestampsSearchResult {
+    bool resultsInDescriptorsAndIntermediate;
+    bool resultsOnlyInIntermediate;
+    bool resultsOnlyInSegments;
+    std::vector<OplogIndexSegmentDescriptor> descriptors;
+};
+
 struct OplogSegmentBinarySearchResult {
     bool found;
     uint64_t ptr;
@@ -31,6 +38,8 @@ public:
     static const std::string DATA_FILE_NAME;
 
     OplogIndexSegment(configuration_t configuration, logger_t logger, uint32_t oplogId);
+
+    OplogSegmentBetweenTimestampsSearchResult getBetweenTimestamps(uint64_t fromTimestamp, uint64_t toTimestamp);
 
     std::vector<OplogIndexSegmentDescriptor> getByAfterTimestamp(uint64_t timestamp);
 

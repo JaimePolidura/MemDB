@@ -13,5 +13,5 @@ public:
     OperatorDescriptor desc() override;
 
 private:
-    oplogSegmentIterator_t getOplogSegmentIterator(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies);
+    oplogIterator_t getOplogSegmentIterator(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies);
 };

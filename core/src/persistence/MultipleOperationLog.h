@@ -24,6 +24,8 @@ public:
 
     void clear(const OperationLogOptions options = {}) override;
 
+    iterator_t<std::vector<uint8_t>> getBetweenTimestamps(uint64_t fromTimestamp, uint64_t toTimestamp, const OperationLogOptions options) override;
+
     iterator_t<std::vector<uint8_t>> getAfterTimestamp(uint64_t timestamp, OperationLogOptions options) override;
 
     iterator_t<std::vector<uint8_t>> getAll(const OperationLogOptions options = {}) override;

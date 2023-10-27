@@ -4,10 +4,6 @@ namespace std {
     template<typename V, typename E = V>
     class result {
     public:
-        result(V value): _value(value), success(true) {}
-
-        result(E error): _error(error), success(false) {}
-
         V get_or_else(const V& alternative) {
             return this->success ? this->_value : alternative;
         }
@@ -47,11 +43,23 @@ namespace std {
         }
 
         static result ok(V value) {
-            return result(value);
+            return result{
+                ._success = true,
+                ._value = value,
+            };
         }
 
         static result error(E error) {
-            return result(error);
+            return result{
+                    ._success = false,
+                    ._error = error,
+            };
+        }
+
+        static result error() {
+            return result{
+                    ._success = false,
+            };
         }
 
     private:

@@ -6,7 +6,7 @@
 #include "shared.h"
 
 struct OnGoingSyncOplog {
-    oplogSegmentIterator_t iterator;
+    oplogIterator_t iterator;
     uint64_t totalNFragments;
     uint64_t nFragmentsSent;
 };
@@ -25,9 +25,9 @@ private:
 public:
     explicit OnGoingSyncOplogsStore(memdbNodeId_t nodeId);
 
-    void registerSyncOplogIterator(uint64_t syncId, oplogSegmentIterator_t segmentIterator);
+    void registerSyncOplogIterator(uint64_t syncId, oplogIterator_t segmentIterator);
 
-    std::optional<oplogSegmentIterator_t> getSenderIteratorById(uint64_t id);
+    std::optional<oplogIterator_t> getSenderIteratorById(uint64_t id);
 
     void markSegmentAsSent(uint64_t syncId);
 

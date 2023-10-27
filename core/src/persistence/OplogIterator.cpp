@@ -32,7 +32,7 @@ std::vector<uint8_t> OplogIterator::next() {
     std::vector<uint8_t> bytesFromDescriptor = this->descriptorDataFetcher(actualDescriptor);
 
     return !this->compressed ?
-           this->compressor.uncompressBytes(bytesFromDescriptor, actualDescriptor.originalSize)
+           this->compressor.uncompressBytes(bytesFromDescriptor, actualDescriptor.uncompressedSize)
                    .get_or_throw_with([](const int errorCode){return "Impossible to decompress oplog in OplogIterator::next. Error code: " + errorCode;}) :
            bytesFromDescriptor;
 }
@@ -41,9 +41,9 @@ uint64_t OplogIterator::totalSize() {
     return this->descriptors.size() + (this->intermediate.empty() ? 0 : 1);
 }
 
-uint32_t OplogIterator::getNextSize() {
+uint32_t OplogIterator::getNextUncompressedSize() {
     return this->intermediateIterated ?
-        this->descriptors.at(this->actualIndexDescriptor).originalSize :
+        this->descriptors.at(this->actualIndexDescriptor).uncompressedSize :
         this->intermediate.size();
 }
 

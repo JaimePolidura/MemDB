@@ -15,6 +15,19 @@ OplogIndexSegmentDescriptor OplogIndexSegmentReader::readIndexAt(uint64_t ptr) {
     );
 }
 
+std::vector<OplogIndexSegmentDescriptor> OplogIndexSegmentReader::readAllIndexBetween(uint64_t fromPtr, uint64_t toPtr) {
+    if(fromPtr >= toPtr || (toPtr - fromPtr) < sizeof(OplogIndexSegmentDescriptor)){
+        return std::vector<OplogIndexSegmentDescriptor>{};
+    }
+
+    toPtr += sizeof(OplogIndexSegmentDescriptor);
+    uint64_t totalToRead = toPtr - fromPtr;
+
+    std::vector<uint8_t> bytes = FileUtils::seekBytes(this->fullPathIndex, fromPtr, totalToRead);
+
+    return this->oplogIndexSegmentDescriptorDeserializer.deserializeAll(bytes);
+}
+
 std::vector<OplogIndexSegmentDescriptor> OplogIndexSegmentReader::readAllIndexFrom(uint64_t ptr) {
     uint64_t totalToRead = FileUtils::size(this->partitionPath, this->indexFileName) - ptr;
     std::vector<uint8_t> bytes = FileUtils::seekBytes(this->fullPathIndex, ptr, totalToRead);
@@ -26,6 +39,12 @@ std::vector<OplogIndexSegmentDescriptor> OplogIndexSegmentReader::readAllIndex()
     return this->oplogIndexSegmentDescriptorDeserializer.deserializeAll(FileUtils::readBytes(this->fullPathIndex));
 }
 
-std::vector<uint8_t> OplogIndexSegmentReader::readBytesDataByDescriptor(OplogIndexSegmentDescriptor descriptor) {
-    return FileUtils::seekBytes(this->fullPathData, descriptor.ptr, descriptor.size);
+std::result<std::vector<uint8_t>> OplogIndexSegmentReader::readBytesDataByDescriptor(OplogIndexSegmentDescriptor descriptor) {
+    auto bytes = FileUtils::seekBytes(this->fullPathData, descriptor.ptr, descriptor.size);
+
+    if(Utils::crc(bytes) == descriptor.crc) {
+        return std::result<std::vector<uint8_t>>::ok(bytes);
+    } else {
+        return std::result<std::vector<uint8_t>>::error();
+    }
 }

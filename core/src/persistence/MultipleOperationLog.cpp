@@ -33,6 +33,14 @@ void MultipleOperationLog::clear(const OperationLogOptions options) {
     this->operationLogs.at(options.operationLogId)->clear(options);
 }
 
+iterator_t<std::vector<uint8_t>> MultipleOperationLog::getBetweenTimestamps(uint64_t fromTimestamp, uint64_t toTimestamp, const OperationLogOptions options) {
+    if(options.operationLogId >= this->operationLogs.size()){
+        return std::make_shared<NullIterator<std::vector<uint8_t>>>();
+    }
+
+    return this->operationLogs[options.operationLogId]->getBetweenTimestamps(fromTimestamp, toTimestamp, options);
+}
+
 iterator_t<std::vector<uint8_t>> MultipleOperationLog::getAfterTimestamp(uint64_t timestamp, OperationLogOptions options) {
     if(options.operationLogId >= this->operationLogs.size()){
         return std::make_shared<NullIterator<std::vector<uint8_t>>>();

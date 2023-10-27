@@ -39,11 +39,11 @@ public:
 
     uint32_t getActualSize();
 
-    uint32_t getNextSize();
+    uint32_t getNextUncompressedSize();
 
     uint32_t getLastTimestampOfLastNext();
 
     bool isCompressingRequired();
 };
 
-using oplogSegmentIterator_t = std::shared_ptr<OplogIterator>;
+using oplogIterator_t = std::shared_ptr<OplogIterator>;

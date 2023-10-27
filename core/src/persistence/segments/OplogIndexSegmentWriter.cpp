@@ -23,7 +23,7 @@ void OplogIndexSegmentWriter::write(const std::vector<uint8_t> &toWrite) {
             .ptr = FileUtils::size(partitionPath, this->dataFileName),
             .crc = Utils::crc(compactedCompressedSerialized),
             .size = static_cast<uint32_t>(compactedCompressedSerialized.size()),
-            .originalSize = static_cast<uint32_t>(compactedSerialized.size()),
+            .uncompressedSize = static_cast<uint32_t>(compactedSerialized.size()),
             .flags = 0x00,
     });
 

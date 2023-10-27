@@ -5,7 +5,7 @@ Response SyncOplogOperator::operate(const OperationBody& operation, const Operat
     uint32_t nodeOplogIdToSync = operation.getArg(2).to<uint32_t>();
     uint64_t syncId = options.requestNumber;
 
-    oplogSegmentIterator_t segmentIterator = std::dynamic_pointer_cast<OplogIterator>(
+    oplogIterator_t segmentIterator = std::dynamic_pointer_cast<OplogIterator>(
             dependencies.operationLog->getAfterTimestamp(lastTimestampUnsync, OperationLogOptions{
                 .operationLogId = nodeOplogIdToSync,
                 .compressed = true,

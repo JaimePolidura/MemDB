@@ -26,6 +26,8 @@ public:
 
     virtual void clear(const OperationLogOptions options = {}) = 0;
 
+    virtual iterator_t<std::vector<uint8_t>> getBetweenTimestamps(uint64_t fromTimestamp, uint64_t toTimestamp, const OperationLogOptions options = {}) = 0;
+
     virtual iterator_t<std::vector<uint8_t>> getAfterTimestamp(uint64_t timestamp, const OperationLogOptions options = {}) = 0;
 
     virtual iterator_t<std::vector<uint8_t>> getAll(const OperationLogOptions options = {}) = 0;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "cluster/changehandler/partition/MoveOpLogRequestCreator.h"
-#include "cluster/partitions/PartitionNeighborsNodesGroupSetter.h"
+#include "cluster/partitions/PartitionNeighborsNodesSetter.h"
 #include "cluster/Cluster.h"
 
 #include "persistence/serializers/OperationLogSerializer.h"
@@ -14,7 +14,7 @@
 
 class NewNodePartitionChangeHandler {
 private:
-    PartitionNeighborsNodesGroupSetter partitionNeighborsNodesGroupSetter;
+    PartitionNeighborsNodesSetter partitionNeighborsNodesGroupSetter;
     OperationLogInvalidator operationLogInvalidator;
     OperationLogSerializer operationLogSerializer;
     operatorDispatcher_t operatorDispatcher;

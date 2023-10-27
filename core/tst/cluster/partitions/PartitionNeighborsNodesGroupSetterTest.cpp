@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "cluster/partitions/PartitionNeighborsNodesGroupSetter.h"
+#include "cluster/partitions/PartitionNeighborsNodesSetter.h"
 #include "cluster/Cluster.h"
 
 #include "PartitionsTest.h"
@@ -9,7 +9,7 @@
 TEST(PartitionNeighborsNodesGroupSetter, setFromOtherNodes){
     cluster_t cluster = std::make_shared<Cluster>();
     PartitionTest partitionTest{cluster->getPartitionObject()};
-    PartitionNeighborsNodesGroupSetter toTest{};
+    PartitionNeighborsNodesSetter toTest{};
     ClusterTest clusterTest{cluster};
 
     clusterTest.setSelfNodeId(std::make_shared<Node>(1, "192.168.1.2", NodeState::RUNNING));

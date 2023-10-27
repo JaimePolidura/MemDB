@@ -35,7 +35,7 @@ private:
     node_t selfNode;
     logger_t logger;
 
-    friend class PartitionNeighborsNodesGroupSetter;
+    friend class PartitionNeighborsNodesSetter;
     friend class PartitionClusterNodeChangeHandler;
     friend class SimpleClusterNodeChangeHandler;
     friend class NewNodePartitionChangeHandler;

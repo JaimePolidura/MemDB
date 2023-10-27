@@ -23,7 +23,7 @@ OplogIndexSegmentDescriptor OplogIndexSegmentDescriptorDeserializer::deserialize
             .ptr = Utils::parse<uint64_t>(ptr + 16),
             .crc = Utils::parse<uint32_t>(ptr + 24),
             .size = Utils::parse<uint32_t>(ptr + 28),
-            .originalSize = Utils::parse<uint32_t>(ptr + 32),
+            .uncompressedSize = Utils::parse<uint32_t>(ptr + 32),
             .flags = Utils::parse<uint32_t>(ptr + 36),
     };
 }

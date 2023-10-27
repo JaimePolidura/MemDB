@@ -1,12 +1,12 @@
 #pragma once
 
-#include "cluster/partitions/PartitionNeighborsNodesGroupSetter.h"
+#include "cluster/partitions/PartitionNeighborsNodesSetter.h"
 #include "cluster/setup/ClusterNodeSetup.h"
 #include "cluster/changehandler/partition/PartitionClusterNodeChangeHandler.h"
 
 class PartitionsClusterNodeSetup : public ClusterNodeSetup {
 private:
-    PartitionNeighborsNodesGroupSetter partitionNeighborsNodesGroupSetter;
+    PartitionNeighborsNodesSetter partitionNeighborsNodesGroupSetter;
 
 public:
     PartitionsClusterNodeSetup(logger_t logger, configuration_t configuration, onGoingSyncOplogs_t multipleResponses, memDbStores_t memDbStores):

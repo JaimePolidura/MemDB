@@ -26,6 +26,36 @@ std::vector<OplogIndexSegmentDescriptor> OplogIndexSegment::getByAfterTimestamp(
     return this->oplogIndexSegmentReader.readAllIndexFrom(ptrToRead);
 }
 
+OplogSegmentBetweenTimestampsSearchResult OplogIndexSegment::getBetweenTimestamps(uint64_t fromTimestamp, uint64_t toTimestamp) {
+    auto fromResult = this->binarySearchByTimestamp(fromTimestamp);
+    auto toResult = this->binarySearchByTimestamp(toTimestamp);
+
+    if(!fromResult.found && !toResult.found){
+        return OplogSegmentBetweenTimestampsSearchResult{
+                .resultsInDescriptorsAndIntermediate = false,
+                .resultsOnlyInIntermediate = true,
+                .resultsOnlyInSegments = false,
+                .descriptors = {}
+        };
+    }
+    if(fromResult.found && !toResult.found){
+        return OplogSegmentBetweenTimestampsSearchResult{
+                .resultsInDescriptorsAndIntermediate = true,
+                .resultsOnlyInIntermediate = false,
+                .resultsOnlyInSegments = false,
+                .descriptors = oplogIndexSegmentReader.readAllIndexFrom(fromResult.ptr),
+        };
+    }
+    if(toResult.found && fromResult.found){
+        return OplogSegmentBetweenTimestampsSearchResult{
+                .resultsInDescriptorsAndIntermediate = false,
+                .resultsOnlyInIntermediate = false,
+                .resultsOnlyInSegments = true,
+                .descriptors = oplogIndexSegmentReader.readAllIndexBetween(fromResult.ptr, toResult.ptr),
+        };
+    }
+}
+
 std::vector<OplogIndexSegmentDescriptor> OplogIndexSegment::getAll() {
     return this->oplogIndexSegmentReader.readAllIndex();
 }

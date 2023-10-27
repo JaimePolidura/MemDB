@@ -11,7 +11,7 @@ struct OplogIndexSegmentDescriptor {
     uint64_t ptr;
     uint32_t crc;
     uint32_t size;
-    uint32_t originalSize;
+    uint32_t uncompressedSize;
     uint32_t flags;
 
     bool hasFlag(OplogIndexSegmentDescriptorFlag flag) {

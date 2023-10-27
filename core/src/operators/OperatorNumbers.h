@@ -11,5 +11,6 @@ public:
     static const constexpr uint8_t SYNC_OPLOG = 0x05; //20
     static const constexpr uint8_t MOVE_OPLOG = 0x06; //24
     static const constexpr uint8_t NEXT_SYNC_OPLOG_SEGMENT = 0x07; //28
+    static const constexpr uint8_t FIX_OPLOG_SEGMENT = 0x08;
 };
 

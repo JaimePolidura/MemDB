@@ -2,7 +2,7 @@
 
 OnGoingSyncOplogsStore::OnGoingSyncOplogsStore(memdbNodeId_t nodeId): selfNodeId(nodeId) {}
 
-void OnGoingSyncOplogsStore::registerSyncOplogIterator(uint64_t syncId, oplogSegmentIterator_t segmentIterator) {
+void OnGoingSyncOplogsStore::registerSyncOplogIterator(uint64_t syncId, oplogIterator_t segmentIterator) {
     std::lock_guard<std::mutex> guard(this->onGoingSyncOplogsByIdLock);
 
     if(!this->onGoingSyncOplogsById.contains(syncId)){
@@ -14,11 +14,11 @@ void OnGoingSyncOplogsStore::registerSyncOplogIterator(uint64_t syncId, oplogSeg
     }
 }
 
-std::optional<oplogSegmentIterator_t> OnGoingSyncOplogsStore::getSenderIteratorById(uint64_t syncOplogId) {
+std::optional<oplogIterator_t> OnGoingSyncOplogsStore::getSenderIteratorById(uint64_t syncOplogId) {
     std::lock_guard<std::mutex> guard(this->onGoingSyncOplogsByIdLock);
 
     return this->onGoingSyncOplogsById.contains(syncOplogId) ?
-           std::optional<oplogSegmentIterator_t>{this->onGoingSyncOplogsById[syncOplogId].iterator} :
+           std::optional<oplogIterator_t>{this->onGoingSyncOplogsById[syncOplogId].iterator} :
            std::nullopt;
 }
 

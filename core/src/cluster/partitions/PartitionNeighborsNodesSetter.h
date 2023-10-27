@@ -2,14 +2,14 @@
 
 #include "cluster/Cluster.h"
 
-class PartitionNeighborsNodesGroupSetter {
+class PartitionNeighborsNodesSetter {
 private:
     cluster_t cluster;
 
 public:
-    PartitionNeighborsNodesGroupSetter(cluster_t cluster);
+    PartitionNeighborsNodesSetter(cluster_t cluster);
 
-    PartitionNeighborsNodesGroupSetter() = default;
+    PartitionNeighborsNodesSetter() = default;
 
     void setClusterObject(cluster_t cluster);
 
@@ -20,7 +20,7 @@ public:
     void addAllNeighborsInPartitions();
 
 private:
-    std::vector<RingEntry> getRingEntriesGroupExceptSelf(RingEntry actualEntry);
+    std::vector<RingEntry> getRingEntriesPartitionExceptSelf(RingEntry actualEntry);
 
     std::vector<node_t> toNodesFromRingEntries(const std::vector<RingEntry>& ringEntries);
 

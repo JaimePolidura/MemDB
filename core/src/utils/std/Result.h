@@ -5,12 +5,12 @@ namespace std {
     class result {
     public:
         V get_or_else(const V& alternative) {
-            return this->success ? this->_value : alternative;
+            return this->_success ? this->_value : alternative;
         }
 
         template<class Error = std::runtime_error>
         V get_or_throw(const std::string& message) {
-            if(this->success){
+            if(this->_success){
                 return this->_value;
             } else {
                 throw Error(message);
@@ -19,7 +19,7 @@ namespace std {
 
         template<class Error = std::runtime_error>
         V get_or_throw_with(std::function<std::string(E&)> errorMessageFunc) {
-            if(this->success){
+            if(this->_success){
                 return this->_value;
             } else {
                 throw Error(errorMessageFunc(this->_error));
@@ -39,21 +39,23 @@ namespace std {
         }
 
         bool has_error() {
-            return !this->success;
+            return !this->_success;
         }
 
         static result ok(V value) {
-            return result{
-                ._success = true,
-                ._value = value,
-            };
+            result toReturn{};
+            toReturn._success = true;
+            toReturn._value = value;
+
+            return toReturn;
         }
 
         static result error(E error) {
-            return result{
-                    ._success = false,
-                    ._error = error,
-            };
+            result toReturn{};
+            toReturn._success = false;
+            toReturn._error = error;
+
+            return toReturn;
         }
 
         static result error() {
@@ -66,6 +68,6 @@ namespace std {
         E _error;
         V _value;
 
-        bool success;
+        bool _success;
     };
 }

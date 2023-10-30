@@ -50,7 +50,11 @@ public:
 
     void deleteNodeById(const memdbNodeId_t nodeId);
 
-    std::optional<Response> sendRequestToAnyNode(const Request& request, const NodePartitionOptions options = {});
+    std::optional<Response> sendRequestToAnyNode(const Request& request, bool requiresSuccessfulResponse, const NodePartitionOptions options = {});
+
+    std::optional<Response> sendRequestToAnyNode(bool requiresSuccessfulResponse,
+                                                 const NodePartitionOptions options,
+                                                 std::function<Request(node_t nodeToSend)> requestCreator);
 
     Response sendRequest(memdbNodeId_t nodeId, const Request& request);
 

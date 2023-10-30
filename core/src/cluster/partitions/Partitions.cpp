@@ -5,7 +5,15 @@ Partitions::Partitions(const std::vector<RingEntry>& allRingEntries, uint32_t no
     this->selfEntry = this->ringEntries.getByNodeId(configuration->get<memdbNodeId_t>(ConfigurationKeys::NODE_ID));
 }
 
-uint32_t Partitions::getRingPositionByKey(SimpleString<memDbDataLength_t> key) const {
+uint32_t Partitions::getOplogIdOfOtherNodeBySelfOplogId(memdbNodeId_t otherNodeId, uint32_t selfOplogId) {
+    return this->configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS) ?
+           (this->isClockwiseNeighbor(otherNodeId) ?
+            selfOplogId + this->getDistanceClockwise(otherNodeId) :
+            selfOplogId - this->getDistanceCounterClockwise(otherNodeId))
+        : 0;
+}
+
+uint32_t Partitions::getRingPositionByKey(SimpleString<memDbDataLength_t> key) {
     return HashCalculator::calculate(key.toString()) % this->maxSize;
 }
 
@@ -82,7 +90,7 @@ void Partitions::add(RingEntry ringEntry){
     this->ringEntries.add(ringEntry);
 }
 
-uint32_t Partitions::getNodesPerPartition() const {
+uint32_t Partitions::getNodesPerPartition() {
     return this->nodesPerPartition;
 }
 

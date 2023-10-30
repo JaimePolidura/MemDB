@@ -10,7 +10,11 @@ Response FixOplogSegmentOperator::operate(const OperationBody& operation, const 
         .compressed = true,
     }));
 
-    auto[bytesToReturn, uncompressedSize] = this->oplogIteratorToBytes(oplogIteratorResult);
+    auto[bytesToReturn, uncompressedSize, successNotCorrupted] = this->oplogIteratorToBytes(oplogIteratorResult);
+
+    if(!successNotCorrupted){
+        return Response::error(ErrorCode::CORRUPTED_OPLOG_SEGMENT);
+    }
 
     return ResponseBuilder::builder()
         .success()
@@ -30,16 +34,22 @@ OperatorDescriptor FixOplogSegmentOperator::desc() {
     };
 }
 
-std::pair<std::vector<uint8_t>, uint32_t> FixOplogSegmentOperator::oplogIteratorToBytes(oplogIterator_t oplogIterator) {
+std::tuple<std::vector<uint8_t>, uint32_t, bool> FixOplogSegmentOperator::oplogIteratorToBytes(oplogIterator_t oplogIterator) {
     std::vector<uint8_t> result(oplogIterator->totalSize());
     uint32_t uncompressedSize = 0;
 
     while(oplogIterator->hasNext()){
         uncompressedSize += oplogIterator->getNextUncompressedSize();
 
-        std::vector<uint8_t> bytes = oplogIterator->next();
+        std::result<std::vector<uint8_t>> bytesResult = oplogIterator->next();
+
+        if(bytesResult.has_error()){
+            return std::make_tuple(result, uncompressedSize, false);
+        }
+
+        std::vector<uint8_t> bytes = bytesResult.get();
         result.insert(result.begin(), bytes.begin(), bytes.end());
     }
 
-    return std::make_pair(result, uncompressedSize);
+    return std::make_tuple(result, uncompressedSize, true);
 }

@@ -7,13 +7,16 @@
 #include "utils/compression/Compressor.h"
 #include "utils/Iterator.h"
 
-using descriptorDataFetcher_t = std::function<std::vector<uint8_t>(OplogIndexSegmentDescriptor)>;
+using descriptorDataFetcher_t = std::function<std::result<std::vector<uint8_t>>(OplogIndexSegmentDescriptor)>;
 
-class OplogIterator : public Iterator<std::vector<uint8_t>> {
+class OplogIterator : public Iterator<std::result<std::vector<uint8_t>>> {
 private:
     std::vector<OplogIndexSegmentDescriptor> descriptors;
     descriptorDataFetcher_t descriptorDataFetcher;
     std::vector<uint8_t> intermediate;
+    uint32_t oplogId;
+
+    uint64_t segmentOplogDescriptorInitDiskPtr;
 
     Compressor compressor;
 
@@ -27,19 +30,27 @@ private:
 
 public:
     OplogIterator(const std::vector<OplogIndexSegmentDescriptor>& descriptors,
+                  uint64_t segmentOplogDescriptorInitDiskPtr,
                   const std::vector<uint8_t>& intermediate,
                   bool compressed,
+                  uint32_t oplogId,
                   descriptorDataFetcher_t descriptorDataFetcher);
 
     bool hasNext() override;
 
-    std::vector<uint8_t> next() override;
+    std::result<std::vector<uint8_t>> next() override;
 
     uint64_t totalSize() override;
 
-    uint32_t getActualSize();
+    OplogIndexSegmentDescriptor getLastDescriptor();
+
+    uint32_t getOplogId();
+
+    uint64_t getLastSegmentOplogDescriptorDiskPtr();
 
     uint32_t getNextUncompressedSize();
+
+    uint32_t getLastUncompressedSize();
 
     uint32_t getLastTimestampOfLastNext();
 

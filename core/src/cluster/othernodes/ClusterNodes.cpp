@@ -61,7 +61,13 @@ void ClusterNodes::deleteNodeById(const memdbNodeId_t nodeId) {
     }
 }
 
-std::optional<Response> ClusterNodes::sendRequestToAnyNode(const Request& request, const NodePartitionOptions options) {
+std::optional<Response> ClusterNodes::sendRequestToAnyNode(const Request& request, bool requiresSuccessfulResponse, const NodePartitionOptions options) {
+    return this->sendRequestToAnyNode(requiresSuccessfulResponse, options, [&request](node_t node){return request;});
+}
+
+std::optional<Response> ClusterNodes::sendRequestToAnyNode(bool requiresSuccessfulResponse,
+                                             const NodePartitionOptions options,
+                                             std::function<Request(node_t nodeToSend)> requestCreator) {
     std::set<memdbNodeId_t> alreadyCheckedNodeId{};
 
     while(true) {
@@ -71,11 +77,15 @@ std::optional<Response> ClusterNodes::sendRequestToAnyNode(const Request& reques
             return std::nullopt;
         }
 
+        Request request = requestCreator(node.value());
+
         std::optional<Response> responseOptional = Utils::tryOnceAndGetOptional<Response>([&request, &node](){
             return node.value()->sendRequest(request);
         });
 
-        if(responseOptional.has_value()){
+        alreadyCheckedNodeId.insert(node.value()->nodeId);
+
+        if(responseOptional.has_value() && (!requiresSuccessfulResponse || responseOptional.value().isSuccessful)){
             return responseOptional.value();
         }
     }
@@ -127,12 +137,10 @@ std::optional<node_t> ClusterNodes::getRandomNode(std::set<memdbNodeId_t> alread
     NodesInPartition nodesInPartition = this->nodesInPartitions[options.partitionId];
     std::set<memdbNodeId_t> nodesIdInPartition = nodesInPartition.getAll();
 
-    std::set<memdbNodeId_t> alreadyChecked{};
-
     while(alreadyCheckedNodesId.size() != nodesInPartition.size()) {
         memdbNodeId_t offset = std::rand() % nodesInPartition.size();
 
-        if(alreadyChecked.contains(offset))
+        if(alreadyCheckedNodesId.contains(offset))
             continue;
 
         auto ptr = std::begin(nodesIdInPartition);

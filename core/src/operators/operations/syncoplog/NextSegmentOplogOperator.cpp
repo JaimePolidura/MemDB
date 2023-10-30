@@ -11,8 +11,7 @@ Response NextSegmentOplogOperator::operate(const OperationBody& operation, const
 
     dependencies.onGoingSyncOplogs->markSegmentAsSent(syncId);
 
-    auto uncompressSize = oplogSenderIterator->getNextUncompressedSize();
-    auto compressedOplog = oplogSenderIterator->next();
+    auto [compressedOplog, uncompressSize] = this->getNextOplogSegmentOrTryFix(oplogSenderIterator, dependencies);
 
     return ResponseBuilder::builder()
             .values({
@@ -32,6 +31,31 @@ OperatorDescriptor NextSegmentOplogOperator::desc() {
         .name = "NEXT_SYNC_OPLOG_SEGMENT",
         .authorizedToExecute = { AuthenticationType::NODE },
     };
+}
+
+std::pair<std::vector<uint8_t>, uint32_t> NextSegmentOplogOperator::getNextOplogSegmentOrTryFix(oplogIterator_t iterator, OperatorDependencies& dependencies) {
+    std::result<std::vector<uint8_t>> bytesFromOplogIteratorResult = iterator->next();
+
+    if(bytesFromOplogIteratorResult.is_success()){
+        return std::make_pair(bytesFromOplogIteratorResult.get(), iterator->getLastUncompressedSize());
+    }
+
+    OplogIndexSegmentDescriptor corruptedDescriptor = iterator->getLastDescriptor();
+
+    std::optional<Response> fixOplogResponse =
+            dependencies.cluster->fixOplogSegment(iterator->getOplogId(), corruptedDescriptor.min, corruptedDescriptor.max);
+
+    if(!fixOplogResponse.has_value() || !fixOplogResponse->isSuccessful) { //No node available or all nodes have corrupted oplog
+        return std::make_pair(std::vector<uint8_t>{}, 0);
+    }
+
+    uint32_t uncompressedSize = fixOplogResponse.value().getResponseValueAtOffset(0, sizeof(uint32_t)).to<uint32_t>();
+    std::vector<uint8_t> fixedBytes = fixOplogResponse->getResponseValueAtOffset(sizeof(uint32_t),
+        fixOplogResponse->responseValue.size - sizeof(uint32_t)).toVector();
+
+    dependencies.oplogIndexSegment->updateCorruptedSegment(uncompressedSize, iterator->getLastSegmentOplogDescriptorDiskPtr(), fixedBytes);
+
+    return std::make_pair(fixedBytes, uncompressedSize);
 }
 
 oplogIterator_t NextSegmentOplogOperator::getOplogSegmentIterator(const OperationBody &operation, const OperationOptions options,

@@ -13,6 +13,11 @@
 
 #include "memdbtypes.h"
 
+enum OperationLogIteratorOrigin {
+    LOCAL,
+    OTHER_NODE
+};
+
 class MemDb {
 private:
     operatorDispatcher_t operatorDispatcher;
@@ -25,6 +30,8 @@ private:
     lamportClock_t clock;
     logger_t logger;
 
+    Compressor compressor{};
+
 public:
     MemDb(logger_t logger, memDbStores_t dbMaps, configuration_t configuration, operatorDispatcher_t operatorDispatcher, tcpServer_t tcpServer,
           lamportClock_t clock, cluster_t cluster, operationLog_t operationLog);
@@ -36,5 +43,9 @@ private:
 
     std::vector<uint64_t> restoreOplogFromDisk();
 
-    uint64_t applyOplog(iterator_t<std::vector<uint8_t>> oplogIterator, bool dontSaveInOperationLog, uint32_t partitionId);
+    uint64_t applyOplog(bytesDiskIterator_t oplogIterator, bool dontSaveInOperationLog, uint32_t partitionId, OperationLogIteratorOrigin oplogOrigin);
+
+    std::vector<uint8_t> getNextOplogOrTryFix(bytesDiskIterator_t oplogIterator, OperationLogIteratorOrigin oplogOrigin);
+
+    std::vector<uint8_t> tryFixLocalOplogSegment(bytesDiskIterator_t oplogIterator);
 };

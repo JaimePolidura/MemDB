@@ -19,11 +19,11 @@ void OplogIndexSegment::save(const std::vector<uint8_t>& toSave) {
     this->oplogIndexSegmentWriter.write(toSave);
 }
 
-std::vector<OplogIndexSegmentDescriptor> OplogIndexSegment::getByAfterTimestamp(uint64_t timestamp) {
+OplogSegmentAfterTimestampsSearchResult OplogIndexSegment::getByAfterTimestamp(uint64_t timestamp) {
     OplogSegmentBinarySearchResult searchResult = this->binarySearchByTimestamp(timestamp);
     uint64_t ptrToRead = searchResult.found ? searchResult.ptr : 0;
 
-    return this->oplogIndexSegmentReader.readAllIndexFrom(ptrToRead);
+    return {.descriptors = this->oplogIndexSegmentReader.readAllIndexFrom(ptrToRead), .descriptorInitPtr = ptrToRead};
 }
 
 OplogSegmentBetweenTimestampsSearchResult OplogIndexSegment::getBetweenTimestamps(uint64_t fromTimestamp, uint64_t toTimestamp) {
@@ -35,6 +35,7 @@ OplogSegmentBetweenTimestampsSearchResult OplogIndexSegment::getBetweenTimestamp
                 .resultsInDescriptorsAndIntermediate = false,
                 .resultsOnlyInIntermediate = true,
                 .resultsOnlyInSegments = false,
+                .descriptorInitPtr = 0,
                 .descriptors = {}
         };
     }
@@ -43,6 +44,7 @@ OplogSegmentBetweenTimestampsSearchResult OplogIndexSegment::getBetweenTimestamp
                 .resultsInDescriptorsAndIntermediate = true,
                 .resultsOnlyInIntermediate = false,
                 .resultsOnlyInSegments = false,
+                .descriptorInitPtr = fromResult.ptr,
                 .descriptors = oplogIndexSegmentReader.readAllIndexFrom(fromResult.ptr),
         };
     }
@@ -51,6 +53,7 @@ OplogSegmentBetweenTimestampsSearchResult OplogIndexSegment::getBetweenTimestamp
                 .resultsInDescriptorsAndIntermediate = false,
                 .resultsOnlyInIntermediate = false,
                 .resultsOnlyInSegments = true,
+                .descriptorInitPtr = fromResult.ptr,
                 .descriptors = oplogIndexSegmentReader.readAllIndexBetween(fromResult.ptr, toResult.ptr),
         };
     }
@@ -60,7 +63,12 @@ std::vector<OplogIndexSegmentDescriptor> OplogIndexSegment::getAll() {
     return this->oplogIndexSegmentReader.readAllIndex();
 }
 
-std::vector<uint8_t> OplogIndexSegment::getDataByDescriptorBytes(OplogIndexSegmentDescriptor descriptor) {
+void OplogIndexSegment::updateCorruptedSegment(const std::vector<uint8_t>& uncorruptedBytes, uint32_t uncompressedSize, uint64_t indexSegmentDescriptorPtr) {
+    OplogIndexSegmentDescriptor corruptedDescriptor = this->oplogIndexSegmentReader.readIndexAt(indexSegmentDescriptorPtr);
+    this->oplogIndexSegmentWriter.updateCorruptedSegment(uncompressedSize, indexSegmentDescriptorPtr, corruptedDescriptor, uncorruptedBytes);
+}
+
+std::result<std::vector<uint8_t>> OplogIndexSegment::getDataByDescriptorBytes(OplogIndexSegmentDescriptor descriptor) {
     return this->oplogIndexSegmentReader.readBytesDataByDescriptor(descriptor);
 }
 

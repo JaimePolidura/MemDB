@@ -16,7 +16,7 @@ void OplogIndexSegmentWriter::write(const std::vector<uint8_t> &toWrite) {
     });
 
     writeLock.lock();
-    
+
     std::vector<uint8_t> descriptorSerialized = this->indexSegmentDescSerializer.serialize(OplogIndexSegmentDescriptor{
             .min = compacted.at(0).timestamp,
             .max = compacted.at(compacted.size() - 1).timestamp,
@@ -29,6 +29,24 @@ void OplogIndexSegmentWriter::write(const std::vector<uint8_t> &toWrite) {
 
     FileUtils::appendBytes(this->partitionPath + "/" + this->dataFileName, compactedCompressedSerialized);
     FileUtils::appendBytes(this->partitionPath + "/" + this->indexFileName, descriptorSerialized);
+
+    writeLock.unlock();
+}
+
+void OplogIndexSegmentWriter::updateCorruptedSegment(uint32_t uncompressedSize, uint64_t indexSegmentDescriptorPtr,
+    OplogIndexSegmentDescriptor corruptedDescriptor, const std::vector<uint8_t>& uncorruptedBytes) {
+
+    writeLock.lock();
+
+    corruptedDescriptor.uncompressedSize = uncompressedSize;
+    corruptedDescriptor.size = uncorruptedBytes.size();
+    corruptedDescriptor.crc = Utils::crc(uncorruptedBytes);
+    corruptedDescriptor.ptr = FileUtils::size(partitionPath, this->dataFileName);
+
+    std::vector<uint8_t> descriptorSerialized = this->indexSegmentDescSerializer.serialize(corruptedDescriptor);
+
+    FileUtils::appendBytes(this->partitionPath + "/" + this->dataFileName, uncorruptedBytes);
+    FileUtils::writeBytes(this->partitionPath + "/" + this->indexFileName, indexSegmentDescriptorPtr, descriptorSerialized);
 
     writeLock.unlock();
 }

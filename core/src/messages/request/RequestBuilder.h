@@ -36,6 +36,7 @@ public:
     RequestBuilder * selfNode(memdbNodeId_t nodeId);
     RequestBuilder * args(const std::vector<SimpleString<memDbDataLength_t>>& args);
     RequestBuilder * addArg(const SimpleString<memDbDataLength_t>& arg);
+    RequestBuilder * addDoubleArg(uint64_t arg);
 
     Request build();
     OperationBody buildOperationBody();

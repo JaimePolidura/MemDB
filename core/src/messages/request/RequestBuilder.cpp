@@ -52,6 +52,14 @@ RequestBuilder *RequestBuilder::selfNode(memdbNodeId_t nodeId) {
     return this;
 }
 
+RequestBuilder * RequestBuilder::addDoubleArg(uint64_t arg) {
+    uint32_t part1 = arg >> 32;
+    uint32_t part2 = arg & 0x00000000FFFFFFFF;
+
+    this->_args->push_back(SimpleString<memDbDataLength_t>::fromNumber(part1));
+    this->_args->push_back(SimpleString<memDbDataLength_t>::fromNumber(part2));
+}
+
 RequestBuilder *RequestBuilder::args(const std::vector<SimpleString<memDbDataLength_t>> &args) {
     this->_args = std::make_shared<std::vector<SimpleString<memDbDataLength_t>>>(args);
     return this;

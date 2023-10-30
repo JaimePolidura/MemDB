@@ -11,7 +11,7 @@
 #include "cluster/partitions/Partitions.h"
 #include "operators/OperatorNumbers.h"
 
-class SyncOplogReceiverIterator : public Iterator<std::vector<uint8_t>> {
+class SyncOplogReceiverIterator : public Iterator<std::result<std::vector<uint8_t>>> {
 private:
     configuration_t configuration;
     clusterNodes_t clusterNodes;
@@ -37,7 +37,7 @@ public:
 
     bool hasNext() override;
 
-    std::vector<uint8_t> next() override;
+    std::result<std::vector<uint8_t>> next() override;
 
     uint64_t totalSize() override;
 
@@ -49,7 +49,5 @@ private:
     Request createSyncOplogRequest(memdbNodeId_t nodeIdToSendRequest);
     Request createNextSegmnentRequest();
 
-    std::tuple<uint32_t, uint32_t, uint32_t> createRequestSyncOplogArgs(memdbNodeId_t nodeIdToSendRequest);
-
-    std::vector<uint8_t> getOplogFromResponse(Response& response);
+    std::result<std::vector<uint8_t>> getOplogFromResponse(Response& response);
 };

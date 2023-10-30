@@ -1,12 +1,16 @@
 #include "OplogIterator.h"
 
 OplogIterator::OplogIterator(const std::vector<OplogIndexSegmentDescriptor>& descriptors,
+                             uint64_t segmentOplogDescriptorInitDiskPtr,
                              const std::vector<uint8_t>& intermediate,
                              bool compressed,
+                             uint32_t oplogId,
                              descriptorDataFetcher_t descriptorDataFetcher):
         compressed(compressed),
         descriptorDataFetcher(descriptorDataFetcher),
+        segmentOplogDescriptorInitDiskPtr(segmentOplogDescriptorInitDiskPtr),
         intermediate(intermediate),
+        oplogId(oplogId),
         descriptors(descriptors) {
 }
 
@@ -15,30 +19,39 @@ bool OplogIterator::hasNext() {
         (!this->intermediateIterated && this->intermediate.size() > 0);
 }
 
-std::vector<uint8_t> OplogIterator::next() {
+std::result<std::vector<uint8_t>> OplogIterator::next() {
     if(!this->intermediateIterated) {
         this->intermediateIterated = true;
 
         return this->compressed ?
-            this->compressor.compressBytes(this->intermediate)
-                .get_or_throw_with([](const int errorCode){return "Impossible to compress intermediate. Return code: " + errorCode;}) :
-            this->intermediate;
+            std::result<std::vector<uint8_t>>::ok(this->compressor.compressBytes(this->intermediate)
+                .get_or_throw_with([](const int errorCode){return "Impossible to compress intermediate. Return code: " + errorCode;})) :
+            std::result<std::vector<uint8_t>>::ok(this->intermediate);
     }
 
     OplogIndexSegmentDescriptor actualDescriptor = this->descriptors.at(this->actualIndexDescriptor);
 
     this->actualIndexDescriptor = this->actualIndexDescriptor + 1;
     this->lastTimestampOfLastNext = actualDescriptor.max;
-    std::vector<uint8_t> bytesFromDescriptor = this->descriptorDataFetcher(actualDescriptor);
+    //Maybe corrupted
+    std::result<std::vector<uint8_t>> bytesFromDescriptorResult = this->descriptorDataFetcher(actualDescriptor);
 
-    return !this->compressed ?
-           this->compressor.uncompressBytes(bytesFromDescriptor, actualDescriptor.uncompressedSize)
-                   .get_or_throw_with([](const int errorCode){return "Impossible to decompress oplog in OplogIterator::next. Error code: " + errorCode;}) :
-           bytesFromDescriptor;
+    return !this->compressed && bytesFromDescriptorResult.is_success() ?
+           std::result<std::vector<uint8_t>>::ok(this->compressor.uncompressBytes(bytesFromDescriptorResult.get(), actualDescriptor.uncompressedSize)
+                   .get_or_throw_with([](const int errorCode){return "Impossible to decompress oplog in OplogIterator::next. Error code: " + errorCode;})) :
+           bytesFromDescriptorResult;
 }
 
 uint64_t OplogIterator::totalSize() {
     return this->descriptors.size() + (this->intermediate.empty() ? 0 : 1);
+}
+
+uint64_t OplogIterator::getLastSegmentOplogDescriptorDiskPtr() {
+    if(this->actualIndexDescriptor > 0){
+        return this->segmentOplogDescriptorInitDiskPtr + ((this->actualIndexDescriptor - 1) * sizeof(OplogIndexSegmentDescriptor));
+    } else {
+        return this->segmentOplogDescriptorInitDiskPtr;
+    }
 }
 
 uint32_t OplogIterator::getNextUncompressedSize() {
@@ -47,10 +60,26 @@ uint32_t OplogIterator::getNextUncompressedSize() {
         this->intermediate.size();
 }
 
+uint32_t OplogIterator::getLastUncompressedSize() {
+    if(this->actualIndexDescriptor == 0){
+        return this->intermediate.size();
+    } else {
+        return this->descriptors.at(this->actualIndexDescriptor - 1).uncompressedSize;
+    }
+}
+
+OplogIndexSegmentDescriptor OplogIterator::getLastDescriptor() {
+    return this->descriptors.at(this->actualIndexDescriptor - 1);
+}
+
 bool OplogIterator::isCompressingRequired() {
     return this->compressed;
 }
 
 uint32_t OplogIterator::getLastTimestampOfLastNext() {
     return this->lastTimestampOfLastNext;
+}
+
+uint32_t OplogIterator::getOplogId() {
+    return this->oplogId;
 }

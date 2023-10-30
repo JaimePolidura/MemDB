@@ -29,12 +29,12 @@ std::vector<uint64_t> MemDb::restoreOplogFromDisk() {
     std::vector<uint64_t> lastRestoredTimestamps{};
     
     for (uint32_t i = 0; i < numberOplogs; i++) {
-        iterator_t<std::vector<uint8_t>> oplogIterator = this->operationLog->getAll(OperationLogOptions{
+        bytesDiskIterator_t oplogIterator = this->operationLog->getAll(OperationLogOptions{
                 .operationLogId = i,
                 .compressed = false,
         });
 
-        uint64_t lastAppliedTimestamp = this->applyOplog(oplogIterator, false, i);
+        uint64_t lastAppliedTimestamp = this->applyOplog(oplogIterator, false, i, OperationLogIteratorOrigin::LOCAL);
 
         lastRestoredTimestamps.push_back(lastAppliedTimestamp);
     }
@@ -54,7 +54,7 @@ void MemDb::syncOplogFromCluster(std::vector<uint64_t> lastTimestampProcessedFro
                         .partitionId = oplogId
                 });
 
-                this->applyOplog(unsyncedOplog, true, oplogId);
+                this->applyOplog(unsyncedOplog, true, oplogId, OperationLogIteratorOrigin::OTHER_NODE);
                 this->logger->info("Synchronized {0} oplog entries with the cluster", unsyncedOplog->totalSize());
             }catch (const std::exception& e) {
                 std::cout << e.what() << std::endl;
@@ -71,13 +71,14 @@ void MemDb::syncOplogFromCluster(std::vector<uint64_t> lastTimestampProcessedFro
     this->cluster->setRunning();
 }
 
-uint64_t MemDb::applyOplog(iterator_t<std::vector<uint8_t>> oplogIterator, bool saveInOperationLog, uint32_t partitionId) {
+uint64_t MemDb::applyOplog(bytesDiskIterator_t oplogIterator, bool saveInOperationLog, uint32_t partitionId, OperationLogIteratorOrigin oplogOrigin) {
     OperationLogDeserializer operationLogDeserializer{};
     uint64_t latestTimestampApplied = 0;
     uint64_t numberOplogsApplied = 0;
 
     while(oplogIterator->hasNext()) {
-        std::vector<uint8_t> serializedOplog = oplogIterator->next();
+        std::vector<uint8_t> serializedOplog = this->getNextOplogOrTryFix(oplogIterator, oplogOrigin);
+
         std::vector<OperationBody> deserializedOplog = operationLogDeserializer.deserializeAll(serializedOplog);
 
         for(OperationBody& operationLogInDisk : deserializedOplog) {
@@ -102,6 +103,45 @@ uint64_t MemDb::applyOplog(iterator_t<std::vector<uint8_t>> oplogIterator, bool 
     this->operatorDispatcher->applyDelayedOperationsBuffer();
 
     return latestTimestampApplied;
+}
+
+std::vector<uint8_t> MemDb::getNextOplogOrTryFix(bytesDiskIterator_t oplogIterator, OperationLogIteratorOrigin oplogOrigin) {
+    std::result<std::vector<uint8_t>> serializedOplogResult = oplogIterator->next();
+
+    if(serializedOplogResult.has_error() && oplogOrigin == OperationLogIteratorOrigin::LOCAL){ //Maybe corrupted
+        return this->tryFixLocalOplogSegment(oplogIterator);
+    } else {
+        return serializedOplogResult.get();
+    }
+}
+
+std::vector<uint8_t> MemDb::tryFixLocalOplogSegment(bytesDiskIterator_t oplogIterator) {
+    this->logger->error("Detected corrupted oplog segment. CRCs don't match");
+
+    if(!this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION)){
+        return {};
+    }
+
+    oplogIterator_t oplogIteratorCasted = std::dynamic_pointer_cast<OplogIterator>(oplogIterator);
+    OplogIndexSegmentDescriptor corruptedDescriptor = oplogIteratorCasted->getLastDescriptor();
+
+    std::optional<Response> responseOptional = this->cluster->fixOplogSegment(oplogIteratorCasted->getOplogId(),
+        corruptedDescriptor.min, corruptedDescriptor.max);
+
+    if(!responseOptional.has_value() || !responseOptional->isSuccessful){
+        this->logger->error("Impossible to get available node to fix oplog");
+        return {};
+    }
+
+    uint32_t uncompressedSize = responseOptional->getResponseValueAtOffset(0, sizeof(uint32_t))
+            .to<uint32_t>();
+    std::vector<uint8_t> fixedOplog = responseOptional->getResponseValueAtOffset(sizeof(uint32_t), responseOptional->responseValue.size - sizeof(uint32_t))
+            .toVector();
+
+    this->operationLog->updateCorrupted(fixedOplog, uncompressedSize, oplogIteratorCasted->getLastSegmentOplogDescriptorDiskPtr());
+
+    return this->compressor.uncompressBytes(fixedOplog, uncompressedSize)
+            .get_or_throw_with([](auto ec){return "Impossible to decompress oplog in MemDb::tryFixLocalOplogSegment. Error code: " + ec;});
 }
 
 #ifdef __linux__

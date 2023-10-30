@@ -33,25 +33,33 @@ void MultipleOperationLog::clear(const OperationLogOptions options) {
     this->operationLogs.at(options.operationLogId)->clear(options);
 }
 
-iterator_t<std::vector<uint8_t>> MultipleOperationLog::getBetweenTimestamps(uint64_t fromTimestamp, uint64_t toTimestamp, const OperationLogOptions options) {
+void MultipleOperationLog::updateCorrupted(const std::vector<uint8_t>& uncorrupted, uint32_t uncompressedSize, uint64_t ptr, const OperationLogOptions options) {
     if(options.operationLogId >= this->operationLogs.size()){
-        return std::make_shared<NullIterator<std::vector<uint8_t>>>();
+        return;
+    }
+
+    return this->operationLogs[options.operationLogId]->updateCorrupted(fixed, uncompressedSize, ptr, options);
+}
+
+bytesDiskIterator_t MultipleOperationLog::getBetweenTimestamps(uint64_t fromTimestamp, uint64_t toTimestamp, const OperationLogOptions options) {
+    if(options.operationLogId >= this->operationLogs.size()){
+        return std::make_shared<NullIterator<std::result<std::vector<uint8_t>>>>();
     }
 
     return this->operationLogs[options.operationLogId]->getBetweenTimestamps(fromTimestamp, toTimestamp, options);
 }
 
-iterator_t<std::vector<uint8_t>> MultipleOperationLog::getAfterTimestamp(uint64_t timestamp, OperationLogOptions options) {
+bytesDiskIterator_t MultipleOperationLog::getAfterTimestamp(uint64_t timestamp, OperationLogOptions options) {
     if(options.operationLogId >= this->operationLogs.size()){
-        return std::make_shared<NullIterator<std::vector<uint8_t>>>();
+        return std::make_shared<NullIterator<std::result<std::vector<uint8_t>>>>();
     }
 
     return this->operationLogs[options.operationLogId]->getAfterTimestamp(timestamp, options);
 }
 
-iterator_t<std::vector<uint8_t>> MultipleOperationLog::getAll(const OperationLogOptions options) {
+bytesDiskIterator_t MultipleOperationLog::getAll(const OperationLogOptions options) {
     if(options.operationLogId >= this->operationLogs.size()){
-        return std::make_shared<NullIterator<std::vector<uint8_t>>>();
+        return std::make_shared<NullIterator<std::result<std::vector<uint8_t>>>>();
     }
 
     return this->operationLogs[options.operationLogId]->getAll(options);

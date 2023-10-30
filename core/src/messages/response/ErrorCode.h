@@ -13,4 +13,5 @@ public:
     static const constexpr uint8_t INVALID_PARTITION = 0x06;
     static const constexpr uint8_t INVALID_CALL = 0x07;
     static const constexpr uint8_t SYNC_OP_LOG_EOF = 0x08;
+    static const constexpr uint8_t CORRUPTED_OPLOG_SEGMENT = 0x09;
 };

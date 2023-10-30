@@ -22,6 +22,17 @@ void FileUtils::writeBytes(const std::string &path, const std::vector<uint8_t> &
     }
 }
 
+void FileUtils::writeBytes(const std::string& path, uint64_t ptr, const std::vector<uint8_t>& bytes) {
+    std::ofstream file(path, std::ios::trunc | std::ios::binary);
+    if (file.is_open()) {
+        file.seekp(ptr, std::ios::beg);
+        file.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+        file.flush();
+        file.close();
+    }else{
+        throw std::runtime_error("Cannot open filePath " + path);
+    }
+
 void FileUtils::createDirectory(const std::string &path) {
 #ifdef _WIN32
     CreateDirectoryA(path.c_str(), NULL);

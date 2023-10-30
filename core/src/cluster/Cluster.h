@@ -55,7 +55,9 @@ public:
 
     auto setRunning() -> void;
 
-    auto syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodePartitionOptions options = {}) -> iterator_t<std::vector<uint8_t>>;
+    auto syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodePartitionOptions options = {}) -> iterator_t<std::result<std::vector<uint8_t>>>;
+
+    auto fixOplogSegment(uint32_t selfOplogId, uint64_t minTimestamp, uint64_t maxTimestamp) -> std::optional<Response>;
 
     auto getPartitionObject() -> partitions_t;
 

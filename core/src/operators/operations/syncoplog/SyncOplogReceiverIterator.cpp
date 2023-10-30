@@ -16,12 +16,12 @@ bool SyncOplogReceiverIterator::hasNext() {
     return this->nSegmentsRemaining > 0;
 }
 
-std::vector<uint8_t> SyncOplogReceiverIterator::next() {
+std::result<std::vector<uint8_t>> SyncOplogReceiverIterator::next() {
     Response nextResponse = this->sendNextSegment();
 
     if(!nextResponse.isSuccessful){
         this->nSegmentsRemaining = 0;
-        return std::vector<uint8_t>{};
+        return std::result<std::vector<uint8_t>>::ok(std::vector<uint8_t>{});
     }
 
     this->timestampToSync = nextResponse.timestamp;
@@ -52,13 +52,13 @@ uint64_t SyncOplogReceiverIterator::totalSize() {
     return this->nSegmentsRemaining;
 }
 
-std::vector<uint8_t> SyncOplogReceiverIterator::getOplogFromResponse(Response& response) {
+std::result<std::vector<uint8_t>> SyncOplogReceiverIterator::getOplogFromResponse(Response& response) {
     auto oplog = response.getResponseValueAtOffset(4, response.responseValue.size - 4).toVector();
     auto originalSize = response.getResponseValueAtOffset(0, 4).to<uint32_t>();
 
-    return this->compressor.uncompressBytes(oplog, originalSize).get_or_throw_with([](const int errorCode) {
+    return std::result<std::vector<uint8_t>>::ok(this->compressor.uncompressBytes(oplog, originalSize).get_or_throw_with([](const int errorCode) {
         return "Unable to uncompress oplog in SyncOplogReceiverIterator::getOplogFromResponse with error code: " + errorCode;
-    });
+    }));
 }
 
 void SyncOplogReceiverIterator::initSyncOplog() {
@@ -84,15 +84,12 @@ void SyncOplogReceiverIterator::initSyncOplog() {
 }
 
 Request SyncOplogReceiverIterator::createSyncOplogRequest(memdbNodeId_t nodeIdToSendRequest) {
-    auto [part1, part2, nodeOplogId] = this->createRequestSyncOplogArgs(nodeIdToSendRequest);
+    auto nodeOplogId = this->partitions->getOplogIdOfOtherNodeBySelfOplogId(nodeIdToSendRequest, this->selfOplogIdToSync);
 
     return RequestBuilder::builder()
             .authKey(this->configuration->get(ConfigurationKeys::AUTH_NODE_KEY))
-            ->args({
-                SimpleString<memDbDataLength_t>::fromNumber(part1),
-                SimpleString<memDbDataLength_t>::fromNumber(part2),
-                SimpleString<memDbDataLength_t>::fromNumber(nodeOplogId)
-            })
+            ->addDoubleArg(this->timestampToSync)
+            ->addArg(SimpleString<memDbDataLength_t>::fromNumber(nodeOplogId))
             ->selfNode(this->configuration->get<memdbNodeId_t>(ConfigurationKeys::NODE_ID))
             ->operatorNumber(OperatorNumbers::SYNC_OPLOG)
             ->requestNumber(this->nextSyncId())
@@ -100,28 +97,13 @@ Request SyncOplogReceiverIterator::createSyncOplogRequest(memdbNodeId_t nodeIdTo
 }
 
 Request SyncOplogReceiverIterator::createNextSegmnentRequest() {
-    auto [part1, part2, nodeOplogId] = this->createRequestSyncOplogArgs(this->nodeSender->nodeId);
+    auto nodeOplogId = this->partitions->getOplogIdOfOtherNodeBySelfOplogId(this->nodeSender->nodeId, this->selfOplogIdToSync);
 
     return RequestBuilder::builder()
             .authKey(this->configuration->get(ConfigurationKeys::AUTH_NODE_KEY))
             ->operatorNumber(OperatorNumbers::NEXT_SYNC_OPLOG_SEGMENT)
             ->requestNumber(this->syncId)
-            ->args({
-                SimpleString<memDbDataLength_t>::fromNumber(part1),
-                SimpleString<memDbDataLength_t>::fromNumber(part2),
-                SimpleString<memDbDataLength_t>::fromNumber(nodeOplogId)
-            })
+            ->addDoubleArg(this->timestampToSync)
+            ->addArg(SimpleString<memDbDataLength_t>::fromNumber(nodeOplogId))
             ->build();
-}
-
-std::tuple<uint32_t, uint32_t, uint32_t> SyncOplogReceiverIterator::createRequestSyncOplogArgs(memdbNodeId_t nodeIdToSendRequest) {
-    uint32_t part1 = this->timestampToSync >> 32;
-    uint32_t part2 = this->timestampToSync & 0xFFFFFFFF;
-    uint32_t nodeOplogId = this->configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS) ?
-                           (this->partitions->isClockwiseNeighbor(nodeIdToSendRequest) ?
-                            this->selfOplogIdToSync + this->partitions->getDistanceClockwise(nodeIdToSendRequest) :
-                            this->selfOplogIdToSync - this->partitions->getDistanceCounterClockwise(nodeIdToSendRequest))
-                            : 0;
-
-    return std::make_tuple(part1, part2, nodeOplogId);
 }

@@ -59,9 +59,10 @@ namespace std {
         }
 
         static result error() {
-            return result{
-                    ._success = false,
-            };
+            result toReturn{};
+            toReturn._success = false;
+
+            return toReturn;
         }
 
     private:

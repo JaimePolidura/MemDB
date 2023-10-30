@@ -29,6 +29,7 @@ private:
 public:
     OplogIndexSegmentWriter(const std::string& partitionPath, const std::string& dataFileName, const std::string& indexFileName, logger_t logger);
 
-    //ToWrite -> Deserialized -> Sorted -> Compacted -> Serialized -> Compressed
     void write(const std::vector<uint8_t>& toWrite);
+
+    void updateCorruptedSegment(uint32_t uncompressedSize, uint64_t indexSegmentDescriptorPtr, OplogIndexSegmentDescriptor corruptedDescriptor, const std::vector<uint8_t>& uncorruptedBytes);
 };

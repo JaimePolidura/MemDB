@@ -6,9 +6,11 @@
 #include "operators/operations/syncoplog/OnGoingSyncOplogsStore.h"
 #include "db/MemDbStores.h"
 #include "logging/Logger.h"
+#include "persistence/segments/OplogIndexSegment.h"
 
 struct OperatorDependencies {
     onGoingSyncOplogs_t onGoingSyncOplogs;
+    oplogIndexSegment_t oplogIndexSegment;
     configuration_t configuration;
     operationLog_t operationLog;
     memDbStores_t memDbStores;

@@ -2,7 +2,7 @@
 
 #include "shared.h"
 
-enum OplogIndexSegmentDescriptorFlag : uint8_t {
+enum OplogIndexSegmentDescriptorFlag : uint32_t {
 };
 
 struct OplogIndexSegmentDescriptor {

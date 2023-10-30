@@ -23,7 +23,21 @@ auto Cluster::setRunning() -> void {
     this->logger->info("Changed cluster node state to RUNNING");
 }
 
-auto Cluster::syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodePartitionOptions options) -> iterator_t<std::vector<uint8_t>> {
+auto Cluster::fixOplogSegment(uint32_t selfOplogId, uint64_t minTimestamp, uint64_t maxTimestamp) -> std::optional<Response> {
+    return this->clusterNodes->sendRequestToAnyNode(true, NodePartitionOptions{.partitionId = static_cast<int>(selfOplogId)},[this, selfOplogId, minTimestamp, maxTimestamp](node_t nodeToSend) {
+        auto otherNodeOplogId = this->partitions->getOplogIdOfOtherNodeBySelfOplogId(nodeToSend->nodeId, selfOplogId);
+        return RequestBuilder::builder()
+            .authKey(this->configuration->get(ConfigurationKeys::AUTH_NODE_KEY))
+            ->selfNode(this->selfNode->nodeId)
+            ->operatorNumber(OperatorNumbers::FIX_OPLOG_SEGMENT)
+            ->addArg(SimpleString<memDbDataLength_t>::fromNumber(otherNodeOplogId))
+            ->addDoubleArg(minTimestamp)
+            ->addDoubleArg(maxTimestamp)
+            ->build();
+    });
+}
+
+auto Cluster::syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodePartitionOptions options) -> iterator_t<std::result<std::vector<uint8_t>>> {
     return std::make_shared<SyncOplogReceiverIterator>(this->configuration, this->clusterNodes, this->partitions, this->logger, lastTimestampProcessedFromOpLog,
         options.partitionId, [this](){return this->onGoingMultipleResponsesStore->nextSyncOplogId();});
 }

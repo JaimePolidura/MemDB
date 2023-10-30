@@ -26,7 +26,9 @@ public:
 
     Partitions() = default;
 
-    uint32_t getRingPositionByKey(SimpleString<memDbDataLength_t> key) const;
+    uint32_t getOplogIdOfOtherNodeBySelfOplogId(memdbNodeId_t otherNodeId, uint32_t selfOplogId);
+
+    uint32_t getRingPositionByKey(SimpleString<memDbDataLength_t> key);
 
     uint32_t getRingPositionByNodeId(memdbNodeId_t nodeId);
 
@@ -63,7 +65,7 @@ public:
 
     void add(RingEntry ringEntry);
 
-    virtual uint32_t getNodesPerPartition() const;
+    virtual uint32_t getNodesPerPartition();
 
     RingEntry getByNodeId(memdbNodeId_t nodeId);
 

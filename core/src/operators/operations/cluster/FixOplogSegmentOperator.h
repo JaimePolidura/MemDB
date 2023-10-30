@@ -2,6 +2,7 @@
 
 #include "operators/Operator.h"
 #include "messages/response/ResponseBuilder.h"
+#include "messages/response/ErrorCode.h"
 
 class FixOplogSegmentOperator : public Operator {
 public:
@@ -10,5 +11,5 @@ public:
     OperatorDescriptor desc() override;
 
 private:
-    std::pair<std::vector<uint8_t>, uint32_t> oplogIteratorToBytes(oplogIterator_t oplogIterator);
+    std::tuple<std::vector<uint8_t>, uint32_t, bool> oplogIteratorToBytes(oplogIterator_t oplogIterator);
 };

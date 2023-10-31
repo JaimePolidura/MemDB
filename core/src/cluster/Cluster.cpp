@@ -6,7 +6,7 @@ Cluster::Cluster(logger_t logger, configuration_t configuration, onGoingSyncOplo
     configuration(configuration),
     memDbStores(memDbStores),
     clusterDb(clusterDb),
-    onGoingMultipleResponsesStore(onGoingMultipleResponsesStore)z,
+    onGoingMultipleResponsesStore(onGoingMultipleResponsesStore),
     clusterNodes(std::make_shared<ClusterNodes>(configuration, logger)),
     logger(logger)
 {}

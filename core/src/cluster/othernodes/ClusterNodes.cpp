@@ -146,7 +146,7 @@ std::optional<node_t> ClusterNodes::getRandomNode(std::set<memdbNodeId_t> alread
         node_t randomNode = this->nodesById.at(* ptr);
         
         if(Node::canSendRequestUnicast(randomNode->state))
-            return randomNode;
+            return std::optional<node_t>(randomNode);
 
         alreadyCheckedNodesId.insert(randomNode->nodeId);
     }

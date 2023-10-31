@@ -28,7 +28,7 @@ public final class MemDbStressTest {
     public static void main(String[] args) {
 //        int[] numberThreads = new int[]{1, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64};
         int[] numberThreads = new int[]{64};
-        
+
         System.out.println("-------------------------------------------- THREADS TEST --------------------------------------------");
         System.out.println();
         System.out.println();

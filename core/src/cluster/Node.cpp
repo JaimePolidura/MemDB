@@ -15,6 +15,7 @@ Node::Node(const Node& other) {
     this->requestSerializer = other.requestSerializer;
 }
 
+//TODO Handle errors
 auto Node::sendRequest(const Request &request) -> std::optional<Response> {
     this->openConnectionIfClosedOrThrow();
 

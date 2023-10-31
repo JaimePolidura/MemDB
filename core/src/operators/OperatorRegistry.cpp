@@ -8,6 +8,8 @@ OperatorRegistry::OperatorRegistry() {
     this->operators[OperatorNumbers::SYNC_OPLOG] = std::make_shared<SyncOplogOperator>();
     this->operators[OperatorNumbers::MOVE_OPLOG] = std::make_shared<MovePartitionOplogOperator>();
     this->operators[OperatorNumbers::NEXT_SYNC_OPLOG_SEGMENT] = std::make_shared<NextSegmentOplogOperator>();
+    this->operators[OperatorNumbers::NEXT_SYNC_OPLOG_SEGMENT] = std::make_shared<NextSegmentOplogOperator>();
+    this->operators[OperatorNumbers::FIX_OPLOG_SEGMENT] = std::make_shared<FixOplogSegmentOperator>();
 }
 
 std::shared_ptr<Operator> OperatorRegistry::get(uint8_t operatorNumber) {

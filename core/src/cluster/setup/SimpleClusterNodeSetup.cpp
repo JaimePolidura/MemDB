@@ -3,7 +3,8 @@
 void SimpleClusterNodeSetup::setCustomClusterInformation(cluster_t cluster) {
     auto allNodes = cluster->clusterDb->getAllNodes()
             .getAllNodesExcept(cluster->getNodeId());
-
+    
+    cluster->partitions = std::make_shared<Partitions>(cluster->configuration);
     cluster->clusterNodes->setNumberPartitions(1);
     cluster->clusterNodes->setOtherNodes(allNodes, NodePartitionOptions{.partitionId = 0});
 }

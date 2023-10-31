@@ -24,6 +24,8 @@ private:
 public:
     Partitions(const std::vector<RingEntry>& allRingEntries, uint32_t nodesPerPartition, uint32_t maxSize, configuration_t configuration);
 
+    Partitions(configuration_t configuration);
+
     Partitions() = default;
 
     uint32_t getOplogIdOfOtherNodeBySelfOplogId(memdbNodeId_t otherNodeId, uint32_t selfOplogId);

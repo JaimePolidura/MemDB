@@ -1,7 +1,4 @@
 cd ../../..
-rm -r /etc/memdb1
-rm -r /etc/memdb2
-
 # CLUSTER DB
 etcdctl del --prefix ""
 

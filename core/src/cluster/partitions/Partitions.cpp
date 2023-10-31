@@ -1,5 +1,7 @@
 #include "cluster/partitions/Partitions.h"
 
+Partitions::Partitions(configuration_t configuration): configuration(configuration) {}
+
 Partitions::Partitions(const std::vector<RingEntry>& allRingEntries, uint32_t nodesPerPartition, uint32_t maxSize, configuration_t configuration):
         nodesPerPartition(nodesPerPartition), maxSize(maxSize), ringEntries(RingEntries::fromEntries(allRingEntries)), configuration(configuration) {
     this->selfEntry = this->ringEntries.getByNodeId(configuration->get<memdbNodeId_t>(ConfigurationKeys::NODE_ID));

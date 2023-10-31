@@ -19,9 +19,12 @@ bool SyncOplogReceiverIterator::hasNext() {
 std::result<std::vector<uint8_t>> SyncOplogReceiverIterator::next() {
     Response nextResponse = this->sendNextSegment();
 
-    if(!nextResponse.isSuccessful){
+    if(!nextResponse.isSuccessful && nextResponse.hasErrorCode(ErrorCode::SYNC_OP_LOG_EOF)){
         this->nSegmentsRemaining = 0;
         return std::result<std::vector<uint8_t>>::ok(std::vector<uint8_t>{});
+    }
+    if(!nextResponse.isSuccessful && nextResponse.hasErrorCode(ErrorCode::UNFIXABLE_CORRUPTED_OPLOG_SEGMENT)){
+        return std::result<std::vector<uint8_t>>::error(std::vector<uint8_t>{});
     }
 
     this->timestampToSync = nextResponse.timestamp;

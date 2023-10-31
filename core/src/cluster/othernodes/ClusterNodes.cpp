@@ -16,8 +16,6 @@ void ClusterNodes::setOtherNodes(const std::vector<node_t>& otherNodesToSet, con
 
 void ClusterNodes::setNumberPartitions(uint32_t numberPartitions) {
     for (int i = 0; i < numberPartitions; ++i) {
-        this->nodesById.size();
-
         this->nodesInPartitions.push_back(NodesInPartition{});
     }
 }

@@ -16,7 +16,7 @@ bytesDiskIterator_t SingleOperationLog::getAfterTimestamp(uint64_t after, const 
     OplogSegmentAfterTimestampsSearchResult desc = this->oplogIndexSegment->getByAfterTimestamp(after);
     std::vector<uint8_t> intermediate = this->intermediateOplog->getAllBytes();
 
-    return std::make_shared<OplogIterator>(desc.descriptors, desc.descriptorInitPtr, intermediate, options.compressed,
+    return std::make_shared<OplogIterator>(desc.descriptors, desc.descriptorInitPtr, intermediate, options.compressed, options.operationLogId,
         [this](OplogIndexSegmentDescriptor desc){return this->readBytesByIndexSegmentDescriptor(desc);});
 }
 
@@ -24,24 +24,24 @@ bytesDiskIterator_t SingleOperationLog::getBetweenTimestamps(uint64_t fromTimest
     auto segmentsResult = this->oplogIndexSegment->getBetweenTimestamps(fromTimestamp, toTimestamp);
 
     if(segmentsResult.resultsOnlyInIntermediate) {
-        return std::make_shared<OplogIterator>(std::vector<OplogIndexSegmentDescriptor>{}, 0, this->intermediateOplog->getAllBytes(), options.compressed,
+        return std::make_shared<OplogIterator>(std::vector<OplogIndexSegmentDescriptor>{}, 0, this->intermediateOplog->getAllBytes(), options.compressed, options.operationLogId,
             [this](OplogIndexSegmentDescriptor desc){return this->readBytesByIndexSegmentDescriptor(desc);});
     }
     if(segmentsResult.resultsInDescriptorsAndIntermediate){
-        return std::make_shared<OplogIterator>(segmentsResult.descriptors, segmentsResult.descriptorInitPtr, this->intermediateOplog->getAllBytes(), options.compressed,
+        return std::make_shared<OplogIterator>(segmentsResult.descriptors, segmentsResult.descriptorInitPtr, this->intermediateOplog->getAllBytes(), options.compressed, options.operationLogId,
             [this](OplogIndexSegmentDescriptor desc){return this->readBytesByIndexSegmentDescriptor(desc);});
     }
     if(segmentsResult.resultsOnlyInSegments){
-        return std::make_shared<OplogIterator>(segmentsResult.descriptors, segmentsResult.descriptorInitPtr, std::vector<uint8_t>{}, options.compressed,
+        return std::make_shared<OplogIterator>(segmentsResult.descriptors, segmentsResult.descriptorInitPtr, std::vector<uint8_t>{}, options.compressed, options.operationLogId,
             [this](OplogIndexSegmentDescriptor desc){return this->readBytesByIndexSegmentDescriptor(desc);});
     }
 }
 
 bytesDiskIterator_t SingleOperationLog::getAll(const OperationLogOptions option) {
-    std::vector<uint8_t> desc = this->oplogIndexSegment->getAll();
+    std::vector<OplogIndexSegmentDescriptor> desc = this->oplogIndexSegment->getAll();
     std::vector<uint8_t> intermediate = this->intermediateOplog->getAllBytes();
 
-    return std::make_shared<OplogIterator>(desc, 0, intermediate, option.compressed,
+    return std::make_shared<OplogIterator>(desc, 0, intermediate, option.compressed, option.operationLogId,
         [this](OplogIndexSegmentDescriptor desc){return this->readBytesByIndexSegmentDescriptor(desc);});
 }
 

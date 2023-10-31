@@ -18,7 +18,9 @@ public:
     memDbDataLength_t getTotalLength() const;
 
     SimpleString<memDbDataLength_t> getResponseValueAtOffset(uint32_t initOffset, std::size_t size) const;
-    
+
+    bool hasErrorCode(uint8_t errorCode);
+
     static Response success(const SimpleString<memDbDataLength_t> &response, uint64_t timestamp = 0);
 
     static Response success(uint64_t timestamp = 0);

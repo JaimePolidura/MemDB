@@ -13,7 +13,7 @@ Response FixOplogSegmentOperator::operate(const OperationBody& operation, const 
     auto[bytesToReturn, uncompressedSize, successNotCorrupted] = this->oplogIteratorToBytes(oplogIteratorResult);
 
     if(!successNotCorrupted){
-        return Response::error(ErrorCode::CORRUPTED_OPLOG_SEGMENT);
+        return Response::error(ErrorCode::UNFIXABLE_CORRUPTED_OPLOG_SEGMENT);
     }
 
     return ResponseBuilder::builder()
@@ -35,12 +35,11 @@ OperatorDescriptor FixOplogSegmentOperator::desc() {
 }
 
 std::tuple<std::vector<uint8_t>, uint32_t, bool> FixOplogSegmentOperator::oplogIteratorToBytes(oplogIterator_t oplogIterator) {
-    std::vector<uint8_t> result(oplogIterator->totalSize());
+    std::vector<uint8_t> result{};
     uint32_t uncompressedSize = 0;
 
     while(oplogIterator->hasNext()){
         uncompressedSize += oplogIterator->getNextUncompressedSize();
-
         std::result<std::vector<uint8_t>> bytesResult = oplogIterator->next();
 
         if(bytesResult.has_error()){

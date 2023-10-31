@@ -38,7 +38,7 @@ void MultipleOperationLog::updateCorrupted(const std::vector<uint8_t>& uncorrupt
         return;
     }
 
-    return this->operationLogs[options.operationLogId]->updateCorrupted(fixed, uncompressedSize, ptr, options);
+    return this->operationLogs[options.operationLogId]->updateCorrupted(uncorrupted, uncompressedSize, ptr, options);
 }
 
 bytesDiskIterator_t MultipleOperationLog::getBetweenTimestamps(uint64_t fromTimestamp, uint64_t toTimestamp, const OperationLogOptions options) {

@@ -27,6 +27,15 @@ ResponseBuilder * ResponseBuilder::requestNumber(memdbRequestNumber_t requestNum
     return this;
 }
 
+ResponseBuilder * ResponseBuilder::isSuccessful(bool isSuccessful, uint8_t errorCodeIfUnsuccessful) {
+    this->_isSuccessful = isSuccessful;
+    if(isSuccessful){
+        this->_errorCode = errorCodeIfUnsuccessful;
+    }
+
+    return this;
+}
+
 ResponseBuilder * ResponseBuilder::value(const SimpleString<memDbDataLength_t>& valueParam) {
     this->_responseValue.push_back(valueParam);
     return this;

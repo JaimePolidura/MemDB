@@ -78,7 +78,6 @@ uint64_t MemDb::applyOplog(bytesDiskIterator_t oplogIterator, bool saveInOperati
 
     while(oplogIterator->hasNext()) {
         std::vector<uint8_t> serializedOplog = this->getNextOplogOrTryFix(oplogIterator, oplogOrigin);
-
         std::vector<OperationBody> deserializedOplog = operationLogDeserializer.deserializeAll(serializedOplog);
 
         for(OperationBody& operationLogInDisk : deserializedOplog) {
@@ -110,6 +109,8 @@ std::vector<uint8_t> MemDb::getNextOplogOrTryFix(bytesDiskIterator_t oplogIterat
 
     if(serializedOplogResult.has_error() && oplogOrigin == OperationLogIteratorOrigin::LOCAL){ //Maybe corrupted
         return this->tryFixLocalOplogSegment(oplogIterator);
+    } else if(serializedOplogResult.has_error()) { //Maybe corrupted or eof
+        return std::vector<uint8_t>{};
     } else {
         return serializedOplogResult.get();
     }

@@ -58,6 +58,8 @@ RequestBuilder * RequestBuilder::addDoubleArg(uint64_t arg) {
 
     this->_args->push_back(SimpleString<memDbDataLength_t>::fromNumber(part1));
     this->_args->push_back(SimpleString<memDbDataLength_t>::fromNumber(part2));
+
+    return this;
 }
 
 RequestBuilder *RequestBuilder::args(const std::vector<SimpleString<memDbDataLength_t>> &args) {

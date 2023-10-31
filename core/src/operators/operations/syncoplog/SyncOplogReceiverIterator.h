@@ -10,6 +10,7 @@
 #include "config/Configuration.h"
 #include "cluster/partitions/Partitions.h"
 #include "operators/OperatorNumbers.h"
+#include "messages/response/ErrorCode.h"
 
 class SyncOplogReceiverIterator : public Iterator<std::result<std::vector<uint8_t>>> {
 private:

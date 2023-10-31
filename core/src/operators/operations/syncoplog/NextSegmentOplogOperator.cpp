@@ -11,16 +11,16 @@ Response NextSegmentOplogOperator::operate(const OperationBody& operation, const
 
     dependencies.onGoingSyncOplogs->markSegmentAsSent(syncId);
 
-    auto [compressedOplog, uncompressSize] = this->getNextOplogSegmentOrTryFix(oplogSenderIterator, dependencies);
+    auto[compressedOplog, uncompressSize, success] = this->getNextOplogSegmentOrTryFix(oplogSenderIterator, dependencies);
 
     return ResponseBuilder::builder()
-            .values({
-                SimpleString<memDbDataLength_t>::fromNumber(uncompressSize),
-                SimpleString<memDbDataLength_t>::fromVector(compressedOplog),
-            })
+            .isSuccessful(success, ErrorCode::UNFIXABLE_CORRUPTED_OPLOG_SEGMENT)
             ->timestamp(oplogSenderIterator->getLastTimestampOfLastNext())
             ->requestNumber(syncId)
-            ->success()
+            ->values({
+                SimpleString<memDbDataLength_t>::fromNumber(uncompressSize),
+                SimpleString<memDbDataLength_t>::fromVector(compressedOplog)
+            })
             ->build();
 }
 
@@ -33,11 +33,11 @@ OperatorDescriptor NextSegmentOplogOperator::desc() {
     };
 }
 
-std::pair<std::vector<uint8_t>, uint32_t> NextSegmentOplogOperator::getNextOplogSegmentOrTryFix(oplogIterator_t iterator, OperatorDependencies& dependencies) {
+std::tuple<std::vector<uint8_t>, uint32_t, bool> NextSegmentOplogOperator::getNextOplogSegmentOrTryFix(oplogIterator_t iterator, OperatorDependencies& dependencies) {
     std::result<std::vector<uint8_t>> bytesFromOplogIteratorResult = iterator->next();
 
     if(bytesFromOplogIteratorResult.is_success()){
-        return std::make_pair(bytesFromOplogIteratorResult.get(), iterator->getLastUncompressedSize());
+        return std::make_tuple(bytesFromOplogIteratorResult.get(), iterator->getLastUncompressedSize(), true);
     }
 
     OplogIndexSegmentDescriptor corruptedDescriptor = iterator->getLastDescriptor();
@@ -46,16 +46,16 @@ std::pair<std::vector<uint8_t>, uint32_t> NextSegmentOplogOperator::getNextOplog
             dependencies.cluster->fixOplogSegment(iterator->getOplogId(), corruptedDescriptor.min, corruptedDescriptor.max);
 
     if(!fixOplogResponse.has_value() || !fixOplogResponse->isSuccessful) { //No node available or all nodes have corrupted oplog
-        return std::make_pair(std::vector<uint8_t>{}, 0);
+        return std::make_tuple(std::vector<uint8_t>{}, 0, false);
     }
 
     uint32_t uncompressedSize = fixOplogResponse.value().getResponseValueAtOffset(0, sizeof(uint32_t)).to<uint32_t>();
-    std::vector<uint8_t> fixedBytes = fixOplogResponse->getResponseValueAtOffset(sizeof(uint32_t),
+    std::vector<uint8_t> uncorruptedBytes = fixOplogResponse->getResponseValueAtOffset(sizeof(uint32_t),
         fixOplogResponse->responseValue.size - sizeof(uint32_t)).toVector();
 
-    dependencies.oplogIndexSegment->updateCorruptedSegment(uncompressedSize, iterator->getLastSegmentOplogDescriptorDiskPtr(), fixedBytes);
+    dependencies.oplogIndexSegment->updateCorruptedSegment(uncorruptedBytes, uncompressedSize, iterator->getLastSegmentOplogDescriptorDiskPtr());
 
-    return std::make_pair(fixedBytes, uncompressedSize);
+    return std::make_tuple(uncorruptedBytes, uncompressedSize, true);
 }
 
 oplogIterator_t NextSegmentOplogOperator::getOplogSegmentIterator(const OperationBody &operation, const OperationOptions options,

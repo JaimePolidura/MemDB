@@ -15,5 +15,5 @@ public:
 private:
     oplogIterator_t getOplogSegmentIterator(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies);
 
-    std::pair<std::vector<uint8_t>, uint32_t> getNextOplogSegmentOrTryFix(oplogIterator_t iterator, OperatorDependencies& dependencies);
+    std::tuple<std::vector<uint8_t>, uint32_t, bool> getNextOplogSegmentOrTryFix(oplogIterator_t iterator, OperatorDependencies& dependencies);
 };

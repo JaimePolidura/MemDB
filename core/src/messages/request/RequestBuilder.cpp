@@ -54,7 +54,7 @@ RequestBuilder *RequestBuilder::selfNode(memdbNodeId_t nodeId) {
 
 RequestBuilder * RequestBuilder::addDoubleArg(uint64_t arg) {
     uint32_t part1 = arg >> 32;
-    uint32_t part2 = arg & 0x00000000FFFFFFFF;
+    uint32_t part2 = (uint32_t) arg & 0xFFFFFFFF;
 
     this->_args->push_back(SimpleString<memDbDataLength_t>::fromNumber(part1));
     this->_args->push_back(SimpleString<memDbDataLength_t>::fromNumber(part2));

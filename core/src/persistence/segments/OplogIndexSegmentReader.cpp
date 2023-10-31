@@ -16,7 +16,10 @@ OplogIndexSegmentDescriptor OplogIndexSegmentReader::readIndexAt(uint64_t ptr) {
 }
 
 std::vector<OplogIndexSegmentDescriptor> OplogIndexSegmentReader::readAllIndexBetween(uint64_t fromPtr, uint64_t toPtr) {
-    if(fromPtr >= toPtr || (toPtr - fromPtr) < sizeof(OplogIndexSegmentDescriptor)){
+    if(fromPtr == toPtr){
+        return this->oplogIndexSegmentDescriptorDeserializer.deserializeAll(FileUtils::seekBytes(this->fullPathIndex, fromPtr, sizeof(OplogIndexSegmentDescriptor)));
+    }
+    if(fromPtr > toPtr || (toPtr - fromPtr) < sizeof(OplogIndexSegmentDescriptor)){
         return std::vector<OplogIndexSegmentDescriptor>{};
     }
 

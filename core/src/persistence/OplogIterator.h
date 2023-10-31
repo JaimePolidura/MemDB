@@ -32,6 +32,7 @@ public:
     OplogIterator(const std::vector<OplogIndexSegmentDescriptor>& descriptors,
                   uint64_t segmentOplogDescriptorInitDiskPtr,
                   const std::vector<uint8_t>& intermediate,
+                  bool iterateOnlyDescriptors,
                   bool compressed,
                   uint32_t oplogId,
                   descriptorDataFetcher_t descriptorDataFetcher);

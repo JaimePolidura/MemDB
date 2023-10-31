@@ -50,10 +50,10 @@ arg_t OperationBody::getArgOr(int position, SimpleString<memDbDataLength_t> othe
 }
 
 uint64_t OperationBody::getDoubleArgU64(int start) const {
-    uint64_t part1 = this->getArg(start).to<uint64_t>();
-    uint64_t part2 = this->getArg(start + 1).to<uint64_t>();
+    uint32_t part1 = this->getArg(start).to<uint32_t>();
+    uint32_t part2 = this->getArg(start + 1).to<uint32_t>();
 
-    return ((uint64_t) part1) << 32 | part2;
+    return ((uint32_t) part1) << 32 | part2;
 }
 
 void OperationBody::setArg(int position, arg_t newArg) {

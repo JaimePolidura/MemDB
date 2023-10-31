@@ -12,12 +12,11 @@ Response FixOplogSegmentOperator::operate(const OperationBody& operation, const 
 
     auto[bytesToReturn, uncompressedSize, successNotCorrupted] = this->oplogIteratorToBytes(oplogIteratorResult);
 
-    if(!successNotCorrupted){
-        return Response::error(ErrorCode::UNFIXABLE_CORRUPTED_OPLOG_SEGMENT);
-    }
+    dependencies.logger->debugInfo("Responding {0} to FIX_OPLOG_SEGMENT(oplogId = {1}, minTimestamp = {2}, maxTimestamp = {3}) with {4} bytes and uncompressed size: {5}",
+                                   successNotCorrupted ? "successfully" : "unsuccessfully", oplogId, minTimestamp, maxTimestamp, bytesToReturn.size(), uncompressedSize);
 
     return ResponseBuilder::builder()
-        .success()
+        .isSuccessful(successNotCorrupted, ErrorCode::UNFIXABLE_CORRUPTED_OPLOG_SEGMENT)
         ->values({
             SimpleString<memDbDataLength_t>::fromNumber(uncompressedSize),
             SimpleString<memDbDataLength_t>::fromVector(bytesToReturn),

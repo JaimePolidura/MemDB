@@ -29,7 +29,7 @@ public:
 
     virtual void clear(const OperationLogOptions options = {}) = 0;
 
-    virtual void updateCorrupted(const std::vector<uint8_t>& uncorrupted, uint32_t uncompressedSize, uint64_t ptr, const OperationLogOptions options = {});
+    virtual void updateCorrupted(const std::vector<uint8_t>& uncorrupted, uint32_t uncompressedSize, uint64_t ptr, const OperationLogOptions options = {}) = 0;
 
     virtual bytesDiskIterator_t getBetweenTimestamps(uint64_t fromTimestamp, uint64_t toTimestamp, const OperationLogOptions options = {}) = 0;
 

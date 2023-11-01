@@ -55,7 +55,7 @@ public:
 
     auto setRunning() -> void;
 
-    auto syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodePartitionOptions options = {}) -> iterator_t<std::result<std::vector<uint8_t>>>;
+    auto syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodePartitionOptions options) -> iterator_t<std::result<std::vector<uint8_t>>>;
 
     auto fixOplogSegment(uint32_t selfOplogId, uint64_t minTimestamp, uint64_t maxTimestamp) -> std::result<Response>;
 
@@ -65,9 +65,9 @@ public:
 
     auto getNodesPerPartition() -> uint32_t;
 
-    auto broadcastAndWait(const OperationBody& operation, const NodePartitionOptions options) -> multipleResponses_t;
+    auto broadcastAndWait(const NodePartitionOptions options, const OperationBody& operation) -> multipleResponses_t;
 
-    virtual auto broadcast(const OperationBody& operation, const NodePartitionOptions options) -> void;
+    virtual auto broadcast(const NodePartitionOptions options, const OperationBody& operation) -> void;
 
     virtual auto getNodeState() -> NodeState;
 

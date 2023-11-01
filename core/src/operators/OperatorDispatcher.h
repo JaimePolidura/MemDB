@@ -1,9 +1,11 @@
 #pragma once
 
-#include "operators/Operator.h"
-#include "operators/OperatorRegistry.h"
+#include "operators/operations/cas/OnGoingPaxosRounds.h"
 #include "operators/DelayedOperationsBuffer.h"
 #include "operators/OperatorDependencies.h"
+#include "operators/OperatorRegistry.h"
+
+#include "operators/Operator.h"
 
 #include "operators/operations/syncoplog/OnGoingSyncOplogsStore.h"
 #include "messages/response/ErrorCode.h"
@@ -19,6 +21,7 @@ public: //Need it for mocking it
     operatorRegistry_t operatorRegistry;
 private:
     DelayedOperationsBuffer delayedOperationsBuffer{};
+    onGoingPaxosRounds_t onGoingPaxosRounds;
     onGoingSyncOplogs_t onGoingSyncOplogs;
     operationLog_t operationLog;
     configuration_t configuration;

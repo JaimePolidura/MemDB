@@ -46,12 +46,12 @@ auto Cluster::getPartitionObject() -> partitions_t {
     return this->partitions;
 }
 
-auto Cluster::broadcastAndWait(const OperationBody& operation, const NodePartitionOptions options) -> multipleResponses_t {
-    return this->clusterNodes->broadcast(operation, options);
+auto Cluster::broadcastAndWait(const NodePartitionOptions options, const OperationBody& operation) -> multipleResponses_t {
+    return this->clusterNodes->broadcastAndWait(options, operation);
 }
 
-auto Cluster::broadcast(const OperationBody& operation, const NodePartitionOptions options) -> void {
-    this->clusterNodes->broadcast(operation, options);
+auto Cluster::broadcast(const NodePartitionOptions options, const OperationBody& operation) -> void {
+    this->clusterNodes->broadcast(options, operation);
 }
 
 auto Cluster::getNodeState() -> NodeState {

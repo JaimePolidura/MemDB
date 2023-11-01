@@ -5,6 +5,7 @@ OperatorDispatcher::OperatorDispatcher(memDbStores_t memDbStores, lamportClock_t
         memDbStores(memDbStores),
         operationLog(operationLog),
         onGoingSyncOplogs(onGoingSyncOplogs),
+        onGoingPaxosRounds(std::make_shared<OnGoingPaxosRounds>()),
         clock(clock),
         operatorRegistry(std::make_shared<OperatorRegistry>()),
         logger(logger),
@@ -94,7 +95,7 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
         }
 
         if(isInReplicationMode() && options.fromClient() && !options.dontBroadcastToCluster){
-            this->cluster->broadcast(operation, {.partitionId = this->getPartitionIdByKey(operation.getArg(0))});
+            this->cluster->broadcast({.partitionId = this->getPartitionIdByKey(operation.getArg(0))}, operation);
             this->logger->debugInfo("Broadcast request for operator {0} from {1}",
                                     operatorToExecute->desc().name, options.checkTimestamps ? "node" : "user");
         }
@@ -123,6 +124,7 @@ void OperatorDispatcher::applyDelayedOperationsBuffer() {
 OperatorDependencies OperatorDispatcher::getDependencies() {
     OperatorDependencies dependenciesToReturn{};
 
+    dependenciesToReturn.onGoingPaxosRounds = this->onGoingPaxosRounds;
     dependenciesToReturn.onGoingSyncOplogs = this->onGoingSyncOplogs;
     dependenciesToReturn.configuration = this->configuration;
     dependenciesToReturn.operationLog = this->operationLog;

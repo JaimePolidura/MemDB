@@ -108,7 +108,7 @@ auto ClusterNodes::sendRequestToRandomNode(const Request& request, const NodePar
     });
 }
 
-auto ClusterNodes::broadcast(const OperationBody& operation, const NodePartitionOptions options) -> void {
+auto ClusterNodes::broadcast(const NodePartitionOptions options, const OperationBody& operation) -> void {
     std::set<memdbNodeId_t> allNodesIdInPartition = this->nodesInPartitions[options.partitionId].getAll();
     int timeout = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS);
     int nRetries = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_N_RETRIES);
@@ -122,7 +122,7 @@ auto ClusterNodes::broadcast(const OperationBody& operation, const NodePartition
     });
 }
 
-auto ClusterNodes::broadcastAndWait(const OperationBody& operation, const NodePartitionOptions options) -> multipleResponses_t {
+auto ClusterNodes::broadcastAndWait(const NodePartitionOptions options, const OperationBody& operation) -> multipleResponses_t {
     int nNodesInPartition = this->nodesInPartitions[options.partitionId].size();
     multipleResponses_t multipleResponses = std::make_shared<MultipleResponses>(nNodesInPartition);
     MultipleResponsesNotifier multipleResponseNotifier(multipleResponses);

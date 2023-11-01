@@ -11,7 +11,7 @@ public:
     bool dontSaveInOperationLog;
     bool dontDebugLog;
     LamportClock::UpdateClockStrategy updateClockStrategy;
-    uint32_t partitionId;
+    int partitionId;
 
     uint64_t requestNumber;
 

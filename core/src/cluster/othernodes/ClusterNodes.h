@@ -61,12 +61,12 @@ public:
 
     std::result<Response> sendRequestToRandomNode(const Request& request, const NodePartitionOptions options);
 
-    void broadcast(const OperationBody& operation, const NodePartitionOptions options);
+    void broadcast(const NodePartitionOptions options, const OperationBody& operation);
 
-    multipleResponses_t broadcastAndWait(const OperationBody& operation, const NodePartitionOptions options);
+    multipleResponses_t broadcastAndWait(const NodePartitionOptions options, const OperationBody& operation);
 
     void removeNodeFromPartition(memdbNodeId_t nodeId, const NodePartitionOptions options);
-
+    
     std::optional<node_t> getRandomNode(const NodePartitionOptions options, std::set<memdbNodeId_t> alreadyCheckedNodesId = {});
 private:
     Request prepareRequest(const OperationBody& operation);

@@ -14,5 +14,7 @@ public:
     static const constexpr uint8_t INVALID_CALL = 0x07;
     static const constexpr uint8_t SYNC_OP_LOG_EOF = 0x08;
     static const constexpr uint8_t UNFIXABLE_CORRUPTED_OPLOG_SEGMENT = 0x09;
+
     static const constexpr uint8_t CAS_FAILED = 0x10;
+    static const constexpr uint8_t CAS_PROMISE_ACCEPTED = 0x11;
 };

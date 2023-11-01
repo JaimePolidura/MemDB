@@ -4,11 +4,13 @@
 #include "cluster/Cluster.h"
 #include "operators/OperationOptions.h"
 #include "operators/operations/syncoplog/OnGoingSyncOplogsStore.h"
+#include "operators/operations/cas/OnGoingPaxosRounds.h"
 #include "db/MemDbStores.h"
 #include "logging/Logger.h"
 #include "persistence/segments/OplogIndexSegment.h"
 
 struct OperatorDependencies {
+    onGoingPaxosRounds_t onGoingPaxosRounds;
     onGoingSyncOplogs_t onGoingSyncOplogs;
     oplogIndexSegment_t oplogIndexSegment;
     configuration_t configuration;

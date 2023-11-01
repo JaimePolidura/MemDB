@@ -15,5 +15,6 @@ public:
 
     static const constexpr uint8_t CAS = 0x09;
     static const constexpr uint8_t CAS_PREPARE = 0x10;
+    static const constexpr uint8_t CAS_ACCEPT = 0x11;
 };
 

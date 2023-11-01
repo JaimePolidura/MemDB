@@ -41,7 +41,6 @@ public:
 
     int getSize() const;
 
-private:
     static const uint8_t HASH_PRIME_FACTOR = 31;
 
     uint32_t calculateHash(const SimpleString<SizeValue>& key) const {
@@ -52,6 +51,8 @@ private:
 
         return hashCode;
     }
+
+private:
 
     AVLNode<SizeValue> * getNodeByKeyHash(uint32_t keyHash) const {
         AVLTree<SizeValue> * actualMapNode = this->getBucket(keyHash);

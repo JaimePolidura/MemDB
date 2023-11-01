@@ -33,7 +33,7 @@ void TCPServer::acceptNewConnections() {
             });
         });
 
-        connection->readAsync(); //Start reading, IO async operation, not blocking
+        connection->readAsync(this->configuration->get<uint64_t>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS));
 
         this->acceptNewConnections();
     });

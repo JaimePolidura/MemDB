@@ -14,7 +14,9 @@ public:
     bool isSuccessful;
     
     Response(bool isSuccessful, uint8_t errorCode, uint64_t timestamp, memdbRequestNumber_t reqNumber, const SimpleString<memDbDataLength_t> &response);
-    
+
+    Response() = default;
+
     memDbDataLength_t getTotalLength() const;
 
     SimpleString<memDbDataLength_t> getResponseValueAtOffset(uint32_t initOffset, std::size_t size) const;

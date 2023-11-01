@@ -59,11 +59,11 @@ void ClusterNodes::deleteNodeById(const memdbNodeId_t nodeId) {
     }
 }
 
-std::optional<Response> ClusterNodes::sendRequestToAnyNode(const Request& request, bool requiresSuccessfulResponse, const NodePartitionOptions options) {
+std::result<Response> ClusterNodes::sendRequestToAnyNode(const Request& request, bool requiresSuccessfulResponse, const NodePartitionOptions options) {
     return this->sendRequestToAnyNode(requiresSuccessfulResponse, options, [&request](node_t node){return request;});
 }
 
-std::optional<Response> ClusterNodes::sendRequestToAnyNode(bool requiresSuccessfulResponse,
+std::result<Response> ClusterNodes::sendRequestToAnyNode(bool requiresSuccessfulResponse,
                                              const NodePartitionOptions options,
                                              std::function<Request(node_t nodeToSend)> requestCreator) {
     std::set<memdbNodeId_t> alreadyCheckedNodeId{};
@@ -72,19 +72,17 @@ std::optional<Response> ClusterNodes::sendRequestToAnyNode(bool requiresSuccessf
         std::optional<node_t> node = this->getRandomNode(alreadyCheckedNodeId, options);
 
         if(!node.has_value()){
-            return std::nullopt;
+            return std::error<Response>();
         }
 
         Request request = requestCreator(node.value());
 
-        std::optional<Response> responseOptional = Utils::tryOnceAndGetOptional<Response>([&request, &node](){
-            return node.value()->sendRequest(request);
-        });
+        std::result<Response> responseOptional = node.value()->sendRequest(request);
 
         alreadyCheckedNodeId.insert(node.value()->nodeId);
 
-        if(responseOptional.has_value() && (!requiresSuccessfulResponse || responseOptional.value().isSuccessful)){
-            return responseOptional.value();
+        if(responseOptional->isSuccessful && (!requiresSuccessfulResponse || responseOptional->isSuccessful)){
+            return responseOptional;
         }
     }
 }
@@ -93,20 +91,20 @@ auto ClusterNodes::sendRequest(memdbNodeId_t nodeId, const Request& request) -> 
     int timeout = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS);
     node_t node = this->nodesById.at(nodeId);
 
-    return Utils::retryUntilSuccessAndGet<Response, std::milli>(std::chrono::milliseconds(timeout), [node, &request]() -> Response {
-        return node->sendRequest(request).value();
+    return Utils::retryUntilSuccessAndGet<Response, std::milli>(std::chrono::milliseconds(timeout), [node, &request]() -> std::result<Response> {
+        return node->sendRequest(request);
     });
 }
 
-auto ClusterNodes::sendRequestToRandomNode(const Request& request, const NodePartitionOptions options) -> std::optional<Response> {
+auto ClusterNodes::sendRequestToRandomNode(const Request& request, const NodePartitionOptions options) -> std::result<Response> {
     int timeout = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS);
     int nRetries = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_N_RETRIES);
     std::set<memdbNodeId_t> alreadyCheckedNodesId = {};
 
-    return Utils::retryUntilAndGet<Response, std::milli>(nRetries, std::chrono::milliseconds(timeout), [this, &request, &alreadyCheckedNodesId, options]() -> Response {
-        node_t nodeToSendRequest = Utils::getOptionalOrThrow<node_t>(this->getRandomNode(alreadyCheckedNodesId, options));
-
-        return nodeToSendRequest->sendRequest(this->prepareRequest(request.operation)).value();
+    return Utils::retryNTimesAndGet<Response, std::milli>(nRetries, std::chrono::milliseconds(timeout), [this, &request, &alreadyCheckedNodesId, options]() -> std::result<Response> {
+        node_t nodeToSendRequest = Utils::getOptionalOrThrow<node_t>(this->getRandomNode(alreadyCheckedNodesId,options));
+        
+        return nodeToSendRequest->sendRequest(this->prepareRequest(request.operation));
     });
 }
 

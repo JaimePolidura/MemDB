@@ -46,8 +46,8 @@ std::result<std::vector<uint8_t>> OplogIndexSegmentReader::readBytesDataByDescri
     auto bytes = FileUtils::seekBytes(this->fullPathData, descriptor.ptr, descriptor.size);
 
     if(Utils::crc(bytes) == descriptor.crc) {
-        return std::result<std::vector<uint8_t>>::ok(bytes);
+        return std::ok(bytes);
     } else {
-        return std::result<std::vector<uint8_t>>::error();
+        return std::error<std::vector<uint8_t>>();
     }
 }

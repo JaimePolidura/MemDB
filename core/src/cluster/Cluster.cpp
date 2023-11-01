@@ -23,7 +23,7 @@ auto Cluster::setRunning() -> void {
     this->logger->info("Changed cluster node state to RUNNING");
 }
 
-auto Cluster::fixOplogSegment(uint32_t selfOplogId, uint64_t minTimestamp, uint64_t maxTimestamp) -> std::optional<Response> {
+auto Cluster::fixOplogSegment(uint32_t selfOplogId, uint64_t minTimestamp, uint64_t maxTimestamp) -> std::result<Response> {
     return this->clusterNodes->sendRequestToAnyNode(true, NodePartitionOptions{.partitionId = static_cast<int>(selfOplogId)},[this, selfOplogId, minTimestamp, maxTimestamp](node_t nodeToSend) {
         auto otherNodeOplogId = this->partitions->getOplogIdOfOtherNodeBySelfOplogId(nodeToSend->nodeId, selfOplogId);
         return RequestBuilder::builder()

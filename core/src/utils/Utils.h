@@ -1,6 +1,7 @@
 #pragma once
 
 #include "shared.h"
+#include "utils/std/Result.h"
 
 class Utils {
 public:
@@ -88,10 +89,13 @@ public:
     static void printVectorHex(const std::vector<uint8_t>& toPrint);
 
     template<typename T, typename B>
-    static T retryUntilSuccessAndGet(const std::chrono::duration<int64_t, B> backoffMillis, std::function<T(void)> toRetry) {
+    static T retryUntilSuccessAndGet(const std::chrono::duration<int64_t, B> backoffMillis, std::function<std::result<T>(void)> toRetry) {
         while(true) {
             try{
-                return toRetry();
+                std::result<T> result = toRetry();
+                if(result.is_success()){
+                    return result.get();
+                }
             }catch (const std::exception& e){
                 if(backoffMillis.count() > 0)
                     std::this_thread::sleep_for(backoffMillis);
@@ -109,19 +113,30 @@ public:
     }
 
     template<typename T, typename B>
-    static std::optional<T> retryUntilAndGet(int numberAttempts, const std::chrono::duration<int64_t, B> backoffMillis, std::function<T(void)> toRetry) {
+    static std::result<T> retryNTimesAndGet(int numberAttempts, const std::chrono::duration<int64_t, B> backoffMillis, std::function<std::result<T>(void)> toRetry) {
         while(numberAttempts > 0) {
             try{
-                return toRetry();
+                std::result<T> result = toRetry();
+                if(result.is_success()){
+                    return result;
+                } else {
+                    numberAttempts--;
+                    if(backoffMillis.count() > 0)
+                        std::this_thread::sleep_for(backoffMillis);
+                    if(numberAttempts == 0)
+                        return std::error<T>();
+                }
+
             }catch (const std::exception& e){
                 numberAttempts--;
-
                 if(backoffMillis.count() > 0)
                     std::this_thread::sleep_for(backoffMillis);
+                if(numberAttempts == 0)
+                    return std::error<T>();
             }
         }
 
-        return std::nullopt;
+        return std::error<T>();
     }
 
     template<typename T>

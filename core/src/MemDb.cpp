@@ -117,20 +117,23 @@ std::vector<uint8_t> MemDb::getNextOplogOrTryFix(bytesDiskIterator_t oplogIterat
 }
 
 std::vector<uint8_t> MemDb::tryFixLocalOplogSegment(bytesDiskIterator_t oplogIterator) {
-    this->logger->error("Detected corrupted oplog segment. CRCs don't match");
-
     if(!this->configuration->getBoolean(ConfigurationKeys::USE_REPLICATION)){
+        this->logger->error("Detected corrupted oplog segment. CRCs don't match");
         return {};
     }
 
     oplogIterator_t oplogIteratorCasted = std::dynamic_pointer_cast<OplogIterator>(oplogIterator);
     OplogIndexSegmentDescriptor corruptedDescriptor = oplogIteratorCasted->getLastDescriptor();
 
-    std::optional<Response> responseOptional = this->cluster->fixOplogSegment(oplogIteratorCasted->getOplogId(),
+    this->logger->error("Detected corrupted oplog segment from timestamp {0} to {1} in oplogId {2}. CRCs don't match",
+                        corruptedDescriptor.min, corruptedDescriptor.max, oplogIteratorCasted->getOplogId());
+
+    std::result<Response> responseOptional = this->cluster->fixOplogSegment(oplogIteratorCasted->getOplogId(),
         corruptedDescriptor.min, corruptedDescriptor.max);
 
-    if(!responseOptional.has_value() || !responseOptional->isSuccessful){
-        this->logger->error("Impossible to get available node to fix oplog");
+    if(responseOptional.has_error() || !responseOptional->isSuccessful){
+        this->logger->error("Impossible to get available node to fix oplog from timestamp {0} to {1} in oplogId {2}",
+                            corruptedDescriptor.min, corruptedDescriptor.max, oplogIteratorCasted->getOplogId());
         return {};
     }
 

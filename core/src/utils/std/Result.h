@@ -4,6 +4,12 @@ namespace std {
     template<typename V, typename E = V>
     class result {
     public:
+        result(const V& value, const E& error, bool success): _value(value), _error(error), _success(success) {}
+
+        result(bool success): _success(success) {}
+
+        result() = default;
+
         V get_or_else(const V& alternative) {
             return this->_success ? this->_value : alternative;
         }
@@ -42,27 +48,8 @@ namespace std {
             return !this->_success;
         }
 
-        static result ok(V value) {
-            result toReturn{};
-            toReturn._success = true;
-            toReturn._value = value;
-
-            return toReturn;
-        }
-
-        static result error(E error) {
-            result toReturn{};
-            toReturn._success = false;
-            toReturn._error = error;
-
-            return toReturn;
-        }
-
-        static result error() {
-            result toReturn{};
-            toReturn._success = false;
-
-            return toReturn;
+        V* operator->() {
+            return &this->_value;
         }
 
     private:
@@ -71,4 +58,34 @@ namespace std {
 
         bool _success;
     };
+
+    template<typename V>
+    static result<V> ok(const V& value) {
+        result<V> toReturn{value, value, true};
+        return toReturn;
+    }
+
+    template<typename V, typename E>
+    static result<V, E> ok(const V& value) {
+        result<V, E> toReturn{value, E{}, true};
+        return toReturn;
+    }
+
+    template<typename E>
+    static result<E, E> error(E error) {
+        result<E, E> toReturn{error, error, false};
+        return toReturn;
+    }
+
+    template<typename V, typename E>
+    static result<V, E> error(E error) {
+        result<V, E> toReturn{V{}, error, false};
+        return toReturn;
+    }
+
+    template<typename V>
+    static result<V, V> error() {
+        result<V, V> toReturn{false};
+        return toReturn;
+    }
 }

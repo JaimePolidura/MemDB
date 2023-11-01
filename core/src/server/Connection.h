@@ -4,6 +4,8 @@
 #include "memdbtypes.h"
 #include "utils/Utils.h"
 #include "logging/Logger.h"
+#include "utils/std/Result.h"
+#include "wait-free-queues/utils/spin_lock.hpp"
 
 #define FRAGMENT_MIN_SIZE 1024
 
@@ -17,7 +19,10 @@ private:
 
     uint8_t messageLengthHeaderBuffer[sizeof(memDbDataLength_t)];
     uint8_t typePacketHeaderBuffer[1];
-    
+
+    jaime::utils::spin_lock flagReadInProgress;
+    std::atomic_uint64_t readRequestCounter;
+
 public:
     Connection(ip::tcp::socket socket, logger_t logger);
 
@@ -25,9 +30,9 @@ public:
 
     std::string getAddress();
 
-    void readAsync();
+    void readAsync(uint64_t timeout);
 
-    std::vector<uint8_t> readSync();
+    std::result<std::vector<uint8_t>> readSync(uint64_t ms);
 
     void writeAsync(std::vector<uint8_t>& toWrite);
 
@@ -40,7 +45,9 @@ public:
 private:
     std::size_t writeSyncFragmented(std::vector<uint8_t>& bytes);
 
-    std::vector<uint8_t> readPacket(uint8_t packetType);
+    std::result<std::vector<uint8_t>> readPacket(uint8_t packetType, uint64_t timeoutMs);
+    std::result<std::vector<uint8_t>> readPacketContent(uint64_t timeoutMs);
+    std::result<std::vector<uint8_t>> readFragmentedPacket(uint64_t timeoutMs);
 
     std::size_t fragmentPacketAndSend(std::vector<uint8_t>& packet, std::function<std::size_t(std::vector<uint8_t>&)> sender);
 
@@ -49,16 +56,14 @@ private:
 
     memDbDataLength_t readPacketLength();
 
-    std::vector<uint8_t> readPacketContent();
-
-    std::vector<uint8_t> readFragmentedPacket();
-
     bool isFragmentPacket(uint8_t packetTypeHeader);
     bool isLastFragmentPacket(uint8_t packetTypeHeader);
 
     void enableTcpNoDelay();
     void setTcpReceiveBufferSize(std::size_t size);
     void setTcpSendBufferSize(std::size_t size);
+
+    boost::system::error_code readWithTimeout(boost::asio::mutable_buffers_1 buffer, uint64_t timeoutMs);
 };
 
 using connection_t = std::shared_ptr<Connection>;

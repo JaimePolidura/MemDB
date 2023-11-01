@@ -26,9 +26,9 @@ std::result<std::vector<uint8_t>> OplogIterator::next() {
         this->intermediateIterated = true;
 
         return this->compressed ?
-            std::result<std::vector<uint8_t>>::ok(this->compressor.compressBytes(this->intermediate)
+            std::ok(this->compressor.compressBytes(this->intermediate)
                 .get_or_throw_with([](const int errorCode){return "Impossible to compress intermediate. Return code: " + errorCode;})) :
-            std::result<std::vector<uint8_t>>::ok(this->intermediate);
+            std::ok(this->intermediate);
     }
 
     OplogIndexSegmentDescriptor actualDescriptor = this->descriptors.at(this->actualIndexDescriptor);
@@ -39,7 +39,7 @@ std::result<std::vector<uint8_t>> OplogIterator::next() {
     std::result<std::vector<uint8_t>> bytesFromDescriptorResult = this->descriptorDataFetcher(actualDescriptor);
 
     return !this->compressed && bytesFromDescriptorResult.is_success() ?
-           std::result<std::vector<uint8_t>>::ok(this->compressor.uncompressBytes(bytesFromDescriptorResult.get(), actualDescriptor.uncompressedSize)
+           std::ok(this->compressor.uncompressBytes(bytesFromDescriptorResult.get(), actualDescriptor.uncompressedSize)
                    .get_or_throw_with([](const int errorCode){return "Impossible to decompress oplog in OplogIterator::next. Error code: " + errorCode;})) :
            bytesFromDescriptorResult;
 }

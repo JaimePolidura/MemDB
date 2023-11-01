@@ -12,8 +12,8 @@ std::result<std::vector<uint8_t>, int> Compressor::compressBytes(const std::vect
     compressed.resize(compressedSize);
 
     return ret == Z_OK ?
-        std::result<std::vector<uint8_t>, int>::ok(compressed) :
-        std::result<std::vector<uint8_t>, int>::error(ret);
+        std::ok<std::vector<uint8_t>, int>(compressed) :
+        std::error<std::vector<uint8_t>, int>(ret);
 }
 
 std::result<std::vector<uint8_t>, int> Compressor::uncompressBytes(const std::vector<uint8_t>& compressed, uint64_t originalSize) {
@@ -26,6 +26,6 @@ std::result<std::vector<uint8_t>, int> Compressor::uncompressBytes(const std::ve
     int ret = uncompress(decompressed.data(), &originalSizeULong , compressedDataPtr, compressedDataSize);
 
     return ret == Z_OK ?
-           std::result<std::vector<uint8_t>, int>::ok(decompressed) :
-           std::result<std::vector<uint8_t>, int>::error(ret);
+           std::ok<std::vector<uint8_t>, int>(decompressed) :
+           std::error<std::vector<uint8_t>, int>(ret);
 }

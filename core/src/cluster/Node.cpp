@@ -2,8 +2,8 @@
 
 Node::Node(): connection(nullptr) {}
 
-Node::Node(memdbNodeId_t nodeId, const std::string& address, NodeState state):
-    connection(nullptr), nodeId(nodeId), address(address), state(state)
+Node::Node(memdbNodeId_t nodeId, const std::string& address, NodeState state, uint64_t readTimeout):
+    connection(nullptr), nodeId(nodeId), address(address), state(state), readTimeout(readTimeout)
 {}
 
 Node::Node(const Node& other) {
@@ -11,25 +11,29 @@ Node::Node(const Node& other) {
     this->address = other.address;
     this->state = other.state;
     this->nodeId = other.nodeId;
+    this->readTimeout = other.readTimeout;
     this->responseDeserializer = other.responseDeserializer;
     this->requestSerializer = other.requestSerializer;
 }
 
-//TODO Handle errors
-auto Node::sendRequest(const Request &request) -> std::optional<Response> {
+auto Node::sendRequest(const Request &request) -> std::result<Response> {
     this->openConnectionIfClosedOrThrow();
 
     std::vector<uint8_t> serializedRequest = this->requestSerializer.serialize(request);
     std::size_t bytesWritten = this->connection->writeSync(serializedRequest);
 
     if(bytesWritten == 0){
-        return std::nullopt;
+        return std::error<Response>();
     }
 
-    std::vector<uint8_t> serializedResponse = this->connection->readSync();
-    Response deserializedResponse = this->responseDeserializer.deserialize(serializedResponse);
+    std::result<std::vector<uint8_t>> responseBytesResult = this->connection->readSync(this->readTimeout);
+    if(responseBytesResult.has_error()){
+        return std::error<Response>();
+    }
 
-    return deserializedResponse;
+    Response deserializedResponse = this->responseDeserializer.deserialize(responseBytesResult.get());
+
+    return std::ok<Response>(deserializedResponse);
 }
 
 void Node::closeConnection() {

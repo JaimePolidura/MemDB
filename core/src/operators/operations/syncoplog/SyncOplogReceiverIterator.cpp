@@ -21,10 +21,10 @@ std::result<std::vector<uint8_t>> SyncOplogReceiverIterator::next() {
 
     if(!nextResponse.isSuccessful && nextResponse.hasErrorCode(ErrorCode::SYNC_OP_LOG_EOF)){
         this->nSegmentsRemaining = 0;
-        return std::result<std::vector<uint8_t>>::ok(std::vector<uint8_t>{});
+        return std::ok(std::vector<uint8_t>{});
     }
     if(!nextResponse.isSuccessful && nextResponse.hasErrorCode(ErrorCode::UNFIXABLE_CORRUPTED_OPLOG_SEGMENT)){
-        return std::result<std::vector<uint8_t>>::error(std::vector<uint8_t>{});
+        return std::error(std::vector<uint8_t>{});
     }
 
     this->timestampToSync = nextResponse.timestamp;
@@ -37,18 +37,18 @@ std::result<std::vector<uint8_t>> SyncOplogReceiverIterator::next() {
 }
 
 Response SyncOplogReceiverIterator::sendNextSegment() {
-    std::optional<Response> responseOptional{};
+    std::result<Response> responseResult{};
 
     do {
-        responseOptional = this->nodeSender->sendRequest(createNextSegmnentRequest());
+        responseResult = this->nodeSender->sendRequest(createNextSegmnentRequest());
 
-        if(!responseOptional.has_value()){
+        if(responseResult.has_error()){
             this->logger->debugInfo("Restarting SYNC_OPLOG at timestamp {0}", this->timestampToSync);
             this->initSyncOplog();
         }
-    }while(!responseOptional.has_value());
+    }while(responseResult.has_error());
 
-    return responseOptional.value();
+    return responseResult.get();
 }
 
 uint64_t SyncOplogReceiverIterator::totalSize() {
@@ -59,7 +59,7 @@ std::result<std::vector<uint8_t>> SyncOplogReceiverIterator::getOplogFromRespons
     auto oplog = response.getResponseValueAtOffset(4, response.responseValue.size - 4).toVector();
     auto originalSize = response.getResponseValueAtOffset(0, 4).to<uint32_t>();
 
-    return std::result<std::vector<uint8_t>>::ok(this->compressor.uncompressBytes(oplog, originalSize).get_or_throw_with([](const int errorCode) {
+    return std::ok(this->compressor.uncompressBytes(oplog, originalSize).get_or_throw_with([](const int errorCode) {
         return "Unable to uncompress oplog in SyncOplogReceiverIterator::getOplogFromResponse with error code: " + errorCode;
     }));
 }
@@ -71,11 +71,11 @@ void SyncOplogReceiverIterator::initSyncOplog() {
 
         Request request = this->createSyncOplogRequest(node->nodeId);
 
-        std::optional<Response> responseOptional = node->sendRequest(request);
+        std::result<Response> responseResult = node->sendRequest(request);
 
-        if(responseOptional.has_value()){
-            this->nSegmentsRemaining = responseOptional.value().responseValue.to<uint64_t>();
-            this->syncId = responseOptional->requestNumber;
+        if(responseResult.is_success()){
+            this->nSegmentsRemaining = responseResult->responseValue.to<uint64_t>();
+            this->syncId = responseResult->requestNumber;
             this->nodeSender = node;
 
             this->logger->debugInfo("Initiated SYNC_OPLOG with node {0} syncId {1} total n segments to receive {2} at timestamp {3}",

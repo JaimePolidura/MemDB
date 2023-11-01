@@ -21,21 +21,83 @@ std::string Connection::getAddress() {
     return ip + ":" + std::to_string(port);
 }
 
-void Connection::readAsync() {
+void Connection::readAsync(uint64_t timeout) {
     std::shared_ptr<Connection> self = shared_from_this();
 
-    this->socket.async_read_some(boost::asio::buffer(this->typePacketHeaderBuffer, sizeof(this->typePacketHeaderBuffer)), [this, self](boost::system::error_code ec, std::size_t lengthRead){
+    this->socket.async_read_some(boost::asio::buffer(this->typePacketHeaderBuffer, sizeof(this->typePacketHeaderBuffer)),
+                                 [this, self, timeout](boost::system::error_code ec, std::size_t lengthRead){
         if(ec) return;
 
-        this->onRequestCallback(this->readPacket(this->typePacketHeaderBuffer[0]));
 
-        this->readAsync();
+        std::result<std::vector<uint8_t>> packetTypeReadResult = this->readPacket(this->typePacketHeaderBuffer[0], timeout);
+        std::result<std::vector<uint8_t>> packetReadResult = this->readPacket(this->typePacketHeaderBuffer[0], timeout);
+
+        if(packetTypeReadResult.is_success() && packetReadResult.is_success()){
+            this->onRequestCallback(packetReadResult.get());
+        }
+
+        this->readAsync(timeout);
     });
 }
 
-std::vector<uint8_t> Connection::readSync() {
-    boost::asio::read(this->socket, boost::asio::buffer(this->typePacketHeaderBuffer));
-    return this->readPacket(this->typePacketHeaderBuffer[0]);
+std::result<std::vector<uint8_t>> Connection::readSync(uint64_t ms) {
+    if(this->readWithTimeout(boost::asio::buffer(this->typePacketHeaderBuffer), ms)){
+        return std::error<std::vector<uint8_t>>();
+    }
+
+    return this->readPacket(this->typePacketHeaderBuffer[0], ms);
+}
+
+std::result<std::vector<uint8_t>> Connection::readPacket(uint8_t packetType, uint64_t timeoutMs) {
+    if(this->isFragmentPacket(packetType)){
+        return this->readFragmentedPacket(timeoutMs);
+    } else {
+        return this->readPacketContent(timeoutMs);
+    }
+}
+
+std::result<std::vector<uint8_t>> Connection::readPacketContent(uint64_t timeoutMs) {
+    if(this->readWithTimeout(boost::asio::buffer(this->messageLengthHeaderBuffer), timeoutMs)){
+        return std::error<std::vector<uint8_t>>();
+    }
+
+    std::vector<uint8_t> messageBuffer(Utils::parse<memDbDataLength_t>(messageLengthHeaderBuffer));
+    if(this->readWithTimeout(boost::asio::buffer(messageBuffer), timeoutMs)){
+        return std::error<std::vector<uint8_t>>();
+    }
+
+    return std::ok(messageBuffer);
+}
+
+std::result<std::vector<uint8_t>> Connection::readFragmentedPacket(uint64_t timeoutMs) {
+    std::vector<uint8_t> result{};
+    int fragmentsReceived = 0;
+
+    this->logger->debugInfo("Received fragmented packet, starting to read");
+
+    this->setTcpReceiveBufferSize(65565 * 8);
+
+    while(true) {
+        fragmentsReceived++;
+
+        std::result<std::vector<uint8_t>> packetResult = this->readPacketContent(timeoutMs);
+        if(packetResult.has_error()){
+            return packetResult;
+        }
+
+        result.insert(result.end(), packetResult->begin(), packetResult->end());
+
+        this->logger->debugInfo("Received fragment {0} packet of {1} kb", fragmentsReceived, packetResult->size() / 1024);
+
+        if(this->isLastFragmentPacket(this->typePacketHeaderBuffer[0])){
+            this->setTcpReceiveBufferSize(65565);
+            return std::ok(result);
+        }
+
+        if(this->readWithTimeout(boost::asio::buffer(this->typePacketHeaderBuffer), timeoutMs)){
+            return std::error<std::vector<uint8_t>>();
+        }
+    }
 }
 
 void Connection::writeAsync(std::vector<uint8_t>& toWrite) {
@@ -62,38 +124,6 @@ size_t Connection::writeSync(std::vector<uint8_t>& toWrite) {
         return this->fragmentPacketAndSend(toWrite, [this](std::vector<uint8_t>& fragmentedPacket){
             return this->socket.write_some(boost::asio::buffer(fragmentedPacket));
         });
-    }
-}
-
-std::vector<uint8_t> Connection::readPacket(uint8_t packetType) {
-    if(this->isFragmentPacket(packetType)){
-        return this->readFragmentedPacket();
-    } else {
-        return this->readPacketContent();
-    }
-}
-
-std::vector<uint8_t> Connection::readFragmentedPacket() {
-    std::vector<uint8_t> result{};
-    int fragmentsReceived = 0;
-
-    this->logger->debugInfo("Received fragmented packet, starting to read");
-
-    this->setTcpReceiveBufferSize(65565 * 8);
-
-    while(true) {
-        fragmentsReceived++;
-        std::vector<uint8_t> packet = this->readPacketContent();
-        result.insert(result.end(), packet.begin(), packet.end());
-
-        this->logger->debugInfo("Received fragment {0} packet of {1} kb", fragmentsReceived, packet.size() / 1024);
-
-        if(this->isLastFragmentPacket(this->typePacketHeaderBuffer[0])){
-            this->setTcpReceiveBufferSize(65565);
-            return result;
-        }
-
-        this->socket.read_some(boost::asio::buffer(this->typePacketHeaderBuffer));
     }
 }
 
@@ -137,14 +167,6 @@ std::size_t Connection::fragmentPacketAndSend(std::vector<uint8_t>& initialPacke
     return written;
 }
 
-std::vector<uint8_t> Connection::readPacketContent() {
-    boost::asio::read(this->socket, boost::asio::buffer(this->messageLengthHeaderBuffer));
-    std::vector<uint8_t> messageBuffer(Utils::parse<memDbDataLength_t>(messageLengthHeaderBuffer));
-    this->socket.read_some(boost::asio::buffer(messageBuffer));
-
-    return messageBuffer;
-}
-
 std::vector<uint8_t> Connection::addContentLengthHeader(std::vector<uint8_t>& vec, memDbDataLength_t contentLength) {
     Utils::appendBeginningToBuffer(contentLength, vec);
     return vec;
@@ -176,4 +198,27 @@ void Connection::enableTcpNoDelay() {
 void Connection::setTcpSendBufferSize(std::size_t size) {
     boost::asio::socket_base::send_buffer_size sendBuffer(size);
     this->socket.set_option(sendBuffer);
+}
+
+boost::system::error_code Connection::readWithTimeout(boost::asio::mutable_buffers_1 buffer, uint64_t timeoutMs) {
+    boost::system::error_code errorCode;
+
+    this->flagReadInProgress.lock();
+
+    uint64_t value = this->readRequestCounter.fetch_add(1);
+
+    std::async(std::launch::async, [this, timeoutMs, value](){
+        std::this_thread::sleep_for(std::chrono::milliseconds(timeoutMs));
+        if(this->readRequestCounter.load(std::memory_order_consume) == value){
+            this->socket.cancel();
+        }
+    });
+
+    boost::asio::read(this->socket, buffer, errorCode);
+    std::atomic_thread_fence(std::memory_order_release);
+    this->readRequestCounter.fetch_add(1);
+
+    this->flagReadInProgress.unlock();
+
+    return errorCode;
 }

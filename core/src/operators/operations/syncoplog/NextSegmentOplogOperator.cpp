@@ -42,14 +42,14 @@ std::tuple<std::vector<uint8_t>, uint32_t, bool> NextSegmentOplogOperator::getNe
 
     OplogIndexSegmentDescriptor corruptedDescriptor = iterator->getLastDescriptor();
 
-    std::optional<Response> fixOplogResponse =
+    std::result<Response> fixOplogResponse =
             dependencies.cluster->fixOplogSegment(iterator->getOplogId(), corruptedDescriptor.min, corruptedDescriptor.max);
 
-    if(!fixOplogResponse.has_value() || !fixOplogResponse->isSuccessful) { //No node available or all nodes have corrupted oplog
+    if(fixOplogResponse.has_error() || !fixOplogResponse->isSuccessful) { //No node available or all nodes have corrupted oplog
         return std::make_tuple(std::vector<uint8_t>{}, 0, false);
     }
 
-    uint32_t uncompressedSize = fixOplogResponse.value().getResponseValueAtOffset(0, sizeof(uint32_t)).to<uint32_t>();
+    uint32_t uncompressedSize = fixOplogResponse->getResponseValueAtOffset(0, sizeof(uint32_t)).to<uint32_t>();
     std::vector<uint8_t> uncorruptedBytes = fixOplogResponse->getResponseValueAtOffset(sizeof(uint32_t),
         fixOplogResponse->responseValue.size - sizeof(uint32_t)).toVector();
 

@@ -6,6 +6,7 @@
 #include "messages/request/RequestSerializer.h"
 #include "messages/response/ResponseDeserializer.h"
 #include "utils/net/DNSUtils.h"
+#include "utils/std/Result.h"
 #include "logging/Logger.h"
 #include "utils/Utils.h"
 
@@ -19,16 +20,18 @@ public:
     NodeState state;
     memdbNodeId_t nodeId;
 
+    uint64_t readTimeout;
+
     ResponseDeserializer responseDeserializer;
     RequestSerializer requestSerializer;
 
     Node();
 
-    Node(memdbNodeId_t nodeId, const std::string& address, NodeState state);
+    Node(memdbNodeId_t nodeId, const std::string& address, NodeState state, uint64_t readTimeout);
 
     Node(const Node& other);
-
-    auto sendRequest(const Request &request) -> std::optional<Response>;
+    
+    auto sendRequest(const Request &request) -> std::result<Response>;
 
     void closeConnection();
 

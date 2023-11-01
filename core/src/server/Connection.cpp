@@ -29,10 +29,9 @@ void Connection::readAsync(uint64_t timeout) {
         if(ec) return;
 
 
-        std::result<std::vector<uint8_t>> packetTypeReadResult = this->readPacket(this->typePacketHeaderBuffer[0], timeout);
         std::result<std::vector<uint8_t>> packetReadResult = this->readPacket(this->typePacketHeaderBuffer[0], timeout);
 
-        if(packetTypeReadResult.is_success() && packetReadResult.is_success()){
+        if(packetReadResult.is_success()){
             this->onRequestCallback(packetReadResult.get());
         }
 

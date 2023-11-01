@@ -28,7 +28,7 @@ public:
                 {ConfigurationKeys::NODE_ID,                            "1"},
                 {ConfigurationKeys::SHOW_DEBUG_LOG,                     "false"},
                 {ConfigurationKeys::USE_PARTITIONS,                     "false"},
-                {ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS,            "500"},
+                {ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS,            "5000"},
                 {ConfigurationKeys::NODE_REQUEST_N_RETRIES,             "10"},
                 {ConfigurationKeys::DATA_PATH,                          FILEPATH}
         };

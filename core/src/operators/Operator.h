@@ -9,7 +9,10 @@
 #include "OperatorDependencies.h"
 
 enum OperatorType {
-    DB_STORE_READ, DB_STORE_WRITE, NODE_MAINTENANCE
+    DB_STORE_READ,
+    DB_STORE_WRITE,
+    NODE_MAINTENANCE,
+    DB_STORE_CONDITIONAL_WRITE,
 };
 
 struct OperatorDescriptor {

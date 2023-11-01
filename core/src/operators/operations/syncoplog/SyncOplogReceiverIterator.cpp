@@ -66,7 +66,7 @@ std::result<std::vector<uint8_t>> SyncOplogReceiverIterator::getOplogFromRespons
 
 void SyncOplogReceiverIterator::initSyncOplog() {
     while(true){
-        node_t node = Utils::getOptionalOrThrow(this->clusterNodes->getRandomNode(this->alreadyCheckedNodeIds, {.partitionId = (int) this->selfOplogIdToSync}),
+        node_t node = Utils::getOptionalOrThrow(this->clusterNodes->getRandomNode({.partitionId = (int) this->selfOplogIdToSync}, this->alreadyCheckedNodeIds),
                                                 "No node available to select for syncing oplog");
 
         Request request = this->createSyncOplogRequest(node->nodeId);

@@ -16,7 +16,7 @@ uint32_t Partitions::getOplogIdOfOtherNodeBySelfOplogId(memdbNodeId_t otherNodeI
 }
 
 uint32_t Partitions::getRingPositionByKey(SimpleString<memDbDataLength_t> key) {
-    return HashCalculator::calculate(key.toString()) % this->maxSize;
+    return HashCalculator::calculateMD5(key.toString()) % this->maxSize;
 }
 
 // self --> (clockwise) nodeB

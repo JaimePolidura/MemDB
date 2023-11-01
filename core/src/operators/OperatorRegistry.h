@@ -10,6 +10,8 @@
 #include "operators/operations/user/DeleteOperator.h"
 #include "operators/operations/user/GetOperator.h"
 #include "operators/operations/user/SetOperator.h"
+#include "operators/operations/cas/CasOperator.h"
+#include "operators/operations/cas/PrepareCasOperator.h"
 #include "operators/Operator.h"
 #include "OperatorNumbers.h"
 

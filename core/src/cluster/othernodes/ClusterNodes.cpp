@@ -69,7 +69,7 @@ std::result<Response> ClusterNodes::sendRequestToAnyNode(bool requiresSuccessful
     std::set<memdbNodeId_t> alreadyCheckedNodeId{};
 
     while(true) {
-        std::optional<node_t> node = this->getRandomNode(alreadyCheckedNodeId, options);
+        std::optional<node_t> node = this->getRandomNode(options, alreadyCheckedNodeId);
 
         if(!node.has_value()){
             return std::error<Response>();
@@ -102,7 +102,7 @@ auto ClusterNodes::sendRequestToRandomNode(const Request& request, const NodePar
     std::set<memdbNodeId_t> alreadyCheckedNodesId = {};
 
     return Utils::retryNTimesAndGet<Response, std::milli>(nRetries, std::chrono::milliseconds(timeout), [this, &request, &alreadyCheckedNodesId, options]() -> std::result<Response> {
-        node_t nodeToSendRequest = Utils::getOptionalOrThrow<node_t>(this->getRandomNode(alreadyCheckedNodesId,options));
+        node_t nodeToSendRequest = Utils::getOptionalOrThrow<node_t>(this->getRandomNode(options, alreadyCheckedNodesId));
         
         return nodeToSendRequest->sendRequest(this->prepareRequest(request.operation));
     });
@@ -113,22 +113,33 @@ auto ClusterNodes::broadcast(const OperationBody& operation, const NodePartition
     int timeout = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS);
     int nRetries = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_N_RETRIES);
 
-    for(memdbNodeId_t nodeId : allNodesIdInPartition){
-        node_t node = this->nodesById.at(nodeId);
-
-        if(!NodeStates::canAcceptRequest(node->state)) {
-            continue;
-        }
-
+    this->forEachNodeInPartitionThatCanAcceptReq(options.partitionId, [this, timeout, nRetries, operation](node_t node) -> void {
         this->requestPool.submit([node, operation, timeout, nRetries, this]() mutable -> void {
             Utils::retryUntil(nRetries, std::chrono::milliseconds(timeout), [this, &node, &operation]() -> void{
                 node->sendRequest(this->prepareRequest(operation));
             });
         });
-    }
+    });
 }
 
-std::optional<node_t> ClusterNodes::getRandomNode(std::set<memdbNodeId_t> alreadyCheckedNodesId, const NodePartitionOptions options) {
+auto ClusterNodes::broadcastAndWait(const OperationBody& operation, const NodePartitionOptions options) -> multipleResponses_t {
+    int nNodesInPartition = this->nodesInPartitions[options.partitionId].size();
+    multipleResponses_t multipleResponses = std::make_shared<MultipleResponses>(nNodesInPartition);
+    MultipleResponsesNotifier multipleResponseNotifier(multipleResponses);
+
+    this->forEachNodeInPartitionThatCanAcceptReq(options.partitionId, [this, multipleResponseNotifier, operation](node_t node) -> void {
+        this->requestPool.submit([node, operation, multipleResponseNotifier, this]() mutable -> void {
+            std::result<Response> responseResult = node->sendRequest(this->prepareRequest(operation));
+            if(responseResult->isSuccessful){
+                multipleResponseNotifier.addResponse(node->nodeId, responseResult.get());
+            }
+        });
+    });
+
+    return multipleResponses;
+}
+
+std::optional<node_t> ClusterNodes::getRandomNode(const NodePartitionOptions options, std::set<memdbNodeId_t> alreadyCheckedNodesId) {
     std::srand(std::time(nullptr));
     NodesInPartition nodesInPartition = this->nodesInPartitions[options.partitionId];
     std::set<memdbNodeId_t> nodesIdInPartition = nodesInPartition.getAll();
@@ -165,4 +176,16 @@ Request ClusterNodes::prepareRequest(const OperationBody& operation) {
     request.authentication = authenticationBody;
 
     return request;
+}
+
+void ClusterNodes::forEachNodeInPartitionThatCanAcceptReq(int partitionId, std::function<void(node_t node)> consumer) {
+    std::set<memdbNodeId_t> allNodesIdInPartition = this->nodesInPartitions[partitionId].getAll();
+
+    for(memdbNodeId_t nodeId : allNodesIdInPartition){
+        node_t node = this->nodesById.at(nodeId);
+
+        if(NodeStates::canAcceptRequest(node->state)) {
+            consumer(node);
+        }
+    }
 }

@@ -46,8 +46,12 @@ auto Cluster::getPartitionObject() -> partitions_t {
     return this->partitions;
 }
 
-auto Cluster::broadcast(const OperationBody& operation) -> void {
-    this->clusterNodes->broadcast(operation);
+auto Cluster::broadcastAndWait(const OperationBody& operation, const NodePartitionOptions options) -> multipleResponses_t {
+    return this->clusterNodes->broadcast(operation, options);
+}
+
+auto Cluster::broadcast(const OperationBody& operation, const NodePartitionOptions options) -> void {
+    this->clusterNodes->broadcast(operation, options);
 }
 
 auto Cluster::getNodeState() -> NodeState {

@@ -94,7 +94,7 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
         }
 
         if(isInReplicationMode() && options.fromClient() && !options.dontBroadcastToCluster){
-            this->cluster->broadcast(operation);
+            this->cluster->broadcast(operation, {.partitionId = this->getPartitionIdByKey(operation.getArg(0))});
             this->logger->debugInfo("Broadcast request for operator {0} from {1}",
                                     operatorToExecute->desc().name, options.checkTimestamps ? "node" : "user");
         }
@@ -139,6 +139,12 @@ OperatorDependencies OperatorDispatcher::getDependencies() {
     };
 
     return dependenciesToReturn;
+}
+
+inline int OperatorDispatcher::getPartitionIdByKey(const SimpleString<memDbDataLength_t>& key) {
+    return this->configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS) ?
+           this->cluster->getPartitionIdByKey(key) :
+           0;
 }
 
 bool OperatorDispatcher::isAuthorizedToExecute(std::shared_ptr<Operator> operatorToExecute, AuthenticationType authenticationOfUser) {

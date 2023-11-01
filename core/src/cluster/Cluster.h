@@ -2,11 +2,12 @@
 
 #include "shared.h"
 
-#include "cluster/partitions/Partitions.h"
-#include "cluster/NodeState.h"
-#include "cluster/othernodes/ClusterNodes.h"
-#include "cluster/clusterdb/ClusterDb.h"
 #include "cluster/othernodes/NodePartitionOptions.h"
+#include "cluster/othernodes/MultipleResponses.h"
+#include "cluster/othernodes/ClusterNodes.h"
+#include "cluster/partitions/Partitions.h"
+#include "cluster/clusterdb/ClusterDb.h"
+#include "cluster/NodeState.h"
 
 #include "utils/clock/LamportClock.h"
 #include "utils/strings/StringUtils.h"
@@ -22,7 +23,6 @@
 #include "logging/Logger.h"
 #include "db/MemDbStores.h"
 #include "operators/OperatorNumbers.h"
-
 
 class Cluster {
 private:
@@ -65,7 +65,9 @@ public:
 
     auto getNodesPerPartition() -> uint32_t;
 
-    virtual auto broadcast(const OperationBody& operation) -> void;
+    auto broadcastAndWait(const OperationBody& operation, const NodePartitionOptions options) -> multipleResponses_t;
+
+    virtual auto broadcast(const OperationBody& operation, const NodePartitionOptions options) -> void;
 
     virtual auto getNodeState() -> NodeState;
 

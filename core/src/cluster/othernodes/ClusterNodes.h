@@ -2,6 +2,7 @@
 
 #include "shared.h"
 #include "cluster/othernodes/NodePartitionOptions.h"
+#include "cluster/othernodes/MultipleResponses.h"
 #include "cluster/othernodes/NodesInPartition.h"
 #include "cluster/Node.h"
 
@@ -34,15 +35,15 @@ public:
 
     void setNumberPartitions(uint32_t numberPartitions);
 
-    void setOtherNodes(const std::vector<node_t>& otherNodesToSet, const NodePartitionOptions options = {});
+    void setOtherNodes(const std::vector<node_t>& otherNodesToSet, const NodePartitionOptions options);
 
     std::vector<NodesInPartition> getNodesInPartitions();
 
-    bool isEmtpy(const NodePartitionOptions options = {});
+    bool isEmtpy(const NodePartitionOptions options);
 
     void setNodeState(memdbNodeId_t nodeId, const NodeState newState);
 
-    void addNode(node_t node, const NodePartitionOptions options = {});
+    void addNode(node_t node, const NodePartitionOptions options);
 
     bool existsByNodeId(memdbNodeId_t nodeId);
 
@@ -50,7 +51,7 @@ public:
 
     void deleteNodeById(const memdbNodeId_t nodeId);
 
-    std::result<Response> sendRequestToAnyNode(const Request& request, bool requiresSuccessfulResponse, const NodePartitionOptions options = {});
+    std::result<Response> sendRequestToAnyNode(const Request& request, bool requiresSuccessfulResponse, const NodePartitionOptions options);
 
     std::result<Response> sendRequestToAnyNode(bool requiresSuccessfulResponse,
                                                  const NodePartitionOptions options,
@@ -58,15 +59,19 @@ public:
 
     Response sendRequest(memdbNodeId_t nodeId, const Request& request);
 
-    std::result<Response> sendRequestToRandomNode(const Request& request, const NodePartitionOptions options = {});
+    std::result<Response> sendRequestToRandomNode(const Request& request, const NodePartitionOptions options);
 
-    void broadcast(const OperationBody& operation, const NodePartitionOptions options = {});
+    void broadcast(const OperationBody& operation, const NodePartitionOptions options);
+
+    multipleResponses_t broadcastAndWait(const OperationBody& operation, const NodePartitionOptions options);
 
     void removeNodeFromPartition(memdbNodeId_t nodeId, const NodePartitionOptions options);
 
-    std::optional<node_t> getRandomNode(std::set<memdbNodeId_t> alreadyCheckedNodesId = {}, const NodePartitionOptions options = {});
+    std::optional<node_t> getRandomNode(const NodePartitionOptions options, std::set<memdbNodeId_t> alreadyCheckedNodesId = {});
 private:
     Request prepareRequest(const OperationBody& operation);
+
+    void forEachNodeInPartitionThatCanAcceptReq(int partitionId, std::function<void(node_t node)> consumer);
 };
 
 using clusterNodes_t = std::shared_ptr<ClusterNodes>;

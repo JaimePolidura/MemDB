@@ -1,6 +1,6 @@
 #include "utils/crypto/HashCalculator.h"
 
-uint64_t HashCalculator::calculate(const std::string& input) {
+uint64_t HashCalculator::calculateMD5(const std::string& input) {
     unsigned char md[MD5_DIGEST_LENGTH];
     MD5(reinterpret_cast<const unsigned char*>(input.c_str()), input.length(), md);
 

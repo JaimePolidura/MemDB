@@ -60,6 +60,22 @@ public:
         return sizeof(StringLengthType);
     }
 
+    bool operator==(const SimpleString<StringLengthType>& other) const {
+        if (this->size != other.size) {
+            return false;
+        }
+        for (StringLengthType i = 0; i < this->size; ++i) {
+            if (* (this->data() + i) != * (other.data() + i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool operator!=(const SimpleString<StringLengthType>& other) const {
+        return !(*this == other);
+    }
+
     static SimpleString empty() {
         return SimpleString{nullptr, 0};
     }

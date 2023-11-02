@@ -20,16 +20,20 @@ public:
 private:
     std::tuple<SimpleString<memDbDataLength_t>, SimpleString<memDbDataLength_t>, SimpleString<memDbDataLength_t>> getArgs(const OperationBody& operation);
 
+    bool checkIfQuorumAndAllResponsesSuccess(multipleResponses_t multiResponses, uint32_t keyHash, OperatorDependencies& dependencies);
+
     LamportClock getNextTimestampForKey(MapEntry<memDbDataLength_t> mapEntry,
                                        OperatorDependencies& dependencies);
 
-    multipleResponses_t sendPrepare(cluster_t cluster,
+    multipleResponses_t sendPrepare(OperatorDependencies& dependencies,
+                                    uint32_t keyHash,
                                     int partitionId,
                                     SimpleString<memDbDataLength_t> key,
                                     LamportClock prevTimestamp,
                                     LamportClock nextTimestamp);
 
-    multipleResponses_t sendAccept(cluster_t cluster,
+    multipleResponses_t sendAccept(OperatorDependencies& dependencies,
+                                   uint32_t keyHash,
                                    int partitionId,
                                    SimpleString<memDbDataLength_t> key,
                                    SimpleString<memDbDataLength_t> value,

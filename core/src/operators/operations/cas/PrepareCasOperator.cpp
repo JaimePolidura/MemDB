@@ -2,23 +2,21 @@
 
 Response PrepareCasOperator::operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) {
     memDbDataStoreMap_t memDbStore = dependencies.memDbStores->getByPartitionId(options.partitionId);
-
     auto[key, prevTimestamp, nextTimestamp] = this->getArgs(operation);
-
     uint32_t keyHash = memDbStore->calculateHash(key);
 
     std::optional<MapEntry<memDbDataLength_t>> keyInDb = memDbStore->get(key);
-    std::optional<PaxosRound> paxosRound = dependencies.onGoingPaxosRounds->getRoundByKeyHash(keyHash);
+    std::optional<PaxosRound> paxosRound = dependencies.onGoingPaxosRounds->getAcceptatorRoundByKeyHash(keyHash);
     bool moreUpToDateValueIsStored = keyInDb.has_value() && keyInDb->timestamp > prevTimestamp;
-    bool promisedHigherTimestamp = paxosRound.has_value() && paxosRound->promisedTimestamp > nextTimestamp;
+    bool promisedHigherTimestamp = paxosRound.has_value() && paxosRound->acceptatorPromisedNextTimestamp > nextTimestamp;
 
     if(moreUpToDateValueIsStored || promisedHigherTimestamp) {
         return Response::error(ErrorCode::CAS_FAILED);
     }
     if(!paxosRound.has_value()) {
-        dependencies.onGoingPaxosRounds->registerNewPaxosRoundPromised(keyHash, nextTimestamp);
+        dependencies.onGoingPaxosRounds->registerNewAcceptatorPromisePaxosRound(keyHash, nextTimestamp);
     }
-    if(paxosRound.has_value() && nextTimestamp > paxosRound->promisedTimestamp) {
+    if(paxosRound.has_value() && nextTimestamp > paxosRound->acceptatorPromisedNextTimestamp) {
         dependencies.onGoingPaxosRounds->updatePromisedTimestamp(keyHash, nextTimestamp);
     }
 

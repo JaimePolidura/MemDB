@@ -130,6 +130,7 @@ OperatorDependencies OperatorDispatcher::getDependencies() {
     dependenciesToReturn.operationLog = this->operationLog;
     dependenciesToReturn.cluster = this->cluster;
     dependenciesToReturn.logger = this->logger;
+    dependenciesToReturn.clock = this->clock;
     dependenciesToReturn.memDbStores = this->memDbStores;
     dependenciesToReturn.operatorDispatcher = [this](const OperationBody& op, const OperationOptions& options) -> Response {
         return this->executeOperation(this->operatorRegistry->get(op.operatorNumber), const_cast<OperationBody&>(op), options);

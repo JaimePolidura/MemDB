@@ -7,6 +7,7 @@
 /**
  * Args:
  *  - uint32 Key
+ *  - uint32 Value
  *  - Prev Timestamp
  *      - uint32 NodeId (lamport's nodeId of proposer) Read as uint16
  *      - uint64 Counter (lamport's nodeId of proposer)
@@ -14,12 +15,15 @@
  *      - uint32 NodeId (lamport's nodeId of proposer) Read as uint16
  *      - uint64 Counter (lamport's nodeId of proposer)
  */
-class PrepareCasOperator : public Operator {
+class AcceptCasOperator : public Operator {
 public:
     Response operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies& dependencies) override;
 
     OperatorDescriptor desc() override;
 
 private:
-    std::tuple<SimpleString<memDbDataLength_t>, LamportClock, LamportClock> getArgs(const OperationBody& operation);
+    std::tuple<SimpleString<memDbDataLength_t>,
+            SimpleString<memDbDataLength_t>,
+            LamportClock,
+            LamportClock> getArgs(const OperationBody& operation);
 };

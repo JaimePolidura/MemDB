@@ -3,37 +3,34 @@
 Response PrepareCasOperator::operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) {
     memDbDataStoreMap_t memDbStore = dependencies.memDbStores->getByPartitionId(options.partitionId);
 
-    SimpleString<memDbDataLength_t> key = operation.getArg(0);
-    SimpleString<memDbDataLength_t> expectedValue = operation.getArg(1);
-    SimpleString<memDbDataLength_t> newValue = operation.getArg(2);
-    LamportClock timestampFromPrepare = this->getTimestampFromArgs(operation);
+    auto[key, prevTimestamp, nextTimestamp] = this->getArgs(operation);
+
     uint32_t keyHash = memDbStore->calculateHash(key);
 
     std::optional<MapEntry<memDbDataLength_t>> keyInDb = memDbStore->get(key);
     std::optional<PaxosRound> paxosRound = dependencies.onGoingPaxosRounds->getRoundByKeyHash(keyHash);
-    bool moreUpToDateValueIsStored = keyInDb.has_value() && keyInDb->timestamp.counter > timestampFromPrepare.counter;
-    bool promisedHigherTimestamp = paxosRound.has_value() && paxosRound->promisedTimestamp > timestampFromPrepare;
+    bool moreUpToDateValueIsStored = keyInDb.has_value() && keyInDb->timestamp > prevTimestamp;
+    bool promisedHigherTimestamp = paxosRound.has_value() && paxosRound->promisedTimestamp > nextTimestamp;
 
     if(moreUpToDateValueIsStored || promisedHigherTimestamp) {
         return Response::error(ErrorCode::CAS_FAILED);
     }
     if(!paxosRound.has_value()) {
-        dependencies.onGoingPaxosRounds->registerNewPaxosRoundPromised(keyHash, timestampFromPrepare);
+        dependencies.onGoingPaxosRounds->registerNewPaxosRoundPromised(keyHash, nextTimestamp);
     }
-    if(paxosRound.has_value() && timestampFromPrepare > paxosRound->promisedTimestamp) {
-        dependencies.onGoingPaxosRounds->updatePromisedTimestamp(keyHash, timestampFromPrepare);
-    }
-
-    if(paxosRound.has_value() && paxosRound->state == PaxosState::ACCEPTED){
-        return ResponseBuilder::builder()
-            .error(ErrorCode::CAS_PROMISE_ACCEPTED)
-            ->values({
-
-            })
-            ->build();
+    if(paxosRound.has_value() && nextTimestamp > paxosRound->promisedTimestamp) {
+        dependencies.onGoingPaxosRounds->updatePromisedTimestamp(keyHash, nextTimestamp);
     }
 
     return Response::success();
+}
+
+std::tuple<SimpleString<memDbDataLength_t>, LamportClock, LamportClock> PrepareCasOperator::getArgs(const OperationBody& operation) {
+    SimpleString<memDbDataLength_t> key = operation.getArg(0);
+    LamportClock prevTimestamp{operation.getArg(1).to<uint16_t>(), operation.getDoubleArgU64(2)};
+    LamportClock nextTimestamp{operation.getArg(4).to<uint16_t>(), operation.getDoubleArgU64(5)};
+
+    return std::make_tuple(key, prevTimestamp, nextTimestamp);
 }
 
 OperatorDescriptor PrepareCasOperator::desc() {
@@ -43,11 +40,4 @@ OperatorDescriptor PrepareCasOperator::desc() {
             .name = "CAS_PREPARE",
             .authorizedToExecute = { AuthenticationType::NODE },
     };
-}
-
-LamportClock PrepareCasOperator::getTimestampFromArgs(const OperationBody& operation) {
-    uint16_t lamportNodeId = operation.getArg(3).to<uint16_t>();
-    uint64_t lamportCounter = operation.getDoubleArgU64(4);
-
-    return LamportClock{lamportNodeId, lamportCounter};
-}
+}}

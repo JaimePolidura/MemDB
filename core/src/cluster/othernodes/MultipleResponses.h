@@ -19,6 +19,8 @@ public:
     bool waitForQuorum(uint64_t timeoutMs);
 
     std::map<memdbNodeId_t, Response> getResponses();
+
+    bool allResponsesSuccessful();
 };
 
 class MultipleResponsesNotifier {

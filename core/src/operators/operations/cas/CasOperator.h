@@ -3,7 +3,7 @@
 #include "operators/Operator.h"
 #include "messages/response/ResponseBuilder.h"
 #include "messages/response/ErrorCode.h"
-#include "operators/operations/cas/OnGoingPaxos.h"
+#include "operators/operations/cas/OnGoingPaxosRounds.h"
 
 /**
  * Args:
@@ -18,5 +18,21 @@ public:
     OperatorDescriptor desc() override;
 
 private:
-    bool promiseResponsesHasGreaterTimestamp(const LamportClock& clock, const std::map<memdbNodeId_t, Response>& prepareResponses);
+    std::tuple<SimpleString<memDbDataLength_t>, SimpleString<memDbDataLength_t>, SimpleString<memDbDataLength_t>> getArgs(const OperationBody& operation);
+
+    LamportClock getNextTimestampForKey(MapEntry<memDbDataLength_t> mapEntry,
+                                       OperatorDependencies& dependencies);
+
+    multipleResponses_t sendPrepare(cluster_t cluster,
+                                    int partitionId,
+                                    SimpleString<memDbDataLength_t> key,
+                                    LamportClock prevTimestamp,
+                                    LamportClock nextTimestamp);
+
+    multipleResponses_t sendAccept(cluster_t cluster,
+                                   int partitionId,
+                                   SimpleString<memDbDataLength_t> key,
+                                   SimpleString<memDbDataLength_t> value,
+                                   LamportClock prevTimestamp,
+                                   LamportClock nextTimestamp);
 };

@@ -8,6 +8,7 @@
 #include "db/MemDbStores.h"
 #include "logging/Logger.h"
 #include "persistence/segments/OplogIndexSegment.h"
+#include "utils/clock/LamportClock.h"
 
 struct OperatorDependencies {
     onGoingPaxosRounds_t onGoingPaxosRounds;
@@ -16,6 +17,7 @@ struct OperatorDependencies {
     configuration_t configuration;
     operationLog_t operationLog;
     memDbStores_t memDbStores;
+    lamportClock_t clock;
     cluster_t cluster;
     logger_t logger;
 

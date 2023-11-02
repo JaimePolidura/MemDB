@@ -14,6 +14,16 @@ std::map<memdbNodeId_t, Response> MultipleResponses::getResponses() {
     return copyOfResponses;
 }
 
+bool MultipleResponses::allResponsesSuccessful() {
+    for (const auto[nodeId, response] : this->responses) {
+        if(!response.isSuccessful){
+            return true;
+        }
+    }
+
+    return false;
+}
+
 MultipleResponsesNotifier::MultipleResponsesNotifier(std::shared_ptr<MultipleResponses> multipleResponse): multipleResponse(multipleResponse) {}
 
 void MultipleResponsesNotifier::addResponse(memdbNodeId_t nodeId, const Response& response) {

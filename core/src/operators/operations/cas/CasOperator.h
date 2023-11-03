@@ -18,7 +18,14 @@ public:
     OperatorDescriptor desc() override;
 
 private:
-    std::tuple<SimpleString<memDbDataLength_t>, SimpleString<memDbDataLength_t>, SimpleString<memDbDataLength_t>> getArgs(const OperationBody& operation);
+    std::tuple<SimpleString<memDbDataLength_t>,
+            SimpleString<memDbDataLength_t>,
+            SimpleString<memDbDataLength_t>> getArgs(const OperationBody& operation);
+
+    std::result<std::tuple<LamportClock, LamportClock>> sendRetriesPrepares(OperatorDependencies& dependencies,
+                                                                            int partitionId,
+                                                                            SimpleString<memDbDataLength_t> key,
+                                                                            SimpleString<memDbDataLength_t> expectedValue);
 
     bool checkIfQuorumAndAllResponsesSuccess(multipleResponses_t multiResponses, uint32_t keyHash, OperatorDependencies& dependencies);
 

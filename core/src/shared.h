@@ -36,6 +36,7 @@
 #include <math.h>
 #include <regex>
 #include <cstring>
+#include <random>
 
 //Deps
 #include <boost/beast.hpp>

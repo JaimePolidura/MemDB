@@ -5,23 +5,34 @@ Response CasOperator::operate(const OperationBody& operation, const OperationOpt
     auto [key, expectedValue, newValue] = this->getArgs(operation);
     uint32_t keyHash = memDbStore->calculateHash(key);
     auto onGoingPaxosRounds = dependencies.onGoingPaxosRounds;
+    ProposerPaxosRound proposerPaxosRound = onGoingPaxosRounds->getProposerByKeyHashOrCreate(keyHash, ProposerPaxosState::WAITING_FOR_PROMISE);
 
-    if(onGoingPaxosRounds->isPaxosRoundOnGoingProposer(keyHash)){
+    if(onGoingPaxosRounds->isOnGoingProposer(keyHash)){
         return Response::error(ErrorCode::CAS_FAILED);
     }
 
-    std::optional<MapEntry<memDbDataLength_t>> storedInDb = memDbStore->get(key);
-    if(!storedInDb.has_value() || storedInDb->value != expectedValue){
-        return Response::error(ErrorCode::CAS_FAILED);
+    LamportClock prevTimestamp = {};
+    LamportClock nextTimestamp = {};
+    
+    //Extract function
+    while(true){
+        std::optional<MapEntry<memDbDataLength_t>> storedInDb = memDbStore->get(key);
+        if(!storedInDb.has_value() || storedInDb->value != expectedValue){
+            return Response::error(ErrorCode::CAS_FAILED);
+        }
+
+        prevTimestamp = storedInDb->timestamp;
+        nextTimestamp = this->getNextTimestampForKey(storedInDb.value(), dependencies);
+
+        multipleResponses_t prepareMultiResponses = this->sendPrepare(dependencies, keyHash, options.partitionId, key, prevTimestamp, nextTimestamp);
+        if(checkIfQuorumAndAllResponsesSuccess(prepareMultiResponses, keyHash, dependencies)) {
+            break;
+        }
+
+        proposerPaxosRound.retryPrepareTimer.sleep();
     }
 
-    LamportClock nextTimestamp = this->getNextTimestampForKey(storedInDb.value(), dependencies);
-    LamportClock prevTimestamp = storedInDb->timestamp;
-
-    multipleResponses_t prepareMultiResponses = this->sendPrepare(dependencies, keyHash, options.partitionId, key, prevTimestamp, nextTimestamp);
-    if(!checkIfQuorumAndAllResponsesSuccess(prepareMultiResponses, keyHash, dependencies)){
-        return Response::error(ErrorCode::CAS_FAILED);
-    }
+    proposerPaxosRound.retryPrepareTimer.reset();
 
     multipleResponses_t acceptMultiResponse = this->sendAccept(dependencies, keyHash, options.partitionId, key, newValue, prevTimestamp, nextTimestamp);
     if(!checkIfQuorumAndAllResponsesSuccess(acceptMultiResponse, keyHash, dependencies)){
@@ -31,7 +42,7 @@ Response CasOperator::operate(const OperationBody& operation, const OperationOpt
     bool success = memDbStore->put(key, newValue, false, nextTimestamp.counter, nextTimestamp.nodeId);
 
     if(success){
-        onGoingPaxosRounds->updatePaxosRoundStateProposer(keyHash, ProposerPaxosState::COMITTED);
+        onGoingPaxosRounds->updateStateProposer(keyHash, ProposerPaxosState::COMITTED);
         dependencies.operationLog->add(options.partitionId, RequestBuilder::builder()
             .operatorNumber(OperatorNumbers::SET)
             ->args({key, newValue})
@@ -39,7 +50,7 @@ Response CasOperator::operate(const OperationBody& operation, const OperationOpt
             ->selfNode(dependencies.cluster->getNodeId())
             ->buildOperationBody());
     } else {
-        onGoingPaxosRounds->updatePaxosRoundStateProposer(keyHash, ProposerPaxosState::FAILED);
+        onGoingPaxosRounds->updateStateProposer(keyHash, ProposerPaxosState::FAILED);
     }
 
     return ResponseBuilder::builder()
@@ -48,12 +59,8 @@ Response CasOperator::operate(const OperationBody& operation, const OperationOpt
 }
 
 bool CasOperator::checkIfQuorumAndAllResponsesSuccess(multipleResponses_t multiResponses, uint32_t keyHash, OperatorDependencies& dependencies) {
-    if(!multiResponses->waitForQuorum(dependencies.configuration->get<uint64_t>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS))) {
-        dependencies.onGoingPaxosRounds->updatePaxosRoundStateProposer(keyHash, ProposerPaxosState::FAILED);
-        return false;
-    }
-    if(!multiResponses->allResponsesSuccessful()){
-        dependencies.onGoingPaxosRounds->updatePaxosRoundStateProposer(keyHash, ProposerPaxosState::FAILED);
+    if(!multiResponses->waitForSuccessfulQuorum(dependencies.configuration->get<uint64_t>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS))) {
+        dependencies.onGoingPaxosRounds->updateStateProposer(keyHash, ProposerPaxosState::FAILED);
         return false;
     }
     return true;
@@ -65,7 +72,7 @@ multipleResponses_t CasOperator::sendPrepare(OperatorDependencies& dependencies,
                                              SimpleString<memDbDataLength_t> key,
                                              LamportClock prevTimestamp,
                                              LamportClock nextTimestamp) {
-    dependencies.onGoingPaxosRounds->updatePaxosRoundStateProposer(keyHash, ProposerPaxosState::WAITING_FOR_PROMISE);
+    dependencies.onGoingPaxosRounds->updateStateProposer(keyHash, ProposerPaxosState::WAITING_FOR_PROMISE);
 
     return dependencies.cluster->broadcastAndWait({.partitionId = partitionId}, RequestBuilder::builder()
             .operatorNumber(OperatorNumbers::CAS_PREPARE)
@@ -85,7 +92,7 @@ multipleResponses_t CasOperator::sendAccept(OperatorDependencies& dependencies,
                                             SimpleString<memDbDataLength_t> value,
                                             LamportClock prevTimestamp,
                                             LamportClock nextTimestamp) {
-    dependencies.onGoingPaxosRounds->updatePaxosRoundStateProposer(keyHash, ProposerPaxosState::WAITING_FOR_ACCEPT);
+    dependencies.onGoingPaxosRounds->updateStateProposer(keyHash, ProposerPaxosState::WAITING_FOR_ACCEPT);
 
     return dependencies.cluster->broadcastAndWait({.partitionId = partitionId}, RequestBuilder::builder()
             .operatorNumber(OperatorNumbers::CAS_ACCEPT)

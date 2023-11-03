@@ -1,6 +1,7 @@
 #pragma once
 
 #include "shared.h"
+#include "utils/clock/ExponentialRandomizedTimer.h"
 #include "utils/clock/LamportClock.h"
 
 enum ProposerPaxosState {
@@ -16,13 +17,15 @@ enum AcceptatorPaxosState {
 
 struct ProposerPaxosRound {
     ProposerPaxosState state;
+
+    ExponentialRandomizedTimer retryPrepareTimer;
 };
 
 struct AcceptatorPaxosRound {
     AcceptatorPaxosState state;
 
-    LamportClock acceptatorPromisedNextTimestamp;
-    LamportClock acceptatorAcceptedNextTimestamp;
+    LamportClock promisedNextTimestamp;
+    LamportClock promisedOldTimestamp;
 };
 
 class OnGoingPaxosRounds {
@@ -35,12 +38,13 @@ private:
 
 public:
     //Proposer
-    bool isPaxosRoundOnGoingProposer(uint32_t keyHash);
-    void updatePaxosRoundStateProposer(uint32_t keyHash, ProposerPaxosState newState);
+    bool isOnGoingProposer(uint32_t keyHash);
+    void updateStateProposer(uint32_t keyHash, ProposerPaxosState newState);
+    ProposerPaxosRound getProposerByKeyHashOrCreate(uint32_t keyHash, ProposerPaxosState newState);
 
     //Acceptator
-    std::optional<AcceptatorPaxosRound> getAcceptatorRoundByKeyHash(uint32_t keyHash);
-    void registerNewAcceptatorPromisePaxosRound(uint32_t keyHash, LamportClock nextTimestamp);
+    std::optional<AcceptatorPaxosRound> getAcceptatorByKeyHash(uint32_t keyHash);
+    void registerNewAcceptatorPromise(uint32_t keyHash, LamportClock nextTimestamp);
     void updatePromisedTimestamp(uint32_t keyHash, LamportClock promisedTimestamp);
     void updateAcceptedTimestamp(uint32_t keyHash, LamportClock promisedTimestamp);
 };

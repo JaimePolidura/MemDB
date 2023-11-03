@@ -6,17 +6,17 @@ Response PrepareCasOperator::operate(const OperationBody& operation, const Opera
     uint32_t keyHash = memDbStore->calculateHash(key);
 
     std::optional<MapEntry<memDbDataLength_t>> keyInDb = memDbStore->get(key);
-    std::optional<AcceptatorPaxosRound> paxosRound = dependencies.onGoingPaxosRounds->getAcceptatorRoundByKeyHash(keyHash);
+    std::optional<AcceptatorPaxosRound> paxosRound = dependencies.onGoingPaxosRounds->getAcceptatorByKeyHash(keyHash);
     bool moreUpToDateValueIsStored = keyInDb.has_value() && keyInDb->timestamp > prevTimestamp;
-    bool promisedHigherTimestamp = paxosRound.has_value() && paxosRound->acceptatorPromisedNextTimestamp > nextTimestamp;
+    bool promisedHigherTimestamp = paxosRound.has_value() && paxosRound->promisedNextTimestamp > nextTimestamp;
 
     if(moreUpToDateValueIsStored || promisedHigherTimestamp) {
         return Response::error(ErrorCode::CAS_FAILED);
     }
     if(!paxosRound.has_value()) {
-        dependencies.onGoingPaxosRounds->registerNewAcceptatorPromisePaxosRound(keyHash, nextTimestamp);
+        dependencies.onGoingPaxosRounds->registerNewAcceptatorPromise(keyHash, nextTimestamp);
     }
-    if(paxosRound.has_value() && nextTimestamp > paxosRound->acceptatorPromisedNextTimestamp) {
+    if(paxosRound.has_value() && nextTimestamp > paxosRound->promisedNextTimestamp) {
         dependencies.onGoingPaxosRounds->updatePromisedTimestamp(keyHash, nextTimestamp);
     }
 
@@ -38,4 +38,4 @@ OperatorDescriptor PrepareCasOperator::desc() {
             .name = "CAS_PREPARE",
             .authorizedToExecute = { AuthenticationType::NODE },
     };
-}}
+}

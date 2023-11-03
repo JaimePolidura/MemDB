@@ -2,16 +2,16 @@
 
 MultipleResponses::MultipleResponses(int nTotalRequest): nTotalRequest(nTotalRequest) {}
 
-bool MultipleResponses::waitForQuorum(uint64_t timeoutMs) {
-    return this->latch.awaitMinOrEq(this->nTotalRequest / 2 + 1, timeoutMs);
-}
-
 std::map<memdbNodeId_t, Response> MultipleResponses::getResponses() {
     this->responsesLock.lock();
     std::map<memdbNodeId_t, Response> copyOfResponses = this->responses;
     this->responsesLock.unlock();
 
     return copyOfResponses;
+}
+
+bool MultipleResponses::waitForSuccessfulQuorum(uint64_t timeoutMs) {
+    return this->successfulResponsesLatch.awaitMinOrEq(this->nTotalRequest / 2 + 1, timeoutMs);
 }
 
 bool MultipleResponses::allResponsesSuccessful() {
@@ -27,8 +27,10 @@ bool MultipleResponses::allResponsesSuccessful() {
 MultipleResponsesNotifier::MultipleResponsesNotifier(std::shared_ptr<MultipleResponses> multipleResponse): multipleResponse(multipleResponse) {}
 
 void MultipleResponsesNotifier::addResponse(memdbNodeId_t nodeId, const Response& response) {
-    multipleResponse->responsesLock.lock();
+    std::unique_lock<std::mutex> uniqueLock(multipleResponse->responsesLock);
+
     multipleResponse->responses.insert({nodeId, response});
-    multipleResponse->latch.increase();
-    multipleResponse->responsesLock.unlock();
+    if(response.isSuccessful){
+        multipleResponse->successfulResponsesLatch.increase();
+    }
 }

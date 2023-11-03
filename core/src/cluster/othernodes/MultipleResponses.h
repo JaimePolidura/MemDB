@@ -8,15 +8,14 @@ class MultipleResponses {
 private:
     std::map<memdbNodeId_t, Response> responses{};
     std::mutex responsesLock{};
-    CounterLatch latch{};
+    CounterLatch successfulResponsesLatch{};
     int nTotalRequest;
 
     friend class MultipleResponsesNotifier;
 public:
-
     MultipleResponses(int nTotalRequest);
 
-    bool waitForQuorum(uint64_t timeoutMs);
+    bool waitForSuccessfulQuorum(uint64_t timeoutMs);
 
     std::map<memdbNodeId_t, Response> getResponses();
 

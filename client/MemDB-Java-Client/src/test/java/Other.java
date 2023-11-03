@@ -5,12 +5,22 @@ import lombok.SneakyThrows;
 public final class Other {
     @SneakyThrows
     public static void main(String[] args) {
-        node1_write();
+        cast_test();
+//        node1_write();
 //        node3_write();
 //        node5_write();
 //        node1_read();
 //        node4_read();
 //        node5_read();
+    }
+
+    @SneakyThrows
+    static void cast_test() {
+        MemDb memDb = new MemDb(MemDbConnections.sync("192.168.1.159", 10000), "789");
+        memDb.set("locked", "false");
+
+        var success = memDb.cas("locked", "true", "true");
+        System.out.println(success);
     }
 
     @SneakyThrows

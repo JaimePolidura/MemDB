@@ -50,9 +50,15 @@ public final class MemDb {
     }
 
     public void set(String key, String value) {
-        this.sendRequest(OperationRequest.builder()
+        sendRequest(OperationRequest.builder()
                 .operator(Operator.SET)
                 .args(List.of(key, value)));
+    }
+
+    public boolean cas(String key, String expected, String value) {
+        return sendRequest(OperationRequest.builder()
+                .operator(Operator.CAS)
+                .args(List.of(key, expected, value))) != null;
     }
 
     public void set(String key, String value, Runnable callback) {

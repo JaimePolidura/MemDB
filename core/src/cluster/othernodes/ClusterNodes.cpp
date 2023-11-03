@@ -127,7 +127,7 @@ auto ClusterNodes::broadcastAndWait(const NodePartitionOptions options, const Op
     multipleResponses_t multipleResponses = std::make_shared<MultipleResponses>(nNodesInPartition);
     MultipleResponsesNotifier multipleResponseNotifier(multipleResponses);
 
-    this->forEachNodeInPartitionThatCanAcceptReq(options.partitionId, [this, multipleResponseNotifier, operation](node_t node) -> void {
+    this->forEachNodeInPartitionThatCanAcceptReq(options.partitionId, [this, multipleResponseNotifier, operation](node_t node) mutable -> void {
         this->requestPool.submit([node, operation, multipleResponseNotifier, this]() mutable -> void {
             std::result<Response> responseResult = node->sendRequest(this->prepareRequest(operation));
             if(responseResult->isSuccessful){

@@ -11,13 +11,17 @@ Response AcceptCasOperator::operate(const OperationBody &operation, const Operat
     bool moreUpToDateValueIsStored = keyInDb.has_value() && keyInDb->timestamp > prevTimestamp;
     bool promisedHigherTimestamp = paxosRound.has_value() && paxosRound->promisedNextTimestamp > nextTimestamp;
 
+    dependencies.logger->debugInfo("Received ACCEPT(prev = {0}, next = {1}, key = {2}, value = {3}). More up to date value stored? {3} Promised higher next timestamp? {4}. Saving to local db",
+                                   prevTimestamp.toString(), nextTimestamp.toString(), key.toString(), value.toString(), moreUpToDateValueIsStored, promisedHigherTimestamp);
+
     if(moreUpToDateValueIsStored || promisedHigherTimestamp){
         return Response::error(ErrorCode::CAS_FAILED);
     }
 
-    bool success = memDbStore->put(key, value, false, nextTimestamp.counter, nextTimestamp.nodeId);
+    if(memDbStore->put(key, value, false, nextTimestamp.counter, nextTimestamp.nodeId)) {
+        dependencies.logger->debugInfo("Successfully saved CAS key = {0} value = {1} with timestamp {2} into local db",
+                                       key.toString(), value.toString(), nextTimestamp.toString());
 
-    if(success) {
         dependencies.onGoingPaxosRounds->updateAcceptedTimestamp(keyHash, nextTimestamp);
         dependencies.operationLog->add(options.partitionId, RequestBuilder::builder()
             .operatorNumber(OperatorNumbers::SET)
@@ -25,11 +29,14 @@ Response AcceptCasOperator::operate(const OperationBody &operation, const Operat
             ->timestamp(nextTimestamp.counter)
             ->selfNode(nextTimestamp.nodeId)
             ->buildOperationBody());
-    }
 
-    return ResponseBuilder::builder()
-        .isSuccessful(success, ErrorCode::CAS_FAILED)
-        ->build();
+        return Response::success();
+    } else {
+        dependencies.logger->debugInfo("Failed to save CAS key = {0} value = {1} with timestamp {2} into local db",
+                                       key.toString(), value.toString(), nextTimestamp.toString());
+
+        return Response::error(ErrorCode::CAS_FAILED);
+    }
 }
 
 std::tuple<SimpleString<memDbDataLength_t>, SimpleString<memDbDataLength_t>, LamportClock, LamportClock> AcceptCasOperator::getArgs(const OperationBody& operation) {

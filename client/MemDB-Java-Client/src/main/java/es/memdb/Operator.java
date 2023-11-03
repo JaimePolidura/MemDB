@@ -1,5 +1,6 @@
 package es.memdb;
 
+import es.memdb.messages.response.expcetions.CasFailed;
 import es.memdb.messages.response.expcetions.MemDbException;
 import es.memdb.messages.response.expcetions.UnknownKey;
 
@@ -8,7 +9,8 @@ import java.util.List;
 public enum Operator {
     SET(1, List.of(UnknownKey.class)),
     GET(2, List.of(UnknownKey.class)),
-    DELETE(3, List.of(UnknownKey.class));
+    DELETE(3, List.of(UnknownKey.class)),
+    CAS(9, List.of(CasFailed.class));
 
     public final List<Class<? extends MemDbException>> expectedExceptions;
     public final int operatorNumber;

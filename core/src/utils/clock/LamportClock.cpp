@@ -13,6 +13,10 @@ LamportClock& LamportClock::operator=(const LamportClock& other) {
     return * this;
 }
 
+std::string LamportClock::toString() {
+    return "("+ std::to_string(this->counter.load()) + ", " + std::to_string(this->nodeId) +")";
+}
+
 uint64_t LamportClock::tick(uint64_t other) {
     uint64_t actualCounterValue = this->counter.load(std::memory_order_acquire);
     uint64_t max = std::max(other, actualCounterValue);

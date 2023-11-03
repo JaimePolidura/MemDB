@@ -1,5 +1,7 @@
 #pragma once
 
+#include "shared.h"
+
 namespace std {
     template<typename V, typename E = V>
     class result {

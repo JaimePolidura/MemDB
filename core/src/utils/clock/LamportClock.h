@@ -23,6 +23,8 @@ public:
 
     uint64_t getCounterValue();
 
+    std::string toString();
+
     //Returns if this clock is bigger than the passed by arguments
     bool compare(uint64_t otherCount, uint16_t otherNodeId);
 

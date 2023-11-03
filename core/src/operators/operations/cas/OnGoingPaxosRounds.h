@@ -3,23 +3,23 @@
 #include "shared.h"
 #include "utils/clock/LamportClock.h"
 
-enum PaxosRole {
-    ACCEPTATOR,
-    PROPOSSER
+enum ProposerPaxosState {
+    WAITING_FOR_PROMISE,
+    WAITING_FOR_ACCEPT,
+    COMITTED,
+    FAILED,
 };
 
-enum PaxosState {
-    PROPOSER_WAITING_FOR_PROMISE,
-    PROPOSER_WAITING_FOR_ACCEPT,
-    PROPOSER_COMITTED,
-    PROPOSER_FAILED,
-
+enum AcceptatorPaxosState {
     ACCEPTATOR_PROMISED,
 };
 
-struct PaxosRound {
-    PaxosState state;
-    PaxosRole role;
+struct ProposerPaxosRound {
+    ProposerPaxosState state;
+};
+
+struct AcceptatorPaxosRound {
+    AcceptatorPaxosState state;
 
     LamportClock acceptatorPromisedNextTimestamp;
     LamportClock acceptatorAcceptedNextTimestamp;
@@ -27,26 +27,22 @@ struct PaxosRound {
 
 class OnGoingPaxosRounds {
 private:
-    std::unordered_map<uint32_t, PaxosRound> paxosRoundsProposerByKeyHash{};
+    std::unordered_map<uint32_t, ProposerPaxosRound> paxosRoundsProposerByKeyHash{};
     std::mutex proposerLock{};
 
-    std::unordered_map<uint32_t, PaxosRound> paxosRoundsAcceptatorByKeyHash{};
+    std::unordered_map<uint32_t, AcceptatorPaxosRound> paxosRoundsAcceptatorByKeyHash{};
     std::mutex acceptatorLock{};
 
 public:
+    //Proposer
     bool isPaxosRoundOnGoingProposer(uint32_t keyHash);
-    void updatePaxosRoundStateProposer(uint32_t keyHash, PaxosState newState);
+    void updatePaxosRoundStateProposer(uint32_t keyHash, ProposerPaxosState newState);
 
-    std::optional<PaxosRound> getAcceptatorRoundByKeyHash(uint32_t keyHash);
+    //Acceptator
+    std::optional<AcceptatorPaxosRound> getAcceptatorRoundByKeyHash(uint32_t keyHash);
     void registerNewAcceptatorPromisePaxosRound(uint32_t keyHash, LamportClock nextTimestamp);
     void updatePromisedTimestamp(uint32_t keyHash, LamportClock promisedTimestamp);
     void updateAcceptedTimestamp(uint32_t keyHash, LamportClock promisedTimestamp);
-
-
-    void registerNewPaxosRoundPromised(uint32_t keyHash, LamportClock promisedTimestamp);
-
-    void updateAcceptedTimestamp(uint32_t keyHash, LamportClock promisedTimestamp, SimpleString<memDbDataLength_t> value);
-
 };
 
 using onGoingPaxosRounds_t = std::shared_ptr<OnGoingPaxosRounds>;

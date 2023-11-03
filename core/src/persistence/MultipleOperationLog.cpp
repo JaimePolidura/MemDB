@@ -1,44 +1,42 @@
 #include "MultipleOperationLog.h"
 
-MultipleOperationLog::MultipleOperationLog(configuration_t configuration, std::function<int(const OperationBody&)> oplogResolver,
-        std::function<std::string(int)> oplogFileNameResolver, uint32_t numberOplogs, logger_t loggerCons): OperationLog(configuration),
-        oplogResolver(oplogResolver),
+MultipleOperationLog::MultipleOperationLog(configuration_t configuration, std::function<std::string(int)> oplogFileNameResolver,
+                                           uint32_t numberOplogs, logger_t loggerCons): OperationLog(configuration),
         logger(loggerCons) {
     this->initializeOplogs(numberOplogs, oplogFileNameResolver);
 }
 
-void MultipleOperationLog::addAll(const std::vector<OperationBody>& operations, const OperationLogOptions options) {
+void MultipleOperationLog::addAll(memdbOplogId_t oplogId, const std::vector<OperationBody>& operations) {
     for (const OperationBody& operation: operations) {
-        this->add(operation, options);
+        this->add(oplogId, operation);
     }
 }
 
-void MultipleOperationLog::add(const OperationBody& operation, const OperationLogOptions options) {
-    int oplogId = this->oplogResolver(operation);
+void MultipleOperationLog::add(memdbOplogId_t oplogId, const OperationBody& operation) {
     singleOperationLog_t oplog = this->operationLogs[oplogId];
 
-    oplog->add(operation, options);
+    oplog->add(oplogId, operation);
 }
 
-bool MultipleOperationLog::hasOplogFile(const OperationLogOptions options) {
-    return this->operationLogs.size() < options.operationLogId &&
-            this->operationLogs.at(options.operationLogId)->hasOplogFile(options);
+bool MultipleOperationLog::hasOplogFile(memdbOplogId_t oplogId) {
+    return this->operationLogs.size() < oplogId &&
+            this->operationLogs.at(oplogId)->hasOplogFile(oplogId);
 }
 
-void MultipleOperationLog::clear(const OperationLogOptions options) {
-    if(options.operationLogId >= this->operationLogs.size()){
+void MultipleOperationLog::clear(memdbOplogId_t oplogId) {
+    if(oplogId >= this->operationLogs.size()){
         return;
     }
 
-    this->operationLogs.at(options.operationLogId)->clear(options);
+    this->operationLogs.at(oplogId)->clear(oplogId);
 }
 
-void MultipleOperationLog::updateCorrupted(const std::vector<uint8_t>& uncorrupted, uint32_t uncompressedSize, uint64_t ptr, const OperationLogOptions options) {
-    if(options.operationLogId >= this->operationLogs.size()){
+void MultipleOperationLog::updateCorrupted(const std::vector<uint8_t>& uncorrupted, uint32_t uncompressedSize, uint64_t ptr, memdbOplogId_t oplogId) {
+    if(oplogId >= this->operationLogs.size()){
         return;
     }
 
-    return this->operationLogs[options.operationLogId]->updateCorrupted(uncorrupted, uncompressedSize, ptr, options);
+    return this->operationLogs[oplogId]->updateCorrupted(uncorrupted, uncompressedSize, ptr, oplogId);
 }
 
 bytesDiskIterator_t MultipleOperationLog::getBetweenTimestamps(uint64_t fromTimestamp, uint64_t toTimestamp, const OperationLogOptions options) {

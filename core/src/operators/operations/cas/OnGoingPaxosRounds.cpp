@@ -4,20 +4,20 @@ bool OnGoingPaxosRounds::isPaxosRoundOnGoingProposer(uint32_t keyHash) {
     std::unique_lock<std::mutex> uniqueLock(this->proposerLock);
 
     if(this->paxosRoundsProposerByKeyHash.contains(keyHash)){
-        PaxosRound& paxosRound = this->paxosRoundsProposerByKeyHash.at(keyHash);
-        return paxosRound.state == PaxosState::PROPOSER_WAITING_FOR_ACCEPT || paxosRound.state == PaxosState::PROPOSER_WAITING_FOR_PROMISE;
+        ProposerPaxosRound& paxosRound = this->paxosRoundsProposerByKeyHash.at(keyHash);
+        return paxosRound.state == ProposerPaxosState::WAITING_FOR_ACCEPT || paxosRound.state == ProposerPaxosState::WAITING_FOR_PROMISE;
     } else {
         return false;
     }
 }
 
-void OnGoingPaxosRounds::updatePaxosRoundStateProposer(uint32_t keyHash, PaxosState newState) {
+void OnGoingPaxosRounds::updatePaxosRoundStateProposer(uint32_t keyHash, ProposerPaxosState newState) {
     std::unique_lock<std::mutex> uniqueLock(this->proposerLock);
 
     if(!this->paxosRoundsProposerByKeyHash.contains(keyHash)) {
-        this->paxosRoundsProposerByKeyHash[keyHash] = PaxosRound{.state = newState, .role = PaxosRole::PROPOSSER};
+        this->paxosRoundsProposerByKeyHash[keyHash] = ProposerPaxosRound{.state = newState};
     } else {
-        PaxosRound& paxosRound = this->paxosRoundsProposerByKeyHash.at(keyHash);
+        ProposerPaxosRound& paxosRound = this->paxosRoundsProposerByKeyHash.at(keyHash);
         paxosRound.state = newState;
     }
 }
@@ -25,28 +25,28 @@ void OnGoingPaxosRounds::updatePaxosRoundStateProposer(uint32_t keyHash, PaxosSt
 void OnGoingPaxosRounds::updateAcceptedTimestamp(uint32_t keyHash, LamportClock promisedTimestamp) {
     std::unique_lock<std::mutex> uniqueLock(this->proposerLock);
 
-    PaxosRound& paxosRound = this->paxosRoundsAcceptatorByKeyHash.at(keyHash);
+    AcceptatorPaxosRound& paxosRound = this->paxosRoundsAcceptatorByKeyHash.at(keyHash);
     paxosRound.acceptatorAcceptedNextTimestamp = promisedTimestamp;
 }
 
 void OnGoingPaxosRounds::updatePromisedTimestamp(uint32_t keyHash, LamportClock promisedTimestamp) {
     std::unique_lock<std::mutex> uniqueLock(this->proposerLock);
 
-    PaxosRound& paxosRound = this->paxosRoundsAcceptatorByKeyHash.at(keyHash);
+    AcceptatorPaxosRound& paxosRound = this->paxosRoundsAcceptatorByKeyHash.at(keyHash);
     paxosRound.acceptatorPromisedNextTimestamp = promisedTimestamp;
 }
 
 void OnGoingPaxosRounds::registerNewAcceptatorPromisePaxosRound(uint32_t keyHash, LamportClock nextTimestamp) {
     std::unique_lock<std::mutex> uniqueLock(this->acceptatorLock);
-    this->paxosRoundsAcceptatorByKeyHash[keyHash] = PaxosRound{
-        .state = PaxosState::ACCEPTATOR_PROMISED,
+    this->paxosRoundsAcceptatorByKeyHash[keyHash] = AcceptatorPaxosRound{
+        .state = AcceptatorPaxosState::ACCEPTATOR_PROMISED,
         .acceptatorPromisedNextTimestamp = nextTimestamp
     };
 }
 
-std::optional<PaxosRound> OnGoingPaxosRounds::getAcceptatorRoundByKeyHash(uint32_t keyHash) {
+std::optional<AcceptatorPaxosRound> OnGoingPaxosRounds::getAcceptatorRoundByKeyHash(uint32_t keyHash) {
     std::unique_lock<std::mutex> uniqueLock(this->acceptatorLock);
     return this->paxosRoundsAcceptatorByKeyHash.contains(keyHash) ?
-           std::optional<PaxosRound>{this->paxosRoundsAcceptatorByKeyHash.at(keyHash)} :
+           std::optional<AcceptatorPaxosRound>{this->paxosRoundsAcceptatorByKeyHash.at(keyHash)} :
            std::nullopt;
 }

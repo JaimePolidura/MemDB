@@ -55,7 +55,9 @@ Response OperatorDispatcher::dispatch_no_applyDelayedOperationsBuffer(const Requ
         this->delayedOperationsBuffer.add(request);
         return Response::success();
     }
-    if(operatorToExecute->desc().type == OperatorType::DB_STORE_WRITE || operatorToExecute->desc().type == OperatorType::DB_STORE_READ){
+    if(operatorToExecute->desc().type == OperatorType::DB_STORE_WRITE ||
+            operatorToExecute->desc().type == OperatorType::DB_STORE_READ ||
+            operatorToExecute->desc().type == OperatorType::DB_STORE_CONDITIONAL_WRITE) { //TODO Improve
         options.partitionId = this->cluster->getPartitionIdByKey(request.operation.getArg(0));
     }
 
@@ -91,7 +93,7 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
         operation.timestamp = newTimestamp;
 
         if(!options.dontSaveInOperationLog){
-            this->operationLog->add(operation);
+            this->operationLog->add(options.partitionId, operation);
         }
 
         if(isInReplicationMode() && options.fromClient() && !options.dontBroadcastToCluster){

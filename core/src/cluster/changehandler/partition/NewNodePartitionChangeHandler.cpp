@@ -139,7 +139,7 @@ void NewNodePartitionChangeHandler::removeKeysFromSelfNode(const std::vector<Map
                 .operation;
 
         this->cluster->memDbStores->getByPartitionId(0)->remove(keyToRemove.key, true, 0, 0);
-        this->operationLog->add(deleteOperation, OperationLogOptions{.operationLogId = 0});
+        this->operationLog->add(0, deleteOperation);
     });
 }
 

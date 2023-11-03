@@ -45,17 +45,17 @@ bytesDiskIterator_t SingleOperationLog::getAll(const OperationLogOptions option)
         [this](OplogIndexSegmentDescriptor desc){return this->readBytesByIndexSegmentDescriptor(desc);});
 }
 
-void SingleOperationLog::clear(const OperationLogOptions options) {
+void SingleOperationLog::clear(memdbOplogId_t oplogId) {
     this->operationLogBuffer->stopFlushing();
     this->oplogIndexSegment->clearAll();
     this->intermediateOplog->clearAll();
 }
 
-void SingleOperationLog::add(const OperationBody &operation, const OperationLogOptions options) {
+void SingleOperationLog::add(memdbOplogId_t oplogId, const OperationBody &operation) {
     this->operationLogBuffer->add(operation);
 }
 
-void SingleOperationLog::addAll(const std::vector<OperationBody> &operations, const OperationLogOptions options) {
+void SingleOperationLog::addAll(memdbOplogId_t oplogId, const std::vector<OperationBody> &operations) {
     this->operationLogBuffer->addAll(operations);
 }
 
@@ -63,13 +63,13 @@ uint32_t SingleOperationLog::getNumberOplogFiles() {
     return 1;
 }
 
-void SingleOperationLog::updateCorrupted(const std::vector<uint8_t>& uncorrupted, uint32_t uncompressedSize, uint64_t ptr, const OperationLogOptions options) {
-    this->logger->debugInfo("Fixed {0} bytes corrupted oplog segment in oplogId {1} at desc ptr {2}", uncorrupted.size(), options.operationLogId, ptr);
+void SingleOperationLog::updateCorrupted(const std::vector<uint8_t>& uncorrupted, uint32_t uncompressedSize, uint64_t ptr, memdbOplogId_t oplogId) {
+    this->logger->debugInfo("Fixed {0} bytes corrupted oplog segment in oplogId {1} at desc ptr {2}", uncorrupted.size(), oplogId, ptr);
 
     this->oplogIndexSegment->updateCorruptedSegment(uncorrupted, uncompressedSize, ptr);
 }
 
-bool SingleOperationLog::hasOplogFile(const OperationLogOptions options) {
+bool SingleOperationLog::hasOplogFile(memdbOplogId_t oplogId) {
     return true; //Method only called by MultipleOperationLog
 }
 

@@ -142,7 +142,7 @@ std::vector<uint8_t> MemDb::tryFixLocalOplogSegment(bytesDiskIterator_t oplogIte
     std::vector<uint8_t> fixedOplog = responseOptional->getResponseValueAtOffset(sizeof(uint32_t), responseOptional->responseValue.size - sizeof(uint32_t))
             .toVector();
 
-    this->operationLog->updateCorrupted(fixedOplog, uncompressedSize, oplogIteratorCasted->getLastSegmentOplogDescriptorDiskPtr());
+    this->operationLog->updateCorrupted(fixedOplog, uncompressedSize, oplogIteratorCasted->getLastSegmentOplogDescriptorDiskPtr(), oplogIteratorCasted->getOplogId());
 
     return this->compressor.uncompressBytes(fixedOplog, uncompressedSize)
             .get_or_throw_with([](auto ec){return "Impossible to decompress oplog in MemDb::tryFixLocalOplogSegment. Error code: " + ec;});

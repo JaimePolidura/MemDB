@@ -6,7 +6,7 @@ Response AcceptCasOperator::operate(const OperationBody &operation, const Operat
     uint32_t keyHash = memDbStore->calculateHash(key);
 
     std::optional<MapEntry<memDbDataLength_t>> keyInDb = memDbStore->get(key);
-    std::optional<PaxosRound> paxosRound = dependencies.onGoingPaxosRounds->getAcceptatorRoundByKeyHash(keyHash);
+    std::optional<AcceptatorPaxosRound> paxosRound = dependencies.onGoingPaxosRounds->getAcceptatorRoundByKeyHash(keyHash);
 
     bool moreUpToDateValueIsStored = keyInDb.has_value() && keyInDb->timestamp > prevTimestamp;
     bool promisedHigherTimestamp = paxosRound.has_value() && paxosRound->acceptatorPromisedNextTimestamp > nextTimestamp;
@@ -17,9 +17,14 @@ Response AcceptCasOperator::operate(const OperationBody &operation, const Operat
 
     bool success = memDbStore->put(key, value, false, nextTimestamp.counter, nextTimestamp.nodeId);
 
-    if(success){
+    if(success) {
         dependencies.onGoingPaxosRounds->updateAcceptedTimestamp(keyHash, nextTimestamp);
-        //TODO Update oplog
+        dependencies.operationLog->add(options.partitionId, RequestBuilder::builder()
+            .operatorNumber(OperatorNumbers::SET)
+            ->args({key, value})
+            ->timestamp(nextTimestamp.counter)
+            ->selfNode(nextTimestamp.nodeId)
+            ->buildOperationBody());
     }
 
     return ResponseBuilder::builder()

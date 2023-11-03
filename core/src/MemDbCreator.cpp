@@ -43,12 +43,8 @@ operationLog_t MemDbCreator::setupMultipleOplogConfiguration(configuration_t con
     auto fileNameResolver = [](int iterations) -> std::string{
         return "oplog-" + iterations;
     };
-    auto oplogResolver = [cluster](const OperationBody& operationBody) -> int{
-        return cluster->getPartitionObject()->getDistanceOfKey(operationBody.args->at(0));
-    };
 
-    return std::make_shared<MultipleOperationLog>(configuration, oplogResolver, fileNameResolver,
-                                                  cluster->getPartitionObject()->getNodesPerPartition(), logger);
+    return std::make_shared<MultipleOperationLog>(configuration, fileNameResolver, cluster->getPartitionObject()->getNodesPerPartition(), logger);
 }
 
 void MemDbCreator::setupClusterChangeWatcher(cluster_t cluster, operationLog_t operationLog, configuration_t configuration,

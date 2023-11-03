@@ -2,6 +2,7 @@
 
 #include "shared.h"
 #include "utils/clock/LamportClock.h"
+#include "memdbtypes.h"
 
 struct OperationOptions {
 public:
@@ -11,7 +12,7 @@ public:
     bool dontSaveInOperationLog;
     bool dontDebugLog;
     LamportClock::UpdateClockStrategy updateClockStrategy;
-    int partitionId;
+    memdbPartitionId_t partitionId;
 
     uint64_t requestNumber;
 

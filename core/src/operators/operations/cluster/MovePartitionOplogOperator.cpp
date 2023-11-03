@@ -5,8 +5,8 @@ Response MovePartitionOplogOperator::operate(const OperationBody& operation, con
 
     bool applyNewOplog = operation.flag1;
     bool clearOldOplog = operation.flag2;
-    auto newOplogId = operation.getArg(0).to<uint32_t>();
-    auto oldOplogId = operation.getArg(1).to<uint32_t>();
+    auto newOplogId = operation.getArg(0).to<memdbOplogId_t>();
+    auto oldOplogId = operation.getArg(1).to<memdbOplogId_t>();
 
     if(newOplogId >= dependencies.cluster->getPartitionObject()->getNodesPerPartition()) {
         this->clearOperationLog(dependencies, oldOplogId);
@@ -16,7 +16,7 @@ Response MovePartitionOplogOperator::operate(const OperationBody& operation, con
     std::vector<uint8_t> oplogRaw =  operation.getArgOr(2, SimpleString<memDbDataLength_t>::fromVector({})).toVector();
     std::vector<OperationBody> oplog = this->operationLogDeserializer.deserializeAll(oplogRaw);
 
-    if(applyNewOplog || !dependencies.operationLog->hasOplogFile({.operationLogId = newOplogId})) {
+    if(applyNewOplog || !dependencies.operationLog->hasOplogFile(newOplogId)) {
         dependencies.logger->debugInfo("MovePartitionOplogOperator Applying {0} entries from oplog id {1}", oplog.size(), newOplogId);
         dependencies.operatorsDispatcher(oplog, {.checkTimestamps = true, .onlyExecute = true, .partitionId = newOplogId});
     }
@@ -28,9 +28,7 @@ Response MovePartitionOplogOperator::operate(const OperationBody& operation, con
 
     dependencies.logger->debugInfo("MovePartitionOplogOperator Adding {0} oplog entries to oplog id {1} ", oplog.size(), newOplogId);
 
-    dependencies.operationLog->addAll(oplog, OperationLogOptions{
-            .operationLogId = newOplogId,
-    });
+    dependencies.operationLog->addAll(newOplogId, oplog);
 
     dependencies.cluster->setRunning();
 
@@ -46,9 +44,9 @@ OperatorDescriptor MovePartitionOplogOperator::desc() {
     };
 }
 
-void MovePartitionOplogOperator::clearOperationLog(OperatorDependencies dependencies, uint32_t operationLogId) {
+void MovePartitionOplogOperator::clearOperationLog(OperatorDependencies dependencies, memdbOplogId_t operationLogId) {
     if(operationLogId > 0) {
-        dependencies.operationLog->clear(OperationLogOptions{.operationLogId = operationLogId});
+        dependencies.operationLog->clear(operationLogId);
         dependencies.memDbStores->removeByPartitionId(operationLogId);
     }
 }

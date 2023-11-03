@@ -12,6 +12,7 @@ OperatorRegistry::OperatorRegistry() {
     this->operators[OperatorNumbers::FIX_OPLOG_SEGMENT] = std::make_shared<FixOplogSegmentOperator>();
     this->operators[OperatorNumbers::CAS] = std::make_shared<CasOperator>();
     this->operators[OperatorNumbers::CAS_PREPARE] = std::make_shared<PrepareCasOperator>();
+    this->operators[OperatorNumbers::CAS_ACCEPT] = std::make_shared<AcceptCasOperator>();
 }
 
 std::shared_ptr<Operator> OperatorRegistry::get(uint8_t operatorNumber) {

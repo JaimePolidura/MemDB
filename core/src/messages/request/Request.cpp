@@ -53,7 +53,7 @@ uint64_t OperationBody::getDoubleArgU64(int start) const {
     uint32_t part1 = this->getArg(start).to<uint32_t>();
     uint32_t part2 = this->getArg(start + 1).to<uint32_t>();
 
-    return ((uint32_t) part1) << 32 | part2;
+    return ((uint64_t) part1) << 32 | part2;
 }
 
 void OperationBody::setArg(int position, arg_t newArg) {

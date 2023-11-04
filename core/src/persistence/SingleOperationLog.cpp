@@ -35,6 +35,8 @@ bytesDiskIterator_t SingleOperationLog::getBetweenTimestamps(uint64_t fromTimest
         return std::make_shared<OplogIterator>(segmentsResult.descriptors, segmentsResult.descriptorInitPtr, std::vector<uint8_t>{}, true, options.compressed, options.operationLogId,
             [this](OplogIndexSegmentDescriptor desc){return this->readBytesByIndexSegmentDescriptor(desc);});
     }
+
+    throw std::error("SegmentResult in SingleOperationLog::getBetweenTimestamps cannot be false");
 }
 
 bytesDiskIterator_t SingleOperationLog::getAll(const OperationLogOptions option) {

@@ -5,8 +5,8 @@ import lombok.SneakyThrows;
 public final class Other {
     @SneakyThrows
     public static void main(String[] args) {
-        cast_test();
-//        node1_write();
+//        cast_test();
+        node1_write();
 //        node3_write();
 //        node5_write();
 //        node1_read();

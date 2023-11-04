@@ -57,6 +57,8 @@ OplogSegmentBetweenTimestampsSearchResult OplogIndexSegment::getBetweenTimestamp
                 .descriptors = oplogIndexSegmentReader.readAllIndexBetween(fromResult.ptr, toResult.ptr),
         };
     }
+
+    throw std::runtime_error("fromResult and toResult in OplogIndexSegment::getBetweenTimestamps cannot be false");
 }
 
 std::vector<OplogIndexSegmentDescriptor> OplogIndexSegment::getAll() {

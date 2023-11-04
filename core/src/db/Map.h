@@ -29,7 +29,8 @@ public:
               const SimpleString<SizeValue>& value,
               LamportClock timestampFromNode,
               LamportClock::UpdateClockStrategy updateClockStrategy,
-              lamportClock_t lamportClock);
+              lamportClock_t lamportClock,
+              bool checkTimestamps);
 
     /**
      * Returns true if operation was successful
@@ -37,8 +38,8 @@ public:
     std::result<DbEditResult> remove(const SimpleString<SizeValue>& key,
                                      LamportClock timestamp,
                                      LamportClock::UpdateClockStrategy updateClockStrategy,
-                                     lamportClock_t lamportClock);
-
+                                     lamportClock_t lamportClock,
+                                     bool checkTimestamps);
 
     std::optional<MapEntry<SizeValue>> get(const SimpleString<SizeValue>& key) const;
 
@@ -132,7 +133,8 @@ std::result<DbEditResult> Map<SizeValue>::put(const SimpleString<SizeValue> &key
                           const SimpleString<SizeValue> &value,
                           LamportClock timestampFromNode,
                           LamportClock::UpdateClockStrategy updateClockStrategy,
-                          lamportClock_t lamportClock) {
+                          lamportClock_t lamportClock,
+                          bool checkTimestamps) {
 
     uint32_t keyHash = this->calculateHash(key);
 
@@ -140,7 +142,7 @@ std::result<DbEditResult> Map<SizeValue>::put(const SimpleString<SizeValue> &key
 
     AVLTree<SizeValue> * bucket = this->getBucket(keyHash);
 
-    std::result<DbEditResult> addResult = bucket->add(key, keyHash, value, timestampFromNode, updateClockStrategy, lamportClock);
+    std::result<DbEditResult> addResult = bucket->add(key, keyHash, value, timestampFromNode, updateClockStrategy, lamportClock, checkTimestamps);
 
     unlockWrite(keyHash);
 
@@ -181,13 +183,14 @@ template<typename SizeValue>
 std::result<DbEditResult> Map<SizeValue>::remove(const SimpleString<SizeValue>& key,
                              LamportClock timestamp,
                              LamportClock::UpdateClockStrategy updateClockStrategy,
-                             lamportClock_t lamportClock) {
+                             lamportClock_t lamportClock,
+                             bool checkTimestamps) {
     uint32_t hash = this->calculateHash(key);
 
     lockWrite(hash);
 
     AVLTree<SizeValue> * bucket = this->getBucket(hash);
-    std::result<DbEditResult> removeResult = bucket->remove(hash, timestamp, updateClockStrategy, lamportClock);
+    std::result<DbEditResult> removeResult = bucket->remove(hash, timestamp, updateClockStrategy, lamportClock, checkTimestamps);
 
     unlockWrite(hash);
 

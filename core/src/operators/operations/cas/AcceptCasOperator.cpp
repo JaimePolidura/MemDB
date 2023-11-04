@@ -19,7 +19,7 @@ Response AcceptCasOperator::operate(const OperationBody &operation, const Operat
         return Response::error(ErrorCode::CAS_FAILED);
     }
 
-    if(memDbStore->put(key, value, false, nextTimestamp.counter, nextTimestamp.nodeId)) {
+    if(memDbStore->put(key, value, nextTimestamp, LamportClock::UpdateClockStrategy::SET, dependencies.clock).is_success()) {
         dependencies.logger->debugInfo("Successfully saved CAS key = {0} value = {1} with timestamp {2} into local db",
                                        key.toString(), value.toString(), nextTimestamp.toString());
 

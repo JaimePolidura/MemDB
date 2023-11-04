@@ -26,4 +26,7 @@ public:
     Response build();
 
     static ResponseBuilder builder();
+
+private:
+    SimpleString<memDbDataLength_t> buildResponseValue();
 };

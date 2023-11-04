@@ -2,8 +2,13 @@
 
 Response DeleteOperator::operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) {
     memDbDataStoreMap_t dbStore = dependencies.memDbStores->getByPartitionId(options.partitionId);
-    std::result<DbEditResult> resultRemove = dbStore->remove(operation.args->at(0), LamportClock{operation.nodeId, operation.timestamp},
-                                   options.updateClockStrategy, dependencies.clock);
+    SimpleString<memDbDataLength_t> key = operation.getArg(0);
+    LamportClock requestTimestamp = LamportClock{operation.nodeId, operation.timestamp};
+    std::result<DbEditResult> resultRemove = dbStore->remove(key, requestTimestamp, options.updateClockStrategy,
+                                                             dependencies.clock, options.checkTimestamps);
+
+    dependencies.logger->debugInfo("Executed DEL({0}) Success? {1} Req timestamp: {2}  New timestamp: {3}", key.toString(),
+                                   resultRemove.is_success(), requestTimestamp.toString(), resultRemove->timestampOfOperation);
 
     return ResponseBuilder::builder()
         .isSuccessful(resultRemove.is_success(), ErrorCode::UNKNOWN_KEY)

@@ -5,7 +5,7 @@
 #include "utils/strings/SimpleString.h"
 #include "utils/clock/LamportClock.h"
 #include "MapEntry.h"
-#include "db/DbEditResult.H"
+#include "db/DbEditResult.h"
 #include "utils/std/Result.h"
 
 #define IGNORE_TIMESTAMP true

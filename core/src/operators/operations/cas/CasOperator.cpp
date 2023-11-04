@@ -28,8 +28,7 @@ Response CasOperator::operate(const OperationBody& operation, const OperationOpt
     dependencies.logger->debugInfo("Received successfully quorum of ACCEPT on key {0} and next {1}. Saving to local db",
                                    key.toString(), nextTimestamp.toString());
 
-    //Success
-    if(memDbStore->put(key, newValue, false, nextTimestamp.counter, nextTimestamp.nodeId)) {
+    if(memDbStore->put(key, newValue, nextTimestamp, LamportClock::UpdateClockStrategy::NONE, dependencies.clock).is_success()) {
         onGoingPaxosRounds->updateStateProposer(keyHash, ProposerPaxosState::COMITTED);
         dependencies.operationLog->add(options.partitionId, RequestBuilder::builder()
             .operatorNumber(OperatorNumbers::SET)

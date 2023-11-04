@@ -92,7 +92,7 @@ uint64_t MemDb::applyOplog(bytesDiskIterator_t oplogIterator, bool saveInOperati
                             .dontBroadcastToCluster = true,
                             .dontSaveInOperationLog = !saveInOperationLog,
                             .dontDebugLog = true,
-                            .updateClockStrategy = LamportClock::UpdateClockStrategy::SET,
+                            .updateClockStrategy = LamportClock::UpdateClockStrategy::SET_MAX,
                             .partitionId = partitionId });
         }
     }

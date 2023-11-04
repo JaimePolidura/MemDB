@@ -10,4 +10,7 @@ public:
     Response operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) override;
 
     OperatorDescriptor desc() override;
+
+private:
+    LamportClock getTimestamp(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies);
 };

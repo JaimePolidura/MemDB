@@ -10,7 +10,7 @@
  * -> 8 initial blocks blocks
  * -> heigth 3
  *
- * Expected result: SET(H, 1) DEL(A) SET(B, 4) SET(E, 4) SET(C, 2) DEL(F) SET(D, 1)
+ * Expected result: SET_MAX(H, 1) DEL(A) SET_MAX(B, 4) SET_MAX(E, 4) SET_MAX(C, 2) DEL(F) SET_MAX(D, 1)
  */
 TEST(MultiThreadedLogCompactor, ShouldCompact) {
     std::vector<OperationBody> * uncompacted = new std::vector<OperationBody>{

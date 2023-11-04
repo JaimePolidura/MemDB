@@ -5,7 +5,7 @@
 class LamportClock {
 public:
     enum UpdateClockStrategy {
-        NONE, SET, TICK
+        NONE, SET_MAX, TICK
     };
 
     std::atomic_uint64_t counter;
@@ -25,7 +25,7 @@ public:
 
     uint64_t update(LamportClock::UpdateClockStrategy updateStrategy, uint64_t otherCounter);
 
-    uint64_t set(uint64_t other);
+    uint64_t setMax(uint64_t other);
 
     uint64_t getCounterValue();
 

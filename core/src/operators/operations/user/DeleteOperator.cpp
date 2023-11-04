@@ -3,7 +3,7 @@
 Response DeleteOperator::operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) {
     memDbDataStoreMap_t dbStore = dependencies.memDbStores->getByPartitionId(options.partitionId);
     SimpleString<memDbDataLength_t> key = operation.getArg(0);
-    LamportClock requestTimestamp = LamportClock{operation.nodeId, operation.timestamp};
+    LamportClock requestTimestamp = this->getTimestamp(operation, options, dependencies);
     std::result<DbEditResult> resultRemove = dbStore->remove(key, requestTimestamp, options.updateClockStrategy,
                                                              dependencies.clock, options.checkTimestamps);
 
@@ -23,4 +23,12 @@ OperatorDescriptor DeleteOperator::desc() {
         .name = "DELETE",
         .authorizedToExecute = { AuthenticationType::API, AuthenticationType::NODE },
     };
+}
+
+LamportClock DeleteOperator::getTimestamp(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) {
+    if(options.fromClient()) {
+        return LamportClock{dependencies.cluster->getNodeId(), operation.timestamp};
+    } else {
+        return LamportClock{operation.nodeId, operation.timestamp};
+    }
 }

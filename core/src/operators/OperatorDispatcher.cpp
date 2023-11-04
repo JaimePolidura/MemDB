@@ -38,7 +38,7 @@ Response OperatorDispatcher::dispatch_no_applyDelayedOperationsBuffer(const Requ
 
     OperationOptions options = {
             .checkTimestamps = writeDbRequestFromNode,
-            .updateClockStrategy = LamportClock::UpdateClockStrategy::TICK,
+            .updateClockStrategy = writeDbRequestFromNode ? LamportClock::UpdateClockStrategy::SET_MAX : LamportClock::UpdateClockStrategy::TICK,
             .requestNumber = request.requestNumber,
     };
 

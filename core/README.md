@@ -11,7 +11,7 @@ This is the main component. This stores the data and handles request & replicati
 - Every operation that can be executed in the database (set, delete, getAll etc.) will be indentified by a number, which will be in every request.
 #### Replication
 - When a append from a client is executed successfuly, the server will broadcast the append operation to every node in the cluster.
-- Conflict resolution in replication is handled by LWW (Last append wins) approach. Every replication request & data stored will have a Lamport clock. If a SET request comes in with a lower timestamp than the stored data, it will getAll rejected.
+- Conflict resolution in replication is handled by LWW (Last append wins) approach. Every replication request & data stored will have a Lamport clock. If a SET_MAX request comes in with a lower timestamp than the stored data, it will getAll rejected.
 - The cluster information is stored in etcd. Every node watchNodeChanges for changes in etcd nodes list, so that it can update its node list.
 - When a node fails and restarts. It will ask a random node to send him all the operations since the last timestamp that he processed (stored in the operation log).
 - When a new node joins the cluster. It will ask a random node to send him all operations.
@@ -37,7 +37,7 @@ Configuration keys are stored in environtment variables:
 ## Available operators
 | **Name**    | **Operator number** | **Args**   | **Auth key type required**      |
 |-------------|---------------------|------------|---------------------------------|
-| SET         | 0x01                | Key, _value | AUTH_NODE_KEY, AUTH_API_KEY     |
+| SET_MAX         | 0x01                | Key, _value | AUTH_NODE_KEY, AUTH_API_KEY     |
 | GET         | 0x02                | Key        | AUTH_API_KEY                    |
 | DELETE      | 0x03                | Key        | AUTH_NODE_KEY, AUTH_API_KEY     |
 | HEATH_CHECK | 0x04                |            | MAINTENANCE_KEY |

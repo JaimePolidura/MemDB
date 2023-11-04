@@ -17,8 +17,8 @@ uint64_t LamportClock::update(LamportClock::UpdateClockStrategy strategy, uint64
     switch (strategy) {
         case NONE:
             return this->counter;
-        case SET:
-            return this->set(otherCounter);
+        case SET_MAX:
+            return this->setMax(otherCounter);
         case TICK:
             return this->tick(otherCounter);
     }
@@ -41,14 +41,14 @@ uint64_t LamportClock::tick(uint64_t other) {
     return newCounter;
 }
 
-uint64_t LamportClock::set(uint64_t newCounter) {
+uint64_t LamportClock::setMax(uint64_t newCounter) {
     uint64_t actual = this->counter.load(std::memory_order_acquire);
 
     while (newCounter > actual && !this->counter.compare_exchange_weak(actual, newCounter, std::memory_order_release)) {
         actual = this->counter.load(std::memory_order_acquire);
     }
 
-    return newCounter > actual ? newCounter : actual;
+    return std::max(newCounter, actual);
 }
 
 uint64_t LamportClock::getCounterValue() {

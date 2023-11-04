@@ -43,11 +43,11 @@ public:
               LamportClock timestampFromNode,
               LamportClock::UpdateClockStrategy updateClockStrategy,
               lamportClock_t lamportClock,
-              bool checkTimestamps) {
+              bool requestFromNode) {
         AVLNode<SizeValue> * newNode = new AVLNode(key, keyHash, value, -1, 0, 0);
 
         DbEditResult result{};
-        AVLNode<SizeValue> * insertedNode = this->insertRecursive(newNode, result, this->root, timestampFromNode, updateClockStrategy, lamportClock, checkTimestamps);
+        AVLNode<SizeValue> * insertedNode = this->insertRecursive(newNode, result, this->root, timestampFromNode, updateClockStrategy, lamportClock, requestFromNode);
 
         return insertedNode != nullptr ?
             std::ok(result) :
@@ -214,15 +214,21 @@ private:
             LamportClock timestamp,
             LamportClock::UpdateClockStrategy updateClockStrategy,
             std::shared_ptr<LamportClock> clock,
-            bool checkTimestamps) {
+            bool requestFromNode) {
 
-        bool ignoreTimestamps = updateClockStrategy == LamportClock::UpdateClockStrategy::NONE || !checkTimestamps;
+        bool ignoreTimestamps = updateClockStrategy == LamportClock::UpdateClockStrategy::NONE || !requestFromNode;
 
         if(last == nullptr) {
             uint64_t newTimestampCounter = clock->update(updateClockStrategy, timestamp.getCounterValue());
-            result.timestampOfOperation = newTimestampCounter;
-            toInsert->timestamp.counter = newTimestampCounter;
-            toInsert->timestamp.nodeId = timestamp.nodeId;
+            
+            if(requestFromNode){
+                result.timestampOfOperation = timestamp.counter;
+                toInsert->timestamp = timestamp;
+            } else {
+                result.timestampOfOperation = newTimestampCounter;
+                toInsert->timestamp.counter = newTimestampCounter;
+                toInsert->timestamp.nodeId = timestamp.nodeId;
+            }
 
             if(this->root == nullptr){
                 this->root = toInsert;
@@ -232,11 +238,11 @@ private:
         }
 
         if(last->keyHash > toInsert->keyHash) {
-            AVLNode<SizeValue> * inserted = insertRecursive(toInsert, result, last->left, timestamp, updateClockStrategy, clock, checkTimestamps);
+            AVLNode<SizeValue> * inserted = insertRecursive(toInsert, result, last->left, timestamp, updateClockStrategy, clock, requestFromNode);
             if(inserted != nullptr) last->left = inserted;
 
         }else if(last->keyHash < toInsert->keyHash) {
-            AVLNode<SizeValue> * inserted = insertRecursive(toInsert, result, last->right, timestamp, updateClockStrategy, clock, checkTimestamps);
+            AVLNode<SizeValue> * inserted = insertRecursive(toInsert, result, last->right, timestamp, updateClockStrategy, clock, requestFromNode);
             if(inserted != nullptr) last->right = inserted;
 
         }else{
@@ -246,7 +252,10 @@ private:
             last->keyHash = toInsert->keyHash;
             last->value = toInsert->value;
             last->key = toInsert->key;
-            last->timestamp = LamportClock{timestamp.nodeId, clock->update(updateClockStrategy, timestamp.getCounterValue())};
+            if(!requestFromNode) {
+                last->timestamp = LamportClock{timestamp.nodeId, clock->update(updateClockStrategy, timestamp.getCounterValue())};
+                result.timestampOfOperation = last->timestamp.counter;
+            }
         }
 
         return this->rebalance(last);

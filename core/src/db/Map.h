@@ -27,10 +27,10 @@ public:
      */
     std::result<DbEditResult> put(const SimpleString<SizeValue>& key,
               const SimpleString<SizeValue>& value,
-              LamportClock timestampFromNode,
+              LamportClock timestamp,
               LamportClock::UpdateClockStrategy updateClockStrategy,
               lamportClock_t lamportClock,
-              bool checkTimestamps);
+              bool requestFromNode);
 
     /**
      * Returns true if operation was successful
@@ -131,10 +131,10 @@ Map<SizeValue>::Map(uint32_t numberBuckets): numberBuckets(Utils::roundUpPowerOf
 template<typename SizeValue>
 std::result<DbEditResult> Map<SizeValue>::put(const SimpleString<SizeValue> &key,
                           const SimpleString<SizeValue> &value,
-                          LamportClock timestampFromNode,
+                          LamportClock timestamp,
                           LamportClock::UpdateClockStrategy updateClockStrategy,
                           lamportClock_t lamportClock,
-                          bool checkTimestamps) {
+                          bool requestFromNode) {
 
     uint32_t keyHash = this->calculateHash(key);
 
@@ -142,7 +142,7 @@ std::result<DbEditResult> Map<SizeValue>::put(const SimpleString<SizeValue> &key
 
     AVLTree<SizeValue> * bucket = this->getBucket(keyHash);
 
-    std::result<DbEditResult> addResult = bucket->add(key, keyHash, value, timestampFromNode, updateClockStrategy, lamportClock, checkTimestamps);
+    std::result<DbEditResult> addResult = bucket->add(key, keyHash, value, timestamp, updateClockStrategy, lamportClock, requestFromNode);
 
     unlockWrite(keyHash);
 

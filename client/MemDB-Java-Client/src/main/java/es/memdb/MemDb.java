@@ -21,7 +21,7 @@ public final class MemDb {
     private ResponseDeserializer responseDeserializer = new ResponseDeserializer();
     private RequestSerializer requestSerializer = new RequestSerializer();
 
-    private final LamportClock clock = new LamportClock(1L);
+    private final LamportClock clock = new LamportClock(0L);
     private final MemDbConnection memDbConnection;
     private final String authApiKey;
 
@@ -76,7 +76,7 @@ public final class MemDb {
         byte[] rawResponse = this.memDbConnection.read(request.getRequestNumber());
         Response response = this.responseDeserializer.deserialize(rawResponse);
 
-        this.clock.update(response.getTimestamp());
+        clock.update(response.getTimestamp());
 
         return response.isFailed() ?
                 handleException(request, response) :

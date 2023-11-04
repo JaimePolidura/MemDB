@@ -10,8 +10,8 @@ public final class LamportClock {
     }
 
     public long update(long other) {
-        long actualCounter = this.count.get();
-        long newCounter = Math.max(actualCounter, other);
+        long actualCounter;
+        long newCounter;
 
         do {
             actualCounter = this.count.get();

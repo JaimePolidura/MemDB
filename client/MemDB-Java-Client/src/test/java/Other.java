@@ -25,7 +25,7 @@ public final class Other {
 
     @SneakyThrows
     static void node1_write() {
-        MemDb memDb = new MemDb(MemDbConnections.sync("192.168.1.159", 10000), "789");
+        MemDb memDb = new MemDb(MemDbConnections.sync("192.168.1.159", 10001), "789");
         memDb.set("cascos", "avion");
     }
 

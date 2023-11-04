@@ -9,7 +9,7 @@ Response SetOperator::operate(const OperationBody& operation, const OperationOpt
     std::result<DbEditResult> resultSet = memDbStore->put(key, value, requestTimestamp, options.updateClockStrategy,
                                                           dependencies.clock, options.checkTimestamps);
 
-    dependencies.logger->debugInfo("Executed SET_MAX({0}, {1}) Success? {2} Req timestamp: {3} New timestamp: {4}",key.toString(), value.toString(),
+    dependencies.logger->debugInfo("Executed SET({0}, {1}) Success? {2} Req timestamp: {3} New timestamp: {4}",key.toString(), value.toString(),
                                    resultSet.is_success(), requestTimestamp.toString(), resultSet->timestampOfOperation);
 
     return ResponseBuilder::builder()
@@ -22,7 +22,7 @@ OperatorDescriptor SetOperator::desc() {
     return OperatorDescriptor{
             .type = OperatorType::DB_STORE_WRITE,
             .number = OperatorNumbers::SET,
-            .name = "SET_MAX",
+            .name = "SET",
             .authorizedToExecute = { AuthenticationType::API, AuthenticationType::NODE },
     };
 }

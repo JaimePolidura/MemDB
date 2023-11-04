@@ -220,7 +220,7 @@ private:
 
         if(last == nullptr) {
             uint64_t newTimestampCounter = clock->update(updateClockStrategy, timestamp.getCounterValue());
-            
+
             if(requestFromNode){
                 result.timestampOfOperation = timestamp.counter;
                 toInsert->timestamp = timestamp;
@@ -249,12 +249,16 @@ private:
             if(!ignoreTimestamps && last->timestamp > timestamp) //Reject. Node has been updated by more updated node
                 return nullptr;
 
-            last->keyHash = toInsert->keyHash;
             last->value = toInsert->value;
-            last->key = toInsert->key;
-            if(!requestFromNode) {
-                last->timestamp = LamportClock{timestamp.nodeId, clock->update(updateClockStrategy, timestamp.getCounterValue())};
-                result.timestampOfOperation = last->timestamp.counter;
+
+            uint64_t newTimestampCounter = clock->update(updateClockStrategy, timestamp.getCounterValue());
+            if(requestFromNode) {
+                result.timestampOfOperation = timestamp.counter;
+                toInsert->timestamp = timestamp;
+            } else {
+                result.timestampOfOperation = newTimestampCounter;
+                toInsert->timestamp.counter = newTimestampCounter;
+                toInsert->timestamp.nodeId = timestamp.nodeId;
             }
         }
 

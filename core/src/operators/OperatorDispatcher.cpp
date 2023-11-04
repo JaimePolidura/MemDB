@@ -42,9 +42,6 @@ Response OperatorDispatcher::dispatch_no_applyDelayedOperationsBuffer(const Requ
             .requestNumber = request.requestNumber,
     };
 
-    this->logger->debugInfo("Received request for operator {0} of request number {1} from {2}", operatorToExecute->desc().name, request.requestNumber,
-                            options.checkTimestamps ? "node" : "user");
-
     if(isInReplicationMode() && (!canAcceptRequest() || (readDbRequest && !canExecuteRequest()))) {
         return Response::error(ErrorCode::INVALID_NODE_STATE);
     }
@@ -57,7 +54,7 @@ Response OperatorDispatcher::dispatch_no_applyDelayedOperationsBuffer(const Requ
     }
     if(operatorToExecute->desc().type == OperatorType::DB_STORE_WRITE ||
             operatorToExecute->desc().type == OperatorType::DB_STORE_READ ||
-            operatorToExecute->desc().type == OperatorType::DB_STORE_CONDITIONAL_WRITE) { //TODO Improve
+            operatorToExecute->desc().type == OperatorType::DB_STORE_CONDITIONAL_WRITE) {
         options.partitionId = this->cluster->getPartitionIdByKey(request.operation.getArg(0));
     }
 
@@ -78,13 +75,12 @@ void OperatorDispatcher::executeOperations(std::shared_ptr<Operator> operatorToE
 Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operatorToExecute,
                           OperationBody& operation,
                           const OperationOptions& options) {
-
     Response result = operatorToExecute->operate(operation, options, this->dependencies);
 
     if(operatorToExecute->desc().type == DB_STORE_WRITE && result.isSuccessful && !options.onlyExecute) {
-        uint64_t newTimestamp = this->updateClock(options.updateClockStrategy, operation.timestamp);
-        result.timestamp = this->clock->tick(newTimestamp);
-        operation.timestamp = newTimestamp;
+        if(options.fromClient()){
+            operation.timestamp = result.timestamp; //Result has new timestamp
+        }
 
         if(!options.dontSaveInOperationLog){
             this->operationLog->add(options.partitionId, operation);
@@ -92,22 +88,12 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
 
         if(isInReplicationMode() && options.fromClient() && !options.dontBroadcastToCluster){
             this->cluster->broadcast({.partitionId = this->getPartitionIdByKey(operation.getArg(0))}, operation);
-            this->logger->debugInfo("Broadcast request for operator {0} from {1}",
-                                    operatorToExecute->desc().name, options.checkTimestamps ? "node" : "user");
+            this->logger->debugInfo("Broadcasting request for operator {0} of key {1} with timestamp ({2}, {3})",
+                                    operatorToExecute->desc().name, operation.getArg(0).toString(), operation.timestamp, cluster->getNodeId());
         }
     }
 
     return result;
-}
-
-uint64_t OperatorDispatcher::updateClock(LamportClock::UpdateClockStrategy strategy, uint64_t newValue) {
-    if(strategy == LamportClock::UpdateClockStrategy::TICK){
-        return this->clock->tick(newValue);
-    } else if (strategy == LamportClock::UpdateClockStrategy::SET) {
-        return this->clock->set(newValue);
-    }
-
-    return this->clock->getCounterValue();
 }
 
 void OperatorDispatcher::applyDelayedOperationsBuffer() {

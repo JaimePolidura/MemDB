@@ -19,7 +19,7 @@ public final class Other {
         MemDb memDb = new MemDb(MemDbConnections.sync("192.168.1.159", 10000), "789");
         memDb.set("locked", "false");
 
-        var success = memDb.cas("locked", "true", "true");
+        var success = memDb.cas("locked", "false", "true");
         System.out.println(success);
     }
 

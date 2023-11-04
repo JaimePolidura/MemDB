@@ -4,6 +4,10 @@
 
 class LamportClock {
 public:
+    enum UpdateClockStrategy {
+        NONE, SET, TICK
+    };
+
     std::atomic_uint64_t counter;
     uint16_t nodeId;
 
@@ -18,6 +22,8 @@ public:
     LamportClock& operator=(const LamportClock& other);
 
     virtual uint64_t tick(uint64_t other);
+
+    uint64_t update(LamportClock::UpdateClockStrategy updateStrategy, uint64_t otherCounter);
 
     uint64_t set(uint64_t other);
 
@@ -37,10 +43,6 @@ public:
     bool operator>=(const LamportClock& other); // this >= other
 
     bool operator==(const LamportClock& other); // this == other
-
-    enum UpdateClockStrategy {
-        NONE, SET, TICK
-    };
 };
 
 using lamportClock_t = std::shared_ptr<LamportClock>;

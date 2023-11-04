@@ -5,6 +5,8 @@
 #include "utils/strings/SimpleString.h"
 #include "utils/clock/LamportClock.h"
 #include "MapEntry.h"
+#include "db/DbEditResult.H"
+#include "utils/std/Result.h"
 
 #define IGNORE_TIMESTAMP true
 #define NOT_IGNORE_TIMESTAMP false
@@ -35,23 +37,33 @@ public:
     AVLNode<SizeValue> * root;
 
 public:
-    bool add(const SimpleString<SizeValue>& key, uint32_t keyHash, const SimpleString<SizeValue>& value, bool ignoreTimeStamps, uint64_t timestamp, uint16_t nodeId) {
-        AVLNode<SizeValue> * newNode = new AVLNode(key, keyHash, value, -1, nodeId, timestamp);
+    std::result<DbEditResult> add(const SimpleString<SizeValue> &key,
+              uint32_t keyHash,
+              const SimpleString<SizeValue> &value,
+              LamportClock timestampFromNode,
+              LamportClock::UpdateClockStrategy updateClockStrategy,
+              lamportClock_t lamportClock) {
+        AVLNode<SizeValue> * newNode = new AVLNode(key, keyHash, value, -1, 0, 0);
 
-        if(this->root == nullptr){
-            this->root = newNode;
-            return true;
-        }
+        DbEditResult result{};
+        AVLNode<SizeValue> * insertedNode = this->insertRecursive(newNode, result, this->root, timestampFromNode, updateClockStrategy, lamportClock);
 
-        AVLNode<SizeValue> * insertedNode = this->insertRecursive(this->root, newNode, ignoreTimeStamps);
-        return insertedNode != nullptr;
+        return insertedNode != nullptr ?
+            std::ok(result) :
+            std::error<DbEditResult>();
     }
 
-    bool remove(uint32_t keyHash, bool ignoreTimeStamps, uint64_t timestamp, uint16_t nodeId) {
+    std::result<DbEditResult> remove(uint32_t keyHash,
+                 LamportClock timestamp,
+                 LamportClock::UpdateClockStrategy updateClockStrategy,
+                 lamportClock_t lamportClock) {
         bool removed = false;
-        this->removeRecursive(this->root, keyHash, timestamp, nodeId, removed, ignoreTimeStamps);
+        DbEditResult result{};
+        this->removeRecursive(this->root, result, keyHash, timestamp, updateClockStrategy, lamportClock, removed);
 
-        return removed;
+        return removed ?
+            std::ok(result) :
+            std::error<DbEditResult>();
     }
 
     std::vector<AVLNode<SizeValue> *> all() const {
@@ -129,21 +141,33 @@ private:
         delete node;
     }
 
-    AVLNode<SizeValue> * removeRecursive(AVLNode<SizeValue> * last, uint32_t keyHashToRemove, uint64_t timestamp, uint16_t nodeId,
-                              bool& removed, bool ignoreTimeStamps, bool alreadyDeleted = false) {
+    AVLNode<SizeValue> * removeRecursive(AVLNode<SizeValue> * last,
+                                         DbEditResult& result,
+                                         uint32_t keyHashToRemove,
+                                         LamportClock timestamp,
+                                         LamportClock::UpdateClockStrategy updateClockStrategy,
+                                         lamportClock_t lamportClock,
+                                         bool& removed,
+                                         bool alreadyDeleted = false) {
+
+        bool ignoreTimeStamps = updateClockStrategy == LamportClock::UpdateClockStrategy::NONE;
+
         if(last == nullptr){
             return last;
         }else if(last->keyHash > keyHashToRemove) {
-            last->left = this->removeRecursive(last->left, keyHashToRemove, timestamp, nodeId, removed, ignoreTimeStamps);
+            last->left = this->removeRecursive(last->left, result, keyHashToRemove, timestamp, updateClockStrategy, lamportClock, removed, alreadyDeleted);
         }else if (last->keyHash < keyHashToRemove) {
-            last->right = this->removeRecursive(last->right, keyHashToRemove, timestamp, nodeId, removed, ignoreTimeStamps);
-        }else{ //Found it
-            if(!ignoreTimeStamps && last->timestamp.compare(timestamp, nodeId)){ //Reject. Node has been updated by more updated node
+            last->right = this->removeRecursive(last->left, result, keyHashToRemove, timestamp, updateClockStrategy, lamportClock, removed, alreadyDeleted);
+        }else {
+            if(!ignoreTimeStamps && last->timestamp > timestamp) {
+                removed = false;
                 return last;
             }
 
             removed = true;
             bool rootRemoved = this->root == last;
+
+            result.timestampOfOperation = lamportClock->update(updateClockStrategy, timestamp.counter);
 
             if(last->left && last->right) {
                 AVLNode<SizeValue> * temp = this->mostLeftChild(last->right);
@@ -154,7 +178,7 @@ private:
                 if(rootRemoved) this->root = last;
 
                 bool ignore = false;
-                last->right = removeRecursive(last->right, last->keyHash, last->timestamp.counter, last->timestamp.nodeId, ignore, false, true);
+                last->right = removeRecursive(last->right, result, last->keyHash, last->timestamp, LamportClock::UpdateClockStrategy::NONE, lamportClock, ignore);
             }else{
                 AVLNode<SizeValue> * temp = last;
                 if(last->left == nullptr)
@@ -166,12 +190,12 @@ private:
 
                 delete temp;
             }
+
+            if(last != nullptr)
+                last = this->rebalance(last);
+
+            return last;
         }
-
-        if(last != nullptr)
-            last = this->rebalance(last);
-
-        return last;
     }
 
     AVLNode<SizeValue> * mostLeftChild(AVLNode<SizeValue> * node) const {
@@ -181,28 +205,45 @@ private:
         return node;
     }
 
-    AVLNode<SizeValue> * insertRecursive(AVLNode<SizeValue> * last, AVLNode<SizeValue> * toInsert, bool ignoreTimeStamps) {
-        if(last == nullptr)
+    AVLNode<SizeValue> * insertRecursive(
+            AVLNode<SizeValue> * toInsert,
+            DbEditResult& result,
+            AVLNode<SizeValue> * last,
+            LamportClock timestamp,
+            LamportClock::UpdateClockStrategy updateClockStrategy,
+            std::shared_ptr<LamportClock> clock) {
+
+        bool ignoreTimestamps = updateClockStrategy == LamportClock::UpdateClockStrategy::NONE;
+
+        if(last == nullptr) {
+            uint64_t newTimestampCounter = clock->update(updateClockStrategy, timestamp.getCounterValue());
+            result.timestampOfOperation = newTimestampCounter;
+            toInsert->timestamp.counter = newTimestampCounter;
+            toInsert->timestamp.nodeId = timestamp.nodeId;
+
+            if(this->root == nullptr){
+                this->root = toInsert;
+            }
+
             return toInsert;
+        }
 
         if(last->keyHash > toInsert->keyHash) {
-            AVLNode<SizeValue> * inserted = insertRecursive(last->left, toInsert, ignoreTimeStamps);
+            AVLNode<SizeValue> * inserted = insertRecursive(toInsert, result, last->left, timestamp, updateClockStrategy, clock);
             if(inserted != nullptr) last->left = inserted;
 
         }else if(last->keyHash < toInsert->keyHash) {
-            AVLNode<SizeValue> * inserted = insertRecursive(last->right, toInsert, ignoreTimeStamps);
+            AVLNode<SizeValue> * inserted = insertRecursive(toInsert, result, last->right, timestamp, updateClockStrategy, clock);
             if(inserted != nullptr) last->right = inserted;
 
         }else{
-            if(!ignoreTimeStamps && last->timestamp > toInsert->timestamp) //Reject. Node has been updated by more updated node
+            if(!ignoreTimestamps && last->timestamp > timestamp) //Reject. Node has been updated by more updated node
                 return nullptr;
 
             last->keyHash = toInsert->keyHash;
             last->value = toInsert->value;
             last->key = toInsert->key;
-            if(last->timestamp < toInsert->timestamp){
-                last->timestamp = toInsert->timestamp;
-            }
+            last->timestamp = LamportClock{timestamp.nodeId, clock->update(updateClockStrategy, timestamp.getCounterValue())};
         }
 
         return this->rebalance(last);

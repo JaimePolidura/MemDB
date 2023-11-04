@@ -3,6 +3,7 @@
 #include "operators/Operator.h"
 #include "messages/response/ErrorCode.h"
 #include "operators/OperatorNumbers.h"
+#include "messages/response/ResponseBuilder.h"
 
 class DeleteOperator : public Operator {
 public:

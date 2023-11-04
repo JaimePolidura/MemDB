@@ -57,8 +57,6 @@ private:
 
     inline int getPartitionIdByKey(const SimpleString<memDbDataLength_t>& key);
 
-    uint64_t updateClock(LamportClock::UpdateClockStrategy updateStrategy, uint64_t newValue);
-
     bool isInReplicationMode();
 
     bool isInPartitionMode();

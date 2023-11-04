@@ -10,7 +10,7 @@ public final class MemDbExceptionsRegistry {
                 .filter(it -> it.code == code)
                 .findFirst()
                 .map(it -> it.clazz)
-                .orElseThrow(() -> new UnknownException("unknown exception ", request));
+                .orElseThrow(() -> new UnknownException("unknown exception with code: " + code, request));
     }
 
     private enum Exceptions {

@@ -7,7 +7,8 @@
 #include "utils/Iterator.h"
 #include "memdbtypes.h"
 #include "MapEntry.h"
-
+#include "utils/std/Result.h"
+#include "db/DbEditResult.h"
 
 template<typename SizeValue>
 class Map {
@@ -24,17 +25,24 @@ public:
     /**
      * Returns true if operation was successful
      */
-    bool put(const SimpleString<SizeValue>& key, const SimpleString<SizeValue>& value, bool ignoreTimeStamps, uint64_t timestamp, uint16_t nodeId);
-
-    std::optional<MapEntry<SizeValue>> get(const SimpleString<SizeValue>& key) const;
-
-    void clear();
+    std::result<DbEditResult> put(const SimpleString<SizeValue>& key,
+              const SimpleString<SizeValue>& value,
+              LamportClock timestampFromNode,
+              LamportClock::UpdateClockStrategy updateClockStrategy,
+              lamportClock_t lamportClock);
 
     /**
      * Returns true if operation was successful
      */
-    bool remove(const SimpleString<SizeValue>& key, bool ignoreTimeStamps, uint64_t timestamp, uint16_t nodeId);
+    std::result<DbEditResult> remove(const SimpleString<SizeValue>& key,
+                                     LamportClock timestamp,
+                                     LamportClock::UpdateClockStrategy updateClockStrategy,
+                                     lamportClock_t lamportClock);
 
+
+    std::optional<MapEntry<SizeValue>> get(const SimpleString<SizeValue>& key) const;
+
+    void clear();
     bool contains(const SimpleString<SizeValue>& key) const;
 
     std::vector<MapEntry<SizeValue>> all();
@@ -120,22 +128,23 @@ Map<SizeValue>::Map(uint32_t numberBuckets): numberBuckets(Utils::roundUpPowerOf
 }
 
 template<typename SizeValue>
-bool Map<SizeValue>::put(const SimpleString<SizeValue>& key, const SimpleString<SizeValue>& value, bool ignoreTimestamps, uint64_t timestamp, uint16_t nodeId) {
+std::result<DbEditResult> Map<SizeValue>::put(const SimpleString<SizeValue> &key,
+                          const SimpleString<SizeValue> &value,
+                          LamportClock timestampFromNode,
+                          LamportClock::UpdateClockStrategy updateClockStrategy,
+                          lamportClock_t lamportClock) {
+
     uint32_t keyHash = this->calculateHash(key);
 
     lockWrite(keyHash);
 
     AVLTree<SizeValue> * bucket = this->getBucket(keyHash);
-    bool alreadyContained = bucket->contains(keyHash);
-    bool added = bucket->add(key, keyHash, value, ignoreTimestamps, timestamp, nodeId);
 
-    if(added && !alreadyContained) {
-        this->size++;
-    }
+    std::result<DbEditResult> addResult = bucket->add(key, keyHash, value, timestampFromNode, updateClockStrategy, lamportClock);
 
     unlockWrite(keyHash);
 
-    return added;
+    return addResult;
 }
 
 template<typename SizeValue>
@@ -169,20 +178,20 @@ std::optional<MapEntry<SizeValue>> Map<SizeValue>::get(const SimpleString<SizeVa
 }
 
 template<typename SizeValue>
-bool Map<SizeValue>::remove(const SimpleString<SizeValue>& key, bool ignoreTimestamps, uint64_t timestamp, uint16_t nodeId) {
+std::result<DbEditResult> Map<SizeValue>::remove(const SimpleString<SizeValue>& key,
+                             LamportClock timestamp,
+                             LamportClock::UpdateClockStrategy updateClockStrategy,
+                             lamportClock_t lamportClock) {
     uint32_t hash = this->calculateHash(key);
 
     lockWrite(hash);
 
     AVLTree<SizeValue> * bucket = this->getBucket(hash);
-    bool removed = false;
-    if(bucket->contains(hash) && (removed = bucket->remove(hash, ignoreTimestamps, timestamp, nodeId))) {
-        this->size--;
-    }
+    std::result<DbEditResult> removeResult = bucket->remove(hash, timestamp, updateClockStrategy, lamportClock);
 
     unlockWrite(hash);
 
-    return removed;
+    return removeResult;
 }
 
 template<typename SizeValue>

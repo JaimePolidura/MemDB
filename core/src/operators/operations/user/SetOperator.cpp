@@ -5,12 +5,13 @@ Response SetOperator::operate(const OperationBody& operation, const OperationOpt
     SimpleString key = operation.args->at(0);
     SimpleString value = operation.args->at(1);
 
-    bool ignoreTimestamps = !options.checkTimestamps;
-    bool updated = memDbStore->put(key, value, ignoreTimestamps, operation.timestamp, operation.nodeId);
+    std::result<DbEditResult> resultSet = memDbStore->put(key, value, LamportClock{operation.nodeId, operation.timestamp},
+                                   options.updateClockStrategy, dependencies.clock);
 
-    return updated ?
-        Response::success() :
-        Response::error(ErrorCode::ALREADY_REPLICATED);
+    return ResponseBuilder::builder()
+        .isSuccessful(resultSet.is_success(), ErrorCode::ALREADY_REPLICATED)
+        ->timestamp(resultSet->timestampOfOperation)
+        ->build();
 }
 
 OperatorDescriptor SetOperator::desc() {

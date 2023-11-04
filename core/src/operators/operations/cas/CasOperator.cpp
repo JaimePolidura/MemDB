@@ -9,10 +9,11 @@ Response CasOperator::operate(const OperationBody& operation, const OperationOpt
     dependencies.logger->debugInfo("Received CAS(key = {0}, expectedValue = {1}, newValue = {2})", key.toString(), expectedValue.toString(), newValue.toString());
 
     if(onGoingPaxosRounds->isOnGoingProposer(keyHash)){
+        dependencies.logger->debugInfo("Failed CAS on key {0} This node already holds a paxos round as a acceptor", key.toString(), expectedValue.toString(), newValue.toString());
         return Response::error(ErrorCode::CAS_FAILED);
     }
 
-    std::result<std::tuple<LamportClock, LamportClock>> resultPrepare = this->sendRetriesPrepares(dependencies, options.partitionId, key, newValue);
+    std::result<std::tuple<LamportClock, LamportClock>> resultPrepare = this->sendRetriesPrepares(dependencies, options.partitionId, key, expectedValue);
     if(resultPrepare.has_error()){
         return Response::error(ErrorCode::CAS_FAILED);
     }

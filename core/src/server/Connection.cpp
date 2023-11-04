@@ -202,22 +202,7 @@ void Connection::setTcpSendBufferSize(std::size_t size) {
 boost::system::error_code Connection::readWithTimeout(boost::asio::mutable_buffers_1 buffer, uint64_t timeoutMs) {
     boost::system::error_code errorCode;
 
-    this->flagReadInProgress.lock();
-
-    uint64_t value = this->readRequestCounter.fetch_add(1);
-
-    std::async(std::launch::async, [this, timeoutMs, value](){
-        std::this_thread::sleep_for(std::chrono::milliseconds(timeoutMs));
-        if(this->readRequestCounter.load(std::memory_order_consume) == value){
-            this->socket.cancel();
-        }
-    });
-
     boost::asio::read(this->socket, buffer, errorCode);
-    std::atomic_thread_fence(std::memory_order_release);
-    this->readRequestCounter.fetch_add(1);
-
-    this->flagReadInProgress.unlock();
 
     return errorCode;
 }

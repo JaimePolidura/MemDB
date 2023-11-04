@@ -138,7 +138,7 @@ void NewNodePartitionChangeHandler::removeKeysFromSelfNode(const std::vector<Map
                 ->build()
                 .operation;
 
-        this->cluster->memDbStores->getByPartitionId(0)->remove(keyToRemove.key, true, 0, 0);
+        this->cluster->memDbStores->getByPartitionId(0)->remove(keyToRemove.key, LamportClock{}, LamportClock::UpdateClockStrategy::NONE, nullptr);
         this->operationLog->add(0, deleteOperation);
     });
 }

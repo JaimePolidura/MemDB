@@ -1,11 +1,14 @@
 #include "operators/operations/user/DeleteOperator.h"
 
 Response DeleteOperator::operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) {
-    bool ignoreTimestamps = !options.checkTimestamps;
     memDbDataStoreMap_t dbStore = dependencies.memDbStores->getByPartitionId(options.partitionId);
-    bool removed = dbStore->remove(operation.args->at(0), ignoreTimestamps, operation.timestamp, operation.nodeId);
+    std::result<DbEditResult> resultRemove = dbStore->remove(operation.args->at(0), LamportClock{operation.nodeId, operation.timestamp},
+                                   options.updateClockStrategy, dependencies.clock);
 
-    return removed ? Response::success() : Response::error(ErrorCode::UNKNOWN_KEY);
+    return ResponseBuilder::builder()
+        .isSuccessful(resultRemove.is_success(), ErrorCode::UNKNOWN_KEY)
+        ->timestamp(resultRemove->timestampOfOperation)
+        ->build();
 }
 
 OperatorDescriptor DeleteOperator::desc() {

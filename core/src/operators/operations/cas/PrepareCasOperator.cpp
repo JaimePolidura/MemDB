@@ -10,8 +10,9 @@ Response PrepareCasOperator::operate(const OperationBody& operation, const Opera
     bool moreUpToDateValueIsStored = keyInDb.has_value() && keyInDb->timestamp > prevTimestamp;
     bool promisedHigherTimestamp = paxosRound.has_value() && paxosRound->promisedNextTimestamp > nextTimestamp;
 
-    dependencies.logger->debugInfo("Received PREPARE(prev = {0}, next = {1}, key = {2}). More up to date value stored? {3} Promised higher next timestamp? {4}",
-                                   prevTimestamp.toString(), nextTimestamp.toString(), key.toString(), moreUpToDateValueIsStored, promisedHigherTimestamp);
+    dependencies.logger->debugInfo("Received PREPARE(prev = {0}, next = {1}, key = {2}). More up to date value stored {3}? {4} Promised higher next timestamp {5}? {6}",
+                                   prevTimestamp.toString(), nextTimestamp.toString(), key.toString(), keyInDb->timestamp.toString(),
+                                   moreUpToDateValueIsStored, paxosRound->promisedNextTimestamp.toString(), promisedHigherTimestamp);
 
     if(moreUpToDateValueIsStored || promisedHigherTimestamp) {
         return Response::error(ErrorCode::CAS_FAILED);

@@ -13,6 +13,17 @@ LamportClock& LamportClock::operator=(const LamportClock& other) {
     return * this;
 }
 
+uint64_t LamportClock::update(LamportClock::UpdateClockStrategy strategy, uint64_t otherCounter) {
+    switch (strategy) {
+        case NONE:
+            return this->counter;
+        case SET:
+            return this->set(otherCounter);
+        case TICK:
+            return this->tick(otherCounter);
+    }
+}
+
 std::string LamportClock::toString() {
     return "("+ std::to_string(this->counter.load()) + ", " + std::to_string(this->nodeId) +")";
 }

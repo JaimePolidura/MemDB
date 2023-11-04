@@ -5,8 +5,8 @@ import lombok.SneakyThrows;
 public final class Other {
     @SneakyThrows
     public static void main(String[] args) {
-//        cast_test();
-        node1_write();
+        cast_test();
+//        node1_write();
 //        node3_write();
 //        node5_write();
 //        node1_read();
@@ -16,16 +16,16 @@ public final class Other {
 
     @SneakyThrows
     static void cast_test() {
-        MemDb memDb = new MemDb(MemDbConnections.sync("192.168.1.159", 10000), "789");
+        MemDb memDb = new MemDb(MemDbConnections.sync("192.168.1.159", 10001), "789");
         memDb.set("locked", "false");
 
-        var success = memDb.cas("locked", "false", "true");
+        var success = memDb.cas("locked", "xd", "true");
         System.out.println(success);
     }
 
     @SneakyThrows
     static void node1_write() {
-        MemDb memDb = new MemDb(MemDbConnections.sync("192.168.1.159", 10001), "789");
+        MemDb memDb = new MemDb(MemDbConnections.sync("192.168.1.159", 10000), "789");
         memDb.set("cascos", "avion");
     }
 

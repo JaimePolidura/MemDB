@@ -71,7 +71,7 @@ public:
 private:
     Request prepareRequest(const OperationBody& operation);
 
-    void forEachNodeInPartitionThatCanAcceptReq(int partitionId, std::function<void(node_t node)> consumer);
+    void forEachNodeInPartition(int partitionId, std::function<void(node_t node)> consumer);
 };
 
 using clusterNodes_t = std::shared_ptr<ClusterNodes>;

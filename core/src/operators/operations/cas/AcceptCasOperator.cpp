@@ -54,6 +54,6 @@ OperatorDescriptor AcceptCasOperator::desc() {
             .type = OperatorType::NODE_MAINTENANCE,
             .number = OperatorNumbers::CAS_ACCEPT,
             .name = "CAS_ACCEPT",
-            .authorizedToExecute = { AuthenticationType::API },
+            .authorizedToExecute = { AuthenticationType::NODE },
     };
 }

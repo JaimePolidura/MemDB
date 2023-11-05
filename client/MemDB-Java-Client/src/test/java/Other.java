@@ -6,13 +6,30 @@ public final class Other {
     @SneakyThrows
     public static void main(String[] args) {
 //        concurrent_cas();
-        simple_cas();
+//        simple_cas();
+        linearized_cas();
 //        node1_write();
 //        node3_write();
 //        node5_write();
 //        node1_read();
 //        node4_read();
 //        node5_read();
+    }
+
+    @SneakyThrows
+    static void linearized_cas() {
+        MemDb memDb = new MemDb(MemDbConnections.sync("192.168.1.159", 10000), "789");
+        memDb.set("n", "0");
+
+        for(int i = 0; i < 100; i++){
+            while (!memDb.cas("n", String.valueOf(i), String.valueOf(i + 1))) {
+                System.out.println("Sleeping");
+                Thread.sleep(1000L * 60);
+            }
+        }
+
+        System.out.println("FINAL!");
+
     }
 
     @SneakyThrows

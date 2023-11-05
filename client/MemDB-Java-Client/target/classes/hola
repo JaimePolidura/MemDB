@@ -1,0 +1,20 @@
+[19:35:41] [2] [DEBUG] Received PREPARE(prev = (69, 1), next = (70, 1), key = locked) from node 1. More up to date value stored (69, 1)? false Promised higher next timestamp (68, 1)? false
+[19:35:41] [2] [DEBUG] Received ACCEPT(prev = (69, 1), next = (70, 1), key = locked, value = 1) from node true. More up to date value stored false? (69, 1) Promised higher next timestamp (70, 1)? false
+[19:35:41] [2] [DEBUG] Successfully saved CAS key = locked value = true with timestamp (70, 1) into local db
+[19:35:41] [2] [DEBUG] Received PREPARE(prev = (71, 1), next = (72, 1), key = locked) from node 1. More up to date value stored (70, 1)? false Promised higher next timestamp (70, 1)? false
+[19:35:41] [2] [DEBUG] Executed SET(locked, false) Success? true Req timestamp: (71, 1) New timestamp: 71
+[19:35:41] [2] [DEBUG] Received ACCEPT(prev = (71, 1), next = (72, 1), key = locked, value = 1) from node true. More up to date value stored false? (71, 1) Promised higher next timestamp (72, 1)? false
+[19:35:41] [2] [DEBUG] Successfully saved CAS key = locked value = true with timestamp (72, 1) into local db
+[19:35:41] [2] [DEBUG] Executed SET(locked, false) Success? true Req timestamp: (73, 1) New timestamp: 73
+[19:35:41] [2] [DEBUG] Received PREPARE(prev = (73, 1), next = (74, 1), key = locked) from node 1. More up to date value stored (73, 1)? false Promised higher next timestamp (72, 1)? false
+[19:35:56] [2] [DEBUG] Received PREPARE(prev = (73, 1), next = (76, 1), key = locked) from node 1. More up to date value stored (73, 1)? false Promised higher next timestamp (74, 1)? false
+[19:35:56] [2] [DEBUG] Received ACCEPT(prev = (73, 1), next = (76, 1), key = locked, value = 1) from node true. More up to date value stored false? (73, 1) Promised higher next timestamp (76, 1)? false
+[19:35:56] [2] [DEBUG] Successfully saved CAS key = locked value = true with timestamp (76, 1) into local db
+[19:35:56] [2] [DEBUG] Executed SET(locked, false) Success? true Req timestamp: (77, 1) New timestamp: 77
+[19:35:56] [2] [DEBUG] Received PREPARE(prev = (77, 1), next = (78, 1), key = locked) from node 1. More up to date value stored (77, 1)? false Promised higher next timestamp (76, 1)? false
+[19:36:02] [2] [DEBUG] Received PREPARE(prev = (77, 1), next = (79, 1), key = locked) from node 1. More up to date value stored (77, 1)? false Promised higher next timestamp (78, 1)? false
+[19:36:02] [2] [DEBUG] Received ACCEPT(prev = (77, 1), next = (79, 1), key = locked, value = 1) from node true. More up to date value stored false? (77, 1) Promised higher next timestamp (79, 1)? false
+[19:36:02] [2] [DEBUG] Successfully saved CAS key = locked value = true with timestamp (79, 1) into local db
+[19:37:12] [2] [DEBUG] Received PREPARE(prev = (77, 1), next = (81, 1), key = locked) from node 1. More up to date value stored (79, 1)? true Promised higher next timestamp (79, 1)? false
+[19:37:21] [2] [DEBUG] Received PREPARE(prev = (77, 1), next = (82, 1), key = locked) from node 1. More up to date value stored (79, 1)? true Promised higher next timestamp (79, 1)? false
+[19:37:40] [2] [DEBUG] Received PREPARE(prev = (77, 1), next = (83, 1), key = locked) from node 1. More up to date value stored (79, 1)? true Promised higher next timestamp (79, 1)? false

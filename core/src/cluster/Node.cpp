@@ -20,7 +20,7 @@ auto Node::sendRequest(const Request &request) -> std::result<Response> {
     this->openConnectionIfClosedOrThrow();
 
     std::vector<uint8_t> serializedRequest = this->requestSerializer.serialize(request);
-    std::size_t bytesWritten = this->writeSyncToNode(serializedRequest);
+    std::size_t bytesWritten = this->writeSyncToConnection(serializedRequest);
 
     if(bytesWritten == 0){
         return std::error<Response>();
@@ -89,7 +89,7 @@ bool Node::canSendRequestUnicast(NodeState state) {
     return state == NodeState::RUNNING;
 }
 
-std::size_t Node::writeSyncToNode(std::vector<uint8_t>& bytes) {
+std::size_t Node::writeSyncToConnection(std::vector<uint8_t>& bytes) {
     try {
         return this->connection->writeSync(bytes);
     }catch (const std::exception& e) {
@@ -99,6 +99,17 @@ std::size_t Node::writeSyncToNode(std::vector<uint8_t>& bytes) {
             return 0;
         }
     }
+}
+
+std::result<std::vector<uint8_t>> Node::readSyncFromConnection(uint64_t timeoutMs) {
+    std::result<std::vector<uint8_t>> readResult = this->connection->readSync(timeoutMs);
+    
+    if(!readResult.is_success()){
+        this->openConnection();
+        readResult = this->connection->readSync(timeoutMs);
+    }
+
+    return readResult;
 }
 
 std::string Node::toJson(std::shared_ptr<Node> node) {

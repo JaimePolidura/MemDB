@@ -44,7 +44,9 @@ public:
 private:
     void openConnectionIfClosedOrThrow();
 
-    std::size_t writeSyncToNode(std::vector<uint8_t>& bytes);
+    std::size_t writeSyncToConnection(std::vector<uint8_t>& bytes);
+
+    std::result<std::vector<uint8_t>> readSyncFromConnection(uint64_t timeoutMs);
 
 public:
     static bool canSendRequestUnicast(NodeState state);

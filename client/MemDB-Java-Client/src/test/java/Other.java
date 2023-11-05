@@ -1,11 +1,15 @@
 import es.memdb.MemDb;
+import es.memdb.Utils;
 import es.memdb.connection.MemDbConnections;
 import lombok.SneakyThrows;
+
+import java.io.IOException;
 
 public final class Other {
     @SneakyThrows
     public static void main(String[] args) {
-        cast_test();
+        concurrent_cas_test();
+//        simple_cas_test();
 //        node1_write();
 //        node3_write();
 //        node5_write();
@@ -15,7 +19,65 @@ public final class Other {
     }
 
     @SneakyThrows
-    static void cast_test() {
+    static void concurrent_cas_test() {
+        MemDb globalMemDb = new MemDb(MemDbConnections.sync("192.168.1.159", 10001), "789");
+        globalMemDb.set("locked", "false");
+
+        Thread t1 = new Thread(() -> {
+            try {
+                MemDb local = new MemDb(MemDbConnections.sync("192.168.1.159", 10000), "789");
+                for(int i = 0; i < 100; i++){
+                    do {
+
+                    }while(!local.cas("lock", "false", "true"));
+
+                    String contadorString = local.get("contador");
+                    int contadorInt = contadorString != null ? Integer.parseInt(contadorString) : 0;
+
+                    local.set("contador", String.valueOf(contadorInt + 1));
+
+                    local.set("lock", "false");
+                }
+
+                System.out.println(local.cas("locked", "false", "true"));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        Thread t2 = new Thread(() -> {
+            try {
+                MemDb local = new MemDb(MemDbConnections.sync("192.168.1.159", 10001), "789");
+                for(int i = 0; i < 100; i++){
+                    do {
+
+                    }while(!local.cas("lock", "false", "true"));
+
+                    String contadorString = local.get("contador");
+                    int contadorInt = contadorString != null ? Integer.parseInt(contadorString) : 0;
+
+                    local.set("contador", String.valueOf(contadorInt + 1));
+
+                    local.set("lock", "false");
+                }
+
+                System.out.println(local.cas("locked", "false", "true"));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        t1.start();
+        t2.start();
+
+        t1.join();
+        t1.join();
+
+        System.out.println(globalMemDb.get("contador"));
+    }
+
+    @SneakyThrows
+    static void simple_cas_test() {
         MemDb memDb = new MemDb(MemDbConnections.sync("192.168.1.159", 10001), "789");
         memDb.set("locked", "false");
 

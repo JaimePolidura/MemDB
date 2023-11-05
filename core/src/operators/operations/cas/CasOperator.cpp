@@ -20,7 +20,8 @@ Response CasOperator::operate(const OperationBody& operation, const OperationOpt
     auto [prevTimestamp, nextTimestamp] = resultPrepare.get();
 
     multipleResponses_t acceptMultiResponse = this->sendAccept(dependencies, keyHash, options.partitionId, key, newValue, prevTimestamp, nextTimestamp);
-    if(!checkIfQuorumAndAllResponsesSuccess(acceptMultiResponse, keyHash, dependencies)) {
+    if(!checkIfQuorumAndAllResponsesSuccess(acceptMultiResponse, keyHash, dependencies)) { //TODO Move to method like sendRetriesPrepares
+        onGoingPaxosRounds->updateStateProposer(keyHash, ProposerPaxosState::FAILED);
         dependencies.logger->debugInfo("Failed to receive quorum of ACCEPT on key {0} and next {1}. Aborting", key.toString(), nextTimestamp.toString());
         return Response::error(ErrorCode::CAS_FAILED);
     }
@@ -62,7 +63,8 @@ std::result<std::tuple<LamportClock, LamportClock>> CasOperator::sendRetriesPrep
 
     while(true){
         std::optional<MapEntry<memDbDataLength_t>> storedInDb = memDbStore->get(key);
-        if(!storedInDb.has_value() || storedInDb->value != expectedValue){
+        if(!storedInDb.has_value() || storedInDb->value != expectedValue) {
+            dependencies.onGoingPaxosRounds->updateStateProposer(keyHash, ProposerPaxosState::FAILED);
             dependencies.logger->debugInfo("Expected value doest match with actual value stored in local db at key {0}", key.toString());
             return std::error<std::tuple<LamportClock, LamportClock>>();
         }

@@ -14,14 +14,15 @@ public final class MemDbExceptionsRegistry {
     }
 
     private enum Exceptions {
-        AUTH_KEY_INVALID(0x00, InvalidAuthApiKey.class),
-        UNKNOWN_KEY(0x01, UnknownKey.class),
-        UNKNOWN_OPERATOR(0x02, UnknownOperator.class),
-        ALREADY_REPLICATED(0x03, AlreadyReplicated.class),
-        NOT_AUTHORIZED(0x04, NotAuthorized.class),
-        INVALID_NODE_STATE(0x05, InvalidNodeState.class),
-        INVALID_PARTITION(0x06, InvalidPartition.class),
-        INVALID_CALL(0x07, InvalidCall.class);
+        AUTH_KEY_INVALID(0, InvalidAuthApiKey.class),
+        UNKNOWN_KEY(1, UnknownKey.class),
+        UNKNOWN_OPERATOR(2, UnknownOperator.class),
+        ALREADY_REPLICATED(3, AlreadyReplicated.class),
+        NOT_AUTHORIZED(4, NotAuthorized.class),
+        INVALID_NODE_STATE(5, InvalidNodeState.class),
+        INVALID_PARTITION(6, InvalidPartition.class),
+        INVALID_CALL(7, InvalidCall.class),
+        CAS_FAILED(10, CasFailed.class);
 
         public final int code;
         public final Class<? extends MemDbException> clazz;

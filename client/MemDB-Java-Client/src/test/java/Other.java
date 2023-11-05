@@ -2,6 +2,7 @@ import es.memdb.MemDb;
 import es.memdb.Utils;
 import es.memdb.connection.MemDbConnections;
 import lombok.SneakyThrows;
+import org.junit.experimental.theories.Theories;
 
 import java.io.IOException;
 
@@ -27,7 +28,9 @@ public final class Other {
             try {
                 MemDb local = new MemDb(MemDbConnections.sync("192.168.1.159", 10000), "789");
                 for(int i = 0; i < 100; i++){
-                    while(!local.cas("lock", "false", "true"));
+                    while(!local.cas("lock", "false", "true")) {
+                        Thread.sleep(100);
+                    }
 
                     String contadorString = local.get("contador");
                     int contadorInt = contadorString != null ? Integer.parseInt(contadorString) : 0;
@@ -38,7 +41,7 @@ public final class Other {
                 }
 
                 System.out.println(local.cas("locked", "false", "true"));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
@@ -47,7 +50,9 @@ public final class Other {
             try {
                 MemDb local = new MemDb(MemDbConnections.sync("192.168.1.159", 10001), "789");
                 for(int i = 0; i < 100; i++){
-                    while(!local.cas("lock", "false", "true"));
+                    while(!local.cas("lock", "false", "true")) {
+                        Thread.sleep(100);
+                    }
 
                     String contadorString = local.get("contador");
                     int contadorInt = contadorString != null ? Integer.parseInt(contadorString) : 0;
@@ -56,9 +61,9 @@ public final class Other {
 
                     local.set("lock", "false");
                 }
-
+                
                 System.out.println(local.cas("locked", "false", "true"));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });

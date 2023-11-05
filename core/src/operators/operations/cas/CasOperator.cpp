@@ -29,7 +29,7 @@ Response CasOperator::operate(const OperationBody& operation, const OperationOpt
     dependencies.logger->debugInfo("Received successfully quorum of ACCEPT on key {0} and next {1}. Saving to local db",
                                    key.toString(), nextTimestamp.toString());
 
-    if(memDbStore->put(key, newValue, nextTimestamp, LamportClock::UpdateClockStrategy::NONE, dependencies.clock, true).is_success()) {
+    if(memDbStore->put(key, newValue, nextTimestamp, LamportClock::UpdateClockStrategy::SET_MAX, dependencies.clock, true).is_success()) {
         onGoingPaxosRounds->updateStateProposer(keyHash, ProposerPaxosState::COMITTED);
         dependencies.operationLog->add(options.partitionId, RequestBuilder::builder()
             .operatorNumber(OperatorNumbers::SET)
@@ -63,7 +63,7 @@ std::result<std::tuple<LamportClock, LamportClock>> CasOperator::sendRetriesPrep
 
     while(true){
         std::optional<MapEntry<memDbDataLength_t>> storedInDb = memDbStore->get(key);
-        if(!storedInDb.has_value() || storedInDb->value != expectedValue) {
+        if(!storedInDb.has_value() || (storedInDb->value != expectedValue)) {
             dependencies.onGoingPaxosRounds->updateStateProposer(keyHash, ProposerPaxosState::FAILED);
             dependencies.logger->debugInfo("Expected value doest match with actual value stored in local db at key {0}", key.toString());
             return std::error<std::tuple<LamportClock, LamportClock>>();

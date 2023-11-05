@@ -31,9 +31,7 @@ auto Node::sendRequest(const Request &request) -> std::result<Response> {
         return std::error<Response>();
     }
 
-    Response deserializedResponse = this->responseDeserializer.deserialize(responseBytesResult.get());
-
-    return std::ok<Response>(deserializedResponse);
+    return this->responseDeserializer.deserialize(responseBytesResult.get());
 }
 
 void Node::closeConnection() {

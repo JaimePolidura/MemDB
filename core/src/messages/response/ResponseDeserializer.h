@@ -6,5 +6,5 @@
 
 class ResponseDeserializer {
 public:
-    Response deserialize(const std::vector<uint8_t>& buffer);
+    std::result<Response> deserialize(const std::vector<uint8_t>& buffer);
 };

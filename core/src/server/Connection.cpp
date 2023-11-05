@@ -60,7 +60,13 @@ std::result<std::vector<uint8_t>> Connection::readPacketContent(uint64_t timeout
         return std::error<std::vector<uint8_t>>();
     }
 
-    std::vector<uint8_t> messageBuffer(Utils::parse<memDbDataLength_t>(messageLengthHeaderBuffer));
+    memDbDataLength_t packetLength = Utils::parse<memDbDataLength_t>(messageLengthHeaderBuffer);
+
+    if(packetLength == 0){
+        std::error<std::vector<uint8_t>>();
+    }
+
+    std::vector<uint8_t> messageBuffer(packetLength);
     if(this->readWithTimeout(boost::asio::buffer(messageBuffer), timeoutMs)){
         return std::error<std::vector<uint8_t>>();
     }

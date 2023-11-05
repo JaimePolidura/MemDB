@@ -14,7 +14,7 @@ private:
     friend class MultipleResponsesNotifier;
 public:
     MultipleResponses(int nTotalRequest);
-
+    
     bool waitForSuccessfulQuorum(uint64_t timeoutMs);
 
     std::map<memdbNodeId_t, Response> getResponses();

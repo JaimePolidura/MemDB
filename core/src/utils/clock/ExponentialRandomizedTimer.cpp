@@ -4,7 +4,7 @@ ExponentialRandomizedTimer::ExponentialRandomizedTimer(uint64_t startMs, uint64_
 
 void ExponentialRandomizedTimer::sleep() {
     std::this_thread::sleep_for(std::chrono::milliseconds(randomize(this->nextSleepingMs)));
-    this->nextSleepingMs = std::max(this->nextSleepingMs * this->nextSleepingMs, this->maxTimeoutMs);
+    this->nextSleepingMs = std::min(this->nextSleepingMs << 2, this->maxTimeoutMs);
 }
 
 void ExponentialRandomizedTimer::reset() {

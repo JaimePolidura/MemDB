@@ -88,6 +88,15 @@ public:
 
     static void printVectorHex(const std::vector<uint8_t>& toPrint);
 
+    template<typename T>
+    static T tryOnceAndGet(std::function<T(void)> toTry, const T& defaultOnException) {
+        try {
+            return toTry();
+        } catch(const std::exception& e) {
+            return defaultOnException;
+        }
+    }
+
     template<typename T, typename B>
     static T retryUntilSuccessAndGet(const std::chrono::duration<int64_t, B> backoffMillis, std::function<std::result<T>(void)> toRetry) {
         while(true) {

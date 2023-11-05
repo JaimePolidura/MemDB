@@ -21,15 +21,13 @@ public final class Other {
     @SneakyThrows
     static void concurrent_cas_test() {
         MemDb globalMemDb = new MemDb(MemDbConnections.sync("192.168.1.159", 10001), "789");
-        globalMemDb.set("locked", "false");
+        globalMemDb.set("lock", "false");
 
         Thread t1 = new Thread(() -> {
             try {
                 MemDb local = new MemDb(MemDbConnections.sync("192.168.1.159", 10000), "789");
                 for(int i = 0; i < 100; i++){
-                    do {
-
-                    }while(!local.cas("lock", "false", "true"));
+                    while(!local.cas("lock", "false", "true"));
 
                     String contadorString = local.get("contador");
                     int contadorInt = contadorString != null ? Integer.parseInt(contadorString) : 0;
@@ -49,9 +47,7 @@ public final class Other {
             try {
                 MemDb local = new MemDb(MemDbConnections.sync("192.168.1.159", 10001), "789");
                 for(int i = 0; i < 100; i++){
-                    do {
-
-                    }while(!local.cas("lock", "false", "true"));
+                    while(!local.cas("lock", "false", "true"));
 
                     String contadorString = local.get("contador");
                     int contadorInt = contadorString != null ? Integer.parseInt(contadorString) : 0;

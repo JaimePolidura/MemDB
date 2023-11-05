@@ -20,7 +20,7 @@ auto Node::sendRequest(const Request &request) -> std::result<Response> {
     this->openConnectionIfClosedOrThrow();
 
     std::vector<uint8_t> serializedRequest = this->requestSerializer.serialize(request);
-    std::size_t bytesWritten = this->connection->writeSync(serializedRequest);
+    std::size_t bytesWritten = this->writeSyncToNode(serializedRequest);
 
     if(bytesWritten == 0){
         return std::error<Response>();
@@ -89,6 +89,18 @@ void Node::setLogger(logger_t loggerP) {
 
 bool Node::canSendRequestUnicast(NodeState state) {
     return state == NodeState::RUNNING;
+}
+
+std::size_t Node::writeSyncToNode(std::vector<uint8_t>& bytes) {
+    try {
+        return this->connection->writeSync(bytes);
+    }catch (const std::exception& e) {
+        if(openConnection()){
+            return Utils::tryOnceAndGet<std::size_t>([this, &bytes](){return this->connection->writeSync(bytes);}, 0);
+        } else {
+            return 0;
+        }
+    }
 }
 
 std::string Node::toJson(std::shared_ptr<Node> node) {

@@ -1,6 +1,8 @@
 #include "server/Connection.h"
 
-Connection::Connection(ip::tcp::socket socket, logger_t logger) : socket{std::move(socket)}, logger(logger) {}
+Connection::Connection(ip::tcp::socket socket, logger_t logger) : socket{std::move(socket)}, logger(logger) {
+    this->enableTcpNoDelay();
+}
 
 void Connection::onRequest(std::function<void(const std::vector<uint8_t>&)> onRequestCallbackParam) {
     this->onRequestCallback = onRequestCallbackParam;

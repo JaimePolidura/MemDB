@@ -254,11 +254,11 @@ private:
             uint64_t newTimestampCounter = clock->update(updateClockStrategy, timestamp.getCounterValue());
             if(requestFromNode) {
                 result.timestampOfOperation = timestamp.counter;
-                toInsert->timestamp = timestamp;
+                last->timestamp = timestamp;
             } else {
                 result.timestampOfOperation = newTimestampCounter;
-                toInsert->timestamp.counter = newTimestampCounter;
-                toInsert->timestamp.nodeId = timestamp.nodeId;
+                last->timestamp.counter = newTimestampCounter;
+                last->timestamp.nodeId = timestamp.nodeId;
             }
         }
 

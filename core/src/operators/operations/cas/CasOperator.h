@@ -23,24 +23,27 @@ private:
             SimpleString<memDbDataLength_t>> getArgs(const OperationBody& operation);
 
     std::result<std::tuple<LamportClock, LamportClock>> sendRetriesPrepares(OperatorDependencies& dependencies,
+                                                                            proposerPaxosRound_t proposerPaxosRound,
                                                                             int partitionId,
                                                                             SimpleString<memDbDataLength_t> key,
                                                                             SimpleString<memDbDataLength_t> expectedValue);
 
-    bool checkIfQuorumAndAllResponsesSuccess(multipleResponses_t multiResponses, uint32_t keyHash, OperatorDependencies& dependencies);
+    bool checkIfQuorumAndAllResponsesSuccess(multipleResponses_t multiResponses,
+                                             proposerPaxosRound_t proposerPaxosRound,
+                                             OperatorDependencies& dependencies);
 
     LamportClock getNextTimestampForKey(MapEntry<memDbDataLength_t> mapEntry,
                                        OperatorDependencies& dependencies);
 
     multipleResponses_t sendPrepare(OperatorDependencies& dependencies,
-                                    uint32_t keyHash,
+                                    proposerPaxosRound_t proposerPaxosRound,
                                     int partitionId,
                                     SimpleString<memDbDataLength_t> key,
                                     LamportClock prevTimestamp,
                                     LamportClock nextTimestamp);
 
     multipleResponses_t sendAccept(OperatorDependencies& dependencies,
-                                   uint32_t keyHash,
+                                   proposerPaxosRound_t proposerPaxosRound,
                                    int partitionId,
                                    SimpleString<memDbDataLength_t> key,
                                    SimpleString<memDbDataLength_t> value,

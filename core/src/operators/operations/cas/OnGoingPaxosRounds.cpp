@@ -1,34 +1,12 @@
 #include "OnGoingPaxosRounds.h"
 
-bool OnGoingPaxosRounds::isOnGoingProposer(uint32_t keyHash) {
-    std::unique_lock<std::mutex> uniqueLock(this->proposerLock);
-
-    if(this->paxosRoundsProposerByKeyHash.contains(keyHash)){
-        ProposerPaxosRound& paxosRound = this->paxosRoundsProposerByKeyHash.at(keyHash);
-        return paxosRound.state == ProposerPaxosState::WAITING_FOR_ACCEPT || paxosRound.state == ProposerPaxosState::WAITING_FOR_PROMISE;
-    } else {
-        return false;
-    }
-}
-
-ProposerPaxosRound OnGoingPaxosRounds::getProposerByKeyHashOrCreate(uint32_t keyHash, ProposerPaxosState newState) {
+proposerPaxosRound_t OnGoingPaxosRounds::getProposerByKeyHash(uint32_t keyHash, ProposerPaxosState newStateIfNotFound) {
     if(!this->paxosRoundsProposerByKeyHash.contains(keyHash)){
-        ProposerPaxosRound paxosRound = ProposerPaxosRound{.state = newState, .retryPrepareTimer = ExponentialRandomizedTimer{1000, 1000 * 60}};
+        proposerPaxosRound_t paxosRound = std::make_shared<ProposerPaxosRound>(newStateIfNotFound, ExponentialRandomizedTimer{1000, 1000 * 60});
         this->paxosRoundsProposerByKeyHash.insert({keyHash, paxosRound});
         return paxosRound;
     } else {
         return this->paxosRoundsProposerByKeyHash.at(keyHash);
-    }
-}
-
-void OnGoingPaxosRounds::updateStateProposer(uint32_t keyHash, ProposerPaxosState newState) {
-    std::unique_lock<std::mutex> uniqueLock(this->proposerLock);
-
-    if(!this->paxosRoundsProposerByKeyHash.contains(keyHash)) {
-        this->paxosRoundsProposerByKeyHash.insert({keyHash, ProposerPaxosRound{.state = newState, .retryPrepareTimer = ExponentialRandomizedTimer{1000, 1000 * 60}}});
-    } else {
-        ProposerPaxosRound& paxosRound = this->paxosRoundsProposerByKeyHash.at(keyHash);
-        paxosRound.state = newState;
     }
 }
 

@@ -19,7 +19,13 @@ struct ProposerPaxosRound {
     ProposerPaxosState state;
 
     ExponentialRandomizedTimer retryPrepareTimer;
+    std::mutex proposerLock{};
+
+    ProposerPaxosRound(ProposerPaxosState state, ExponentialRandomizedTimer retryPrepareTimer):
+        state(state), retryPrepareTimer(retryPrepareTimer) {}
 };
+
+using proposerPaxosRound_t = std::shared_ptr<ProposerPaxosRound>;
 
 struct AcceptatorPaxosRound {
     AcceptatorPaxosState state;
@@ -30,7 +36,7 @@ struct AcceptatorPaxosRound {
 
 class OnGoingPaxosRounds {
 private:
-    std::unordered_map<uint32_t, ProposerPaxosRound> paxosRoundsProposerByKeyHash{};
+    std::unordered_map<uint32_t, proposerPaxosRound_t> paxosRoundsProposerByKeyHash{};
     std::mutex proposerLock{};
 
     std::unordered_map<uint32_t, AcceptatorPaxosRound> paxosRoundsAcceptatorByKeyHash{};
@@ -38,9 +44,7 @@ private:
 
 public:
     //Proposer
-    bool isOnGoingProposer(uint32_t keyHash);
-    void updateStateProposer(uint32_t keyHash, ProposerPaxosState newState);
-    ProposerPaxosRound getProposerByKeyHashOrCreate(uint32_t keyHash, ProposerPaxosState newState);
+    proposerPaxosRound_t getProposerByKeyHash(uint32_t keyHash, ProposerPaxosState newStateIfNotFound);
 
     //Acceptator
     std::optional<AcceptatorPaxosRound> getAcceptatorByKeyHash(uint32_t keyHash);

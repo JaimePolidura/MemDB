@@ -13,8 +13,8 @@ std::map<memdbNodeId_t, Response> MultipleResponses::getResponses() {
 bool MultipleResponses::waitForSuccessfulQuorum(uint64_t timeoutMs) {
     int nTotalNodes = this->nTotalRequest + 1;
     int minQuorum = nTotalNodes / 2 + 1;
-    
-    return this->successfulResponsesLatch.awaitMinOrEq(minQuorum, timeoutMs);
+
+    return this->successfulResponsesLatch.awaitMinOrEq(minQuorum - 1, timeoutMs); //-1 to include our self
 }
 
 bool MultipleResponses::allResponsesSuccessful() {

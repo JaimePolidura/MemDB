@@ -115,8 +115,8 @@ auto ClusterNodes::broadcast(const NodePartitionOptions options, const Operation
 
     this->forEachNodeInPartition(options.partitionId, [this, timeout, nRetries, operation](node_t node) -> void {
         this->requestPool.submit([node, operation, timeout, nRetries, this]() mutable -> void {
-            Utils::retryUntil(nRetries, std::chrono::milliseconds(timeout), [this, &node, &operation]() -> void {
-                node->sendRequest(this->prepareRequest(operation));
+            Utils::retryNTimesAndGet<Response, std::milli>(nRetries, std::chrono::milliseconds(timeout), [this, &node, &operation]() -> std::result<Response> {
+                return node->sendRequest(this->prepareRequest(operation));
             });
         });
     });
@@ -127,18 +127,14 @@ auto ClusterNodes::broadcastAndWait(const NodePartitionOptions options, const Op
     multipleResponses_t multipleResponses = std::make_shared<MultipleResponses>(nNodesInPartition);
     MultipleResponsesNotifier multipleResponseNotifier(multipleResponses);
 
-    this->forEachNodeInPartition(options.partitionId,
-                                 [this, multipleResponseNotifier, operation](node_t node) mutable -> void {
-                                     this->requestPool.submit(
-                                             [node, operation, multipleResponseNotifier, this]() mutable -> void {
-                                                 std::result<Response> responseResult = node->sendRequest(
-                                                         this->prepareRequest(operation));
-                                                 if (responseResult->isSuccessful) {
-                                                     multipleResponseNotifier.addResponse(node->nodeId,
-                                                                                          responseResult.get());
-                                                 }
-                                             });
-                                 });
+    this->forEachNodeInPartition(options.partitionId, [this, multipleResponseNotifier, operation](node_t node) mutable -> void {
+        this->requestPool.submit([node, operation, multipleResponseNotifier, this]() mutable -> void {
+            std::result<Response> responseResult = node->sendRequest(this->prepareRequest(operation));
+            if (responseResult->isSuccessful) {
+                multipleResponseNotifier.addResponse(node->nodeId, responseResult.get());
+            }
+        });
+    });
 
     return multipleResponses;
 }

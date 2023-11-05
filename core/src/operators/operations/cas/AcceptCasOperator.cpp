@@ -11,9 +11,9 @@ Response AcceptCasOperator::operate(const OperationBody &operation, const Operat
     bool moreUpToDateValueIsStored = keyInDb.has_value() && keyInDb->timestamp > prevTimestamp;
     bool promisedHigherTimestamp = paxosRound.has_value() && paxosRound->promisedNextTimestamp > nextTimestamp;
 
-    dependencies.logger->debugInfo("Received ACCEPT(prev = {0}, next = {1}, key = {2}, value = {3}). More up to date value stored {4}? {5} Promised higher next timestamp {6}? {7}",
-                                   prevTimestamp.toString(), nextTimestamp.toString(), key.toString(), value.toString(), moreUpToDateValueIsStored,
-                                   keyInDb->timestamp.toString(), paxosRound->promisedNextTimestamp.toString(), promisedHigherTimestamp);
+    dependencies.logger->debugInfo("Received ACCEPT(prev = {0}, next = {1}, key = {2}, value = {3}) from node {4}. More up to date value stored {5}? {6} Promised higher next timestamp {7}? {8}",
+                                   prevTimestamp.toString(), nextTimestamp.toString(), key.toString(), std::to_string(operation.nodeId), value.toString(),
+                                   keyInDb->timestamp.toString(), moreUpToDateValueIsStored, paxosRound->promisedNextTimestamp.toString(), promisedHigherTimestamp);
 
     if(moreUpToDateValueIsStored || promisedHigherTimestamp){
         return Response::error(ErrorCode::CAS_FAILED);

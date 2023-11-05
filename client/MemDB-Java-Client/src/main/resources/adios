@@ -1,0 +1,51 @@
+[19:35:41] [1] [DEBUG] Sending PREPARE(prev = (69, 1), next = (70, 1), key = locked) to nodes in partition 0
+[19:35:41] [1] [DEBUG] Received successfully quorum of promises on key locked and next (70, 1)
+[19:35:41] [1] [DEBUG] Sending ACCEPT(key = locked, value = true, prev = (69, 1), next = (70, 1))
+[19:35:41] [1] [DEBUG] Received successfully quorum of ACCEPT on key locked and next (70, 1). Saving to local db
+[19:35:41] [1] [DEBUG] Successfully saved CAS key = locked value = true with timestamp (70, 1) into local db
+[19:35:41] [1] [DEBUG] Executed SET(locked, false) Success? true Req timestamp: (69, 1) New timestamp: 71
+[19:35:41] [1] [DEBUG] Broadcasting request for operator SET of key locked with timestamp (71, 1)
+[19:35:41] [1] [DEBUG] Received CAS(key = locked, expectedValue = false, newValue = true)
+
+[19:35:41] [1] [DEBUG] Sending PREPARE(prev = (71, 1), next = (72, 1), key = locked) to nodes in partition 0
+[19:35:41] [1] [DEBUG] Received successfully quorum of promises on key locked and next (72, 1)
+[19:35:41] [1] [DEBUG] Sending ACCEPT(key = locked, value = true, prev = (71, 1), next = (72, 1))
+[19:35:41] [1] [DEBUG] Received successfully quorum of ACCEPT on key locked and next (72, 1). Saving to local db
+[19:35:41] [1] [DEBUG] Successfully saved CAS key = locked value = true with timestamp (72, 1) into local db
+[19:35:41] [1] [DEBUG] Executed SET(locked, false) Success? true Req timestamp: (71, 1) New timestamp: 73
+[19:35:41] [1] [DEBUG] Broadcasting request for operator SET of key locked with timestamp (73, 1)
+[19:35:41] [1] [DEBUG] Received CAS(key = locked, expectedValue = false, newValue = true)
+[19:35:41] [1] [DEBUG] Sending PREPARE(prev = (73, 1), next = (74, 1), key = locked) to nodes in partition 0
+[19:35:46] [1] [DEBUG] Promise quorum on key locked and next (74, 1) failed. Sleeping and retrying
+[19:35:47] [1] [DEBUG] Sending PREPARE(prev = (73, 1), next = (75, 1), key = locked) to nodes in partition 0
+[19:35:47] [1] [DEBUG] Received fragmented packet, starting to read
+[19:35:52] [1] [DEBUG] Promise quorum on key locked and next (75, 1) failed. Sleeping and retrying
+[19:35:56] [1] [DEBUG] Sending PREPARE(prev = (73, 1), next = (76, 1), key = locked) to nodes in partition 0
+[19:35:56] [1] [DEBUG] Received fragment 1 packet of 0 kb
+[19:35:56] [1] [DEBUG] Received successfully quorum of promises on key locked and next (76, 1)
+[19:35:56] [1] [DEBUG] Sending ACCEPT(key = locked, value = true, prev = (73, 1), next = (76, 1))
+[19:35:56] [1] [DEBUG] Received successfully quorum of ACCEPT on key locked and next (76, 1). Saving to local db
+[19:35:56] [1] [DEBUG] Successfully saved CAS key = locked value = true with timestamp (76, 1) into local db
+[19:35:56] [1] [DEBUG] Executed SET(locked, false) Success? true Req timestamp: (73, 1) New timestamp: 77
+[19:35:56] [1] [DEBUG] Broadcasting request for operator SET of key locked with timestamp (77, 1)
+[19:35:56] [1] [DEBUG] Received fragmented packet, starting to read
+[19:35:56] [1] [DEBUG] Received CAS(key = locked, expectedValue = false, newValue = true)
+[19:35:56] [1] [DEBUG] Sending PREPARE(prev = (77, 1), next = (78, 1), key = locked) to nodes in partition 0
+[19:36:01] [1] [DEBUG] Promise quorum on key locked and next (78, 1) failed. Sleeping and retrying
+[19:36:02] [1] [DEBUG] Sending PREPARE(prev = (77, 1), next = (79, 1), key = locked) to nodes in partition 0
+[19:36:02] [1] [DEBUG] Received fragmented packet, starting to read
+[19:36:02] [1] [DEBUG] Received successfully quorum of promises on key locked and next (79, 1)
+[19:36:02] [1] [DEBUG] Sending ACCEPT(key = locked, value = true, prev = (77, 1), next = (79, 1))
+[19:36:07] [1] [DEBUG] Failed to receive quorum of ACCEPT on key locked and next (79, 1). Aborting
+[19:37:07] [1] [DEBUG] Received CAS(key = locked, expectedValue = false, newValue = true)
+[19:37:07] [1] [DEBUG] Sending PREPARE(prev = (77, 1), next = (80, 1), key = locked) to nodes in partition 0
+[19:37:12] [1] [DEBUG] Promise quorum on key locked and next (80, 1) failed. Sleeping and retrying
+[19:37:12] [1] [DEBUG] Sending PREPARE(prev = (77, 1), next = (81, 1), key = locked) to nodes in partition 0
+[19:37:17] [1] [DEBUG] Promise quorum on key locked and next (81, 1) failed. Sleeping and retrying
+[19:37:21] [1] [DEBUG] Sending PREPARE(prev = (77, 1), next = (82, 1), key = locked) to nodes in partition 0
+[19:37:21] [1] [DEBUG] Received fragmented packet, starting to read
+[19:37:26] [1] [DEBUG] Promise quorum on key locked and next (82, 1) failed. Sleeping and retrying
+[19:37:40] [1] [DEBUG] Sending PREPARE(prev = (77, 1), next = (83, 1), key = locked) to nodes in partition 0
+[19:37:40] [1] [DEBUG] Received fragment 1 packet of 0 kb
+[19:37:40] [1] [DEBUG] Received fragmented packet, starting to read
+[19:37:45] [1] [DEBUG] Promise quorum on key locked and next (83, 1) failed. Sleeping and retrying

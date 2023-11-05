@@ -1,16 +1,12 @@
 import es.memdb.MemDb;
-import es.memdb.Utils;
 import es.memdb.connection.MemDbConnections;
 import lombok.SneakyThrows;
-import org.junit.experimental.theories.Theories;
-
-import java.io.IOException;
 
 public final class Other {
     @SneakyThrows
     public static void main(String[] args) {
-        concurrent_cas_test();
-//        simple_cas_test();
+//        concurrent_cas();
+        simple_cas();
 //        node1_write();
 //        node3_write();
 //        node5_write();
@@ -20,7 +16,7 @@ public final class Other {
     }
 
     @SneakyThrows
-    static void concurrent_cas_test() {
+    static void concurrent_cas() {
         MemDb globalMemDb = new MemDb(MemDbConnections.sync("192.168.1.159", 10001), "789");
         globalMemDb.set("lock", "false");
 
@@ -61,7 +57,7 @@ public final class Other {
 
                     local.set("lock", "false");
                 }
-                
+
                 System.out.println(local.cas("locked", "false", "true"));
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -78,12 +74,19 @@ public final class Other {
     }
 
     @SneakyThrows
-    static void simple_cas_test() {
-        MemDb memDb = new MemDb(MemDbConnections.sync("192.168.1.159", 10001), "789");
+    static void simple_cas() {
+        MemDb memDb = new MemDb(MemDbConnections.sync("192.168.1.159", 10000), "789");
         memDb.set("locked", "false");
 
-        var success = memDb.cas("locked", "xd", "true");
-        System.out.println(success);
+        for(int i = 0; i < 100; i++){
+            while (!memDb.cas("locked", "false", "true")) {
+                Thread.sleep(1000L * 60);
+            }
+
+            memDb.set("locked", "false");
+        }
+
+        System.out.println("FINAL!");
     }
 
     @SneakyThrows

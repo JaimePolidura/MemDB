@@ -23,10 +23,14 @@ private:
     jaime::utils::spin_lock flagReadInProgress;
     std::atomic_uint64_t readRequestCounter;
 
+    std::function<ip::tcp::socket()> resetConnectionCallback;
+
 public:
     Connection(ip::tcp::socket socket, logger_t logger);
 
     void onRequest(std::function<void(const std::vector<uint8_t>&)> onRequestCallbackParam);
+
+    void setResetConnection(std::function<ip::tcp::socket()> resetCallback);
 
     std::string getAddress();
 
@@ -64,6 +68,8 @@ private:
     void setTcpSendBufferSize(std::size_t size);
 
     boost::system::error_code readWithTimeout(boost::asio::mutable_buffers_1 buffer, uint64_t timeoutMs);
+
+    void resetConnection();
 };
 
 using connection_t = std::shared_ptr<Connection>;

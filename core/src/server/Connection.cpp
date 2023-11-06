@@ -8,6 +8,10 @@ void Connection::onRequest(std::function<void(const std::vector<uint8_t>&)> onRe
     this->onRequestCallback = onRequestCallbackParam;
 }
 
+void Connection::setResetConnection(std::function<ip::tcp::socket()> resetCallback) {
+    this->resetConnectionCallback = resetCallback;
+}
+
 bool Connection::isOpen() {
     return this->socket.is_open();
 }
@@ -64,8 +68,8 @@ std::result<std::vector<uint8_t>> Connection::readPacketContent(uint64_t timeout
 
     memDbDataLength_t packetLength = Utils::parse<memDbDataLength_t>(messageLengthHeaderBuffer);
 
-    if(packetLength == 0){
-        std::error<std::vector<uint8_t>>();
+    if(packetLength == 0) {
+        return readPacketContent(timeoutMs);
     }
 
     std::vector<uint8_t> messageBuffer(packetLength);
@@ -126,7 +130,14 @@ size_t Connection::writeSync(std::vector<uint8_t>& toWrite) {
         this->addContentLengthHeader(toWrite, toWrite.size());
         this->addNoFragmentationHeader(toWrite);
 
-        return this->socket.write_some(boost::asio::buffer(toWrite));
+        std::size_t written = this->socket.write_some(boost::asio::buffer(toWrite));
+
+        if(written == 0){
+            this->resetConnection();
+            return this->socket.write_some(boost::asio::buffer(toWrite));
+        } else {
+            return written;
+        }
     } else {
         return this->fragmentPacketAndSend(toWrite, [this](std::vector<uint8_t>& fragmentedPacket){
             return this->socket.write_some(boost::asio::buffer(fragmentedPacket));
@@ -213,4 +224,11 @@ boost::system::error_code Connection::readWithTimeout(boost::asio::mutable_buffe
     boost::asio::read(this->socket, buffer, errorCode);
 
     return errorCode;
+}
+
+void Connection::resetConnection() {
+    this->close();
+    if(this->resetConnectionCallback != nullptr){
+        this->socket = this->resetConnectionCallback();
+    }
 }

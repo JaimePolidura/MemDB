@@ -44,11 +44,14 @@ public:
 private:
     void openConnectionIfClosedOrThrow();
 
+    bool connectToSocket(std::string& ip, const std::string& port, ip::tcp::socket& socket);
+
     std::size_t writeSyncToConnection(std::vector<uint8_t>& bytes);
 
     std::result<std::vector<uint8_t>> readSyncFromConnection(uint64_t timeoutMs);
 
 public:
+
     static bool canSendRequestUnicast(NodeState state);
 
     static std::string toJson(std::shared_ptr<Node> node);

@@ -154,4 +154,4 @@ OperatorDescriptor CasOperator::desc() {
         .name = "CAS",
         .authorizedToExecute = { AuthenticationType::API },
     };
-}´
+}

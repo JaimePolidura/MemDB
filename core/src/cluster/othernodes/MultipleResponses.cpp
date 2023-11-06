@@ -31,7 +31,7 @@ MultipleResponsesNotifier::MultipleResponsesNotifier(std::shared_ptr<MultipleRes
 
 void MultipleResponsesNotifier::addResponse(memdbNodeId_t nodeId, const Response& response) {
     std::unique_lock<std::mutex> uniqueLock(multipleResponse->responsesLock);
-
+    
     multipleResponse->responses.insert({nodeId, response});
     if(response.isSuccessful){
         multipleResponse->successfulResponsesLatch.increase();

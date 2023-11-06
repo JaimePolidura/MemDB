@@ -55,18 +55,16 @@ bool Node::openConnection() {
 
     boost::asio::ip::tcp::socket socket(this->ioContext);
 
-    bool success = Utils::tryOnce([ip, port, &socket]() mutable -> void{
-        if(DNSUtils::isName(ip))
-            ip = DNSUtils::singleResolve(ip, port);
-
-        boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(ip), std::atoi(port.data()));
-        socket.connect(endpoint);
-    });
-
-    if(!success)
+    if(!this->connectToSocket(ip, port, socket))
         return false;
 
     this->connection = std::make_shared<Connection>(std::move(socket), this->logger);
+    this->connection->setResetConnection([this, ip, port]() mutable -> ip::tcp::socket {
+        boost::asio::ip::tcp::socket socket(this->ioContext);
+        this->connectToSocket(ip, port, socket);
+
+        return socket;
+    });
 
     return true;
 }
@@ -103,13 +101,23 @@ std::size_t Node::writeSyncToConnection(std::vector<uint8_t>& bytes) {
 
 std::result<std::vector<uint8_t>> Node::readSyncFromConnection(uint64_t timeoutMs) {
     std::result<std::vector<uint8_t>> readResult = this->connection->readSync(timeoutMs);
-    
+
     if(!readResult.is_success()){
         this->openConnection();
         readResult = this->connection->readSync(timeoutMs);
     }
 
     return readResult;
+}
+
+bool Node::connectToSocket(std::string& ip, const std::string& port, ip::tcp::socket& socket) {
+    return Utils::tryOnce([ip, port, &socket]() mutable -> void{
+        if(DNSUtils::isName(ip))
+            ip = DNSUtils::singleResolve(ip, port);
+
+        boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(ip), std::atoi(port.data()));
+        socket.connect(endpoint);
+    });
 }
 
 std::string Node::toJson(std::shared_ptr<Node> node) {

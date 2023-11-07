@@ -1,6 +1,6 @@
 #include "messages/response/Response.h"
 
-Response::Response(bool isSuccessful, uint8_t errorCode, uint64_t timestamp, memdbRequestNumber_t reqNumber, const SimpleString<memDbDataLength_t> &response) :
+Response::Response(bool isSuccessful, uint8_t errorCode, LamportClock timestamp, memdbRequestNumber_t reqNumber, const SimpleString<memDbDataLength_t> &response) :
         isSuccessful(isSuccessful),
         responseValue(response),
         requestNumber(reqNumber),
@@ -20,11 +20,11 @@ SimpleString<memDbDataLength_t> Response::getResponseValueAtOffset(uint32_t init
     return SimpleString<memDbDataLength_t>::fromPointer(this->responseValue.data() + initOffset, size);
 }
 
-Response Response::success(const SimpleString<memDbDataLength_t> &response, uint64_t timestamp) {
+Response Response::success(const SimpleString<memDbDataLength_t> &response, LamportClock timestamp) {
     return Response(true, 0x00, timestamp, 0, response);
 }
 
-Response Response::success(uint64_t timestamp) {
+Response Response::success(LamportClock timestamp) {
     return Response(true, 0x00, timestamp, 0, SimpleString<memDbDataLength_t>::empty());
 }
 
@@ -32,7 +32,7 @@ Response Response::error(uint8_t errorCode) {
     return Response(false, errorCode, 0, 0, SimpleString<memDbDataLength_t>::empty());
 }
 
-Response Response::error(uint8_t errorCode, memdbRequestNumber_t requestNumber, uint64_t timestamp) {
+Response Response::error(uint8_t errorCode, memdbRequestNumber_t requestNumber, LamportClock timestamp) {
     Response response = Response(false, errorCode, timestamp, 0, SimpleString<memDbDataLength_t>::empty());
     response.requestNumber = requestNumber;
 

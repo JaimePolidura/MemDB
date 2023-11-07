@@ -131,7 +131,7 @@ public final class MemDbStressTest {
 
     @SneakyThrows
     private static MemDb getMemDbObject() {
-        return new MemDb(MemDbConnections.sync("192.168.1.159", 10000), "789");
+        return MemDbConnections.sync("192.168.1.159", 10000, "789");
     }
 
     private static Supplier<String> argGenerator() {

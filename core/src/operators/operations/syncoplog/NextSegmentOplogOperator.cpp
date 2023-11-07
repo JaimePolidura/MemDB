@@ -14,8 +14,8 @@ Response NextSegmentOplogOperator::operate(const OperationBody& operation, const
     auto[compressedOplog, uncompressSize, success] = this->getNextOplogSegmentOrTryFix(oplogSenderIterator, dependencies);
 
     return ResponseBuilder::builder()
-            .isSuccessful(success, ErrorCode::UNFIXABLE_CORRUPTED_OPLOG_SEGMENT)
-            ->timestamp(oplogSenderIterator->getLastTimestampOfLastNext())
+            .timestampCounter(oplogSenderIterator->getLastTimestampOfLastNext())
+            ->isSuccessful(success, ErrorCode::UNFIXABLE_CORRUPTED_OPLOG_SEGMENT)
             ->requestNumber(syncId)
             ->values({
                 SimpleString<memDbDataLength_t>::fromNumber(uncompressSize),

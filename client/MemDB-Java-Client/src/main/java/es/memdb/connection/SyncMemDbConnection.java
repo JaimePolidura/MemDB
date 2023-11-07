@@ -1,17 +1,11 @@
 package es.memdb.connection;
 
-import es.memdb.Utils;
-import lombok.SneakyThrows;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Consumer;
 
 public final class SyncMemDbConnection implements MemDbConnection {
     private final String host;
@@ -47,21 +41,6 @@ public final class SyncMemDbConnection implements MemDbConnection {
         } catch (IOException e) {
             this.operationLock.unlock();
             e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void write(byte[] value, int requestNumber, Consumer<Byte[]> onResponseCallback) {
-        try {
-            this.operationLock.lock();
-            
-            this.output.write(value);
-
-            onResponseCallback.accept(Utils.primitiveToWrapper(this.read(requestNumber)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }finally {
-            this.operationLock.unlock();
         }
     }
 

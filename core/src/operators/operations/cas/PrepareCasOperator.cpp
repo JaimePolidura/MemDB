@@ -13,7 +13,7 @@ Response PrepareCasOperator::operate(const OperationBody& operation, const Opera
     dependencies.logger->debugInfo("Received PREPARE(prev = {0}, next = {1}, key = {2}) from node {3}. More up to date value stored {4}? {5} Promised higher next timestamp {6}? {7}",
                                    prevTimestamp.toString(), nextTimestamp.toString(), key.toString(), std::to_string(operation.nodeId), keyInDb->timestamp.toString(),
                                    moreUpToDateValueIsStored, paxosRound->promisedNextTimestamp.toString(), promisedHigherTimestamp);
-
+    
     if(moreUpToDateValueIsStored || promisedHigherTimestamp) {
         return Response::error(ErrorCode::CAS_FAILED);
     }

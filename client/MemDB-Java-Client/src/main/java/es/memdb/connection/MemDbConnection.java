@@ -10,7 +10,5 @@ public interface MemDbConnection extends AutoCloseable {
 
     void write(byte[] value, int requestNumber);
 
-    void write(byte[] value, int requestNumber, Consumer<Byte[]> onResponseCallback);
-
     boolean isClosed();
 }

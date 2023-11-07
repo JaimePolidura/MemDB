@@ -6,8 +6,13 @@ ResponseBuilder ResponseBuilder::builder() {
     return ResponseBuilder{}; 
 }
 
-ResponseBuilder * ResponseBuilder::timestamp(uint64_t timestamp) {
+ResponseBuilder * ResponseBuilder::timestamp(LamportClock timestamp) {
     this->_timestamp = timestamp;
+    return this;
+}
+
+ResponseBuilder * ResponseBuilder::timestampCounter(uint64_t timestampCounter) {
+    this->_timestamp = LamportClock{0, timestampCounter};
     return this;
 }
 

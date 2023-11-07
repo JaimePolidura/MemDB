@@ -12,7 +12,7 @@ Response DeleteOperator::operate(const OperationBody& operation, const Operation
 
     return ResponseBuilder::builder()
         .isSuccessful(resultRemove.is_success(), ErrorCode::UNKNOWN_KEY)
-        ->timestamp(resultRemove->timestampOfOperation)
+        ->timestampCounter(resultRemove->timestampOfOperation)
         ->build();
 }
 

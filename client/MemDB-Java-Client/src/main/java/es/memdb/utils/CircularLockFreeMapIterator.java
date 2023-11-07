@@ -1,4 +1,4 @@
-package es.memdb.utils.clock;
+package es.memdb.utils;
 
 import lombok.AllArgsConstructor;
 

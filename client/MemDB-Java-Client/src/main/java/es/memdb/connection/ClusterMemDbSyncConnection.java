@@ -3,7 +3,7 @@ package es.memdb.connection;
 import es.memdb.cluster.ClusterManager;
 import es.memdb.cluster.ClusterNodeConnection;
 import es.memdb.cluster.Node;
-import es.memdb.utils.clock.CircularLockFreeMapIterator;
+import es.memdb.utils.CircularLockFreeMapIterator;
 import io.vavr.control.Try;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -95,11 +95,6 @@ public class ClusterMemDbSyncConnection implements MemDbConnection {
         ClusterNodeConnection clusterNodeRequest = this.clusterNodeConnections.get(nodeIdRequest);
 
         return clusterNodeRequest.read(requestNumber);
-    }
-
-    @Override
-    public void write(byte[] value, int requestNumber, Consumer<Byte[]> onResponseCallback) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

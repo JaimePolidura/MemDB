@@ -14,7 +14,7 @@ Response SetOperator::operate(const OperationBody& operation, const OperationOpt
 
     return ResponseBuilder::builder()
         .isSuccessful(resultSet.is_success(), ErrorCode::ALREADY_REPLICATED)
-        ->timestamp(resultSet->timestampOfOperation)
+        ->timestampCounter(resultSet->timestampOfOperation)
         ->build();
 }
 

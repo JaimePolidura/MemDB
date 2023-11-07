@@ -17,7 +17,7 @@
 class PrepareCasOperator : public Operator {
 public:
     Response operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies& dependencies) override;
-
+    
     OperatorDescriptor desc() override;
 
 private:

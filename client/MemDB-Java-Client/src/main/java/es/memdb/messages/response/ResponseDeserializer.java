@@ -1,8 +1,9 @@
 package es.memdb.messages.response;
 
+import es.memdb.utils.LamportClock;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 public final class ResponseDeserializer {
     private static final byte SUCCESSFUL_MASK = 0x01; //00000001
@@ -10,7 +11,9 @@ public final class ResponseDeserializer {
     //We assume that the raw comes without the "Total response length"
     public Response deserialize(byte[] raw) {
         int requestNumber = ByteBuffer.wrap(raw).getInt();
-        long timestamp = ByteBuffer.wrap(raw, 4, 8).getLong();
+        long timestampCounter = ByteBuffer.wrap(raw, 4, 8).getLong();
+        short timestampNodeId = ByteBuffer.wrap(raw, 8, 10).getShort();
+        LamportClock timestamp = new LamportClock(timestampCounter, timestampNodeId);
         boolean isSuccessFul = (raw[4 + 8] & SUCCESSFUL_MASK) == 1;
         short errorCode = (short) (raw[4 + 8] >> 1);
 

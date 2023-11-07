@@ -3,17 +3,18 @@
 #include "shared.h"
 
 #include "utils/strings/SimpleString.h"
+#include "utils/clock/LamportClock.h"
 #include "memdbtypes.h"
 
 struct Response {
 public:
     SimpleString<memDbDataLength_t> responseValue;
     memdbRequestNumber_t requestNumber;
-    uint64_t timestamp;
+    LamportClock timestamp;
     uint8_t errorCode;
     bool isSuccessful;
     
-    Response(bool isSuccessful, uint8_t errorCode, uint64_t timestamp, memdbRequestNumber_t reqNumber, const SimpleString<memDbDataLength_t> &response);
+    Response(bool isSuccessful, uint8_t errorCode, LamportClock timestamp, memdbRequestNumber_t reqNumber, const SimpleString<memDbDataLength_t> &response);
 
     Response() = default;
 
@@ -23,11 +24,11 @@ public:
 
     bool hasErrorCode(uint8_t errorCode);
 
-    static Response success(const SimpleString<memDbDataLength_t> &response, uint64_t timestamp = 0);
+    static Response success(const SimpleString<memDbDataLength_t> &response, LamportClock timestamp = {});
 
-    static Response success(uint64_t timestamp = 0);
+    static Response success(LamportClock timestamp = {});
 
     static Response error(uint8_t errorCode);
 
-    static Response error(uint8_t errorCode, memdbRequestNumber_t requestNumber, uint64_t timestamp = 0);
+    static Response error(uint8_t errorCode, memdbRequestNumber_t requestNumber, LamportClock timestamp = {});
 };

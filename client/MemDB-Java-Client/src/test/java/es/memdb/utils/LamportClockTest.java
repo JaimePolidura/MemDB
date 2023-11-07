@@ -1,4 +1,4 @@
-package es.memdb.utils.clock;
+package es.memdb.utils;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -9,7 +9,7 @@ public class LamportClockTest  {
 
     @Before
     public void setup() {
-        this.lamportClockToTest = new LamportClock(0L);
+        this.lamportClockToTest = new LamportClock(0L, (short) 0);
     }
 
     @Test

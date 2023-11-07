@@ -29,7 +29,7 @@ Response Response::success(LamportClock timestamp) {
 }
 
 Response Response::error(uint8_t errorCode) {
-    return Response(false, errorCode, 0, 0, SimpleString<memDbDataLength_t>::empty());
+    return Response(false, errorCode, LamportClock{0, 0}, 0, SimpleString<memDbDataLength_t>::empty());
 }
 
 Response Response::error(uint8_t errorCode, memdbRequestNumber_t requestNumber, LamportClock timestamp) {

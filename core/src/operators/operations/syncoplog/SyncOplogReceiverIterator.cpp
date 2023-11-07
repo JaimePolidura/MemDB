@@ -27,7 +27,7 @@ std::result<std::vector<uint8_t>> SyncOplogReceiverIterator::next() {
         return std::error(std::vector<uint8_t>{});
     }
 
-    this->timestampToSync = nextResponse.timestamp;
+    this->timestampToSync = nextResponse.timestamp.counter;
     this->nSegmentsRemaining--;
 
     this->logger->debugInfo("Received new segment from node {0} of {1} bytes at timestamp {2} Segments remaining: {3}",

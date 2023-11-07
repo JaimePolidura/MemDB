@@ -6,7 +6,7 @@ Response GetOperator::operate(const OperationBody& operation, const OperationOpt
     
     return ResponseBuilder::builder()
         .isSuccessful(result.has_value(), ErrorCode::UNKNOWN_KEY)
-        ->timestamp(result->timestamp);
+        ->timestamp(result->timestamp)
         ->build();
 }
 

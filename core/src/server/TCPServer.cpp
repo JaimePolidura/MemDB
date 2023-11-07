@@ -61,7 +61,7 @@ void TCPServer::onNewRequest(const std::vector<uint8_t>& requestRawBuffer, conne
 }
 
 void TCPServer::sendAuthError(connection_t connection, Request request) {
-    const Response errorAuthResponse = Response::error(ErrorCode::AUTH_ERROR, request.requestNumber, request.operation.timestamp);
+    const Response errorAuthResponse = Response::error(ErrorCode::AUTH_ERROR, request.requestNumber, LamportClock{0, request.operation.timestamp});
     this->sendResponse(connection, errorAuthResponse);
 }
 

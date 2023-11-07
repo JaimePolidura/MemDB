@@ -27,6 +27,8 @@ public final class LamportClock implements Comparable<LamportClock> {
     }
 
     public long get() {
+        System.out.println(counter.get());
+
         return this.counter.get();
     }
 

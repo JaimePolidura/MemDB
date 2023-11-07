@@ -34,7 +34,7 @@ ResponseBuilder * ResponseBuilder::requestNumber(memdbRequestNumber_t requestNum
 
 ResponseBuilder * ResponseBuilder::isSuccessful(bool isSuccessful, uint8_t errorCodeIfUnsuccessful) {
     this->_isSuccessful = isSuccessful;
-    if(isSuccessful){
+    if(!isSuccessful){
         this->_errorCode = errorCodeIfUnsuccessful;
     }
 

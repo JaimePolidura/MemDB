@@ -11,6 +11,7 @@ import es.memdb.utils.LamportClock;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -87,6 +88,7 @@ public final class MemDb {
         memDbConnection.write(rawRequest, request.getRequestNumber());
 
         byte[] rawResponse = memDbConnection.read(request.getRequestNumber());
+
         Response response = responseDeserializer.deserialize(rawResponse);
 
         clock.update(response.getTimestamp().getCounter().get());

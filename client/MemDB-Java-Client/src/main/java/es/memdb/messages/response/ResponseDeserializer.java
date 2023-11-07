@@ -4,6 +4,7 @@ import es.memdb.utils.LamportClock;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public final class ResponseDeserializer {
     private static final byte SUCCESSFUL_MASK = 0x01; //00000001
@@ -12,12 +13,12 @@ public final class ResponseDeserializer {
     public Response deserialize(byte[] raw) {
         int requestNumber = ByteBuffer.wrap(raw).getInt();
         long timestampCounter = ByteBuffer.wrap(raw, 4, 8).getLong();
-        short timestampNodeId = ByteBuffer.wrap(raw, 8, 10).getShort();
+        short timestampNodeId = ByteBuffer.wrap(raw, 8, 2).getShort();
         LamportClock timestamp = new LamportClock(timestampCounter, timestampNodeId);
-        boolean isSuccessFul = (raw[4 + 8] & SUCCESSFUL_MASK) == 1;
-        short errorCode = (short) (raw[4 + 8] >> 1);
+        boolean isSuccessFul = (raw[4 + 8 + 2] & SUCCESSFUL_MASK) == 1;
+        short errorCode = (short) (raw[4 + 8 + 2] >> 1);
 
-        int offsetResponseLength = 4 + 8 + 1;
+        int offsetResponseLength = 4 + 8 + 2 + 1;
         int offsetResponseBody = offsetResponseLength + 4;
 
         String response = raw.length > offsetResponseBody && raw[offsetResponseLength + 3] > 0 ?

@@ -10,7 +10,7 @@ struct Response {
 public:
     SimpleString<memDbDataLength_t> responseValue;
     memdbRequestNumber_t requestNumber;
-    LamportClock timestamp;
+    LamportClock timestamp{0, 0};
     uint8_t errorCode;
     bool isSuccessful;
     
@@ -24,11 +24,11 @@ public:
 
     bool hasErrorCode(uint8_t errorCode);
 
-    static Response success(const SimpleString<memDbDataLength_t> &response, LamportClock timestamp = {});
+    static Response success(const SimpleString<memDbDataLength_t> &response, LamportClock timestamp = {0, 0});
 
     static Response success(LamportClock timestamp = {});
 
     static Response error(uint8_t errorCode);
 
-    static Response error(uint8_t errorCode, memdbRequestNumber_t requestNumber, LamportClock timestamp = {});
+    static Response error(uint8_t errorCode, memdbRequestNumber_t requestNumber, LamportClock timestamp = {0, 0});
 };

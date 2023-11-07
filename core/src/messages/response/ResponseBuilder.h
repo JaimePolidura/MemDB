@@ -8,7 +8,7 @@ class ResponseBuilder {
 private:
     std::vector<SimpleString<memDbDataLength_t>> _responseValue{};
     memdbRequestNumber_t _requestNumber{};
-    LamportClock _timestamp{};
+    LamportClock _timestamp{0, 0};
     uint8_t _errorCode{};
     bool _isSuccessful{};
 

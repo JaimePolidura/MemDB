@@ -9,7 +9,7 @@ Response::Response(bool isSuccessful, uint8_t errorCode, LamportClock timestamp,
 {}
 
 memDbDataLength_t Response::getTotalLength() const {
-    return sizeof(memdbRequestNumber_t) + sizeof(uint64_t) + 1 + (responseValue.size > 0 ? (sizeof(memDbDataLength_t) + responseValue.size) : sizeof(memDbDataLength_t));
+    return sizeof(memdbRequestNumber_t) + sizeof(uint64_t) + sizeof(uint16_t) + 1 + (responseValue.size > 0 ? (sizeof(memDbDataLength_t) + responseValue.size) : sizeof(memDbDataLength_t));
 }
 
 bool Response::hasErrorCode(uint8_t errorCodeToCheck) {

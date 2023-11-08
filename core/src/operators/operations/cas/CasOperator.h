@@ -32,9 +32,6 @@ private:
                                              proposerPaxosRound_t proposerPaxosRound,
                                              OperatorDependencies& dependencies);
 
-    LamportClock getNextTimestampForKey(MapEntry<memDbDataLength_t> mapEntry,
-                                       OperatorDependencies& dependencies);
-
     multipleResponses_t sendPrepare(OperatorDependencies& dependencies,
                                     proposerPaxosRound_t proposerPaxosRound,
                                     int partitionId,

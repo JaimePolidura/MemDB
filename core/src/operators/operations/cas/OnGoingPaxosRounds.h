@@ -30,8 +30,7 @@ using proposerPaxosRound_t = std::shared_ptr<ProposerPaxosRound>;
 struct AcceptatorPaxosRound {
     AcceptatorPaxosState state;
 
-    LamportClock promisedNextTimestamp;
-    LamportClock promisedOldTimestamp;
+    LamportClock promisedNextTimestamp{0, 0};
 };
 
 class OnGoingPaxosRounds {

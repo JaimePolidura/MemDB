@@ -78,8 +78,8 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
     Response result = operatorToExecute->operate(operation, options, this->dependencies);
 
     if(operatorToExecute->desc().type == DB_STORE_WRITE && result.isSuccessful && !options.onlyExecute) {
-        if(options.fromClient()){
-            operation.timestamp = result.timestamp.counter; //Result has new timestamp
+        if(options.fromClient()) {
+            operation.timestamp = result.timestamp.counter;
         }
 
         if(!options.dontSaveInOperationLog){

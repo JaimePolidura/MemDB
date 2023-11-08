@@ -54,8 +54,8 @@ std::result<std::tuple<LamportClock, LamportClock>> CasOperator::sendRetriesPrep
                                                                         SimpleString<memDbDataLength_t> expectedValue) {
     memDbDataStoreMap_t memDbStore = dependencies.memDbStores->getByPartitionId(partitionId);
     uint32_t keyHash = memDbStore->calculateHash(key);
+    LamportClock nextTimestamp = *dependencies.clock.get();
     LamportClock prevTimestamp = {};
-    LamportClock nextTimestamp = {};
 
     while(true){
         std::optional<MapEntry<memDbDataLength_t>> storedInDb = memDbStore->get(key);
@@ -66,7 +66,7 @@ std::result<std::tuple<LamportClock, LamportClock>> CasOperator::sendRetriesPrep
         }
 
         prevTimestamp = storedInDb->timestamp;
-        nextTimestamp = this->getNextTimestampForKey(storedInDb.value(), dependencies);
+        nextTimestamp.counter++;
 
         dependencies.logger->debugInfo("Sending PREPARE(prev = {0}, next = {1}, key = {2}) to nodes in partition {3}",
                                        prevTimestamp.toString(), nextTimestamp.toString(), key.toString(), partitionId);
@@ -140,11 +140,6 @@ multipleResponses_t CasOperator::sendAccept(OperatorDependencies& dependencies,
 
 std::tuple<SimpleString<memDbDataLength_t>, SimpleString<memDbDataLength_t>, SimpleString<memDbDataLength_t>> CasOperator::getArgs(const OperationBody& operation) {
     return std::make_tuple(operation.getArg(0), operation.getArg(1), operation.getArg(2));
-}
-
-LamportClock CasOperator::getNextTimestampForKey(MapEntry<memDbDataLength_t> mapEntry,
-                                                OperatorDependencies& dependencies) {
-    return LamportClock{dependencies.cluster->getNodeId(), dependencies.clock->tick(mapEntry.timestamp.counter)};
 }
 
 OperatorDescriptor CasOperator::desc() {

@@ -46,7 +46,7 @@ public:
               bool requestFromNode) {
         AVLNode<SizeValue> * newNode = new AVLNode(key, keyHash, value, -1, 0, 0);
 
-        DbEditResult result{};
+        DbEditResult result{.timestampOfOperation = 0};
         AVLNode<SizeValue> * insertedNode = this->insertRecursive(newNode, result, this->root, timestampFromNode, updateClockStrategy, lamportClock, requestFromNode);
 
         return insertedNode != nullptr ?
@@ -162,13 +162,13 @@ private:
             last->right = this->removeRecursive(last->left, result, keyHashToRemove, timestamp, updateClockStrategy, lamportClock, removed, checkTimestamps);
         }else {
             if(!ignoreTimeStamps && last->timestamp > timestamp) {
+                result.timestampOfOperation = 0;
                 removed = false;
                 return last;
             }
 
             removed = true;
             bool rootRemoved = this->root == last;
-
             result.timestampOfOperation = lamportClock->update(updateClockStrategy, timestamp.counter);
 
             if(last->left && last->right) {

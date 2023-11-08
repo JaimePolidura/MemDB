@@ -2,12 +2,11 @@ package es.memdb.utils;
 
 import lombok.Getter;
 
-import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicLong;
 
 public final class LamportClock implements Comparable<LamportClock> {
     @Getter private final AtomicLong counter;
-    @Getter private final short nodeId; //Used only for node respnses
+    @Getter private final short nodeId;
 
     public LamportClock(long initialValue, short nodeId) {
         this.counter = new AtomicLong(initialValue);
@@ -20,6 +19,7 @@ public final class LamportClock implements Comparable<LamportClock> {
 
         do {
             actualCounter = this.counter.get();
+
             newCounter = Math.max(actualCounter, other);
         }while (this.counter.compareAndExchange(actualCounter, newCounter) != actualCounter);
 
@@ -27,8 +27,6 @@ public final class LamportClock implements Comparable<LamportClock> {
     }
 
     public long get() {
-        System.out.println(counter.get());
-
         return this.counter.get();
     }
 

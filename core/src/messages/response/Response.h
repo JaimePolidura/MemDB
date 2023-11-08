@@ -26,7 +26,7 @@ public:
 
     static Response success(const SimpleString<memDbDataLength_t> &response, LamportClock timestamp = {0, 0});
 
-    static Response success(LamportClock timestamp = {});
+    static Response success(LamportClock timestamp = {0, 0});
 
     static Response error(uint8_t errorCode);
 

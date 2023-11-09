@@ -5,12 +5,13 @@
 #include "cluster/changehandler/ClusterDbNodeChangeHandler.h"
 
 class PartitionClusterNodeChangeHandler : public ClusterDbNodeChangeHandler {
-private:
-    NewNodePartitionChangeHandler newNodePartitionChangeHandler;
-    DeletionNodeChangeHandler deletionNodeChangeHandler;
-
 public:
     PartitionClusterNodeChangeHandler(logger_t logger, cluster_t cluster, operationLog_t operationLog, operatorDispatcher_t operatorDispatcher);
 
-    void handleChange(node_t nodeChanged, const ClusterDbChangeType changeType) override;
+    void handleNewNode(node_t newNode) override;
+
+    void handleDeletionNode(node_t deletedNode) override;
+private:
+    NewNodePartitionChangeHandler newNodePartitionChangeHandler;
+    DeletionNodeChangeHandler deletionNodeChangeHandler;
 };

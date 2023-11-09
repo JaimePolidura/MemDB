@@ -14,6 +14,8 @@ public:
     Configuration(const std::map<std::string, std::string>& configurationValues);
 
     virtual std::string get(const std::string& key);
+    
+    virtual std::vector<std::string> getVector(const std::string& key);
 
     virtual bool getBoolean(const std::string& key);
 

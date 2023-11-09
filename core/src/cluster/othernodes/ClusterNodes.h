@@ -16,14 +16,6 @@
 #include "logging/Logger.h"
 
 class ClusterNodes {
-private:
-    std::map<memdbNodeId_t, node_t> nodesById{};
-    std::vector<NodesInPartition> nodesInPartitions{};
-
-    configuration_t configuration;
-    ThreadPool requestPool;
-    logger_t logger;
-
 public:
     ClusterNodes(configuration_t configuration, logger_t logger):
         logger(logger),
@@ -35,7 +27,11 @@ public:
 
     void setNumberPartitions(uint32_t numberPartitions);
 
+    int getSize();
+
     void setOtherNodes(const std::vector<node_t>& otherNodesToSet, const NodePartitionOptions options);
+
+    std::vector<node_t> getAllNodes();
 
     std::vector<NodesInPartition> getNodesInPartitions();
 
@@ -63,12 +59,21 @@ public:
 
     void broadcast(const NodePartitionOptions options, const OperationBody& operation);
 
+    void broadcastAll(const OperationBody& operation);
+
     multipleResponses_t broadcastAndWait(const NodePartitionOptions options, const OperationBody& operation);
 
     void removeNodeFromPartition(memdbNodeId_t nodeId, const NodePartitionOptions options);
     
     std::optional<node_t> getRandomNode(const NodePartitionOptions options, std::set<memdbNodeId_t> alreadyCheckedNodesId = {});
 private:
+    std::map<memdbNodeId_t, node_t> nodesById{};
+    std::vector<NodesInPartition> nodesInPartitions{};
+
+    configuration_t configuration;
+    ThreadPool requestPool;
+    logger_t logger;
+
     Request prepareRequest(const OperationBody& operation);
 
     void forEachNodeInPartition(int partitionId, std::function<void(node_t node)> consumer);

@@ -28,6 +28,8 @@ public:
 
     Partitions() = default;
 
+    uint32_t getMaxSize();
+
     uint32_t getOplogIdOfOtherNodeBySelfOplogId(memdbNodeId_t otherNodeId, uint32_t selfOplogId);
 
     uint32_t getRingPositionByKey(SimpleString<memDbDataLength_t> key);
@@ -44,6 +46,8 @@ public:
     std::vector<RingEntry> getNeighborsCounterClockwiseByNodeId(memdbNodeId_t nodeId);
 
     std::vector<RingEntry> getNeighbors();
+
+    std::vector<RingEntry> getAll();
 
     RingEntry getNeighborCounterClockwiseByNodeId(memdbNodeId_t nodeId);
 

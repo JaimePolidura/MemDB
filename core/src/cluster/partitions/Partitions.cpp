@@ -7,6 +7,14 @@ Partitions::Partitions(const std::vector<RingEntry>& allRingEntries, uint32_t no
     this->selfEntry = this->ringEntries.getByNodeId(configuration->get<memdbNodeId_t>(ConfigurationKeys::NODE_ID));
 }
 
+uint32_t Partitions::getMaxSize() {
+    return this->maxSize;
+}
+
+std::vector<RingEntry> Partitions::getAll() {
+    return this->ringEntries.getAll();
+}
+
 uint32_t Partitions::getOplogIdOfOtherNodeBySelfOplogId(memdbNodeId_t otherNodeId, uint32_t selfOplogId) {
     return this->configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS) ?
            (this->isClockwiseNeighbor(otherNodeId) ?

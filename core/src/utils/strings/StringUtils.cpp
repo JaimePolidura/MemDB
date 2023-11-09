@@ -1,6 +1,10 @@
 #include "utils/strings/StringUtils.h"
 
 std::vector<std::string> StringUtils::split(const std::string& stringToSplit, char delimiter) {
+    if(stringToSplit.empty()){
+        return {};
+    }
+    
     std::vector<std::string> tokens;
     std::istringstream stream(stringToSplit);
     std::string token;

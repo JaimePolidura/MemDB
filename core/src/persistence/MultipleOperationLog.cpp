@@ -1,10 +1,7 @@
 #include "MultipleOperationLog.h"
 
-MultipleOperationLog::MultipleOperationLog(configuration_t configuration, std::function<std::string(int)> oplogFileNameResolver,
-                                           uint32_t numberOplogs, logger_t loggerCons): OperationLog(configuration),
-        logger(loggerCons) {
-    this->initializeOplogs(numberOplogs, oplogFileNameResolver);
-}
+MultipleOperationLog::MultipleOperationLog(configuration_t configuration, logger_t logger, std::function<std::string(int)> oplogFileNameResolver):
+    OperationLog(configuration, logger), oplogFileNameResolver(oplogFileNameResolver) {}
 
 void MultipleOperationLog::addAll(memdbOplogId_t oplogId, const std::vector<OperationBody>& operations) {
     for (const OperationBody& operation: operations) {
@@ -67,10 +64,10 @@ uint32_t MultipleOperationLog::getNumberOplogFiles() {
     return this->operationLogs.size();
 }
 
-void MultipleOperationLog::initializeOplogs(int numberOplogs, std::function<std::string(int)> oplogFileNameResolver) {
+void MultipleOperationLog::initializeOplogs(int numberOplogs) {
     for(int i = 0; i < numberOplogs; i++) {
         std::string fileName = oplogFileNameResolver(i);
-        singleOperationLog_t oplog = std::make_shared<SingleOperationLog>(this->configuration, i, this->logger);
+        singleOperationLog_t oplog = std::make_shared<SingleOperationLog>(this->configuration, this->logger);
 
         this->operationLogs.push_back(oplog);
     }

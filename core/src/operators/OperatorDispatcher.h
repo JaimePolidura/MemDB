@@ -17,24 +17,11 @@
 #include "cluster/Cluster.h"
 
 class OperatorDispatcher {
-public: //Need it for mocking it
-    operatorRegistry_t operatorRegistry;
-private:
-    DelayedOperationsBuffer delayedOperationsBuffer{};
-    onGoingPaxosRounds_t onGoingPaxosRounds;
-    onGoingSyncOplogs_t onGoingSyncOplogs;
-    operationLog_t operationLog;
-    configuration_t configuration;
-    cluster_t cluster;
-    lamportClock_t clock;
-    memDbStores_t memDbStores;
-    logger_t logger;
-
-    OperatorDependencies dependencies;
-
 public:
     OperatorDispatcher(memDbStores_t memDbStores, lamportClock_t clock, cluster_t cluster, configuration_t configuration,
                        logger_t logger, operationLog_t operationLog, onGoingSyncOplogs_t onGoingSyncOplogs);
+
+    OperatorDispatcher() = default;
 
     Response dispatch(const Request& request);
 
@@ -49,6 +36,21 @@ public:
     void applyDelayedOperationsBuffer();
 
 private:
+    DelayedOperationsBuffer delayedOperationsBuffer{};
+    onGoingPaxosRounds_t onGoingPaxosRounds = std::make_shared<OnGoingPaxosRounds>();
+    onGoingSyncOplogs_t onGoingSyncOplogs;
+    operatorRegistry_t operatorRegistry = std::make_shared<OperatorRegistry>();
+    operationLog_t operationLog;
+    configuration_t configuration;
+    cluster_t cluster;
+    lamportClock_t clock;
+    memDbStores_t memDbStores;
+    logger_t logger;
+
+    friend class MemDbCreator;
+
+    OperatorDependencies dependencies;
+
     Response dispatch_no_applyDelayedOperationsBuffer(const Request& request);
 
     OperatorDependencies getDependencies();

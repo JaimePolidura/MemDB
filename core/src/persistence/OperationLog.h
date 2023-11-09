@@ -2,6 +2,7 @@
 
 #include "messages/request/Request.h"
 #include "config/Configuration.h"
+#include "logging/Logger.h"
 #include "persistence/OplogIterator.h"
 #include "utils/std/Result.h"
 
@@ -13,11 +14,8 @@ struct OperationLogOptions {
 };
 
 class OperationLog {
-protected:
-    configuration_t configuration;
-
 public:
-    explicit OperationLog(configuration_t configuration): configuration(configuration) {}
+    OperationLog(configuration_t configuration, logger_t logger): configuration(configuration), logger(logger) {}
 
     OperationLog() = default;
 
@@ -38,6 +36,10 @@ public:
     virtual bytesDiskIterator_t getAll(const OperationLogOptions options) = 0;
 
     virtual uint32_t getNumberOplogFiles() = 0;
+
+protected:
+    configuration_t configuration;
+    logger_t logger;
 };
 
 using operationLog_t = std::shared_ptr<OperationLog>;

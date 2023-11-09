@@ -5,10 +5,11 @@
 
 class SimpleClusterNodeSetup : public ClusterNodeSetup {
 public:
-    SimpleClusterNodeSetup(logger_t logger, configuration_t configuration, onGoingSyncOplogs_t multipleResponses, memDbStores_t memDbStores):
-        ClusterNodeSetup(logger, configuration, multipleResponses, memDbStores) {}
+    SimpleClusterNodeSetup(operatorDispatcher_t operatorDispatcher, onGoingSyncOplogs_t onGoingSyncOplogs, configuration_t configuration,
+            operationLog_t operationLog, memDbStores_t memDbStores, cluster_t cluster, logger_t logger): ClusterNodeSetup(operatorDispatcher,
+            onGoingSyncOplogs, configuration, operationLog, memDbStores, cluster, logger) {}
 
-    void setCustomClusterInformation(cluster_t cluster) override;
+    void setClusterConfig(GetClusterConfigResponse clusterConfig) override;
 
-    clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler(cluster_t cluster, operationLog_t operationLog, operatorDispatcher_t operatorDispatcher) override;
+    clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler() override;
 };

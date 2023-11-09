@@ -36,6 +36,8 @@ public:
 
     std::vector<RingEntry> getNeighborsCounterClockwise(memdbNodeId_t nodeId, uint32_t numberNeighbors);
 
+    std::vector<RingEntry> getAll();
+
     RingEntry getNeighborCounterClockwise(memdbNodeId_t nodeId);
 
     RingEntry getNeighborClockwise(memdbNodeId_t nodeId);

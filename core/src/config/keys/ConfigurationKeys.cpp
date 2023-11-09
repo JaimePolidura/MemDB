@@ -18,3 +18,6 @@ const std::string ConfigurationKeys::NODE_ID = "NODE_ID";
 const std::string ConfigurationKeys::USE_PARTITIONS = "USE_PARTITIONS";
 const std::string ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS = "NODE_REQUEST_TIMEOUT_MS";
 const std::string ConfigurationKeys::NODE_REQUEST_N_RETRIES = "NODE_REQUEST_N_RETRIES";
+const std::string ConfigurationKeys::ADDRESS = "ADDRESS";
+
+const std::string ConfigurationKeys::SEED_NODES = "SEED_NODES";

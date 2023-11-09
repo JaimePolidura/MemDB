@@ -1,11 +1,11 @@
 #pragma once
 
-#include "cluster/clusterdb/ClusterDbValueChanged.h"
 #include "cluster/Node.h"
-#include "cluster/othernodes/ClusterNodes.h"
 #include "logging/Logger.h"
-#include "cluster/Cluster.h"
 #include "operators/OperatorDispatcher.h"
+
+class Cluster;
+using cluster_t = std::shared_ptr<Cluster>;
 
 class ClusterDbNodeChangeHandler {
 protected:
@@ -20,7 +20,9 @@ public:
 
     ClusterDbNodeChangeHandler() = default;
 
-    virtual void handleChange(node_t nodeChanged, ClusterDbChangeType changeType) = 0;
+    virtual void handleNewNode(node_t newNode) = 0;
+
+    virtual void handleDeletionNode(node_t deletedNode) = 0;
 };
 
 using clusterDbNodeChangeHandler_t = std::shared_ptr<ClusterDbNodeChangeHandler>;

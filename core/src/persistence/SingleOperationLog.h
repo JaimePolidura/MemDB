@@ -4,32 +4,19 @@
 
 #include "messages/request/Request.h"
 
-#include "persistence/compaction/OperationLogCompacter.h"
 #include "persistence/segments/OplogIndexSegment.h"
 #include "persistence/buffer/OperationLogBuffer.h"
 #include "persistence/OperationLog.h"
 
 #include "persistence/intermediate/IntermediateOplog.h"
-#include "persistence/segments/OplogIndexSegment.h"
-#include "persistence/OplogIterator.h"
 #include "persistence/segments/OplogIndexSegmentDescriptor.h"
 
 #include "config/Configuration.h"
-#include "utils/Utils.h"
 #include "logging/Logger.h"
 
 class SingleOperationLog : public OperationLog {
-private:
-    const std::string memdbBasePath;
-    const std::string partitionPath;
-
-    operationLogBuffer_t operationLogBuffer;
-    oplogIndexSegment_t oplogIndexSegment;
-    intermediateOplog_t intermediateOplog;
-    logger_t logger;
-
 public:
-    SingleOperationLog(configuration_t configuration, uint32_t oplogId, logger_t logger);
+    SingleOperationLog(configuration_t configuration, logger_t logger);
 
     void add(memdbOplogId_t oplogId, const OperationBody& operation) override;
 
@@ -50,6 +37,18 @@ public:
     uint32_t getNumberOplogFiles() override;
 
 private:
+    friend class MultipleOperationLog;
+    friend class MemDbCreator;
+
+    std::string memdbBasePath;
+    std::string partitionPath;
+
+    operationLogBuffer_t operationLogBuffer;
+    oplogIndexSegment_t oplogIndexSegment;
+    intermediateOplog_t intermediateOplog;
+
+    void initialize(uint32_t oplogId);
+
     void initializeFiles();
 
     std::result<std::vector<uint8_t>> readBytesByIndexSegmentDescriptor(OplogIndexSegmentDescriptor descriptor);

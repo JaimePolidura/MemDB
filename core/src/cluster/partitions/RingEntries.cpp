@@ -50,6 +50,16 @@ void RingEntries::add(RingEntry ringEntryToAdd) {
     }
 }
 
+std::vector<RingEntry> RingEntries::getAll() {
+    std::vector<RingEntry> ringEntriesToReturn{};
+    
+    for(const auto[key, value] : this->indexByNodeId){
+        ringEntriesToReturn.push_back(value->entry);
+    }
+    
+    return ringEntriesToReturn;
+}
+
 void RingEntries::deleteByNodeId(memdbNodeId_t nodeId) {
     RingEntryNode * ringEntryDeleted = this->indexByNodeId.at(nodeId);
     ringEntryDeleted->back->next = ringEntryDeleted->next;

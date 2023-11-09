@@ -26,7 +26,7 @@ public:
     RequestSerializer requestSerializer;
 
     Node();
-
+    
     Node(memdbNodeId_t nodeId, const std::string& address, NodeState state, uint64_t readTimeout);
 
     Node(const Node& other);

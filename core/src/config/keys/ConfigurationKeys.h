@@ -19,7 +19,9 @@ public:
     static const std::string CLUSTER_MANAGER_ADDRESS;
     static const std::string ETCD_ADDRESSES;
     static const std::string NODE_ID;
+    static const std::string ADDRESS;
     static const std::string USE_PARTITIONS;
     static const std::string NODE_REQUEST_TIMEOUT_MS;
     static const std::string NODE_REQUEST_N_RETRIES;
+    static const std::string SEED_NODES;
 };

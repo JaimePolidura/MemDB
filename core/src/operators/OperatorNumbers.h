@@ -16,5 +16,9 @@ public:
     static const constexpr uint8_t CAS = 0x09;
     static const constexpr uint8_t CAS_PREPARE = 0x10;
     static const constexpr uint8_t CAS_ACCEPT = 0x11;
-};
 
+    static const constexpr uint8_t GET_CLUSTER_CONFIG = 0x12;
+    static const constexpr uint8_t JOIN_CLUSTER_ANNOUNCE = 0x13;
+    static const constexpr uint8_t LEAVE_CLUSTER_ANNOUNCE = 0x14;
+    static const constexpr uint8_t DO_LEAVE_CLUSTER = 0x15;
+};

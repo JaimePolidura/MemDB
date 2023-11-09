@@ -5,9 +5,7 @@ OperatorDispatcher::OperatorDispatcher(memDbStores_t memDbStores, lamportClock_t
         memDbStores(memDbStores),
         operationLog(operationLog),
         onGoingSyncOplogs(onGoingSyncOplogs),
-        onGoingPaxosRounds(std::make_shared<OnGoingPaxosRounds>()),
         clock(clock),
-        operatorRegistry(std::make_shared<OperatorRegistry>()),
         logger(logger),
         cluster(cluster),
         configuration(configuration) {

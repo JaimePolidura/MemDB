@@ -8,6 +8,11 @@ std::string Configuration::get(const std::string& key) {
     return this->getOrDefault(key);
 }
 
+std::vector<std::string> Configuration::getVector(const std::string& key) {
+    std::string vectorRaw = this->get(key);
+    return StringUtils::split(vectorRaw, ',');
+}
+
 bool Configuration::getBoolean(const std::string& key) {
     return this->getOrDefault(key) == "true";
 }

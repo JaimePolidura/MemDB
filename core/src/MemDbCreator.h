@@ -3,25 +3,25 @@
 #include <memory>
 
 #include "MemDb.h"
-#include "config/keys/ConfigurationKeys.h"
 #include "cluster/Cluster.h"
-#include "auth/Authenticator.h"
 #include "config/ConfigurationLoader.h"
+#include "cluster/setup/ClusterNodeSetup.h"
+#include "cluster/changehandler/partition/PartitionClusterNodeChangeHandler.h"
+#include "cluster/changehandler/simple/SimpleClusterNodeChangeHandler.h"
+#include "cluster/setup/PartitionsClusterNodeSetup.h"
+#include "cluster/setup/SimpleClusterNodeSetup.h"
 
 #include "persistence/MultipleOperationLog.h"
-#include "persistence/SingleOperationLog.h"
 
 class MemDbCreator {
 public:
     static std::shared_ptr<MemDb> create(int nArgs, char ** args);
 
 private:
-    static operationLog_t createOperationLogObject(configuration_t configuration, cluster_t cluster, logger_t logger);
+    static operationLog_t createOperationLogObject(configuration_t configuration, logger_t logger);
 
-    static cluster_t createClusterObject(logger_t logger, configuration_t configuration, onGoingSyncOplogs_t multipleResponses, memDbStores_t memDbStores);
+    static cluster_t createClusterObject(logger_t logger, configuration_t configuration, onGoingSyncOplogs_t multipleResponses,
+        memDbStores_t memDbStores, operatorDispatcher_t operatorDispatcher, operationLog_t operationLog);
 
-    static operationLog_t setupMultipleOplogConfiguration(configuration_t configuration, cluster_t cluster, logger_t logger);
-
-    static void setupClusterChangeWatcher(cluster_t cluster, operationLog_t operationLog, configuration_t configuration, logger_t logger,
-                                          operatorDispatcher_t operatorDispatcher, onGoingSyncOplogs_t multipleResponses, memDbStores_t memDbStores);
+    static void initializeOplog(configuration_t configuration, operationLog_t operationLog, cluster_t cluster);
 };

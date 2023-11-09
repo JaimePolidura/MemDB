@@ -6,12 +6,10 @@ PartitionClusterNodeChangeHandler::PartitionClusterNodeChangeHandler(logger_t lo
     newNodePartitionChangeHandler(logger, cluster, operationLog, operatorDispatcher),
     deletionNodeChangeHandler(logger, cluster, operationLog, operatorDispatcher) {}
 
-void PartitionClusterNodeChangeHandler::handleChange(node_t nodeChanged, const ClusterDbChangeType changeType) {
-    if(changeType == ClusterDbChangeType::DELETED) {
-        this->deletionNodeChangeHandler.handle(nodeChanged);
-    }else if(cluster->clusterNodes->existsByNodeId(nodeChanged->nodeId)) {
-        cluster->clusterNodes->setNodeState(nodeChanged->nodeId, nodeChanged->state);
-    }else {
-        this->newNodePartitionChangeHandler.handle(nodeChanged);
-    }
+void PartitionClusterNodeChangeHandler::handleNewNode(node_t newNode) {
+    this->newNodePartitionChangeHandler.handle(newNode);
+}
+
+void PartitionClusterNodeChangeHandler::handleDeletionNode(node_t deletedNode) {
+    this->deletionNodeChangeHandler.handle(deletedNode);
 }

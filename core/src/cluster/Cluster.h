@@ -1,55 +1,29 @@
 #pragma once
 
 #include "shared.h"
+#include "changehandler/ClusterDbNodeChangeHandler.h"
 
 #include "cluster/othernodes/NodePartitionOptions.h"
 #include "cluster/othernodes/MultipleResponses.h"
+#include "cluster/GetClusterConfigResponse.h"
 #include "cluster/othernodes/ClusterNodes.h"
 #include "cluster/partitions/Partitions.h"
-#include "cluster/clusterdb/ClusterDb.h"
 #include "cluster/NodeState.h"
-
-#include "utils/clock/LamportClock.h"
-#include "utils/strings/StringUtils.h"
 
 #include "operators/operations/syncoplog/SyncOplogReceiverIterator.h"
 #include "operators/operations/syncoplog/OnGoingSyncOplogsStore.h"
-#include "messages/request/RequestBuilder.h"
 
 #include "config/Configuration.h"
-#include "config/keys/ConfigurationKeys.h"
 
-#include "persistence/serializers/OperationLogDeserializer.h"
 #include "logging/Logger.h"
 #include "db/MemDbStores.h"
-#include "operators/OperatorNumbers.h"
 
 class Cluster {
-private:
-    onGoingSyncOplogs_t onGoingMultipleResponsesStore;
-    configuration_t configuration;
-    clusterNodes_t clusterNodes;
-    memDbStores_t memDbStores;
-    partitions_t partitions;
-    clusterdb_t clusterDb;
-    node_t selfNode;
-    logger_t logger;
-
-    friend class PartitionNeighborsNodesSetter;
-    friend class PartitionClusterNodeChangeHandler;
-    friend class SimpleClusterNodeChangeHandler;
-    friend class NewNodePartitionChangeHandler;
-    friend class PartitionsClusterNodeSetup;
-    friend class DeletionNodeChangeHandler;
-    friend class SimpleClusterNodeSetup;
-    friend class ClusterNodeSetup;
-    friend class ClusterTest;
-
 public:
     Cluster(configuration_t configuration);
 
     Cluster(logger_t logger, configuration_t configuration, onGoingSyncOplogs_t onGoingMultipleResponsesStore,
-            memDbStores_t memDbStores, clusterdb_t clusterDb);
+            memDbStores_t memDbStores);
 
     auto setBooting() -> void;
 
@@ -60,10 +34,18 @@ public:
     auto fixOplogSegment(uint32_t selfOplogId, uint64_t minTimestamp, uint64_t maxTimestamp) -> std::result<Response>;
 
     auto getPartitionObject() -> partitions_t;
+    
+    auto getClusterConfig() -> std::result<GetClusterConfigResponse>;
+
+    auto announceJoin() -> void;
+
+    auto announceLeave() -> void;
 
     auto getPartitionIdByKey(SimpleString<memDbDataLength_t> key) -> uint32_t;
 
     auto getNodesPerPartition() -> uint32_t;
+
+    auto getMaxPartitionSize() -> uint32_t;
 
     auto broadcastAndWait(const NodePartitionOptions options, const OperationBody& operation) -> multipleResponses_t;
 
@@ -73,7 +55,32 @@ public:
 
     auto getNodeId() -> memdbNodeId_t;
 
-    auto watchForChangesInNodesClusterDb(std::function<void(node_t nodeChanged, ClusterDbChangeType changeType)> onChangeCallback) -> void;
+private:
+    clusterDbNodeChangeHandler_t clusterChangeHandler;
+    onGoingSyncOplogs_t onGoingMultipleResponsesStore;
+    configuration_t configuration;
+    clusterNodes_t clusterNodes;
+    memDbStores_t memDbStores;
+    partitions_t partitions;
+    node_t selfNode;
+    logger_t logger;
+
+    friend class PartitionClusterNodeChangeHandler;
+    friend class SimpleClusterNodeChangeHandler;
+    friend class PartitionNeighborsNodesSetter;
+    friend class NewNodePartitionChangeHandler;
+    friend class LeaveClusterAnnounceOperator;
+    friend class JoinClusterAnnounceOperator;
+    friend class PartitionsClusterNodeSetup;
+    friend class DeletionNodeChangeHandler;
+    friend class GetClusterConfigOperator;
+    friend class DoLeaveClusterOperator;
+    friend class SimpleClusterNodeSetup;
+    friend class ClusterNodeSetup;
+    friend class ClusterTest;
+
+    std::vector<RingEntry> getRingEntriesFromGetClusterConfig(uint32_t nNodesInCluster, int& offset, Response response);
+    std::vector<node_t> getNodesFromGetClusterConfig(uint32_t nNodesInCluster, int& offset, Response response);
 };
 
 using cluster_t = std::shared_ptr<Cluster>;

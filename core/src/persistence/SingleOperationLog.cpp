@@ -1,16 +1,8 @@
 #include "SingleOperationLog.h"
 
-SingleOperationLog::SingleOperationLog(configuration_t configuration, uint32_t oplogId, logger_t loggerCons): OperationLog(configuration),
-    logger(loggerCons),
+SingleOperationLog::SingleOperationLog(configuration_t configuration, logger_t logger): OperationLog(configuration, logger),
     operationLogBuffer(std::make_shared<OperationLogBuffer>(configuration->get<int>(ConfigurationKeys::SERVER_THREADS) + 1)),
-    intermediateOplog(std::make_shared<IntermediateOplog>(configuration, oplogId)),
-    oplogIndexSegment(std::make_shared<OplogIndexSegment>(configuration, loggerCons, oplogId)),
-    memdbBasePath(configuration->get(ConfigurationKeys::DATA_PATH)),
-    partitionPath(memdbBasePath + "/" + std::to_string(oplogId)) {
-    this->initializeFiles();
-    this->operationLogBuffer->setFlushCallback([this](auto toFlush){this->intermediateOplog->addAll(toFlush);});
-    this->intermediateOplog->setOnFlushingIntermediate([this](auto bytes){this->oplogIndexSegment->save(bytes);});
-}
+    memdbBasePath(configuration->get(ConfigurationKeys::DATA_PATH)) {}
 
 bytesDiskIterator_t SingleOperationLog::getAfterTimestamp(uint64_t after, const OperationLogOptions options) {
     OplogSegmentAfterTimestampsSearchResult desc = this->oplogIndexSegment->getByAfterTimestamp(after);
@@ -77,6 +69,16 @@ bool SingleOperationLog::hasOplogFile(memdbOplogId_t oplogId) {
 
 std::result<std::vector<uint8_t>> SingleOperationLog::readBytesByIndexSegmentDescriptor(OplogIndexSegmentDescriptor descriptor) {
     return this->oplogIndexSegment->getDataByDescriptorBytes(descriptor);
+}
+
+void SingleOperationLog::initialize(uint32_t oplogId) {
+    this->oplogIndexSegment = std::make_shared<OplogIndexSegment>(configuration, logger, oplogId);
+    this->intermediateOplog = std::make_shared<IntermediateOplog>(configuration, oplogId);
+    this->partitionPath = this->memdbBasePath + "/" + std::to_string(oplogId);
+
+    this->initializeFiles();
+    this->operationLogBuffer->setFlushCallback([this](auto toFlush){this->intermediateOplog->addAll(toFlush);});
+    this->intermediateOplog->setOnFlushingIntermediate([this](auto bytes){this->oplogIndexSegment->save(bytes);});
 }
 
 void SingleOperationLog::initializeFiles() {

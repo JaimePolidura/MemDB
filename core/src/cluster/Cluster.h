@@ -1,7 +1,6 @@
 #pragma once
 
 #include "shared.h"
-#include "changehandler/ClusterDbNodeChangeHandler.h"
 
 #include "cluster/othernodes/NodePartitionOptions.h"
 #include "cluster/othernodes/MultipleResponses.h"
@@ -56,14 +55,17 @@ public:
     auto getNodeId() -> memdbNodeId_t;
 
 private:
-    clusterDbNodeChangeHandler_t clusterChangeHandler;
     onGoingSyncOplogs_t onGoingMultipleResponsesStore;
     configuration_t configuration;
     clusterNodes_t clusterNodes;
     memDbStores_t memDbStores;
     partitions_t partitions;
-    node_t selfNode;
     logger_t logger;
+
+    NodeState selfState{NodeState::BOOTING};
+
+    std::function<void(node_t)> deletedNodeInClusterHandler;
+    std::function<void(node_t)> newNodeInClusterHandler;
 
     friend class PartitionClusterNodeChangeHandler;
     friend class SimpleClusterNodeChangeHandler;

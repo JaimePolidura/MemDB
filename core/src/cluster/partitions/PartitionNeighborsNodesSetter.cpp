@@ -61,7 +61,7 @@ std::vector<RingEntry> PartitionNeighborsNodesSetter::getRingEntriesPartitionExc
     std::copy_if(ringEntries.begin(),
                  ringEntries.end(),
                  std::back_inserter(ringEntriesWithoutSelfNodeId),
-                 [this](RingEntry ringEntry){return this->cluster->selfNode->nodeId != ringEntry.nodeId;});
+                 [this](RingEntry ringEntry){return this->cluster->getNodeId() != ringEntry.nodeId;});
 
     return ringEntriesWithoutSelfNodeId;
 }
@@ -77,7 +77,7 @@ std::vector<node_t> PartitionNeighborsNodesSetter::toNodesFromRingEntries(const 
     nodesToReturn.reserve(ringEntries.size());
 
     for (const RingEntry& entry : ringEntries) {
-        nodesToReturn.push_back(cluster->clusterDb->getByNodeId(entry.nodeId));;
+        nodesToReturn.push_back(cluster->clusterNodes->getByNodeId(entry.nodeId));
     }
 
     return nodesToReturn;

@@ -2,14 +2,13 @@
 
 Node::Node(): connection(nullptr) {}
 
-Node::Node(memdbNodeId_t nodeId, const std::string& address, NodeState state, uint64_t readTimeout):
-    connection(nullptr), nodeId(nodeId), address(address), state(state), readTimeout(readTimeout)
+Node::Node(memdbNodeId_t nodeId, const std::string& address, uint64_t readTimeout):
+    connection(nullptr), nodeId(nodeId), address(address), readTimeout(readTimeout)
 {}
 
 Node::Node(const Node& other) {
     this->connection = other.connection;
     this->address = other.address;
-    this->state = other.state;
     this->nodeId = other.nodeId;
     this->readTimeout = other.readTimeout;
     this->responseDeserializer = other.responseDeserializer;
@@ -45,7 +44,7 @@ bool Node::isConnectionOpened() const {
 }
 
 bool Node::openConnection() {
-    if(!NodeStates::canAcceptRequest(this->state) || this->isConnectionOpened()){
+    if(this->isConnectionOpened()){
         return false;
     }
 
@@ -83,10 +82,6 @@ void Node::setLogger(logger_t loggerP) {
     this->logger = loggerP;
 }
 
-bool Node::canSendRequestUnicast(NodeState state) {
-    return state == NodeState::RUNNING;
-}
-
 std::size_t Node::writeSyncToConnection(std::vector<uint8_t>& bytes) {
     try {
         return this->connection->writeSync(bytes);
@@ -118,17 +113,4 @@ bool Node::connectToSocket(std::string& ip, const std::string& port, ip::tcp::so
         boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(ip), std::atoi(port.data()));
         socket.connect(endpoint);
     });
-}
-
-std::string Node::toJson(std::shared_ptr<Node> node) {
-    return "{\"nodeId\": \""+std::to_string(node->nodeId)+"\", \"address\": \""+node->address+"\", \"state\": \""+NodeStates::parseNodeStateToString(node->state)+"\"}";
-}
-
-std::shared_ptr<Node> Node::fromJson(const nlohmann::json& json) {
-    std::shared_ptr<Node> node = std::make_shared<Node>();
-    node->address = json["address"].get<std::string>();
-    node->state = NodeStates::parseNodeStateFromString(json["state"].get<std::string>());
-    node->nodeId = (memdbNodeId_t) std::stoi(json["nodeId"].get<std::string>());
-
-    return node;
 }

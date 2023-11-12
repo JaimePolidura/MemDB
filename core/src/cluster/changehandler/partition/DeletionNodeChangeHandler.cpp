@@ -15,7 +15,7 @@ void DeletionNodeChangeHandler::handle(node_t deletedNode) {
         this->partitionNeighborsNodesGroupSetter.updateNeighborsWithDeletedNode(deletedNode);
     }
 
-    if(this->cluster->selfNode->nodeId == deletedNode->nodeId) {
+    if(this->cluster->getNodeId() == deletedNode->nodeId) {
         this->logger->debugInfo("Detected self deletion in the cluster", deletedNode->nodeId);
 
         std::vector<RingEntry> neighborsClockWise = this->cluster->partitions->getNeighborsClockwise();

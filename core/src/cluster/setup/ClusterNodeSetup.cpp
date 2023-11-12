@@ -3,12 +3,18 @@
 void ClusterNodeSetup::initializeNodeInCluster() {
     this->logger->info("Setting up node in the cluster");
 
-    cluster->selfNode = clusterDb->getByNodeId(configuration->get<memdbNodeId_t>(ConfigurationKeys::NODE_ID));
-
     this->setClusterConfig(cluster->getClusterConfig()
             .get_or_throw("Cannot contact to any seed node"));
 
-    cluster->clusterChangeHandler = this->getClusterDbChangeNodeHandler();
+    clusterDbNodeChangeHandler_t changeHandler = this->getClusterDbChangeNodeHandler();
+
+    cluster->deletedNodeInClusterHandler = {[changeHandler](node_t deletedNode) -> void {
+        changeHandler->handleDeletionNode(deletedNode);
+    }};
+
+    cluster->newNodeInClusterHandler = {[changeHandler](node_t newNode) -> void {
+        changeHandler->handleNewNode(newNode);
+    }};
 
     cluster->announceJoin();
 

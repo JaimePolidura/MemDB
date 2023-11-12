@@ -5,7 +5,6 @@
 #include "config/keys/ConfigurationKeys.h"
 #include "cluster/Cluster.h"
 #include "utils/clock/LamportClock.h"
-#include "cluster/setup/ClusterCreator.h"
 #include "logging/Logger.h"
 #include "persistence/SingleOperationLog.h"
 #include "persistence/serializers/OperationLogDeserializer.h"

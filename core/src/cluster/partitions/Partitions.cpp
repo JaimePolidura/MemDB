@@ -100,6 +100,19 @@ void Partitions::add(RingEntry ringEntry){
     this->ringEntries.add(ringEntry);
 }
 
+RingEntry Partitions::addByNode(node_t node) {
+    uint32_t ringPosition = static_cast<uint32_t>(HashCalculator::calculateMD5(std::to_string(node->nodeId)));
+
+    RingEntry ringEntry = RingEntry{
+        .nodeId = node->nodeId,
+        .ringPosition = ringPosition
+    };
+
+    this->ringEntries.add(ringEntry);
+
+    return ringEntry;
+}
+
 uint32_t Partitions::getNodesPerPartition() {
     return this->nodesPerPartition;
 }

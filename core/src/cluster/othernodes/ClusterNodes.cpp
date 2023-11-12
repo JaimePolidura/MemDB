@@ -15,7 +15,13 @@ void ClusterNodes::setOtherNodes(const std::vector<node_t>& otherNodesToSet, con
 }
 
 std::vector<node_t> ClusterNodes::getAllNodes() {
-    return Utils::collectValuesInto(this->nodesById);
+    std::vector<node_t> nodes{};
+    nodes.reserve(this->nodesById.size());
+    for (const auto& entry : this->nodesById) {
+        nodes.push_back(entry.second);
+    }
+
+    return nodes;
 }
 
 int ClusterNodes::getSize() {
@@ -39,10 +45,6 @@ std::vector<NodesInPartition> ClusterNodes::getNodesInPartitions() {
 
 bool ClusterNodes::isEmtpy(const NodePartitionOptions options) {
     return options.partitionId >= this->nodesInPartitions.size() || this->nodesInPartitions[options.partitionId].size() == 0;
-}
-
-void ClusterNodes::setNodeState(memdbNodeId_t nodeId, const NodeState newState) {
-    this->nodesById[nodeId]->state = newState;
 }
 
 void ClusterNodes::addNode(node_t node, const NodePartitionOptions options) {
@@ -174,9 +176,6 @@ std::optional<node_t> ClusterNodes::getRandomNode(const NodePartitionOptions opt
         auto ptr = std::begin(nodesIdInPartition);
         std::advance(ptr, offset);
         node_t randomNode = this->nodesById.at(* ptr);
-        
-        if(Node::canSendRequestUnicast(randomNode->state))
-            return std::optional<node_t>(randomNode);
 
         alreadyCheckedNodesId.insert(randomNode->nodeId);
     }

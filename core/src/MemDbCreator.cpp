@@ -46,9 +46,11 @@ cluster_t MemDbCreator::createClusterObject(logger_t logger, configuration_t con
     if(configuration->getBoolean(ConfigurationKeys::USE_REPLICATION)){
         cluster_t cluster = std::make_shared<Cluster>(logger, configuration, multipleResponses, memDbStores);
 
-        clusterNodeSetup_t setup = configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS) ?
-            std::make_shared<PartitionsClusterNodeSetup>(operatorDispatcher, multipleResponses, configuration, operationLog, memDbStores, cluster, logger) :
-            std::make_shared<SimpleClusterNodeSetup>(operatorDispatcher, multipleResponses, configuration, operationLog, memDbStores, cluster, logger);
+        clusterNodeSetup_t setup;
+        if(configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS))
+            setup = std::make_shared<PartitionsClusterNodeSetup>(operatorDispatcher, multipleResponses, configuration, operationLog, memDbStores, cluster, logger);
+        else
+            setup = std::make_shared<SimpleClusterNodeSetup>(operatorDispatcher, multipleResponses, configuration, operationLog, memDbStores, cluster, logger);
 
         setup->initializeNodeInCluster();
 

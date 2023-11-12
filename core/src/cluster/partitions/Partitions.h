@@ -71,6 +71,8 @@ public:
 
     void add(RingEntry ringEntry);
 
+    RingEntry addByNode(node_t node);
+
     virtual uint32_t getNodesPerPartition();
 
     RingEntry getByNodeId(memdbNodeId_t nodeId);

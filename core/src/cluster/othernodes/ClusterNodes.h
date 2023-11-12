@@ -37,8 +37,6 @@ public:
 
     bool isEmtpy(const NodePartitionOptions options);
 
-    void setNodeState(memdbNodeId_t nodeId, const NodeState newState);
-
     void addNode(node_t node, const NodePartitionOptions options);
 
     bool existsByNodeId(memdbNodeId_t nodeId);

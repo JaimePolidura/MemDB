@@ -2,8 +2,8 @@
 
 void SimpleClusterNodeChangeHandler::handleNewNode(node_t newNode) {
     if(cluster->clusterNodes->existsByNodeId(newNode->nodeId)){
-        this->logger->debugInfo("Detected change of node {0} with new state {1}", newNode->nodeId, NodeStates::parseNodeStateToString(newNode->state));
-        cluster->clusterNodes->setNodeState(newNode->nodeId, newNode->state);
+        this->logger->debugInfo("Detected change of node {0}", newNode->nodeId);
+        cluster->clusterNodes->addNode(newNode, NodePartitionOptions{.partitionId = 0});
     }else{
         this->logger->debugInfo("Detected new node {0}", newNode->nodeId);
         cluster->clusterNodes->addNode(newNode, NodePartitionOptions{.partitionId = 0});

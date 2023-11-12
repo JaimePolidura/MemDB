@@ -5,8 +5,8 @@ Response DoLeaveClusterOperator::operate(const OperationBody& operation, const O
         std::this_thread::sleep_for(std::chrono::seconds(5));
 
         dependencies.cluster->announceLeave();
-        dependencies.cluster->clusterChangeHandler->handleDeletionNode(std::make_shared<Node>(dependencies.cluster->getNodeId(),
-            dependencies.configuration->get(ConfigurationKeys::ADDRESS), NodeState::BOOTING, 0));
+        dependencies.cluster->deletedNodeInClusterHandler(std::make_shared<Node>(dependencies.cluster->getNodeId(),
+            dependencies.configuration->get(ConfigurationKeys::ADDRESS), 0));
     }};
 
     return Response::success();

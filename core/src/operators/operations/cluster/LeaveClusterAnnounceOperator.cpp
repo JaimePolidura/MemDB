@@ -3,7 +3,7 @@
 Response LeaveClusterAnnounceOperator::operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies&dependencies) {
     if(dependencies.cluster->clusterNodes->existsByNodeId(operation.nodeId)) {
         node_t node = dependencies.cluster->clusterNodes->getByNodeId(operation.nodeId);
-        dependencies.cluster->clusterChangeHandler->handleDeletionNode(node);
+        dependencies.cluster->deletedNodeInClusterHandler(node);
     }
 
     return Response::success();

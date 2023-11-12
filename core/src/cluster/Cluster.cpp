@@ -11,12 +11,12 @@ Cluster::Cluster(logger_t logger, configuration_t configuration, onGoingSyncOplo
 {}
 
 void Cluster::setBooting() {
-    this->selfNode->state = NodeState::BOOTING;
+    this->selfState = NodeState::BOOTING;
     this->logger->info("Changed cluster node state to BOOTING");
 }
 
 auto Cluster::setRunning() -> void {
-    this->selfNode->state = NodeState::RUNNING;
+    this->selfState = NodeState::RUNNING;
     this->logger->info("Changed cluster node state to RUNNING");
 }
 
@@ -25,7 +25,7 @@ auto Cluster::fixOplogSegment(uint32_t selfOplogId, uint64_t minTimestamp, uint6
         auto otherNodeOplogId = this->partitions->getOplogIdOfOtherNodeBySelfOplogId(nodeToSend->nodeId, selfOplogId);
         return RequestBuilder::builder()
             .authKey(this->configuration->get(ConfigurationKeys::AUTH_NODE_KEY))
-            ->selfNode(this->selfNode->nodeId)
+            ->selfNode(this->getNodeId())
             ->operatorNumber(OperatorNumbers::FIX_OPLOG_SEGMENT)
             ->addArg(SimpleString<memDbDataLength_t>::fromNumber(otherNodeOplogId))
             ->addDoubleArg(minTimestamp)
@@ -71,7 +71,7 @@ auto Cluster::announceLeave() -> void {
 }
 
 auto Cluster::getNodeState() -> NodeState {
-    return this->selfNode->state;
+    return this->selfState;
 }
 
 auto Cluster::getNodeId() -> memdbNodeId_t {
@@ -106,11 +106,11 @@ auto Cluster::getClusterConfig() -> std::result<GetClusterConfigResponse> {
     std::vector<std::string> addressSeedNodes = this->configuration->getVector(ConfigurationKeys::SEED_NODES);
 
     for(const std::string& seedNodeAddress : addressSeedNodes){
-        Node seedNode = Node{0, seedNodeAddress, NodeState::RUNNING, 5000};
+        Node seedNode = Node{0, seedNodeAddress, 5000};
         std::result<Response> responseResult = seedNode.sendRequest(RequestBuilder::builder()
             .authKey(this->configuration->get(ConfigurationKeys::AUTH_NODE_KEY))
             ->operatorNumber(OperatorNumbers::GET_CLUSTER_CONFIG)
-            ->selfNode(this->selfNode->nodeId)
+            ->selfNode(this->getNodeId())
             ->build());
 
         if(responseResult.is_success()){
@@ -157,7 +157,7 @@ std::vector<node_t> Cluster::getNodesFromGetClusterConfig(uint32_t nNodesInClust
         std::string address = response.getResponseValueAtOffset(20, sizeAddress).toString();
 
         nodes[i] = std::make_shared<Node>(
-                nodeId, address, NodeState::RUNNING, this->configuration->get<uint64_t>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS)
+                nodeId, address, this->configuration->get<uint64_t>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS)
         );
 
         offset += 8 + sizeAddress;

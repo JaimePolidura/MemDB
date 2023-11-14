@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\ClusterNodeChangeHandler.h"
+#include "cluster/changehandler/ClusterNodeChangeHandler.h"
 
 class SimpleClusterNodeChangeHandler : public ClusterNodeChangeHandler {
 public:

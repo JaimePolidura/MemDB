@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\changehandler\ClusterNodeChangeHandler.h"
+#include "cluster/changehandler/ClusterNodeChangeHandler.h"
 #include "cluster/Cluster.h"
 
 #include "persistence/OperationLog.h"

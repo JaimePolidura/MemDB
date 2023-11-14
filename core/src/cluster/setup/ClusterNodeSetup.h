@@ -16,7 +16,7 @@ public:
 
     virtual void setClusterConfig(GetClusterConfigResponse clusterConfig) = 0;
 
-    virtual clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler() = 0;
+    virtual clusterNodeChangeHandler_t getClusterChangeNodeHandler() = 0;
 
 protected:
     operatorDispatcher_t operatorDispatcher;

@@ -11,5 +11,5 @@ public:
 
     void setClusterConfig(GetClusterConfigResponse clusterConfig) override;
 
-    clusterDbNodeChangeHandler_t getClusterDbChangeNodeHandler() override;
+    clusterNodeChangeHandler_t getClusterChangeNodeHandler() override;
 };

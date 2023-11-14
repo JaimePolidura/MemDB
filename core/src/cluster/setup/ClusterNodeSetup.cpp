@@ -6,7 +6,7 @@ void ClusterNodeSetup::initializeNodeInCluster() {
     this->setClusterConfig(cluster->getClusterConfig()
             .get_or_throw("Cannot contact to any seed node"));
 
-    clusterDbNodeChangeHandler_t changeHandler = this->getClusterDbChangeNodeHandler();
+    clusterNodeChangeHandler_t changeHandler = this->getClusterChangeNodeHandler();
 
     cluster->deletedNodeInClusterHandler = {[changeHandler](node_t deletedNode) -> void {
         changeHandler->handleDeletionNode(deletedNode);

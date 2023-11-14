@@ -6,6 +6,6 @@ void SimpleClusterNodeSetup::setClusterConfig(GetClusterConfigResponse clusterCo
     cluster->clusterNodes->setOtherNodes(clusterConfig.nodes, NodePartitionOptions{.partitionId = 0});
 }
 
-clusterDbNodeChangeHandler_t SimpleClusterNodeSetup::getClusterDbChangeNodeHandler() {
+clusterNodeChangeHandler_t SimpleClusterNodeSetup::getClusterChangeNodeHandler() {
     return std::make_shared<SimpleClusterNodeChangeHandler>(cluster->logger, cluster, operationLog, operatorDispatcher);
 }

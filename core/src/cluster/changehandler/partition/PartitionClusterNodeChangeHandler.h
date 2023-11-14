@@ -2,9 +2,9 @@
 
 #include "cluster/changehandler/partition/NewNodePartitionChangeHandler.h"
 #include "cluster/changehandler/partition/DeletionNodeChangeHandler.h"
-#include "cluster/changehandler/ClusterDbNodeChangeHandler.h"
+#include "cluster/changehandler/ClusterNodeChangeHandler.h"
 
-class PartitionClusterNodeChangeHandler : public ClusterDbNodeChangeHandler {
+class PartitionClusterNodeChangeHandler : public ClusterNodeChangeHandler {
 public:
     PartitionClusterNodeChangeHandler(logger_t logger, cluster_t cluster, operationLog_t operationLog, operatorDispatcher_t operatorDispatcher);
 

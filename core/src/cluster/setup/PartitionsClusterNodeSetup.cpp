@@ -10,6 +10,6 @@ void PartitionsClusterNodeSetup::setClusterConfig(GetClusterConfigResponse clust
     this->partitionNeighborsNodesGroupSetter.addAllNeighborsInPartitions();
 }
 
-clusterDbNodeChangeHandler_t PartitionsClusterNodeSetup::getClusterDbChangeNodeHandler() {
+clusterNodeChangeHandler_t PartitionsClusterNodeSetup::getClusterChangeNodeHandler() {
     return std::make_shared<PartitionClusterNodeChangeHandler>(cluster->logger, cluster, operationLog, operatorDispatcher);
 }

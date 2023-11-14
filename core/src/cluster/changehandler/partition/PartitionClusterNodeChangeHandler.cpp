@@ -2,7 +2,7 @@
 
 PartitionClusterNodeChangeHandler::PartitionClusterNodeChangeHandler(logger_t logger, cluster_t cluster, operationLog_t operationLog,
                                                                      operatorDispatcher_t operatorDispatcher):
-    ClusterDbNodeChangeHandler(logger, cluster, operationLog, operatorDispatcher),
+    ClusterNodeChangeHandler(logger, cluster, operationLog, operatorDispatcher),
     newNodePartitionChangeHandler(logger, cluster, operationLog, operatorDispatcher),
     deletionNodeChangeHandler(logger, cluster, operationLog, operatorDispatcher) {}
 

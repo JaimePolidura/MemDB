@@ -1,22 +1,13 @@
 #include "operators/DelayedOperationsBuffer.h"
 
+DelayedOperationsBuffer::DelayedOperationsBuffer(configuration_t configuration):
+    diskBuffer(configuration->get(ConfigurationKeys::DATA_PATH), "pending-requests-to-handle") {}
+
+
 void DelayedOperationsBuffer::add(const Request& request){
-    this->lock.lock();
-    this->operations.push(request);
-    this->lock.unlock();
+    this->diskBuffer.add(request);
 }
 
-bool DelayedOperationsBuffer::isEmpty() {
-    return this->operations.empty();
-}
-
-Request DelayedOperationsBuffer::get() {
-    this->lock.lock();
-
-    Request toReturn = this->operations.front();
-    this->operations.pop();
-
-    this->lock.unlock();
-
-    return toReturn;
+BackedDiskBufferIterator DelayedOperationsBuffer::iterator() {
+    return this->diskBuffer.iterator();
 }

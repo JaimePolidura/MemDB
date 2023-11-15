@@ -36,12 +36,12 @@ public:
     void applyDelayedOperationsBuffer();
 
 private:
-    DelayedOperationsBuffer delayedOperationsBuffer{};
     onGoingPaxosRounds_t onGoingPaxosRounds = std::make_shared<OnGoingPaxosRounds>();
     onGoingSyncOplogs_t onGoingSyncOplogs;
     operatorRegistry_t operatorRegistry = std::make_shared<OperatorRegistry>();
     operationLog_t operationLog;
     configuration_t configuration;
+    DelayedOperationsBuffer delayedOperationsBuffer;
     cluster_t cluster;
     lamportClock_t clock;
     memDbStores_t memDbStores;

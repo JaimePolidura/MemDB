@@ -11,6 +11,21 @@
     #include <fcntl.h>
 #endif
 
+void FileUtils::deleteTopBytes(const std::string& path, uint64_t nBytesToDelete) {
+    std::fstream file(path, std::ios::in | std::ios::out | std::ios::binary);
+    if(!file.is_open()) {
+        throw std::runtime_error("Cannot open filePath " + path);
+    }
+
+    uint64_t fileSize = file.tellg();
+
+    file.seekg(fileSize - nBytesToDelete, std::ios::beg);
+    file.seekp(fileSize - nBytesToDelete, std::ios::beg);
+    file.trunc(fileSize - nBytesToDelete);
+
+    file.close();
+}
+
 void FileUtils::writeBytes(const std::string &path, const std::vector<uint8_t> &bytes) {
     std::ofstream file(path, std::ios::trunc | std::ios::binary);
     if (file.is_open()) {

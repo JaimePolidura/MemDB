@@ -19,6 +19,7 @@ std::shared_ptr<MemDb> MemDbCreator::create(int nArgs, char ** args) {
     tcpServer_t tcpServer = std::make_shared<TCPServer>(logger, configuration, Authenticator{configuration}, operatorDispatcher);
 
     operatorDispatcher->logger = logger;
+    operatorDispatcher->delayedOperationsBuffer = DelayedOperationsBuffer{configuration};
     operatorDispatcher->configuration = configuration;
     operatorDispatcher->clock = clock;
     operatorDispatcher->cluster = cluster;

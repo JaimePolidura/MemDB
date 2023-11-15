@@ -8,7 +8,8 @@ OperatorDispatcher::OperatorDispatcher(memDbStores_t memDbStores, lamportClock_t
         clock(clock),
         logger(logger),
         cluster(cluster),
-        configuration(configuration) {
+        configuration(configuration),
+        delayedOperationsBuffer(configuration) {
     this->dependencies = this->getDependencies();
 }
 
@@ -95,9 +96,11 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
 }
 
 void OperatorDispatcher::applyDelayedOperationsBuffer() {
-    while(!this->delayedOperationsBuffer.isEmpty()){
-        Request operation = this->delayedOperationsBuffer.get();
-        this->dispatch_no_applyDelayedOperationsBuffer(operation); //Avoid recursive call
+    Iterator<Request>& iterator = dynamic_cast<Iterator<Request>&>(this->delayedOperationsBuffer.iterator());
+
+    while(iterator.hasNext()) {
+        Request operation = iterator.next();
+        this->dispatch_no_applyDelayedOperationsBuffer(operation);
     }
 }
 

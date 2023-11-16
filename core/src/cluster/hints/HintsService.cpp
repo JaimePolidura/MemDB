@@ -15,7 +15,20 @@ void HintsService::add(memdbNodeId_t nodeId, const Request&request) {
         std::to_string(nodeId)
     )});
 
+    this->pendingHints.insert(nodeId);
+
     this->hintsByNodeId.at(nodeId)->add(request);
+}
+
+bool HintsService::maybeHasPendingHints(memdbNodeId_t nodeId) {
+    if(this->hintsByNodeId.contains(nodeId)) {
+        return true;
+    }
+
+    bool hintsNeverChecked = !this->hintsNodesCheckedAtLeastOnce.contains(nodeId);
+    bool hasPendingHint = this->pendingHints.contains(nodeId);
+
+    return hintsNeverChecked || hasPendingHint;
 }
 
 iterator_t<Request> HintsService::iterator(memdbNodeId_t nodeId) {
@@ -28,6 +41,7 @@ iterator_t<Request> HintsService::iterator(memdbNodeId_t nodeId) {
         return std::make_shared<HintIterator>(std::dynamic_pointer_cast<BackedDiskBufferIterator>(bufferIterator), [this, nodeId]() -> void {
             std::unique_lock uniqueLock2(this->hintsServiceLock);
             this->onGoingIterators.erase(nodeId);
+            this->pendingHints.insert(nodeId);
         });
     } else {
         return std::make_shared<NullIterator<Request>>();

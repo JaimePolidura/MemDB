@@ -3,7 +3,7 @@
 void SimpleClusterNodeSetup::setClusterConfig(GetClusterConfigResponse clusterConfig) {
     cluster->partitions = std::make_shared<Partitions>(cluster->configuration);
     cluster->clusterNodes->setNumberPartitions(1);
-    cluster->clusterNodes->setOtherNodes(clusterConfig.nodes, NodePartitionOptions{.partitionId = 0});
+    cluster->clusterNodes->setOtherNodes(clusterConfig.nodes, 0);
 }
 
 clusterNodeChangeHandler_t SimpleClusterNodeSetup::getClusterChangeNodeHandler() {

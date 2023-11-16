@@ -56,6 +56,9 @@ Response OperatorDispatcher::dispatch_no_applyDelayedOperationsBuffer(const Requ
             operatorToExecute->desc().type == OperatorType::DB_STORE_CONDITIONAL_WRITE) {
         options.partitionId = this->cluster->getPartitionIdByKey(request.operation.getArg(0));
     }
+    if(!options.fromClient() && isInReplicationMode()) {
+        this->cluster->checkHintedHandoff(request.operation.nodeId);
+    }
 
     OperationBody operationBody = request.operation;
 
@@ -86,7 +89,10 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
         }
 
         if(isInReplicationMode() && options.fromClient() && !options.dontBroadcastToCluster){
-            this->cluster->broadcast({.partitionId = this->getPartitionIdByKey(operation.getArg(0))}, operation);
+            this->cluster->broadcast(operation, {
+                .partitionId = this->getPartitionIdByKey(operation.getArg(0)),
+                .canBeStoredInHint =  true
+            });
             this->logger->debugInfo("Broadcasting request for operator {0} of key {1} with timestamp ({2}, {3})",
                                     operatorToExecute->desc().name, operation.getArg(0).toString(), operation.timestamp, cluster->getNodeId());
         }

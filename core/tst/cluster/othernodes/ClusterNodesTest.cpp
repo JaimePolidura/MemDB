@@ -9,7 +9,7 @@ TEST(ClusterNodes, setOtherNodesTest) {
     auto node1 = std::make_shared<Node>(1, "192.168.1.1", NodeState::RUNNING);
     auto node2 = std::make_shared<Node>(4, "192.168.1.2", NodeState::RUNNING);
 
-    clusterNodes.setOtherNodes({node1, node2}, NodePartitionOptions{.partitionId = 0});
+    clusterNodes.setOtherNodes({node1, node2}, SendRequestOptions{.partitionId = 0});
 
     std::vector<NodesInPartition> groups = clusterNodes.getNodesInPartitions();
     std::set<memdbNodeId_t> group = groups.at(0).getAll();

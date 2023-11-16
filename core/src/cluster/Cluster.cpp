@@ -21,7 +21,7 @@ auto Cluster::setRunning() -> void {
 }
 
 auto Cluster::fixOplogSegment(uint32_t selfOplogId, uint64_t minTimestamp, uint64_t maxTimestamp) -> std::result<Response> {
-    return this->clusterNodes->sendRequestToAnyNode(true, NodePartitionOptions{.partitionId = static_cast<int>(selfOplogId)},[this, selfOplogId, minTimestamp, maxTimestamp](node_t nodeToSend) {
+    return this->clusterNodes->sendRequestToAnyNode(true, SendRequestOptions{.partitionId = static_cast<int>(selfOplogId)},[this, selfOplogId, minTimestamp, maxTimestamp](node_t nodeToSend) {
         auto otherNodeOplogId = this->partitions->getOplogIdOfOtherNodeBySelfOplogId(nodeToSend->nodeId, selfOplogId);
         return RequestBuilder::builder()
             .authKey(this->configuration->get(ConfigurationKeys::AUTH_NODE_KEY))
@@ -34,7 +34,7 @@ auto Cluster::fixOplogSegment(uint32_t selfOplogId, uint64_t minTimestamp, uint6
     });
 }
 
-auto Cluster::syncOplog(uint64_t lastTimestampProcessedFromOpLog, const NodePartitionOptions options) -> iterator_t<std::result<std::vector<uint8_t>>> {
+auto Cluster::syncOplog(uint64_t lastTimestampProcessedFromOpLog, const SendRequestOptions options) -> iterator_t<std::result<std::vector<uint8_t>>> {
     return std::make_shared<SyncOplogReceiverIterator>(this->configuration, this->clusterNodes, this->partitions, this->logger, lastTimestampProcessedFromOpLog,
         options.partitionId, [this](){return this->onGoingMultipleResponsesStore->nextSyncOplogId();});
 }
@@ -43,12 +43,16 @@ auto Cluster::getPartitionObject() -> partitions_t {
     return this->partitions;
 }
 
-auto Cluster::broadcastAndWait(const NodePartitionOptions options, const OperationBody& operation) -> multipleResponses_t {
-    return this->clusterNodes->broadcastAndWait(options, operation);
+auto Cluster::broadcastAndWait(const OperationBody& operation, SendRequestOptions options) -> multipleResponses_t {
+    return this->clusterNodes->broadcastAndWait(operation, options);
 }
 
-auto Cluster::broadcast(const NodePartitionOptions options, const OperationBody& operation) -> void {
-    this->clusterNodes->broadcast(options, operation);
+auto Cluster::checkHintedHandoff(memdbNodeId_t nodeId) -> void {
+    this->clusterNodes->sendHintedHandoff(nodeId);
+}
+
+auto Cluster::broadcast(const OperationBody& operation, SendRequestOptions options) -> void {
+    this->clusterNodes->broadcast(operation, options);
 }
 
 auto Cluster::announceJoin() -> void {
@@ -59,7 +63,7 @@ auto Cluster::announceJoin() -> void {
         })
         ->buildOperationBody();
 
-    this->clusterNodes->broadcastAll(request);
+    this->clusterNodes->broadcastAll(request, SendRequestOptions{.canBeStoredInHint = true});
 }
 
 auto Cluster::announceLeave() -> void {
@@ -67,7 +71,7 @@ auto Cluster::announceLeave() -> void {
         .operatorNumber(OperatorNumbers::LEAVE_CLUSTER_ANNOUNCE)
         ->buildOperationBody();
 
-    this->clusterNodes->broadcastAll(request);
+    this->clusterNodes->broadcastAll(request, SendRequestOptions{.canBeStoredInHint = true});
 }
 
 auto Cluster::getNodeState() -> NodeState {

@@ -1,6 +1,6 @@
 #include "cluster/othernodes/ClusterNodes.h"
 
-void ClusterNodes::setOtherNodes(const std::vector<node_t>& otherNodesToSet, const NodePartitionOptions options) {
+void ClusterNodes::setOtherNodes(const std::vector<node_t>& otherNodesToSet, memdbPartitionId_t partitionId) {
     for (const node_t& node: otherNodesToSet) {
         if(this->nodesById.contains(node->nodeId)) {
             this->nodesById[node->nodeId]->closeConnection();
@@ -9,7 +9,7 @@ void ClusterNodes::setOtherNodes(const std::vector<node_t>& otherNodesToSet, con
 
         this->nodesById[node->nodeId] = node;
 
-        NodesInPartition& nodesInPartition = this->nodesInPartitions[options.partitionId];
+        NodesInPartition& nodesInPartition = this->nodesInPartitions[partitionId];
         nodesInPartition.add(node->nodeId);
     }
 }
@@ -24,6 +24,13 @@ std::vector<node_t> ClusterNodes::getAllNodes() {
     return nodes;
 }
 
+void ClusterNodes::sendHintedHandoff(memdbNodeId_t nodeId) {
+    iterator_t<Request> hints = this->hintsService->iterator(nodeId);
+    while(hints->hasNext()) {
+        this->sendRequest(nodeId, hints->next());
+    }
+}
+
 int ClusterNodes::getSize() {
     return this->nodesById.size();
 }
@@ -34,8 +41,8 @@ void ClusterNodes::setNumberPartitions(uint32_t numberPartitions) {
     }
 }
 
-void ClusterNodes::removeNodeFromPartition(memdbNodeId_t nodeId, const NodePartitionOptions options) {
-    NodesInPartition& nodesInPartition = this->nodesInPartitions.at(options.partitionId);
+void ClusterNodes::removeNodeFromPartition(memdbNodeId_t nodeId, memdbPartitionId_t partitionId) {
+    NodesInPartition& nodesInPartition = this->nodesInPartitions.at(partitionId);
     nodesInPartition.remove(nodeId);
 }
 
@@ -43,12 +50,12 @@ std::vector<NodesInPartition> ClusterNodes::getNodesInPartitions() {
     return this->nodesInPartitions;
 }
 
-bool ClusterNodes::isEmtpy(const NodePartitionOptions options) {
-    return options.partitionId >= this->nodesInPartitions.size() || this->nodesInPartitions[options.partitionId].size() == 0;
+bool ClusterNodes::isEmtpy(memdbPartitionId_t partitionId) {
+    return partitionId >= this->nodesInPartitions.size() || this->nodesInPartitions[partitionId].size() == 0;
 }
 
-void ClusterNodes::addNode(node_t node, const NodePartitionOptions options) {
-    NodesInPartition& nodePartitions = this->nodesInPartitions[options.partitionId];
+void ClusterNodes::addNode(node_t node, memdbPartitionId_t partitionId) {
+    NodesInPartition& nodePartitions = this->nodesInPartitions[partitionId];
     nodePartitions.add(node->nodeId);
     this->nodesById[node->nodeId] = node;
 }
@@ -69,17 +76,17 @@ void ClusterNodes::deleteNodeById(const memdbNodeId_t nodeId) {
     }
 }
 
-std::result<Response> ClusterNodes::sendRequestToAnyNode(const Request& request, bool requiresSuccessfulResponse, const NodePartitionOptions options) {
+std::result<Response> ClusterNodes::sendRequestToAnyNode(const Request& request, bool requiresSuccessfulResponse, const SendRequestOptions options) {
     return this->sendRequestToAnyNode(requiresSuccessfulResponse, options, [&request](node_t node){return request;});
 }
 
 std::result<Response> ClusterNodes::sendRequestToAnyNode(bool requiresSuccessfulResponse,
-                                             const NodePartitionOptions options,
+                                             const SendRequestOptions options,
                                              std::function<Request(node_t nodeToSend)> requestCreator) {
     std::set<memdbNodeId_t> alreadyCheckedNodeId{};
 
     while(true) {
-        std::optional<node_t> node = this->getRandomNode(options, alreadyCheckedNodeId);
+        std::optional<node_t> node = this->getRandomNode(options.partitionId, alreadyCheckedNodeId);
 
         if(!node.has_value()){
             return std::error<Response>();
@@ -106,42 +113,50 @@ auto ClusterNodes::sendRequest(memdbNodeId_t nodeId, const Request& request) -> 
     });
 }
 
-auto ClusterNodes::sendRequestToRandomNode(const Request& request, const NodePartitionOptions options) -> std::result<Response> {
+auto ClusterNodes::sendRequestToRandomNode(const Request& request, const SendRequestOptions options) -> std::result<Response> {
     int timeout = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS);
     int nRetries = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_N_RETRIES);
     std::set<memdbNodeId_t> alreadyCheckedNodesId = {};
 
     return Utils::retryNTimesAndGet<Response, std::milli>(nRetries, std::chrono::milliseconds(timeout), [this, &request, &alreadyCheckedNodesId, options]() -> std::result<Response> {
-        node_t nodeToSendRequest = Utils::getOptionalOrThrow<node_t>(this->getRandomNode(options, alreadyCheckedNodesId));
+        node_t nodeToSendRequest = Utils::getOptionalOrThrow<node_t>(this->getRandomNode(options.partitionId, alreadyCheckedNodesId));
         
         return nodeToSendRequest->sendRequest(this->prepareRequest(request.operation));
     });
 }
 
-auto ClusterNodes::broadcast(const NodePartitionOptions options, const OperationBody& operation) -> void {
+auto ClusterNodes::broadcast(const OperationBody& operation, SendRequestOptions options) -> void {
     std::set<memdbNodeId_t> allNodesIdInPartition = this->nodesInPartitions[options.partitionId].getAll();
     int timeout = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS);
     int nRetries = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_N_RETRIES);
 
-    this->forEachNodeInPartition(options.partitionId, [this, timeout, nRetries, operation](node_t node) -> void {
-        this->requestPool.submit([node, operation, timeout, nRetries, this]() mutable -> void {
-            Utils::retryNTimesAndGet<Response, std::milli>(nRetries, std::chrono::milliseconds(timeout), [this, &node, &operation]() -> std::result<Response> {
-                return node->sendRequest(this->prepareRequest(operation));
+    this->forEachNodeInPartition(options.partitionId, [this, timeout, nRetries, options, operation](node_t node) -> void {
+        this->requestPool.submit([node, operation, timeout, nRetries, options, this]() mutable -> void {
+            std::result<Response> result = Utils::retryNTimesAndGet<Response, std::milli>(nRetries, std::chrono::milliseconds(timeout),
+                [this, &node, &operation]() -> std::result<Response> {
+                    return node->sendRequest(this->prepareRequest(operation));
             });
+
+            if(result.has_error() && options.canBeStoredInHint) {
+                this->hintsService->add(node->nodeId, this->prepareRequest(operation));
+            }
         });
     });
 }
 
-auto ClusterNodes::broadcastAndWait(const NodePartitionOptions options, const OperationBody& operation) -> multipleResponses_t {
+auto ClusterNodes::broadcastAndWait(const OperationBody& operation, SendRequestOptions options) -> multipleResponses_t {
     int nNodesInPartition = this->nodesInPartitions[options.partitionId].size();
     multipleResponses_t multipleResponses = std::make_shared<MultipleResponses>(nNodesInPartition);
     MultipleResponsesNotifier multipleResponseNotifier(multipleResponses);
 
-    this->forEachNodeInPartition(options.partitionId, [this, multipleResponseNotifier, operation](node_t node) mutable -> void {
-        this->requestPool.submit([node, operation, multipleResponseNotifier, this]() mutable -> void {
+    this->forEachNodeInPartition(options.partitionId, [this, options, multipleResponseNotifier, operation](node_t node) mutable -> void {
+        this->requestPool.submit([node, options, operation, multipleResponseNotifier, this]() mutable -> void {
             std::result<Response> responseResult = node->sendRequest(this->prepareRequest(operation));
             if (responseResult->isSuccessful) {
                 multipleResponseNotifier.addResponse(node->nodeId, responseResult.get());
+            }
+            if(responseResult.has_error() && options.canBeStoredInHint) {
+                this->hintsService->add(node->nodeId, this->prepareRequest(operation));
             }
         });
     });
@@ -149,22 +164,27 @@ auto ClusterNodes::broadcastAndWait(const NodePartitionOptions options, const Op
     return multipleResponses;
 }
 
-void ClusterNodes::broadcastAll(const OperationBody& operation) {
+void ClusterNodes::broadcastAll(const OperationBody& operation, SendRequestOptions options) {
     int timeout = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS);
     int nRetries = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_N_RETRIES);
 
     for (node_t node: this->nodesById | std::views::values) {
-        this->requestPool.submit([node, operation, timeout, nRetries, this]() mutable -> void {
-            Utils::retryNTimesAndGet<Response, std::milli>(nRetries, std::chrono::milliseconds(timeout), [this, &node, &operation]() -> std::result<Response> {
-                return node->sendRequest(this->prepareRequest(operation));
+        this->requestPool.submit([node, operation, timeout, options, nRetries, this]() mutable -> void {
+            std::result<Response> result = Utils::retryNTimesAndGet<Response, std::milli>(nRetries, std::chrono::milliseconds(timeout),
+                [this, &node, &operation, options]() -> std::result<Response> {
+                    return node->sendRequest(this->prepareRequest(operation));
             });
+
+            if(result.has_error() && options.canBeStoredInHint) {
+               this->hintsService->add(node->nodeId, this->prepareRequest(operation));
+            }
         });
     }
 }
 
-std::optional<node_t> ClusterNodes::getRandomNode(const NodePartitionOptions options, std::set<memdbNodeId_t> alreadyCheckedNodesId) {
+std::optional<node_t> ClusterNodes::getRandomNode(memdbPartitionId_t partitionId, std::set<memdbNodeId_t> alreadyCheckedNodesId) {
     std::srand(std::time(nullptr));
-    NodesInPartition nodesInPartition = this->nodesInPartitions[options.partitionId];
+    NodesInPartition nodesInPartition = this->nodesInPartitions[partitionId];
     std::set<memdbNodeId_t> nodesIdInPartition = nodesInPartition.getAll();
 
     while(alreadyCheckedNodesId.size() != nodesInPartition.size()) {

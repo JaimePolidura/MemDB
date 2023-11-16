@@ -103,7 +103,7 @@ multipleResponses_t CasOperator::sendPrepare(OperatorDependencies& dependencies,
                                              LamportClock nextTimestamp) {
     proposerPaxosRound->state = ProposerPaxosState::WAITING_FOR_PROMISE;
 
-    return dependencies.cluster->broadcastAndWait({.partitionId = partitionId}, RequestBuilder::builder()
+    return dependencies.cluster->broadcastAndWait(RequestBuilder::builder()
             .operatorNumber(OperatorNumbers::CAS_PREPARE)
             ->selfNode(dependencies.cluster->getNodeId())
             ->addArg(key)
@@ -111,7 +111,8 @@ multipleResponses_t CasOperator::sendPrepare(OperatorDependencies& dependencies,
             ->addDoubleArg(prevTimestamp.counter)
             ->addArg(SimpleString<memDbDataLength_t>::fromNumber(dependencies.cluster->getNodeId()))
             ->addDoubleArg(nextTimestamp.counter.load())
-            ->buildOperationBody());
+            ->buildOperationBody(),
+            {.partitionId = partitionId});
 }
 
 multipleResponses_t CasOperator::sendAccept(OperatorDependencies& dependencies,
@@ -126,7 +127,7 @@ multipleResponses_t CasOperator::sendAccept(OperatorDependencies& dependencies,
     dependencies.logger->debugInfo("Sending ACCEPT(key = {0}, value = {1}, prev = {2}, next = {3})", key.toString(),
                                    value.toString(), prevTimestamp.toString(), nextTimestamp.toString());
 
-    return dependencies.cluster->broadcastAndWait({.partitionId = partitionId}, RequestBuilder::builder()
+    return dependencies.cluster->broadcastAndWait(RequestBuilder::builder()
             .operatorNumber(OperatorNumbers::CAS_ACCEPT)
             ->selfNode(dependencies.cluster->getNodeId())
             ->addArg(key)
@@ -135,7 +136,7 @@ multipleResponses_t CasOperator::sendAccept(OperatorDependencies& dependencies,
             ->addDoubleArg(prevTimestamp.counter.load())
             ->addArg(SimpleString<memDbDataLength_t>::fromNumber(dependencies.cluster->getNodeId()))
             ->addDoubleArg(nextTimestamp.counter.load())
-            ->buildOperationBody());
+            ->buildOperationBody(), {.partitionId = partitionId});
 }
 
 std::tuple<SimpleString<memDbDataLength_t>, SimpleString<memDbDataLength_t>, SimpleString<memDbDataLength_t>> CasOperator::getArgs(const OperationBody& operation) {

@@ -6,7 +6,7 @@
 #include "config/Configuration.h"
 
 class DelayedOperationsBuffer {
-    BackedDiskRequestBuffer diskBuffer;
+    backedDiskRequestBuffer_t diskBuffer;
 
 public:
     explicit DelayedOperationsBuffer(configuration_t configuration);
@@ -15,5 +15,5 @@ public:
 
     void add(const Request& request);
 
-    BackedDiskBufferIterator iterator();
+    iterator_t<Request> iterator();
 };

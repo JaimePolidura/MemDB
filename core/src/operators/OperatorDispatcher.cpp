@@ -96,10 +96,10 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
 }
 
 void OperatorDispatcher::applyDelayedOperationsBuffer() {
-    Iterator<Request>& iterator = dynamic_cast<Iterator<Request>&>(this->delayedOperationsBuffer.iterator());
+    iterator_t<Request> iterator = this->delayedOperationsBuffer.iterator();
 
-    while(iterator.hasNext()) {
-        Request operation = iterator.next();
+    while(iterator->hasNext()) {
+        Request operation = iterator->next();
         this->dispatch_no_applyDelayedOperationsBuffer(operation);
     }
 }

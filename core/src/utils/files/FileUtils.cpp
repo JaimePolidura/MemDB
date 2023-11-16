@@ -21,7 +21,11 @@ void FileUtils::deleteTopBytes(const std::string& path, uint64_t nBytesToDelete)
 
     file.seekg(fileSize - nBytesToDelete, std::ios::beg);
     file.seekp(fileSize - nBytesToDelete, std::ios::beg);
-    file.trunc(fileSize - nBytesToDelete);
+
+#ifndef _WIN32
+    int fd = file.rdbuf().fd();
+    ftruncate(fd, fileSize - nBytesToDelete);
+#endif
 
     file.close();
 }

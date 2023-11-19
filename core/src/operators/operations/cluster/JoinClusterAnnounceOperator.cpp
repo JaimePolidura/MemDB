@@ -4,6 +4,8 @@ Response JoinClusterAnnounceOperator::operate(const OperationBody& operation, co
     std::string address = operation.getArg(0).toString();
     memdbNodeId_t newNodeId = operation.nodeId;
 
+    dependencies.logger->info("Received JOIN_CLUSTER_ANNOUNCE from nodeId {0} with address {1}", newNodeId, address);
+
     dependencies.cluster->newNodeInClusterHandler(std::make_shared<Node>(newNodeId, address,
         dependencies.configuration->get<uint64_t>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS)));
 

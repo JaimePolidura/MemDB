@@ -1,7 +1,7 @@
 #include "cluster/setup/ClusterNodeSetup.h"
 
 void ClusterNodeSetup::initializeNodeInCluster() {
-    this->logger->info("Setting up node in the cluster");
+    this->logger->info("Setting up node in the cluster. Sending GET_CLUSTER_CONFIG to any node");
 
     this->setClusterConfig(cluster->getClusterConfig()
             .get_or_throw("Cannot contact to any seed node"));
@@ -15,6 +15,8 @@ void ClusterNodeSetup::initializeNodeInCluster() {
     cluster->newNodeInClusterHandler = {[changeHandler](node_t newNode) -> void {
         changeHandler->handleNewNode(newNode);
     }};
+    
+    this->logger->info("Broadcasting to all cluster JOIN_CLUSTER_ANNOUNCE");
 
     cluster->announceJoin();
 

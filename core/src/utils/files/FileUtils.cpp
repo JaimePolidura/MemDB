@@ -12,22 +12,66 @@
 #endif
 
 void FileUtils::deleteTopBytes(const std::string& path, uint64_t nBytesToDelete) {
-    std::fstream file(path, std::ios::in | std::ios::out | std::ios::binary);
-    if(!file.is_open()) {
+#ifdef _WIN32
+    std::wstring widePath;
+    widePath.resize(MultiByteToWideChar(CP_ACP, 0, path.c_str(), -1, nullptr, 0));
+    MultiByteToWideChar(CP_ACP, 0, path.c_str(), -1, &widePath[0], static_cast<int>(widePath.size()));
+
+    HANDLE fileHandle = CreateFileW(widePath.c_str(), GENERIC_READ | GENERIC_WRITE,
+        FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+    if (fileHandle == INVALID_HANDLE_VALUE) {
+        throw std::runtime_error("Cannot open filePath");
+    }
+
+    LARGE_INTEGER fileSize;
+    if (!GetFileSizeEx(fileHandle, &fileSize)) {
+        CloseHandle(fileHandle);
+        throw std::runtime_error("Error getting file size");
+    }
+
+    LARGE_INTEGER newPosition;
+    newPosition.QuadPart = fileSize.QuadPart - nBytesToDelete;
+
+    if (!SetFilePointerEx(fileHandle, newPosition, NULL, FILE_BEGIN)) {
+        CloseHandle(fileHandle);
+        throw std::runtime_error("Error seeking to position");
+    }
+
+    if (!SetEndOfFile(fileHandle)) {
+        CloseHandle(fileHandle);
+        throw std::runtime_error("Error truncating file");
+    }
+
+    CloseHandle(fileHandle);
+#elif
+    int fd = open(path.c_str(), O_RDWR);
+
+    if (fileDescriptor == -1) {
         throw std::runtime_error("Cannot open filePath " + path);
     }
 
-    uint64_t fileSize = file.tellg();
+    struct stat fileStat;
+    if (fstat(fileDescriptor, &fileStat) == -1) {
+        close(fileDescriptor);
+        throw std::runtime_error("Error getting file status");
+    }
 
-    file.seekg(fileSize - nBytesToDelete, std::ios::beg);
-    file.seekp(fileSize - nBytesToDelete, std::ios::beg);
+    off_t fileSize = fileStat.st_size;
 
-#ifndef _WIN32
-    int fd = file.rdbuf().fd();
-    ftruncate(fd, fileSize - nBytesToDelete);
+    off_t newPosition = lseek(fileDescriptor, fileSize - nBytesToDelete, SEEK_SET);
+    if (newPosition == -1) {
+        close(fileDescriptor);
+        throw std::runtime_error("Error seeking to position");
+    }
+
+    if (ftruncate(fileDescriptor, newPosition) == -1) {
+        close(fileDescriptor);
+        throw std::runtime_error("Error truncating file");
+    }
+
+    close(fileDescriptor);
 #endif
-
-    file.close();
 }
 
 void FileUtils::writeBytes(const std::string &path, const std::vector<uint8_t> &bytes) {

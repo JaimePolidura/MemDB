@@ -1,6 +1,8 @@
 #include "DoLeaveClusterOperator.h"
 
 Response DoLeaveClusterOperator::operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies& dependencies) {
+    dependencies.logger->info("Received DO_LEAVE_CLUSTER. Leaving cluster");
+
     std::thread exitSelfThread = std::thread{[dependencies]() -> void {
         std::this_thread::sleep_for(std::chrono::seconds(5));
 

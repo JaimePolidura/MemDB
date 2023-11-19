@@ -1,9 +1,9 @@
 package connection
 
 import (
-	"clustermanager/src/_shared/logging"
-	"clustermanager/src/_shared/utils"
+	"clustermanager/src/logging"
 	"clustermanager/src/nodes/nodes"
+	"clustermanager/src/utils"
 	"net"
 	"sync"
 )

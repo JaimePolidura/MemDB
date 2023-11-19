@@ -1,10 +1,10 @@
 package main
 
 import (
-	"clustermanager/src/_shared/config"
-	configuration_keys "clustermanager/src/_shared/config/keys"
-	"clustermanager/src/_shared/logging"
+	"clustermanager/src/config"
+	"clustermanager/src/config/keys"
 	"clustermanager/src/healthchecks"
+	"clustermanager/src/logging"
 	"clustermanager/src/nodes/nodes/connection"
 	"fmt"
 	"github.com/labstack/echo/v4"

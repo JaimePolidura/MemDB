@@ -2,7 +2,7 @@ package partitions
 
 import (
 	"clustermanager/src/_shared/etcd"
-	"clustermanager/src/_shared/logging"
+	"clustermanager/src/logging"
 	"encoding/json"
 	"sort"
 	"strconv"

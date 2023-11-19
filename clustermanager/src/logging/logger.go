@@ -1,8 +1,8 @@
 package logging
 
 import (
-	configuration "clustermanager/src/_shared/config"
-	configuration_keys "clustermanager/src/_shared/config/keys"
+	"clustermanager/src/config"
+	"clustermanager/src/config/keys"
 	"log"
 )
 

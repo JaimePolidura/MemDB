@@ -4,22 +4,6 @@ rm -r /etc/memdb2
 rm -r /etc/memdb3
 rm -r /etc/memdb4
 
-# CLUSTER DB
-etcdctl del --prefix ""
-
-etcdctl put /partitions/config/nodesPerPartition "2"
-etcdctl put /partitions/config/ringSize "64"
-
-etcdctl put /partitions/ring/1 "{\"nodeId\":\"1\",\"ringPosition\": 2}"
-etcdctl put /partitions/ring/4 "{\"nodeId\":\"4\",\"ringPosition\": 29}"
-etcdctl put /partitions/ring/2 "{\"nodeId\":\"2\",\"ringPosition\": 35}"
-etcdctl put /partitions/ring/3 "{\"nodeId\":\"3\",\"ringPosition\": 62}"
-
-etcdctl put /nodes/1 "{\"nodeId\":\"1\",\"address\":\"memdb-clusternode-1:10000\",\"state\":\"BOOTING\"}"
-etcdctl put /nodes/2 "{\"nodeId\":\"2\",\"address\":\"memdb-clusternode-2:10001\",\"state\":\"BOOTING\"}"
-etcdctl put /nodes/3 "{\"nodeId\":\"3\",\"address\":\"memdb-clusternode-3:10002\",\"state\":\"BOOTING\"}"
-etcdctl put /nodes/4 "{\"nodeId\":\"4\",\"address\":\"memdb-clusternode-4:10003\",\"state\":\"BOOTING\"}"
-
 # CLUSTER MANAGER
 cd ./clustermanager
 
@@ -38,8 +22,6 @@ sudo ./linux-build.sh
 sudo ./run.sh USE_REPLICATION=true \
         SHOW_DEBUG_LOG=true \
         SERVER_PORT=10000 \
-        CLUSTER_MANAGER_ADDRESS=127.0.0.1:8080 \
-        ETCD_ADDRESSES=127.0.0.1:2379 \
         DATA_PATH=/etc/memdb1 \
         NODE_ID=1 \ 
 		USE_PARTITIONS=true &
@@ -47,45 +29,40 @@ sudo ./run.sh USE_REPLICATION=true \
 sudo ./run.sh USE_REPLICATION=true \
         SHOW_DEBUG_LOG=true \
         SERVER_PORT=10001 \
-        CLUSTER_MANAGER_ADDRESS=127.0.0.1:8080 \
-        ETCD_ADDRESSES=127.0.0.1:2379 \
         DATA_PATH=/etc/memdb2 \
+		SEED_NODES=127.0.0.1:10000 \
         NODE_ID=2 \ 
 		USE_PARTITIONS=true &
 
 sudo ./run.sh USE_REPLICATION=true \
         SHOW_DEBUG_LOG=true \
         SERVER_PORT=10002 \
-        CLUSTER_MANAGER_ADDRESS=127.0.0.1:8080 \
-        ETCD_ADDRESSES=127.0.0.1:2379 \
         DATA_PATH=/etc/memdb3 \
+		SEED_NODES=127.0.0.1:10000 \
         NODE_ID=3 \ 
 		USE_PARTITIONS=true &
 
 sudo ./run.sh USE_REPLICATION=true \
         SHOW_DEBUG_LOG=true \
         SERVER_PORT=10003 \
-        CLUSTER_MANAGER_ADDRESS=127.0.0.1:8080 \
-        ETCD_ADDRESSES=127.0.0.1:2379 \
         DATA_PATH=/etc/memdb4 \
+		SEED_NODES=127.0.0.1:10000 \		
         NODE_ID=4 \ 
 		USE_PARTITIONS=true &
 
 sudo ./run.sh USE_REPLICATION=true \
         SHOW_DEBUG_LOG=true \
         SERVER_PORT=10004 \
-        CLUSTER_MANAGER_ADDRESS=127.0.0.1:8080 \
-        ETCD_ADDRESSES=127.0.0.1:2379 \
         DATA_PATH=/etc/memdb5 \
+		SEED_NODES=127.0.0.1:10000 \		
         NODE_ID=5 \ 
 		USE_PARTITIONS=true &
 
 sudo ./run.sh USE_REPLICATION=true \
         SHOW_DEBUG_LOG=true \
         SERVER_PORT=10005 \
-        CLUSTER_MANAGER_ADDRESS=127.0.0.1:8080 \
-        ETCD_ADDRESSES=127.0.0.1:2379 \
         DATA_PATH=/etc/memdb6 \
+		SEED_NODES=127.0.0.1:10000 \		
         NODE_ID=6 \ 
 		USE_PARTITIONS=true &
 

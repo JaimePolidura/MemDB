@@ -5,7 +5,6 @@
 #include "shared.h"
 
 class Configuration {
-private:
     const std::map<std::string, std::string> defaultConfigurationValues;
 
 public:

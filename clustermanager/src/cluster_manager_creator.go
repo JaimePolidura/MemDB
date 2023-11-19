@@ -1,17 +1,16 @@
 package main
 
 import (
-	configuration "clustermanager/src/_shared/config"
-	configuration_keys "clustermanager/src/_shared/config/keys"
-	"clustermanager/src/_shared/etcd"
-	"clustermanager/src/_shared/logging"
-	"clustermanager/src/_shared/utils"
+	"clustermanager/src/config"
+	"clustermanager/src/config/keys"
 	"clustermanager/src/healthchecks"
+	"clustermanager/src/logging"
 	nodes2 "clustermanager/src/nodes"
 	"clustermanager/src/nodes/nodes"
 	"clustermanager/src/nodes/nodes/connection"
 	"clustermanager/src/partitions"
 	partitions2 "clustermanager/src/partitions/partitions"
+	"clustermanager/src/utils"
 	"crypto/md5"
 	echojwt "github.com/labstack/echo-jwt"
 	"github.com/labstack/echo/v4"
@@ -30,8 +29,6 @@ func CreateClusterManager(args []string) *ClusterManager {
 		Configuration: loadedConfiguration,
 	}
 	etcdNativeClient := createEtcdNativeClient(loadedConfiguration)
-	partitionsRepository := &partitions2.PartitionRepository{Client: etcd.EtcdClient[string]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}, Logger: logger}
-	nodesRepository := &nodes.NodeRepository{Client: etcd.EtcdClient[nodes.Node]{NativeClient: etcdNativeClient, Timeout: time.Second * 30}}
 	nodeConnections := connection.CreateNodeConnectionsObject(logger)
 	healthService := createHealthCheckService(loadedConfiguration, nodeConnections, nodesRepository, logger)
 	apiEcho := configureHttpApi(loadedConfiguration, logger, partitionsRepository, nodesRepository)

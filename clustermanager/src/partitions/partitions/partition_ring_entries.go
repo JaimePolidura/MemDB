@@ -1,8 +1,8 @@
 package partitions
 
 import (
-	"clustermanager/src/_shared/utils"
 	"clustermanager/src/nodes/nodes"
+	utils2 "clustermanager/src/utils"
 )
 
 type PartitionRingEntries struct {
@@ -20,7 +20,7 @@ func (entries PartitionRingEntries) Add(entry PartitionRingEntry) {
 		interfaceArray = append(interfaceArray, s)
 	}
 
-	utils.InsertIntoSortedArray(interfaceArray, entries.Entries, func(i int) bool {
+	utils2.InsertIntoSortedArray(interfaceArray, entries.Entries, func(i int) bool {
 		return entries.Entries[i].RingPosition >= entry.RingPosition
 	})
 }
@@ -52,7 +52,7 @@ func (entries PartitionRingEntries) getNeighborsByRingPosition(ringPosition uint
 		return []PartitionRingEntry{}, []PartitionRingEntry{}, false
 	}
 
-	ringIterator := utils.CircularArrayIterator[PartitionRingEntry]{Array: entries.Entries}
+	ringIterator := utils2.CircularArrayIterator[PartitionRingEntry]{Array: entries.Entries}
 	ringIterator.WithStartingIndex(indexOfRingEntry)
 
 	var counterClockWise []PartitionRingEntry

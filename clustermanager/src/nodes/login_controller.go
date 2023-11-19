@@ -1,9 +1,9 @@
 package nodes
 
 import (
-	configuration "clustermanager/src/_shared/config"
-	configuration_keys "clustermanager/src/_shared/config/keys"
-	"clustermanager/src/_shared/logging"
+	"clustermanager/src/config"
+	"clustermanager/src/config/keys"
+	"clustermanager/src/logging"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 	"net/http"

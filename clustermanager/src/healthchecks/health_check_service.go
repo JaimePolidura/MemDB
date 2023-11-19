@@ -1,9 +1,9 @@
 package healthchecks
 
 import (
-	"clustermanager/src/_shared/config"
-	"clustermanager/src/_shared/config/keys"
-	"clustermanager/src/_shared/logging"
+	"clustermanager/src/config"
+	"clustermanager/src/config/keys"
+	"clustermanager/src/logging"
 	"clustermanager/src/nodes/nodes"
 	connection2 "clustermanager/src/nodes/nodes/connection"
 	"clustermanager/src/nodes/nodes/connection/messages/request"
@@ -14,7 +14,7 @@ import (
 
 type HealthCheckService struct {
 	NodesRespository *nodes.NodeRepository
-	Configuration    *configuration.Configuartion
+	Configuration    *configuration.configuration
 	NodeConnections  *connection2.NodeConnections
 	Logger           *logging.Logger
 
@@ -23,7 +23,7 @@ type HealthCheckService struct {
 }
 
 func (healthCheckService *HealthCheckService) Start() {
-	healthCheckService.periodHealthCheck = healthCheckService.Configuration.GetInt(configuration_keys.MEMDB_CLUSTERMANAGER_HEALTHCHECK_PERIOD)
+	healthCheckService.periodHealthCheck = healthCheckService.Configuration.GetInt(configuration_keys.configuration_keys.MEMDB_CLUSTERMANAGER_HEALTHCHECK_PERIOD)
 
 	go healthCheckService.startAsyncHealthCheckPeriodicRoutine()
 }

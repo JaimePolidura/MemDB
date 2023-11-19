@@ -1,8 +1,8 @@
 package nodes
 
 import (
-	configuration "clustermanager/src/_shared/config"
-	configuration_keys "clustermanager/src/_shared/config/keys"
+	"clustermanager/src/config"
+	"clustermanager/src/config/keys"
 	"clustermanager/src/nodes/nodes"
 	"clustermanager/src/partitions"
 	"errors"

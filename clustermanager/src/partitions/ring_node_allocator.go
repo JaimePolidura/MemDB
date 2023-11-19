@@ -1,9 +1,9 @@
 package partitions
 
 import (
-	"clustermanager/src/_shared/utils"
 	"clustermanager/src/nodes/nodes"
 	"clustermanager/src/partitions/partitions"
+	"clustermanager/src/utils"
 	"errors"
 	"math/rand"
 )

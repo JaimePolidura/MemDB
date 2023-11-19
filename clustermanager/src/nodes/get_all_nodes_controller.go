@@ -1,9 +1,9 @@
 package nodes
 
 import (
-	configuration "clustermanager/src/_shared/config"
-	configuration_keys "clustermanager/src/_shared/config/keys"
-	"clustermanager/src/_shared/logging"
+	"clustermanager/src/config"
+	"clustermanager/src/config/keys"
+	"clustermanager/src/logging"
 	"clustermanager/src/nodes/nodes"
 	partitions2 "clustermanager/src/partitions/partitions"
 	"github.com/labstack/echo/v4"

@@ -148,6 +148,6 @@ OperatorDescriptor CasOperator::desc() {
         .type = OperatorType::DB_STORE_CONDITIONAL_WRITE,
         .number = OperatorNumbers::CAS,
         .name = "CAS",
-        .authorizedToExecute = { AuthenticationType::API },
+        .authorizedToExecute = { AuthenticationType::USER },
     };
 }

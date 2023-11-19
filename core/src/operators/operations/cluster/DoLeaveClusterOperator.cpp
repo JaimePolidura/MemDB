@@ -19,6 +19,6 @@ OperatorDescriptor DoLeaveClusterOperator::desc() {
         .type = OperatorType::NODE_MAINTENANCE,
         .number = OperatorNumbers::DO_LEAVE_CLUSTER,
         .name = "DO_LEAVE_CLUSTER",
-        .authorizedToExecute = { AuthenticationType::CLUSTER_MANAGER }
+        .authorizedToExecute = { AuthenticationType::USER }
     };
 }

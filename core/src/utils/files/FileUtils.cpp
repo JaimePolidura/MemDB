@@ -44,33 +44,33 @@ void FileUtils::deleteTopBytes(const std::string& path, uint64_t nBytesToDelete)
     }
 
     CloseHandle(fileHandle);
-#elif
+#else
     int fd = open(path.c_str(), O_RDWR);
 
-    if (fileDescriptor == -1) {
+    if (fd == -1) {
         throw std::runtime_error("Cannot open filePath " + path);
     }
 
     struct stat fileStat;
-    if (fstat(fileDescriptor, &fileStat) == -1) {
-        close(fileDescriptor);
+    if (fstat(fd, &fileStat) == -1) {
+        close(fd);
         throw std::runtime_error("Error getting file status");
     }
 
     off_t fileSize = fileStat.st_size;
 
-    off_t newPosition = lseek(fileDescriptor, fileSize - nBytesToDelete, SEEK_SET);
+    off_t newPosition = lseek(fd, fileSize - nBytesToDelete, SEEK_SET);
     if (newPosition == -1) {
-        close(fileDescriptor);
+        close(fd);
         throw std::runtime_error("Error seeking to position");
     }
 
-    if (ftruncate(fileDescriptor, newPosition) == -1) {
-        close(fileDescriptor);
+    if (ftruncate(fd, newPosition) == -1) {
+        close(fd);
         throw std::runtime_error("Error truncating file");
     }
 
-    close(fileDescriptor);
+    close(fd);
 #endif
 }
 

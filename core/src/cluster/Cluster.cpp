@@ -108,30 +108,43 @@ auto Cluster::getPartitionIdByKey(SimpleString<memDbDataLength_t> key) -> uint32
 
 auto Cluster::getClusterConfig() -> std::result<GetClusterConfigResponse> {
     std::vector<std::string> addressSeedNodes = this->configuration->getVector(ConfigurationKeys::SEED_NODES);
+    uint64_t timeoutMs = this->configuration->get<uint64_t>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS);
+    uint32_t nRetries = this->configuration->get<uint32_t>(ConfigurationKeys::NODE_REQUEST_N_RETRIES);
 
-    for(const std::string& seedNodeAddress : addressSeedNodes){
-        Node seedNode = Node{0, seedNodeAddress, 5000};
-        std::result<Response> responseResult = seedNode.sendRequest(RequestBuilder::builder()
-            .authKey(this->configuration->get(ConfigurationKeys::AUTH_NODE_KEY))
-            ->operatorNumber(OperatorNumbers::GET_CLUSTER_CONFIG)
-            ->selfNode(this->getNodeId())
-            ->build());
+    if(addressSeedNodes.empty()) {
+        return std::error<GetClusterConfigResponse>();
+    }
 
-        if(responseResult.is_success()){
-            uint32_t nodesPerPartition = responseResult->getResponseValueAtOffset(0, 4).to<uint32_t>();
-            uint32_t maxPartitionSize = responseResult->getResponseValueAtOffset(4, 4).to<uint32_t>();
-            uint32_t nNodesInCluster = responseResult->getResponseValueAtOffset(8, 4).to<uint32_t>();
+    for(const std::string& seedNodeAddress : addressSeedNodes) {
+        if(seedNodeAddress == this->configuration->get(ConfigurationKeys::ADDRESS))  {
+            continue;
+        }
 
-            int offset = 12;
-            std::vector<node_t> nodes = getNodesFromGetClusterConfig(nNodesInCluster, offset, responseResult.get());
-            std::vector<RingEntry> ringEntries = getRingEntriesFromGetClusterConfig(nNodesInCluster, offset, responseResult.get());
+        Node seedNode = Node{0, seedNodeAddress, timeoutMs};
 
-            return std::ok(GetClusterConfigResponse{
-                .nodesPerPartition = nodesPerPartition,
-                .maxPartitionSize = maxPartitionSize,
-                .nodes = nodes,
-                .ringEntries = ringEntries
-            });
+        for(int i = 0; i < nRetries; i++) {
+            std::result<Response> responseResult = seedNode.sendRequest(RequestBuilder::builder()
+                .authKey(this->configuration->get(ConfigurationKeys::AUTH_NODE_KEY))
+                ->operatorNumber(OperatorNumbers::GET_CLUSTER_CONFIG)
+                ->selfNode(this->getNodeId())
+                ->build());
+
+            if(responseResult.is_success()){
+                uint32_t nodesPerPartition = responseResult->getResponseValueAtOffset(0, 4).to<uint32_t>();
+                uint32_t maxPartitionSize = responseResult->getResponseValueAtOffset(4, 4).to<uint32_t>();
+                uint32_t nNodesInCluster = responseResult->getResponseValueAtOffset(8, 4).to<uint32_t>();
+
+                int offset = 12;
+                std::vector<node_t> nodes = getNodesFromGetClusterConfig(nNodesInCluster, offset, responseResult.get());
+                std::vector<RingEntry> ringEntries = getRingEntriesFromGetClusterConfig(nNodesInCluster, offset, responseResult.get());
+
+                return std::ok(GetClusterConfigResponse{
+                    .nodesPerPartition = nodesPerPartition,
+                    .maxPartitionSize = maxPartitionSize,
+                    .nodes = nodes,
+                    .ringEntries = ringEntries
+                });
+            }
         }
     }
 

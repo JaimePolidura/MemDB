@@ -48,7 +48,7 @@ void TCPServer::onNewRequest(const std::vector<uint8_t>& requestRawBuffer, conne
         return;
     }
 
-    request.authenticationType = this->authenicator.getAuthenticationType(request.authentication.authKey);
+    request.authenticationType = this->authenicator.getAuthenticationType(request.authentication.authKey).get();
     if(request.authenticationType != AuthenticationType::NODE && request.authentication.flag1){//Only node id can be present in request with node keys
         this->sendAuthError(connection, request);
         return;

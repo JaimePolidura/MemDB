@@ -9,6 +9,6 @@ OperatorDescriptor HealthCheckOperator::desc() {
             .type = OperatorType::NODE_MAINTENANCE,
             .number = OperatorNumbers::HEALTH_CHECK,
             .name = "HEALTH_CHECK",
-            .authorizedToExecute = { AuthenticationType::CLUSTER_MANAGER },
+            .authorizedToExecute = { AuthenticationType::USER, AuthenticationType::NODE },
     };
 }

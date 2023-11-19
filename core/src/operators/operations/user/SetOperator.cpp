@@ -23,7 +23,7 @@ OperatorDescriptor SetOperator::desc() {
             .type = OperatorType::DB_STORE_WRITE,
             .number = OperatorNumbers::SET,
             .name = "SET",
-            .authorizedToExecute = { AuthenticationType::API, AuthenticationType::NODE },
+            .authorizedToExecute = { AuthenticationType::USER, AuthenticationType::NODE },
     };
 }
 

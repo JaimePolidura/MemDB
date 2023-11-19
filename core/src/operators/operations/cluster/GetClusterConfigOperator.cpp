@@ -58,6 +58,6 @@ OperatorDescriptor GetClusterConfigOperator::desc() {
         .type = OperatorType::NODE_MAINTENANCE,
         .number = OperatorNumbers::GET_CLUSTER_CONFIG,
         .name = "GET_CLUSTER_CONFIG",
-        .authorizedToExecute = { AuthenticationType::NODE, AuthenticationType::API }
+        .authorizedToExecute = { AuthenticationType::NODE, AuthenticationType::USER }
     };
 }

@@ -15,6 +15,6 @@ OperatorDescriptor GetOperator::desc() {
             .type = OperatorType::DB_STORE_READ,
             .number = OperatorNumbers::GET,
             .name = "GET",
-            .authorizedToExecute = { AuthenticationType::API },
+            .authorizedToExecute = { AuthenticationType::USER },
     };
 }

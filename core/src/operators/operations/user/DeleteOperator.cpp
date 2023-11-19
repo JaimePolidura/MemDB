@@ -21,7 +21,7 @@ OperatorDescriptor DeleteOperator::desc() {
         .type = OperatorType::DB_STORE_WRITE,
         .number = OperatorNumbers::DEL,
         .name = "DELETE",
-        .authorizedToExecute = { AuthenticationType::API, AuthenticationType::NODE },
+        .authorizedToExecute = { AuthenticationType::USER, AuthenticationType::NODE },
     };
 }
 

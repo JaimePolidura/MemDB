@@ -6,15 +6,15 @@
 
 struct OperationOptions {
 public:
-    bool checkTimestamps;
-    bool onlyExecute;
-    bool dontBroadcastToCluster;
-    bool dontSaveInOperationLog;
-    bool dontDebugLog;
+    bool checkTimestamps{false};
+    bool onlyExecute{false};
+    bool dontBroadcastToCluster{false};
+    bool dontSaveInOperationLog{false};
+    bool dontDebugLog{false};
     LamportClock::UpdateClockStrategy updateClockStrategy;
-    memdbPartitionId_t partitionId;
+    memdbPartitionId_t partitionId{0};
 
-    uint64_t requestNumber;
+    uint64_t requestNumber{0};
 
     bool fromClient() const {
         return !this->checkTimestamps;

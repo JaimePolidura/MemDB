@@ -1,4 +1,4 @@
-cd ../../../core
+cd ../../core
 
 ./linux-build.sh
 

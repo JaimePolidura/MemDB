@@ -1,4 +1,4 @@
-cd ../../../../core
+cd ../../../core
 
 sudo gdb --args ./src/build/src/memdb_run USE_REPLICATION=true \
         SHOW_DEBUG_LOG=true \

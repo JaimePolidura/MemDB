@@ -21,4 +21,5 @@ public:
     static const constexpr uint8_t JOIN_CLUSTER_ANNOUNCE = 0x13;
     static const constexpr uint8_t LEAVE_CLUSTER_ANNOUNCE = 0x14;
     static const constexpr uint8_t DO_LEAVE_CLUSTER = 0x15;
+    static const constexpr uint8_t GET_NODE_DATA = 0x16;
 };

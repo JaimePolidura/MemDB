@@ -2,78 +2,35 @@ package main
 
 import (
 	"clustermanager/src/config"
-	"clustermanager/src/config/keys"
-	"clustermanager/src/healthchecks"
+	"clustermanager/src/endpoints"
 	"clustermanager/src/logging"
-	nodes2 "clustermanager/src/nodes"
-	"clustermanager/src/nodes/nodes"
-	"clustermanager/src/nodes/nodes/connection"
-	"clustermanager/src/partitions"
-	partitions2 "clustermanager/src/partitions/partitions"
-	"clustermanager/src/utils"
-	"crypto/md5"
+	"clustermanager/src/nodes"
 	echojwt "github.com/labstack/echo-jwt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	clientv3 "go.etcd.io/etcd/client/v3"
 	"log"
 	"os"
-	"strings"
-	"time"
 )
 
 func CreateClusterManager(args []string) *ClusterManager {
-	loadedConfiguration := configuration.LoadConfiguration(args)
+	loadedConfiguration := config.LoadConfiguration(args)
 	logger := &logging.Logger{
 		NativeLogger:  log.New(os.Stdout, "[ClusterManager] ", log.Ldate|log.Ltime|log.Lmsgprefix),
 		Configuration: loadedConfiguration,
 	}
-	etcdNativeClient := createEtcdNativeClient(loadedConfiguration)
-	nodeConnections := connection.CreateNodeConnectionsObject(logger)
-	healthService := createHealthCheckService(loadedConfiguration, nodeConnections, nodesRepository, logger)
-	apiEcho := configureHttpApi(loadedConfiguration, logger, partitionsRepository, nodesRepository)
+	nodeConnections := nodes.CreateClusterNodeConnections(loadedConfiguration)
+	apiEcho := configureHttpApi(loadedConfiguration, nodeConnections, logger)
 
 	return &ClusterManager{
-		configuration:      loadedConfiguration,
-		etcdNativeClient:   etcdNativeClient,
-		healthCheckService: healthService,
-		nodeConnections:    nodeConnections,
-		api:                apiEcho,
-		logger:             logger,
+		configuration: loadedConfiguration,
+		api:           apiEcho,
+		logger:        logger,
 	}
 }
 
-func createEtcdNativeClient(configuration *configuration.Configuartion) *clientv3.Client {
-	client, err := clientv3.New(clientv3.Config{
-		Endpoints:   strings.Split(configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_ETCD_ENDPOINTS), ","),
-		DialTimeout: time.Second * 30,
-	})
-
-	if err != nil {
-		panic("Cannot connect to etcd: " + err.Error())
-	}
-
-	return client
-}
-
-func createHealthCheckService(
-	configuration *configuration.Configuartion,
-	connections *connection.NodeConnections,
-	nodesRepository *nodes.NodeRepository,
-	logger *logging.Logger) *healthchecks.HealthCheckService {
-
-	return &healthchecks.HealthCheckService{
-		NodesRespository: nodesRepository,
-		Configuration:    configuration,
-		NodeConnections:  connections,
-		Logger:           logger,
-	}
-}
-
-func configureHttpApi(configuration *configuration.Configuartion,
-	logger *logging.Logger,
-	partitionRepository *partitions2.PartitionRepository,
-	nodesRepository *nodes.NodeRepository) *echo.Echo {
+func configureHttpApi(configuration *config.Configuartion,
+	connections *nodes.ClusterNodeConnections,
+	logger *logging.Logger) *echo.Echo {
 
 	echoApi := echo.New()
 	echoApi.HideBanner = true
@@ -81,21 +38,16 @@ func configureHttpApi(configuration *configuration.Configuartion,
 
 	apiGroup := echoApi.Group("/api")
 	apiGroup.Use(echojwt.WithConfig(echojwt.Config{
-		SigningKey: []byte(configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_API_JWT_SECRET_KEY)),
+		SigningKey: []byte(configuration.Get(config.MEMDB_CLUSTERMANAGER_API_JWT_SECRET_KEY)),
 	}))
 
-	ringNodeAllocator := &partitions.RingNodeAllocator{HashCalculator: utils.HashCalculator{HashAlgorithm: md5.New()}, PartitionsRepository: partitionRepository}
+	getClusterConfigController := endpoints.CreateGetClusterConfigController(configuration, connections)
+	removeNodeClusterController := endpoints.CreateRemoveNodeClusterController(configuration, connections)
+	loginController := endpoints.CreateLoginController(configuration, logger)
 
-	createNodeController := &nodes2.CreateNodeController{NodesRepository: nodesRepository, RingNodeAllocator: ringNodeAllocator, Configuration: configuration}
-	getAllNodesController := nodes2.GetAllNodeController{NodesRepository: nodesRepository, Logger: logger, PartitionRepository: partitionRepository}
-	loginController := &nodes2.LoginController{Configuration: configuration, Logger: logger}
-	getRingController := &partitions.GetRingInfoController{PartitionsRepository: partitionRepository, Configuration: configuration}
-
+	apiGroup.DELETE("/cluster/nodes/:nodeId", removeNodeClusterController.Remove)
+	apiGroup.GET("/cluster/config", getClusterConfigController.GetClusterConfig)
 	echoApi.POST("/login", loginController.Login)
-
-	apiGroup.POST("/nodes/create", createNodeController.CreateNode)
-	apiGroup.GET("/nodes/all", getAllNodesController.GetAllNodes)
-	apiGroup.GET("/partitions/ring/info", getRingController.GetRingInfo)
 
 	return echoApi
 }

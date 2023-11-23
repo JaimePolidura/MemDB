@@ -64,8 +64,12 @@ bool ClusterNodes::existsByNodeId(memdbNodeId_t nodeId) {
     return this->nodesById.count(nodeId) != 0;
 }
 
-node_t ClusterNodes::getByNodeId(memdbNodeId_t nodeId) {
-    return this->nodesById[nodeId];
+std::optional<node_t> ClusterNodes::getByNodeId(memdbNodeId_t nodeId) {
+    if(this->nodesById.contains(nodeId)) {
+        return this->nodesById[nodeId];
+    } else {
+        return std::nullopt;
+    }
 }
 
 void ClusterNodes::deleteNodeById(const memdbNodeId_t nodeId) {

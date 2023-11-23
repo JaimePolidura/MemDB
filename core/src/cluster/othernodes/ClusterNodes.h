@@ -58,7 +58,7 @@ public:
 
     bool existsByNodeId(memdbNodeId_t nodeId);
 
-    node_t getByNodeId(memdbNodeId_t nodeId);
+    std::optional<node_t> getByNodeId(memdbNodeId_t nodeId);
 
     void deleteNodeById(const memdbNodeId_t nodeId);
 

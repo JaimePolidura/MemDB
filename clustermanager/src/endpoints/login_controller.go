@@ -1,8 +1,7 @@
-package nodes
+package endpoints
 
 import (
 	"clustermanager/src/config"
-	"clustermanager/src/config/keys"
 	"clustermanager/src/logging"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
@@ -11,8 +10,15 @@ import (
 )
 
 type LoginController struct {
-	Configuration *configuration.Configuartion
+	Configuration *config.Configuartion
 	Logger        *logging.Logger
+}
+
+func CreateLoginController(configuration *config.Configuartion, logger *logging.Logger) *LoginController {
+	return &LoginController{
+		Configuration: configuration,
+		Logger:        logger,
+	}
 }
 
 type LoginRequest struct {
@@ -25,7 +31,7 @@ func (controller *LoginController) Login(c echo.Context) error {
 		return err
 	}
 
-	if loginRequest.AuthKey != controller.Configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_AUTH_API_KEY) {
+	if loginRequest.AuthKey != controller.Configuration.Get(config.MEMDB_CLUSTERMANAGER_AUTH_USER_KEY) {
 		return c.JSON(http.StatusForbidden, "Invalid auth key")
 	}
 
@@ -34,7 +40,7 @@ func (controller *LoginController) Login(c echo.Context) error {
 	})
 
 	signedToken, err := unsingedToken.SignedString(
-		[]byte(controller.Configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_API_JWT_SECRET_KEY)))
+		[]byte(controller.Configuration.Get(config.MEMDB_CLUSTERMANAGER_API_JWT_SECRET_KEY)))
 
 	if err != nil {
 		return err

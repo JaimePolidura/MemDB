@@ -1,5 +1,7 @@
 package request
 
+import "clustermanager/src/nodes"
+
 type Request struct {
 	AuthKey        string
 	OperatorNumber uint8
@@ -10,6 +12,29 @@ func BuildHealthCheckRequest(authKey string) Request {
 	return Request{
 		AuthKey:        authKey,
 		OperatorNumber: 0x04,
+	}
+}
+
+func BuildGetClusterConfigRequest(authKey string) Request {
+	return Request{
+		AuthKey:        authKey,
+		OperatorNumber: 0x12,
+	}
+}
+
+func BuildDoLeaveNodeClusterRequest(authKey string, nodeId nodes.NodeId_t) Request {
+	return Request{
+		AuthKey:        authKey,
+		OperatorNumber: 0x15,
+		Args:           []string{string(nodeId)},
+	}
+}
+
+func BuildGetNodeDataRequest(authKey string, nodeId nodes.NodeId_t) Request {
+	return Request{
+		AuthKey:        authKey,
+		OperatorNumber: 0x16,
+		Args:           []string{string(nodeId)},
 	}
 }
 

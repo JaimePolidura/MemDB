@@ -1,4 +1,4 @@
-package configuration
+package config
 
 import (
 	"os"
@@ -11,12 +11,12 @@ type Configuartion struct {
 	cachedConfigurationKeys *sync.Map
 }
 
-func (configuartion *Configuartion) GetBoolean(key string) bool {
-	return configuartion.Get(key) == "true"
+func (this *Configuartion) GetBoolean(key string) bool {
+	return this.Get(key) == "true"
 }
 
-func (configuartion *Configuartion) GetInt(key string) int64 {
-	strValue := configuartion.Get(key)
+func (this *Configuartion) GetInt(key string) int64 {
+	strValue := this.Get(key)
 	intValue, err := strconv.ParseInt(strValue, 10, 64)
 
 	if err != nil {
@@ -26,8 +26,13 @@ func (configuartion *Configuartion) GetInt(key string) int64 {
 	return intValue
 }
 
-func (configuartion *Configuartion) Get(key string) string {
-	if cachedValue, inCache := configuartion.cachedConfigurationKeys.Load(key); inCache {
+func (this *Configuartion) GetConfig(key string) []string {
+	rawArray := this.Get(key)
+	return strings.Split(rawArray, ",")
+}
+
+func (this *Configuartion) Get(key string) string {
+	if cachedValue, inCache := this.cachedConfigurationKeys.Load(key); inCache {
 		return cachedValue.(string)
 	}
 
@@ -39,11 +44,11 @@ func (configuartion *Configuartion) Get(key string) string {
 	}
 
 	if envExists {
-		configuartion.cachedConfigurationKeys.Store(key, envValue)
+		this.cachedConfigurationKeys.Store(key, envValue)
 		return envValue
 	}
 
-	configuartion.cachedConfigurationKeys.Store(key, defaultValue)
+	this.cachedConfigurationKeys.Store(key, defaultValue)
 	return defaultValue
 }
 

@@ -25,6 +25,7 @@ std::shared_ptr<MemDb> MemDbCreator::create(int nArgs, char ** args) {
     operatorDispatcher->cluster = cluster;
     operatorDispatcher->operationLog = operationLog;
     operatorDispatcher->onGoingSyncOplogs = syncOplogsStore;
+    operatorDispatcher->memDbStores = memDbStores;
 
     initializeOplog(configuration, operationLog, cluster);
 

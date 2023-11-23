@@ -15,4 +15,5 @@ public:
     static const constexpr uint8_t SYNC_OP_LOG_EOF = 8;
     static const constexpr uint8_t UNFIXABLE_CORRUPTED_OPLOG_SEGMENT = 9;
     static const constexpr uint8_t CAS_FAILED = 10;
+    static const constexpr uint8_t NODE_NOT_FOUND = 11;
 };

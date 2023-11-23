@@ -80,6 +80,7 @@ private:
     friend class GetClusterConfigOperator;
     friend class DoLeaveClusterOperator;
     friend class SimpleClusterNodeSetup;
+    friend class GetNodeDataOperator;
     friend class ClusterNodeSetup;
     friend class ClusterTest;
 

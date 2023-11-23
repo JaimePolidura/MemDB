@@ -1,4 +1,4 @@
-cd ../../../core
+cd ../../core
 
 # NODE
 sudo ./linux-build.sh

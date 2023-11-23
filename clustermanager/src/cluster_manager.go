@@ -2,28 +2,19 @@ package main
 
 import (
 	"clustermanager/src/config"
-	"clustermanager/src/config/keys"
-	"clustermanager/src/healthchecks"
 	"clustermanager/src/logging"
-	"clustermanager/src/nodes/nodes/connection"
 	"fmt"
 	"github.com/labstack/echo/v4"
-	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
 type ClusterManager struct {
-	healthCheckService *healthchecks.HealthCheckService
-	etcdNativeClient   *clientv3.Client
-	configuration      *configuration.Configuartion
-	nodeConnections    *connection.NodeConnections
-	api                *echo.Echo
-	logger             *logging.Logger
+	configuration *config.Configuartion
+	api           *echo.Echo
+	logger        *logging.Logger
 }
 
 func (clusterManager *ClusterManager) start() {
-	clusterManager.healthCheckService.Start()
-
-	clusterManager.api.Logger.Fatal(clusterManager.api.Start(":" + clusterManager.configuration.Get(configuration_keys.MEMDB_CLUSTERMANAGER_API_PORT)))
+	clusterManager.api.Logger.Fatal(clusterManager.api.Start(":" + clusterManager.configuration.Get(config.MEMDB_CLUSTERMANAGER_API_PORT)))
 	var input string //Block program
 	fmt.Scanln(&input)
 }

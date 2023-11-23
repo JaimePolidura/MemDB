@@ -13,6 +13,7 @@
 #include "operators/operations/cas/CasOperator.h"
 #include "operators/operations/cas/PrepareCasOperator.h"
 #include "operators/operations/cas/AcceptCasOperator.h"
+#include "operators/operations/cluster/GetNodeDataOperator.h"
 #include "operators/Operator.h"
 #include "OperatorNumbers.h"
 

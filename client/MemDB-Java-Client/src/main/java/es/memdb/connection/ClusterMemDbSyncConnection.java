@@ -1,8 +1,7 @@
 package es.memdb.connection;
 
-import es.memdb.cluster.ClusterManager;
-import es.memdb.cluster.ClusterNodeConnection;
 import es.memdb.cluster.Node;
+import es.memdb.messages.response.Response;
 import es.memdb.utils.CircularLockFreeMapIterator;
 import io.vavr.control.Try;
 import lombok.AllArgsConstructor;
@@ -14,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -40,6 +40,14 @@ public class ClusterMemDbSyncConnection implements MemDbConnection {
         this.clusterManager.getAllNodes().forEach(node -> Try.run(() -> {
             this.clusterNodeConnections.put(node.getNodeId(), ClusterNodeConnection.of(node));
         }));
+    }
+
+    public Future<Response> sendRequest(int nodeId, Response response) {
+        return null;
+    }
+
+    public int getNNodes() {
+        return -1; //TODO
     }
 
     @SneakyThrows
@@ -82,7 +90,6 @@ public class ClusterMemDbSyncConnection implements MemDbConnection {
             throw new RuntimeException("No node available to send request");
 
         while (true) {
-            //Iterator is lockfree, no race conditions
             Map.Entry<Integer, ClusterNodeConnection> nextNodeEntry = this.nextNodeToSendRequestIterator.next();
 
             return nextNodeEntry.getValue();
@@ -129,7 +136,7 @@ public class ClusterMemDbSyncConnection implements MemDbConnection {
         String address = addressSplitted[0];
         String port = addressSplitted[1];
 
-        SyncMemDbConnection nodeConnection = new SyncMemDbConnection(address, Integer.parseInt(port));
+        NoClusterMemDbConnection nodeConnection = new NoClusterMemDbConnection(address, Integer.parseInt(port));
         nodeConnection.connect();
 
         return nodeConnection;

@@ -1,5 +1,10 @@
 package es.memdb.connection;
 
+import es.memdb.messages.request.Request;
+import es.memdb.messages.request.RequestSerializer;
+import es.memdb.messages.response.Response;
+import es.memdb.messages.response.ResponseDeserializer;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -7,17 +12,18 @@ import java.net.Socket;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public final class SyncMemDbConnection implements MemDbConnection {
+public final class NoClusterMemDbConnection implements MemDbConnection {
     private final String host;
     private final int port;
     private Socket socket;
     private OutputStream output;
     private InputStream input;
 
+    private final ResponseDeserializer responseDeserializer = new ResponseDeserializer();
+    private final RequestSerializer requestSerializer = new RequestSerializer();
     private final ResponseReader responseReader = new ResponseReader();
-    private final Lock operationLock = new ReentrantLock(true);
 
-    public SyncMemDbConnection(String host, int port) throws IOException {
+    public NoClusterMemDbConnection(String host, int port) throws IOException {
         this.host = host;
         this.port = port;
         this.connect();
@@ -33,32 +39,22 @@ public final class SyncMemDbConnection implements MemDbConnection {
     }
 
     @Override
-    public void write(byte[] value, int requestNumber) {
+    public Response send(Request request) {
         try {
-            this.operationLock.lock();
+            byte[] serialized = requestSerializer.serialize(request);
+            output.write(serialized);
 
-            this.output.write(value);
-        } catch (IOException e) {
-            this.operationLock.unlock();
+            byte[] bytesResponse = responseReader.read(input);
+            return responseDeserializer.deserialize(bytesResponse);
+        } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
     }
 
     @Override
     public boolean isClosed() {
         return this.socket == null || this.socket.isClosed();
-    }
-
-    @Override
-    public byte[] read(int requestNumber) {
-        try{
-            return this.responseReader.read(this.input);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }finally {
-            this.operationLock.unlock();
-        }
     }
 
     @Override

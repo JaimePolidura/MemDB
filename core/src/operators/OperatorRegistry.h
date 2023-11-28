@@ -7,6 +7,7 @@
 #include "operators/operations/cluster/MovePartitionOplogOperator.h"
 #include "operators/operations/cluster/FixOplogSegmentOperator.h"
 #include "operators/operations/cluster/HealthCheckOperator.h"
+#include "operators/operations/user/ContainsOperator.h"
 #include "operators/operations/user/DeleteOperator.h"
 #include "operators/operations/user/GetOperator.h"
 #include "operators/operations/user/SetOperator.h"

@@ -1,7 +1,6 @@
 package es.memdb.connection;
 
 import es.memdb.MemDb;
-import es.memdb.cluster.ClusterManager;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,6 +11,6 @@ public final class MemDbConnections {
     }
 
     public static MemDb sync(String host, int port, String authApiKey) throws IOException {
-        return new MemDb(new SyncMemDbConnection(host, port), authApiKey, false);
+        return new MemDb(new NoClusterMemDbConnection(host, port), authApiKey, false);
     }
 }

@@ -1,5 +1,6 @@
 package es.memdb;
 
+import es.memdb.connection.ClusterMemDbSyncConnection;
 import es.memdb.connection.MemDbConnection;
 import es.memdb.messages.request.*;
 import es.memdb.messages.response.MultiResponses;
@@ -11,15 +12,12 @@ import es.memdb.utils.LamportClock;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
 public final class MemDb {
     private MemDbExceptionsRegistry memDbExceptionsRegistry = new MemDbExceptionsRegistry();
     private RequestNumberGenerator requestNumberGenerator = new RequestNumberGenerator();
-    private ResponseDeserializer responseDeserializer = new ResponseDeserializer();
-    private RequestSerializer requestSerializer = new RequestSerializer();
 
     private final LamportClock clock = new LamportClock(0L, (short) 0);
     private final MemDbConnection memDbConnection;
@@ -32,9 +30,16 @@ public final class MemDb {
                 .args(List.of(key)));
     }
 
+    public boolean contains(String key) {
+        return sendRequest(OperationRequest.builder()
+                .operator(Operator.CONTAINS)
+                .args(List.of(key))) != null;
+    }
+
     public MultiResponses quorumGet(String key) {
         Request request = this.createRequestObject(OperationRequest.builder()
                 .operator(Operator.GET)
+                .timestamp(clock.get())
                 .args(List.of(key)));
 
         if(!isCluster){
@@ -63,11 +68,14 @@ public final class MemDb {
     }
 
     private MultiResponses sendMultipleRequest(Request request) {
-        int nNodes = /* TODO **/ 0;
+        ClusterMemDbSyncConnection connectionCluster = (ClusterMemDbSyncConnection) this.memDbConnection;
+        int nNodes = connectionCluster.getNNodes();
         MultiResponses multiResponses = MultiResponses.fromCluster(nNodes);
         MultiResponses.MultipleResponseNotifier notifier = new MultiResponses.MultipleResponseNotifier(multiResponses);
 
         for (int i = 0; i < nNodes; i++) {
+            connectionCluster.sendRequest( request);
+
             notifier.addResponse(/** TOOD */ null);
             //Send req
         }
@@ -83,13 +91,7 @@ public final class MemDb {
     }
 
     private Response sendRequestAndReceiveResponse(Request request) {
-        byte[] rawRequest = requestSerializer.serialize(request, clock.get());
-
-        memDbConnection.write(rawRequest, request.getRequestNumber());
-
-        byte[] rawResponse = memDbConnection.read(request.getRequestNumber());
-
-        Response response = responseDeserializer.deserialize(rawResponse);
+        Response response = memDbConnection.send(request);
 
         clock.update(response.getTimestamp().getCounter().get());
 
@@ -108,7 +110,9 @@ public final class MemDb {
         return Request.builder()
                 .requestNumber(requestNumber)
                 .authentication(AuthenticationRequest.builder().authApiKey(authApiKey).build())
-                .operationRequest(operation.build())
+                .operationRequest(operation
+                        .timestamp(clock.get())
+                        .build())
                 .build();
     }
 
@@ -116,7 +120,7 @@ public final class MemDb {
     private String handleException(Request request, Response response) {
         int errorCode = response.getErrorCode();
         Class<? extends MemDbException> exception = memDbExceptionsRegistry.findByCode(errorCode, request);
-        boolean exceptionExpected = request.getOperationRequest().getOperator().isExpcetionExpected(exception);
+        boolean exceptionExpected = request.getOperationRequest().getOperator().isExceptionExpected(exception);
 
         if(!exceptionExpected)
             throw (MemDbException) exception.getConstructors()[0].newInstance(exception.getName(), request);

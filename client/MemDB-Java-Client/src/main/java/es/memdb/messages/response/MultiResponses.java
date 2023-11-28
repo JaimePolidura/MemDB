@@ -33,7 +33,25 @@ public final class MultiResponses {
 
     public Optional<MultiResponseResult> awaitQuorum(long time, TimeUnit timeUnit) {
         boolean isTimeout = latch.awaitMin(maxNodes / 2 + 1, time, timeUnit);
+        return getMultiResponseResult(isTimeout);
+    }
 
+    public Optional<MultiResponseResult> awaitAll(long time, TimeUnit timeUnit) {
+        boolean isTimeout = latch.awaitMin(maxNodes, time, timeUnit);
+        return getMultiResponseResult(isTimeout);
+    }
+
+    public Optional<MultiResponseResult> awaitTwo(long time, TimeUnit timeUnit) {
+        boolean isTimeout = latch.awaitMin(2, time, timeUnit);
+        return getMultiResponseResult(isTimeout);
+    }
+
+    public Optional<MultiResponseResult> await(int nNodes, long time, TimeUnit timeUnit) {
+        boolean isTimeout = latch.awaitMin(nNodes, time, timeUnit);
+        return getMultiResponseResult(isTimeout);
+    }
+
+    private Optional<MultiResponseResult> getMultiResponseResult(boolean isTimeout) {
         return !isTimeout ?
                 Optional.of(new MultiResponseResult(responses)) :
                 Optional.empty();

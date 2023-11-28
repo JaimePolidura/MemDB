@@ -1,6 +1,11 @@
 package es.memdb;
 
+import io.vavr.CheckedRunnable;
+import lombok.SneakyThrows;
+
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.security.MessageDigest;
 
 public final class Utils {
     public static int toInt(byte[] bytes) {
@@ -14,6 +19,24 @@ public final class Utils {
             primitive[i] = wrapper[i];
 
         return primitive;
+    }
+
+    @SneakyThrows
+    public static long md5(String key) {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] hashBytes = md.digest(key.getBytes());
+
+        return ByteBuffer.wrap(hashBytes)
+                .order(ByteOrder.BIG_ENDIAN)
+                .getLong();
+    }
+
+    public static void rethrowNoChecked(CheckedRunnable checkedRunnable) {
+        try{
+            checkedRunnable.run();
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static Byte[] primitiveToWrapper(byte[] primitive) {

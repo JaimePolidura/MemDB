@@ -13,12 +13,25 @@
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
             <version>4.4.0-m1</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.JaimePolidura</groupId>
+            <artifactId>Java-Utils</artifactId>
+            <version>1.1.17</version>
         </dependency>
 
         <dependency>

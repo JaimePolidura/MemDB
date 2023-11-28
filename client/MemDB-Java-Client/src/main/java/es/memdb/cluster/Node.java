@@ -1,30 +1,56 @@
 package es.memdb.cluster;
 
+import es.memdb.connection.MemDbConnection;
+import es.memdb.connection.NoClusterMemDbConnection;
+import es.memdb.connection.ResponseReader;
+import es.memdb.messages.request.Request;
+import es.memdb.messages.request.RequestSerializer;
+import es.memdb.messages.response.Response;
+import es.memdb.messages.response.ResponseDeserializer;
+import es.memdb.utils.LamportClock;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.IOException;
 import java.util.Objects;
 
-@NoArgsConstructor
-@AllArgsConstructor
 public final class Node {
     @Getter private int nodeId;
-    @Getter private NodeState state;
     @Getter private String address;
+    @Getter private MemDbConnection connection;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Node node = (Node) o;
-        return nodeId == node.nodeId && state == node.state && Objects.equals(address, node.address);
+    private final ResponseDeserializer responseDeserializer = new ResponseDeserializer();
+    private final RequestSerializer requestSerializer = new RequestSerializer();
+
+    public Node(String address) {
+        this(address, 0);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(nodeId, state, address);
+    public Node(String address, int nodeId) {
+        this.address = address;
+        this.nodeId = nodeId;
+    }
+
+    public Response sendRequest(Request request) {
+        if(connection.isClosed()){
+            connect();
+        }
+
+        byte[] responseBytes = requestSerializer.serialize(request, request.getOperationRequest().getTimestamp());
+        return responseDeserializer.deserialize(responseBytes);
+    }
+
+    public void connect() {
+        try{
+            String host = address.split(":")[0];
+            int port = Integer.parseInt(address.split(":")[1]);
+            connection = new NoClusterMemDbConnection(host, port);
+            connection.connect();
+        }catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     public int getPort() {

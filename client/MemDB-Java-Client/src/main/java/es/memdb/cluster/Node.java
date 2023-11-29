@@ -38,8 +38,12 @@ public final class Node {
             connect();
         }
 
-        byte[] responseBytes = requestSerializer.serialize(request, request.getOperationRequest().getTimestamp());
+        byte[] responseBytes = requestSerializer.serialize(request);
         return responseDeserializer.deserialize(responseBytes);
+    }
+
+    public void close() throws Exception {
+        this.connection.close();
     }
 
     public void connect() {

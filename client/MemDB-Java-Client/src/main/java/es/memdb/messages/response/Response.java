@@ -14,6 +14,10 @@ public final class Response {
     @Getter private final boolean isSuccessful;
     @Getter private final String response;
 
+    public boolean hasError(int errorCode) {
+        return (this.errorCode & errorCode) == errorCode;
+    }
+
     public boolean isFailed() {
         return !this.isSuccessful;
     }

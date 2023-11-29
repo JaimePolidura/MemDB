@@ -65,11 +65,22 @@ public final class MultiResponses {
             return this.responses.get(0).getResponse();
         }
 
+        public boolean anyResponseHasValue() {
+            return this.responses.get(0).getResponse() != null;
+        }
+
         public String mostUptoDateResponse() {
             return responses.stream()
                     .max(Comparator.comparing(Response::getTimestamp))
                     .get()
                     .getResponse();
+        }
+
+        public boolean mostUptoDateResponseHasValue() {
+            return responses.stream()
+                    .max(Comparator.comparing(Response::getTimestamp))
+                    .get()
+                    .getResponse() != null;
         }
 
         public boolean allSuccessful() {

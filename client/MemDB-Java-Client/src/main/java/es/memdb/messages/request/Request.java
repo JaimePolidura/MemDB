@@ -11,6 +11,14 @@ public final class Request {
     @Getter private final AuthenticationRequest authentication;
     @Getter private final OperationRequest operationRequest;
 
+    public boolean hasOneArg() {
+        return !operationRequest.getArgs().isEmpty();
+    }
+
+    public String getFirstArg() {
+        return this.operationRequest.getArgs().get(0);
+    }
+
     @Override
     public String toString() {
         return "Request{" +

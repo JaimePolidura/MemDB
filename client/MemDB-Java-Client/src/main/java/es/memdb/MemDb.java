@@ -1,11 +1,10 @@
 package es.memdb;
 
-import es.memdb.connection.ClusterMemDbSyncConnection;
+import es.memdb.cluster.ClusterMemDbConnection;
 import es.memdb.connection.MemDbConnection;
 import es.memdb.messages.request.*;
 import es.memdb.messages.response.MultiResponses;
 import es.memdb.messages.response.Response;
-import es.memdb.messages.response.ResponseDeserializer;
 import es.memdb.messages.response.expcetions.MemDbException;
 import es.memdb.messages.response.expcetions.MemDbExceptionsRegistry;
 import es.memdb.utils.LamportClock;
@@ -36,17 +35,20 @@ public final class MemDb {
                 .args(List.of(key))) != null;
     }
 
+    public MultiResponses quorumContains(String key) {
+        Request request = createRequestObject(OperationRequest.builder()
+                .operator(Operator.CONTAINS)
+                .args(List.of(key)));
+
+        return sendMultiRequest(request);
+    }
+
     public MultiResponses quorumGet(String key) {
         Request request = this.createRequestObject(OperationRequest.builder()
                 .operator(Operator.GET)
-                .timestamp(clock.get())
                 .args(List.of(key)));
 
-        if(!isCluster){
-            return MultiResponses.fromSingleResponse(sendRequestAndReceiveResponse(request));
-        } else {
-            return sendMultipleRequest(request);
-        }
+        return sendMultiRequest(request);
     }
 
     public void delete(String key) {
@@ -67,20 +69,17 @@ public final class MemDb {
                 .args(List.of(key, expected, value))) != null;
     }
 
-    private MultiResponses sendMultipleRequest(Request request) {
-        ClusterMemDbSyncConnection connectionCluster = (ClusterMemDbSyncConnection) this.memDbConnection;
-        int nNodes = connectionCluster.getNNodes();
-        MultiResponses multiResponses = MultiResponses.fromCluster(nNodes);
-        MultiResponses.MultipleResponseNotifier notifier = new MultiResponses.MultipleResponseNotifier(multiResponses);
-
-        for (int i = 0; i < nNodes; i++) {
-            connectionCluster.sendRequest( request);
-
-            notifier.addResponse(/** TOOD */ null);
-            //Send req
+    private MultiResponses sendMultiRequest(Request request) {
+        if(!isCluster){
+            return MultiResponses.fromSingleResponse(sendRequestAndReceiveResponse(request));
+        } else {
+            return sendMultipleRequest(request);
         }
+    }
 
-        return multiResponses;
+    private MultiResponses sendMultipleRequest(Request request) {
+        ClusterMemDbConnection connectionCluster = (ClusterMemDbConnection) this.memDbConnection;
+        return connectionCluster.sendMultipleRequest(request);
     }
 
     private String sendRequest(OperationRequest.OperationRequestBuilder operation) {

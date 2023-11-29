@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.MessageDigest;
+import java.util.*;
 
 public final class Utils {
     public static int toInt(byte[] bytes) {
@@ -19,6 +20,22 @@ public final class Utils {
             primitive[i] = wrapper[i];
 
         return primitive;
+    }
+
+    public static <T> List<T> getRandomUnique(List<T> list, int n) {
+        if(n >= list.size()){
+            return list;
+        }
+
+        List<T> alreadyTaken = new ArrayList<>();
+        while (alreadyTaken.size() < n) {
+            T randomValue = list.get((int) (Math.random() * list.size()));
+            if(!alreadyTaken.contains(randomValue)){
+                alreadyTaken.add(randomValue);
+            }
+        }
+
+        return alreadyTaken;
     }
 
     @SneakyThrows

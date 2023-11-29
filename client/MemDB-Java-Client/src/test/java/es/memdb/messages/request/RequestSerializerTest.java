@@ -24,13 +24,14 @@ public class RequestSerializerTest {
                         .build())
                 .operationRequest(OperationRequest.builder()
                         .operator(Operator.SET)
+                        .timestamp(1)
                         .args(List.of(
                                 "name", "jaime"
                         ))
                         .build())
                 .build();
 
-        byte[] response = this.requestSerializer.serialize(request, 1);
+        byte[] response = this.requestSerializer.serialize(request);
 
         byte[] expected = new byte[]{
                 0x00, 0x00, 0x00, 0x22, //Request size

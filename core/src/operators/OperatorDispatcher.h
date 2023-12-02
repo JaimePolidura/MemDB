@@ -18,9 +18,6 @@
 
 class OperatorDispatcher {
 public:
-    OperatorDispatcher(memDbStores_t memDbStores, lamportClock_t clock, cluster_t cluster, configuration_t configuration,
-                       logger_t logger, operationLog_t operationLog, onGoingSyncOplogs_t onGoingSyncOplogs);
-
     OperatorDispatcher() = default;
 
     Response dispatch(const Request& request);
@@ -47,9 +44,9 @@ private:
     memDbStores_t memDbStores;
     logger_t logger;
 
-    friend class MemDbCreator;
-
     OperatorDependencies dependencies;
+
+    friend class MemDbCreator;
 
     Response dispatch_no_applyDelayedOperationsBuffer(const Request& request);
 

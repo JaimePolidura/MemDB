@@ -8,9 +8,6 @@ std::shared_ptr<MemDb> MemDbCreator::create(int nArgs, char ** args) {
     lamportClock_t clock = std::make_shared<LamportClock>(1);
     operationLog_t operationLog = createOperationLogObject(configuration, logger);
 
-    //TODO Fix. If I dont put this, DelayedOperationBuffer will segfault at initialization
-    std::queue<Request> req{};
-
     operatorDispatcher_t operatorDispatcher = std::make_shared<OperatorDispatcher>();
 
     cluster_t cluster = createClusterObject(logger, configuration, syncOplogsStore, memDbStores, operatorDispatcher, operationLog);

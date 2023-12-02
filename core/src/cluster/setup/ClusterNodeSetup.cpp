@@ -36,11 +36,19 @@ void ClusterNodeSetup::initializeNodeInCluster() {
 }
 
 void ClusterNodeSetup::setConfigurationProvidedClusterConfig() {
+    uint32_t nodesPerPartition = configuration->get<uint32_t>(ConfigurationKeys::NODES_PER_PARTITION);
+    memdbNodeId_t selfNodeId = configuration->get<memdbNodeId_t>(ConfigurationKeys::NODE_ID);
+    uint32_t maxPartitionSize = configuration->get<uint32_t>(ConfigurationKeys::MAX_PARTITION_SIZE);
+    uint32_t ringPosition = static_cast<uint32_t>(HashCalculator::calculateMD5(std::to_string(selfNodeId)) % maxPartitionSize);
+
     this->setClusterConfig(GetClusterConfigResponse{
-        .nodesPerPartition = configuration->get<uint32_t>(ConfigurationKeys::NODES_PER_PARTITION),
-        .maxPartitionSize = configuration->get<uint32_t>(ConfigurationKeys::MAX_PARTITION_SIZE),
+        .nodesPerPartition = nodesPerPartition,
+        .maxPartitionSize = maxPartitionSize,
         .nodes = {},
-        .ringEntries = {}
+        .ringEntries = {RingEntry{
+            .nodeId = selfNodeId,
+            .ringPosition =  ringPosition
+        }}
     });
 }
 

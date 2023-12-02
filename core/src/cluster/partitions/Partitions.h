@@ -10,7 +10,6 @@
 #include "config/Configuration.h"
 
 class Partitions {
-private:
     RingEntries ringEntries;
 
     RingEntry selfEntry{};

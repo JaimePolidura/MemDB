@@ -25,4 +25,7 @@ sudo gdb --args ./src/build/src/memdb_run USE_REPLICATION=true \
 		SEED_NODES=localhost:10000 \
         DATA_PATH=/etc/memdb1 \
         NODE_ID=1 \
+		SEED_NODES=localhost:10000 \
+		NODES_PER_PARTITION=2 \
+		MAX_PARTITION_SIZE=64 \
 		USE_PARTITIONS=true

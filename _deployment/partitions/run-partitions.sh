@@ -25,6 +25,8 @@ sudo ./run.sh USE_REPLICATION=true \
         DATA_PATH=/etc/memdb1 \
         NODE_ID=1 \ 
 		SEED_NODES=localhost:10000 \
+		NODES_PER_PARTITION=2 \
+		MAX_PARTITION_SIZE=64 \
 		USE_PARTITIONS=true &
 
 sudo ./run.sh USE_REPLICATION=true \

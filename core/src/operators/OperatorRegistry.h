@@ -19,7 +19,6 @@
 #include "OperatorNumbers.h"
 
 class OperatorRegistry {
-private:
     std::map<uint8_t, std::shared_ptr<Operator>> operators{};
 
 public:

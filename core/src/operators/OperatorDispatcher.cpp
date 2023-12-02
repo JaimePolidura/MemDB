@@ -1,17 +1,5 @@
 #include "operators/OperatorDispatcher.h"
 
-OperatorDispatcher::OperatorDispatcher(memDbStores_t memDbStores, lamportClock_t clock, cluster_t cluster, configuration_t configuration,
-                                       logger_t logger, operationLog_t operationLog, onGoingSyncOplogs_t onGoingSyncOplogs):
-        memDbStores(memDbStores),
-        operationLog(operationLog),
-        onGoingSyncOplogs(onGoingSyncOplogs),
-        clock(clock),
-        logger(logger),
-        cluster(cluster),
-        configuration(configuration),
-        delayedOperationsBuffer(configuration) {
-}
-
 Response OperatorDispatcher::dispatch(const Request& request) {
     if(canExecuteRequest()){
         applyDelayedOperationsBuffer();

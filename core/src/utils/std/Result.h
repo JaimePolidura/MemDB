@@ -8,7 +8,7 @@ namespace std {
     public:
         result(const V& value, const E& error, bool success): _value(value), _error(error), _success(success) {}
 
-        result(bool success): _success(success) {}
+        explicit result(bool success): _success(success) {}
 
         result() = default;
 

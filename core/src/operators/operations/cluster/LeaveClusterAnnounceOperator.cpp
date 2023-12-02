@@ -4,7 +4,7 @@ Response LeaveClusterAnnounceOperator::operate(const OperationBody& operation, c
     dependencies.logger->info("Received LEAVE_CLUSTER_ANNOUNCE from node {0}", operation.nodeId);
 
     if(dependencies.cluster->clusterNodes->existsByNodeId(operation.nodeId)) {
-        node_t node = dependencies.cluster->clusterNodes->getByNodeId(operation.nodeId);
+        node_t node = dependencies.cluster->clusterNodes->getByNodeId(operation.nodeId).value();
         dependencies.cluster->deletedNodeInClusterHandler(node);
     }
 

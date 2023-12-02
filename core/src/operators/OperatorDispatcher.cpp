@@ -10,7 +10,6 @@ OperatorDispatcher::OperatorDispatcher(memDbStores_t memDbStores, lamportClock_t
         cluster(cluster),
         configuration(configuration),
         delayedOperationsBuffer(configuration) {
-    this->dependencies = this->getDependencies();
 }
 
 Response OperatorDispatcher::dispatch(const Request& request) {
@@ -111,27 +110,27 @@ void OperatorDispatcher::applyDelayedOperationsBuffer() {
     }
 }
 
-OperatorDependencies OperatorDispatcher::getDependencies() {
-    OperatorDependencies dependenciesToReturn{};
+void OperatorDispatcher::buildDependencies() {
+    OperatorDependencies dependencies{};
 
-    dependenciesToReturn.onGoingPaxosRounds = this->onGoingPaxosRounds;
-    dependenciesToReturn.onGoingSyncOplogs = this->onGoingSyncOplogs;
-    dependenciesToReturn.configuration = this->configuration;
-    dependenciesToReturn.operationLog = this->operationLog;
-    dependenciesToReturn.cluster = this->cluster;
-    dependenciesToReturn.logger = this->logger;
-    dependenciesToReturn.clock = this->clock;
-    dependenciesToReturn.memDbStores = this->memDbStores;
-    dependenciesToReturn.operatorDispatcher = [this](const OperationBody& op, const OperationOptions& options) -> Response {
+    dependencies.onGoingPaxosRounds = this->onGoingPaxosRounds;
+    dependencies.onGoingSyncOplogs = this->onGoingSyncOplogs;
+    dependencies.configuration = this->configuration;
+    dependencies.operationLog = this->operationLog;
+    dependencies.cluster = this->cluster;
+    dependencies.logger = this->logger;
+    dependencies.clock = this->clock;
+    dependencies.memDbStores = this->memDbStores;
+    dependencies.operatorDispatcher = [this](const OperationBody& op, const OperationOptions& options) -> Response {
         return this->executeOperation(this->operatorRegistry->get(op.operatorNumber), const_cast<OperationBody&>(op), options);
     };
-    dependenciesToReturn.operatorsDispatcher = [this](const std::vector<OperationBody>& ops, const OperationOptions& options) -> void {
+    dependencies.operatorsDispatcher = [this](const std::vector<OperationBody>& ops, const OperationOptions& options) -> void {
         std::for_each(ops.begin(), ops.end(), [this, options](const OperationBody &op) -> void {
             this->executeOperation(this->operatorRegistry->get(op.operatorNumber), const_cast<OperationBody&>(op), options);
         });
     };
 
-    return dependenciesToReturn;
+    this->dependencies = dependencies;
 }
 
 inline int OperatorDispatcher::getPartitionIdByKey(const SimpleString<memDbDataLength_t>& key) {

@@ -21,9 +21,9 @@ bool Authenticator::isKeyUser(const std::string& authKey) {
 
 std::result<AuthenticationType> Authenticator::getAuthenticationTypeFromConfiguration(const std::string& authKey) {
     if(this->configuration->get(ConfigurationKeys::AUTH_USER_KEY) == authKey) {
-        return AuthenticationType::USER;
+        return std::ok(AuthenticationType::USER);
     }else if (this->configuration->get(ConfigurationKeys::AUTH_NODE_KEY) == authKey) {
-        return AuthenticationType::NODE;
+        return std::ok(AuthenticationType::NODE);
     }
 
     return std::error<AuthenticationType>();

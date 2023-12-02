@@ -53,7 +53,7 @@ private:
 
     Response dispatch_no_applyDelayedOperationsBuffer(const Request& request);
 
-    OperatorDependencies getDependencies();
+    void buildDependencies();
 
     bool isAuthorizedToExecute(std::shared_ptr<Operator> operatorToExecute, AuthenticationType authenticationOfUser);
 

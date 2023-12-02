@@ -7,7 +7,6 @@
 #include "Map.h"
 
 class MemDbStores {
-private:
     std::map<uint32_t, memDbDataStoreMap_t> storesByPartitionId{};
 
 public:

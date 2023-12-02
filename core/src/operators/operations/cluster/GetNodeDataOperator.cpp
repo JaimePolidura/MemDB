@@ -5,7 +5,10 @@ Response GetNodeDataOperator::operate(const OperationBody&operation, const Opera
     std::optional<node_t> nodeOptional = dependencies.cluster->clusterNodes->getByNodeId(nodeId);
 
     return nodeOptional.has_value() ?
-        this->nodeToSimpleString(nodeOptional.value()) :
+        ResponseBuilder::builder()
+            .value(this->nodeToSimpleString(nodeOptional.value()))
+            ->success()
+            ->build() :
         Response::error(ErrorCode::NODE_NOT_FOUND);
 }
 

@@ -135,7 +135,28 @@ uint64_t FileUtils::size(const std::string &basePath, const std::string &fileNam
     return in.tellg();
 }
 
+void FileUtils::mkdirAll(const std::string& path) {
+    std::vector<std::string> spplitedByFileSep = StringUtils::split(path, '/');
+    std::string lastPathChecked = spplitedByFileSep[0];
+
+    for(int i = 0; i < spplitedByFileSep.size(); i++) {
+        if(i > 0) {
+            lastPathChecked = lastPathChecked + "/" + spplitedByFileSep[i];
+        }
+        if(lastPathChecked == "") {
+            lastPathChecked = "/";
+            continue;
+        }
+
+        if(!FileUtils::exists(lastPathChecked)) {
+            FileUtils::createDirectory(lastPathChecked);
+        }
+    }
+}
+
 void FileUtils::createFile(const std::string &path, const std::string &name) {
+FileUtils::mkdirAll(path);
+
 #ifdef _WIN32
     HANDLE handle = CreateFile((path + "\\" + name).c_str(), GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
 

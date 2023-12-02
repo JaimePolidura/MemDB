@@ -7,10 +7,10 @@ import java.util.concurrent.TimeUnit;
 public final class Other {
     @SneakyThrows
     public static void main(String[] args) {
-        concurrent_cas();
+//        concurrent_cas();
 //        simple_cas();
 //        linearized_cas();
-//        node1_write();
+        node1_write();
 //        node3_write();
 //        node5_write();
 //        node1_read();

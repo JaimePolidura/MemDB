@@ -1,6 +1,7 @@
 #pragma once
 
 #include "shared.h"
+#include "utils/strings/StringUtils.h"
 
 class FileUtils {
 public:
@@ -29,4 +30,6 @@ public:
     static uint64_t size(const std::string& basePath, const std::string& fileName);
 
     static std::string getFileInPath(const std::string& basePath, const std::string& fileName);
+
+    static void mkdirAll(const std::string& path);
 };

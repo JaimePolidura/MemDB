@@ -21,4 +21,7 @@ public:
     static const std::string NODE_REQUEST_TIMEOUT_MS;
     static const std::string NODE_REQUEST_N_RETRIES;
     static const std::string SEED_NODES;
+
+    static const std::string NODES_PER_PARTITION;
+    static const std::string MAX_PARTITION_SIZE;
 };

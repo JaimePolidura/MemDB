@@ -28,6 +28,8 @@ public:
                 {ConfigurationKeys::NODE_REQUEST_N_RETRIES,             "10"},
                 {ConfigurationKeys::SEED_NODES,                         ""},
                 {ConfigurationKeys::ADDRESS,                            "127.0.0.1"},
+                {ConfigurationKeys::NODES_PER_PARTITION,                "0"}, //Provided by seeder nodes
+                {ConfigurationKeys::MAX_PARTITION_SIZE,                 "0"},
                 {ConfigurationKeys::DATA_PATH,                          FILEPATH}
         };
     }

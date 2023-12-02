@@ -7,4 +7,5 @@ sudo ./run.sh USE_REPLICATION=true \
         SERVER_PORT=10001 \
 		SEED_NODES=127.0.0.1:10000 \
         DATA_PATH=/etc/memdb2 \
+		SEED_NODES=localhost:10000 \
         NODE_ID=2

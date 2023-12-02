@@ -18,3 +18,5 @@ const std::string ConfigurationKeys::NODE_REQUEST_N_RETRIES = "NODE_REQUEST_N_RE
 const std::string ConfigurationKeys::ADDRESS = "ADDRESS";
 
 const std::string ConfigurationKeys::SEED_NODES = "SEED_NODES";
+const std::string ConfigurationKeys::NODES_PER_PARTITION = "NODES_PER_PARTITION";
+const std::string ConfigurationKeys::MAX_PARTITION_SIZE = "MAX_PARTITION_SIZE";

@@ -4,15 +4,16 @@ void ClusterNodeSetup::initializeNodeInCluster() {
     this->logger->info("Setting up node in the cluster. Sending GET_CLUSTER_CONFIG to any node");
 
     std::result<GetClusterConfigResponse> clusterConfigResponse = cluster->getClusterConfig();
+    bool selfIsTheOnlySeedNode = this->isSelfTheOnlySeedNode();
 
     if(clusterConfigResponse.is_success()) {
         this->setClusterConfig(clusterConfigResponse.get());
     }
-    if(clusterConfigResponse.has_error() && !configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS)) {
-        this->setClusterConfig(GetClusterConfigResponse{.nodes = {}});
-    }
-    if(clusterConfigResponse.has_error() && configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS)) {
+    if(!selfIsTheOnlySeedNode && clusterConfigResponse.has_error()) {
         throw std::runtime_error("Cannot connect to any seed node to get cluster information");
+    }
+    if(selfIsTheOnlySeedNode && clusterConfigResponse.has_error()) {
+        this->setConfigurationProvidedClusterConfig();
     }
 
     clusterNodeChangeHandler_t changeHandler = this->getClusterChangeNodeHandler();
@@ -32,4 +33,18 @@ void ClusterNodeSetup::initializeNodeInCluster() {
     cluster->setBooting();
 
     this->logger->info("Cluster node is now set up");
+}
+
+void ClusterNodeSetup::setConfigurationProvidedClusterConfig() {
+    this->setClusterConfig(GetClusterConfigResponse{
+        .nodesPerPartition = configuration->get<uint32_t>(ConfigurationKeys::NODES_PER_PARTITION),
+        .maxPartitionSize = configuration->get<uint32_t>(ConfigurationKeys::MAX_PARTITION_SIZE),
+        .nodes = {},
+        .ringEntries = {}
+    });
+}
+
+bool ClusterNodeSetup::isSelfTheOnlySeedNode() {
+    std::vector<std::string> seedsNodes = configuration->getVector(ConfigurationKeys::SEED_NODES);
+    return seedsNodes.size() == 1 && seedsNodes[0].compare(configuration->get(ConfigurationKeys::ADDRESS)) == 0;
 }

@@ -145,6 +145,8 @@ auto Cluster::getClusterConfig() -> std::result<GetClusterConfigResponse> {
                     .ringEntries = ringEntries
                 });
             }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(timeoutMs));
         }
     }
 

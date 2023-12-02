@@ -24,6 +24,7 @@ sudo ./run.sh USE_REPLICATION=true \
         SERVER_PORT=10000 \
         DATA_PATH=/etc/memdb1 \
         NODE_ID=1 \ 
+		SEED_NODES=localhost:10000 \
 		USE_PARTITIONS=true &
 
 sudo ./run.sh USE_REPLICATION=true \

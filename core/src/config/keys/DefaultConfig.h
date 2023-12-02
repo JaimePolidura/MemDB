@@ -27,9 +27,9 @@ public:
                 {ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS,            "5000"},
                 {ConfigurationKeys::NODE_REQUEST_N_RETRIES,             "10"},
                 {ConfigurationKeys::SEED_NODES,                         ""},
-                {ConfigurationKeys::ADDRESS,                            "127.0.0.1"},
-                {ConfigurationKeys::NODES_PER_PARTITION,                "0"}, //Provided by seeder nodes
-                {ConfigurationKeys::MAX_PARTITION_SIZE,                 "0"},
+                {ConfigurationKeys::ADDRESS,                            "localhost"},
+                {ConfigurationKeys::NODES_PER_PARTITION,                "1"}, //Provided by seeder nodes
+                {ConfigurationKeys::MAX_PARTITION_SIZE,                 "64"},
                 {ConfigurationKeys::DATA_PATH,                          FILEPATH}
         };
     }

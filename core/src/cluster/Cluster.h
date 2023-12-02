@@ -85,7 +85,7 @@ private:
     friend class ClusterTest;
 
     std::vector<RingEntry> getRingEntriesFromGetClusterConfig(uint32_t nNodesInCluster, int& offset, Response response);
-    std::vector<node_t> getNodesFromGetClusterConfig(uint32_t nNodesInCluster, int& offset, Response response);
+    std::vector<node_t> getNodesFromGetClusterConfig(int nNodesInCluster, int& offset, Response response);
 };
 
 using cluster_t = std::shared_ptr<Cluster>;

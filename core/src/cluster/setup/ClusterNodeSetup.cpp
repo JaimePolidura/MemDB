@@ -46,5 +46,6 @@ void ClusterNodeSetup::setConfigurationProvidedClusterConfig() {
 
 bool ClusterNodeSetup::isSelfTheOnlySeedNode() {
     std::vector<std::string> seedsNodes = configuration->getVector(ConfigurationKeys::SEED_NODES);
-    return seedsNodes.size() == 1 && seedsNodes[0].compare(configuration->get(ConfigurationKeys::ADDRESS)) == 0;
+    return seedsNodes.size() == 1 && seedsNodes[0].compare(configuration->get(ConfigurationKeys::ADDRESS) + ":" +
+    configuration->get(ConfigurationKeys::SERVER_PORT)) == 0;
 }

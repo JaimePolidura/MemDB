@@ -63,6 +63,8 @@ auto Cluster::announceJoin() -> void {
         })
         ->buildOperationBody();
 
+    this->logger->info("Announcing join to the cluster");
+
     this->clusterNodes->broadcastAll(request, SendRequestOptions{.canBeStoredInHint = true});
 }
 
@@ -70,6 +72,8 @@ auto Cluster::announceLeave() -> void {
     OperationBody request = RequestBuilder::builder()
         .operatorNumber(OperatorNumbers::LEAVE_CLUSTER_ANNOUNCE)
         ->buildOperationBody();
+
+    this->logger->info("Announcing leave to the cluster");
 
     this->clusterNodes->broadcastAll(request, SendRequestOptions{.canBeStoredInHint = true});
 }
@@ -110,13 +114,17 @@ auto Cluster::getClusterConfig() -> std::result<GetClusterConfigResponse> {
     std::vector<std::string> addressSeedNodes = this->configuration->getVector(ConfigurationKeys::SEED_NODES);
     uint64_t timeoutMs = this->configuration->get<uint64_t>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS);
     uint32_t nRetries = this->configuration->get<uint32_t>(ConfigurationKeys::NODE_REQUEST_N_RETRIES);
+    bool usingPartitions = this->configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS);
 
     if(addressSeedNodes.empty()) {
         return std::error<GetClusterConfigResponse>();
     }
 
+    this->logger->info("Sending GET_CLUSTER_CONFIG to any seed node");
+
     for(const std::string& seedNodeAddress : addressSeedNodes) {
-        if(seedNodeAddress == this->configuration->get(ConfigurationKeys::ADDRESS))  {
+        if(seedNodeAddress == this->configuration->get(ConfigurationKeys::ADDRESS) + ":" +
+            this->configuration->get(ConfigurationKeys::SERVER_PORT))  {
             continue;
         }
 
@@ -130,13 +138,17 @@ auto Cluster::getClusterConfig() -> std::result<GetClusterConfigResponse> {
                 ->build());
 
             if(responseResult.is_success()){
+                this->logger->info("Received GET_CLUSTER_CONFIG from seed node {0}", seedNode.nodeId);
+
                 uint32_t nodesPerPartition = responseResult->getResponseValueAtOffset(0, 4).to<uint32_t>();
                 uint32_t maxPartitionSize = responseResult->getResponseValueAtOffset(4, 4).to<uint32_t>();
-                uint32_t nNodesInCluster = responseResult->getResponseValueAtOffset(8, 4).to<uint32_t>();
+                int nNodesInCluster = responseResult->getResponseValueAtOffset(8, 4).to<int>();
 
                 int offset = 12;
                 std::vector<node_t> nodes = getNodesFromGetClusterConfig(nNodesInCluster, offset, responseResult.get());
-                std::vector<RingEntry> ringEntries = getRingEntriesFromGetClusterConfig(nNodesInCluster, offset, responseResult.get());
+                std::vector<RingEntry> ringEntries = usingPartitions ? //Using partitions
+                    getRingEntriesFromGetClusterConfig(nNodesInCluster, offset, responseResult.get()) :
+                    std::vector<RingEntry>{};
 
                 return std::ok(GetClusterConfigResponse{
                     .nodesPerPartition = nodesPerPartition,
@@ -167,17 +179,17 @@ std::vector<RingEntry> Cluster::getRingEntriesFromGetClusterConfig(uint32_t nNod
     return ringEntries;
 }
 
-std::vector<node_t> Cluster::getNodesFromGetClusterConfig(uint32_t nNodesInCluster, int& offset, Response response) {
-    std::vector<node_t> nodes{nNodesInCluster};
+std::vector<node_t> Cluster::getNodesFromGetClusterConfig(int nNodesInCluster, int& offset, Response response) {
+    std::vector<node_t> nodes{};
 
     for(int i = 0; i < nNodesInCluster; i++) {
-        memdbNodeId_t nodeId = response.getResponseValueAtOffset(12, 4).to<memdbNodeId_t>();
-        std::size_t sizeAddress = response.getResponseValueAtOffset(16, 4).to<std::size_t>();
-        std::string address = response.getResponseValueAtOffset(20, sizeAddress).toString();
+        memdbNodeId_t nodeId = response.getResponseValueAtOffset(offset, 4).to<memdbNodeId_t>();
+        std::size_t sizeAddress = response.getResponseValueAtOffset(offset + 4, 4).to<std::size_t>();
+        std::string address = response.getResponseValueAtOffset(offset + 8, sizeAddress).toString();
 
-        nodes[i] = std::make_shared<Node>(
+        nodes.push_back(std::make_shared<Node>(
                 nodeId, address, this->configuration->get<uint64_t>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS)
-        );
+        ));
 
         offset += 8 + sizeAddress;
     }

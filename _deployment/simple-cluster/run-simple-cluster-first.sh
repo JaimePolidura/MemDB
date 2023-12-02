@@ -15,5 +15,6 @@ sudo ./linux-build.sh
 sudo ./run.sh USE_REPLICATION=true \
         SHOW_DEBUG_LOG=true \
         SERVER_PORT=10000 \
+		SEED_NODES=localhost:10000 \
         DATA_PATH=/etc/memdb1 \
         NODE_ID=1

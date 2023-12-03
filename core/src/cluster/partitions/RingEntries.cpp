@@ -77,7 +77,9 @@ std::vector<RingEntry> RingEntries::getNeighborsClockwise(memdbNodeId_t nodeId, 
         if(i > 0 && initialNodePtr->next == startedNodePtr){
             break;
         }
-
+        if(initialNodePtr->next == nullptr) {
+            break;
+        }
         initialNodePtr = initialNodePtr->next;
         neighbors.push_back(initialNodePtr->entry);
     }
@@ -94,6 +96,9 @@ std::vector<RingEntry> RingEntries::getNeighborsCounterClockwise(memdbNodeId_t n
         if(i > 0 && initialNodePtr->back == startedNodePtr){
             break;
         }
+        if(initialNodePtr->next == nullptr) {
+            break;
+        }
 
         initialNodePtr = initialNodePtr->back;
         neighbors.push_back(initialNodePtr->entry);
@@ -102,12 +107,28 @@ std::vector<RingEntry> RingEntries::getNeighborsCounterClockwise(memdbNodeId_t n
     return neighbors;
 }
 
-RingEntry RingEntries::getNeighborCounterClockwise(memdbNodeId_t nodeId) {
-    return this->indexByNodeId.at(nodeId)->back->entry;
+std::optional<RingEntry> RingEntries::getNeighborCounterClockwise(memdbNodeId_t nodeId) {
+    if(this->indexByNodeId.contains(nodeId)) {
+        RingEntryNode * ringEntryByNodeId = this->indexByNodeId.at(nodeId);
+
+        return ringEntryByNodeId->back != nullptr ?
+            std::optional<RingEntry>(ringEntryByNodeId->back->entry) :
+            std::nullopt;
+    } else {
+        return std::nullopt;
+    }
 }
 
-RingEntry RingEntries::getNeighborClockwise(memdbNodeId_t nodeId) {
-    return this->indexByNodeId.at(nodeId)->next->entry;
+std::optional<RingEntry> RingEntries::getNeighborClockwise(memdbNodeId_t nodeId) {
+    if(this->indexByNodeId.contains(nodeId)) {
+        RingEntryNode * ringEntryByNodeId = this->indexByNodeId.at(nodeId);
+
+        return ringEntryByNodeId->next != nullptr ?
+            std::optional<RingEntry>(ringEntryByNodeId->next->entry) :
+            std::nullopt;
+    } else {
+        return std::nullopt;
+    }
 }
 
 RingEntry RingEntries::getRingEntryBelongsToPosition(uint32_t ringPosition) {
@@ -120,6 +141,9 @@ RingEntry RingEntries::getRingEntryBelongsToPosition(uint32_t ringPosition) {
         actualPointer = nextToActualPointer;
         nextToActualPointer = actualPointer->next;
 
+        if(nextToActualPointer == nullptr) {
+            return actualPointer->entry;
+        }
         if(actualPointer->entry.ringPosition <= ringPosition && nextToActualPointer->entry.ringPosition > ringPosition){
             return actualPointer->entry;
         }

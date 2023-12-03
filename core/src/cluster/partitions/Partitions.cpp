@@ -51,11 +51,11 @@ std::vector<RingEntry> Partitions::getNeighbors() {
     return Utils::concat(neighboursCounterClockwise, neighboursClockWise);
 }
 
-RingEntry Partitions::getNeighborCounterClockwiseByNodeId(memdbNodeId_t nodeId) {
+std::optional<RingEntry> Partitions::getNeighborCounterClockwiseByNodeId(memdbNodeId_t nodeId) {
     return this->ringEntries.getNeighborCounterClockwise(nodeId);
 }
 
-RingEntry Partitions::getNeighborClockwiseByNodeId(memdbNodeId_t nodeId) {
+std::optional<RingEntry> Partitions::getNeighborClockwiseByNodeId(memdbNodeId_t nodeId) {
     return this->ringEntries.getNeighborClockwise(nodeId);
 }
 

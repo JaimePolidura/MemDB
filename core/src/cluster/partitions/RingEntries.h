@@ -19,7 +19,6 @@ struct RingEntryNode {
 };
 
 class RingEntries {
-private:
     RingEntryNode * head;
     std::map<memdbNodeId_t, RingEntryNode *> indexByNodeId;
 
@@ -38,9 +37,9 @@ public:
 
     std::vector<RingEntry> getAll();
 
-    RingEntry getNeighborCounterClockwise(memdbNodeId_t nodeId);
+    std::optional<RingEntry> getNeighborCounterClockwise(memdbNodeId_t nodeId);
 
-    RingEntry getNeighborClockwise(memdbNodeId_t nodeId);
+    std::optional<RingEntry> getNeighborClockwise(memdbNodeId_t nodeId);
 
     RingEntry getRingEntryBelongsToPosition(uint32_t ringPosition);
 

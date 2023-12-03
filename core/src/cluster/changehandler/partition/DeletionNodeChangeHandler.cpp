@@ -19,7 +19,8 @@ void DeletionNodeChangeHandler::handle(node_t deletedNode) {
         this->logger->debugInfo("Detected self deletion in the cluster", deletedNode->nodeId);
 
         std::vector<RingEntry> neighborsClockWise = this->cluster->partitions->getNeighborsClockwise();
-        memdbNodeId_t prevNodeId = this->cluster->partitions->getNeighborCounterClockwiseByNodeId(deletedNode->nodeId).nodeId;
+        memdbNodeId_t prevNodeId = this->cluster->partitions->getNeighborCounterClockwiseByNodeId(deletedNode->nodeId)
+            .value().nodeId;
 
         this->sendSelfOplogToPrevNode(prevNodeId);
         this->sendRestOplogsToNextNodes(neighborsClockWise);

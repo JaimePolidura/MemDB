@@ -47,7 +47,7 @@ ResponseBuilder * ResponseBuilder::value(const SimpleString<memDbDataLength_t>& 
 }
 
 ResponseBuilder * ResponseBuilder::values(const std::vector<SimpleString<memDbDataLength_t>>& values) {
-    this->_responseValue.insert(this->_responseValue.begin(), values.begin(), values.end());
+    this->_responseValue = values;
     return this;
 }
 

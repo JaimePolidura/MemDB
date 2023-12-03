@@ -2,7 +2,7 @@
 
 Response GetClusterConfigOperator::operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies& dependencies) {
     bool usingPartitions = dependencies.configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS);
-    int nNodesCluster = dependencies.cluster->clusterNodes->getSize();
+    int nNodesCluster = dependencies.cluster->clusterNodes->getSize() + 1; //Plus self
 
     dependencies.logger->info("Received GET_CLUSTER_CONFIG from node {0}", operation.nodeId);
 

@@ -15,6 +15,7 @@ OperatorRegistry::OperatorRegistry() {
     this->operators[OperatorNumbers::CAS_PREPARE] = std::make_shared<PrepareCasOperator>();
     this->operators[OperatorNumbers::CAS_ACCEPT] = std::make_shared<AcceptCasOperator>();
     this->operators[OperatorNumbers::GET_NODE_DATA] = std::make_shared<GetNodeDataOperator>();
+    this->operators[OperatorNumbers::GET_CLUSTER_CONFIG] = std::make_shared<GetClusterConfigOperator>();
 }
 
 std::shared_ptr<Operator> OperatorRegistry::get(uint8_t operatorNumber) {

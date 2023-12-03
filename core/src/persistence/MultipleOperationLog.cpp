@@ -69,6 +69,8 @@ void MultipleOperationLog::initializeOplogs(int numberOplogs) {
         std::string fileName = oplogFileNameResolver(i);
         singleOperationLog_t oplog = std::make_shared<SingleOperationLog>(this->configuration, this->logger);
 
+        oplog->initialize(i);
+
         this->operationLogs.push_back(oplog);
     }
 }

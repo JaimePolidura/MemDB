@@ -137,7 +137,7 @@ auto Cluster::getClusterConfig() -> std::result<GetClusterConfigResponse> {
                 ->selfNode(this->getNodeId())
                 ->build());
 
-            if(responseResult.is_success()){
+            if(responseResult.is_success() && responseResult->isSuccessful){
                 this->logger->info("Received GET_CLUSTER_CONFIG from seed node {0}", seedNode.nodeId);
 
                 uint32_t nodesPerPartition = responseResult->getResponseValueAtOffset(0, 4).to<uint32_t>();

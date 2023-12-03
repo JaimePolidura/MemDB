@@ -15,4 +15,7 @@ public:
     void setClusterConfig(GetClusterConfigResponse clusterConfig) override;
 
     clusterNodeChangeHandler_t getClusterChangeNodeHandler() override;
+
+private:
+    std::vector<RingEntry> getRingEntriesFromClusterConfig(const GetClusterConfigResponse& clusterConfig);
 };

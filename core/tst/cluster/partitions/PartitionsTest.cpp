@@ -100,7 +100,7 @@ TEST(Partitions, getDistanceOfKey){
 TEST(Partitions, getNeighborCounterClockwiseByNodeId){
     partitions_t partitions = setup();
 
-    ASSERT_TRUE(partitions->getNeighborCounterClockwiseByNodeId(2).nodeId == 4);
+    ASSERT_TRUE(partitions->getNeighborCounterClockwiseByNodeId(2).value().nodeId == 4);
 }
 
 TEST(Partitions, getNeighborsClockwiseByNodeId){

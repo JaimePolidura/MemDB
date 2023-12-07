@@ -51,7 +51,8 @@ std::vector<SimpleString<memDbDataLength_t>> GetClusterConfigOperator::nodesToSi
     });
 
     //We include our self
-    std::string selfAddress = dependencies.configuration->get(ConfigurationKeys::ADDRESS);
+    std::string selfAddress = dependencies.configuration->get(ConfigurationKeys::ADDRESS) + ":" +
+        dependencies.configuration->get(ConfigurationKeys::SERVER_PORT);
     nodesToReturn.push_back(SimpleString<memDbDataLength_t>::fromNumber(dependencies.cluster->getNodeId()));
     nodesToReturn.push_back(SimpleString<memDbDataLength_t>::fromNumber(static_cast<uint32_t>(selfAddress.size())));
     nodesToReturn.push_back(SimpleString<memDbDataLength_t>::fromString(selfAddress));

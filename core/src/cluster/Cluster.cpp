@@ -150,6 +150,8 @@ auto Cluster::getClusterConfig() -> std::result<GetClusterConfigResponse> {
                     getRingEntriesFromGetClusterConfig(nNodesInCluster, offset, responseResult.get()) :
                     std::vector<RingEntry>{};
 
+                seedNode.closeConnection();
+
                 return std::ok(GetClusterConfigResponse{
                     .nodesPerPartition = nodesPerPartition,
                     .maxPartitionSize = maxPartitionSize,

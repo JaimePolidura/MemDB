@@ -15,14 +15,19 @@ void RingEntries::add(RingEntry ringEntryToAdd) {
     }
     if(size == 1) {
         if(this->head->entry.ringPosition > ringEntryToAdd.ringPosition){
-            newRingEntry = this->head;
-            this->head = newRingEntry;
-        }
+            auto prevHeadNode = this->head;
 
-        this->head->next = newRingEntry;
-        this->head->back = newRingEntry;
-        newRingEntry->next = this->head;
-        newRingEntry->back = this->head;
+            this->head = newRingEntry;
+            prevHeadNode->next = newRingEntry;
+            prevHeadNode->back = newRingEntry;
+            this->head->next = prevHeadNode;
+            this->head->back = prevHeadNode;
+        } else {
+            this->head->next = newRingEntry;
+            this->head->back = newRingEntry;
+            newRingEntry->next = this->head;
+            newRingEntry->back = this->head;
+        }
 
         return;
     }
@@ -48,6 +53,13 @@ void RingEntries::add(RingEntry ringEntryToAdd) {
 
         iterations++;
     }
+
+    //New ring entry has the larges ringPosition so it will be added before HEAD
+    auto oldBackToHead = this->head->back;
+    this->head->back = newRingEntry;
+    oldBackToHead->next = newRingEntry;
+    newRingEntry->next = this->head;
+    newRingEntry->back = oldBackToHead;
 }
 
 std::vector<RingEntry> RingEntries::getAll() {

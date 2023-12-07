@@ -101,7 +101,7 @@ void Partitions::add(RingEntry ringEntry){
 }
 
 RingEntry Partitions::addByNode(node_t node) {
-    uint32_t ringPosition = static_cast<uint32_t>(HashCalculator::calculateMD5(std::to_string(node->nodeId)));
+    uint32_t ringPosition = static_cast<uint32_t>(HashCalculator::calculateMD5(std::to_string(node->nodeId)) % this->maxSize);
 
     RingEntry ringEntry = RingEntry{
         .nodeId = node->nodeId,

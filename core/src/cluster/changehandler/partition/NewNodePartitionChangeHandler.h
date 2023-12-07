@@ -39,8 +39,6 @@ private:
 
     splitedSelfOplog_t splitSelfOplog(std::vector<MapEntry<memDbDataLength_t>> keysSelfOplog, RingEntry newRingEntry);
 
-    void invalidateSelfOplogNextNode(const std::vector<OperationBody>& oplogNextNode);
-
     void removeKeysFromSelfNode(const std::vector<MapEntry<memDbDataLength_t>>& keysSelfOplog);
     void updateOplogIdOfNeighNodesPlusOne(std::vector<MapEntry<memDbDataLength_t>>& newOplog, const std::vector<RingEntry>& neighbors);
     void sendNewOplogToNewNode(memdbNodeId_t nodeId, std::vector<MapEntry<memDbDataLength_t>>& oplog);

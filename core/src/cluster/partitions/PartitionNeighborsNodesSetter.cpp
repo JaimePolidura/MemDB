@@ -35,13 +35,13 @@ void PartitionNeighborsNodesSetter::updateNeighborsWithNewNode(node_t newNode) {
     }
 }
 
-void PartitionNeighborsNodesSetter::addAllNeighborsInPartitions() {
+void PartitionNeighborsNodesSetter::addAllNeighborsInPartitions(const GetClusterConfigResponse& response) {
     uint32_t nodesPerPartition = cluster->partitions->getNodesPerPartition();
     RingEntry actualEntry = cluster->partitions->getSelfEntry();
 
     for (int i = 0; i < nodesPerPartition; ++i) {
         std::vector<RingEntry> ringEntriesActualPartition = this->getRingEntriesPartitionExceptSelf(actualEntry);
-        std::vector<node_t> nodesActualPartition = this->toNodesFromRingEntries(ringEntriesActualPartition);
+        std::vector<node_t> nodesActualPartition = this->toNodesFromRingEntries(ringEntriesActualPartition, response.nodes);
 
         cluster->clusterNodes->setOtherNodes(nodesActualPartition, i);
 
@@ -87,12 +87,17 @@ bool PartitionNeighborsNodesSetter::containsNodeId(const std::vector<RingEntry>&
     });
 }
 
-std::vector<node_t> PartitionNeighborsNodesSetter::toNodesFromRingEntries(const std::vector<RingEntry>& ringEntries) {
+std::vector<node_t> PartitionNeighborsNodesSetter::toNodesFromRingEntries(const std::vector<RingEntry>& ringEntries, const std::vector<node_t>& nodes) {
     std::vector<node_t> nodesToReturn{};
     nodesToReturn.reserve(ringEntries.size());
 
     for (const RingEntry& entry : ringEntries) {
-        nodesToReturn.push_back(cluster->clusterNodes->getByNodeId(entry.nodeId).value());
+        for(node_t node : nodes) {
+            if(node->nodeId == entry.nodeId) {
+                nodesToReturn.push_back(node);
+                break;
+            }
+        }
     }
 
     return nodesToReturn;

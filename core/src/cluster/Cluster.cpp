@@ -168,12 +168,12 @@ auto Cluster::getClusterConfig() -> std::result<GetClusterConfigResponse> {
 std::vector<RingEntry> Cluster::getRingEntriesFromGetClusterConfig(uint32_t nNodesInCluster, int& offset, Response response) {
     std::vector<RingEntry> ringEntries{nNodesInCluster};
     for(int i = 0; i < nNodesInCluster; i++) {
-        memdbNodeId_t nodeId = response.getResponseValueAtOffset(offset, 4).to<memdbNodeId_t>();
-        uint32_t ringPosition = response.getResponseValueAtOffset(offset + 4, 4).to<uint32_t>();
+        memdbNodeId_t nodeId = response.getResponseValueAtOffset(offset, sizeof(memdbNodeId_t)).to<memdbNodeId_t>();
+        uint32_t ringPosition = response.getResponseValueAtOffset(offset + sizeof(memdbNodeId_t), 4).to<uint32_t>();
 
         ringEntries[i] = RingEntry{.nodeId = nodeId, .ringPosition = ringPosition};
 
-        offset += 8;
+        offset += sizeof(memdbNodeId_t) + 4;
     }
 
     return ringEntries;
@@ -183,15 +183,15 @@ std::vector<node_t> Cluster::getNodesFromGetClusterConfig(int nNodesInCluster, i
     std::vector<node_t> nodes{};
 
     for(int i = 0; i < nNodesInCluster; i++) {
-        memdbNodeId_t nodeId = response.getResponseValueAtOffset(offset, 4).to<memdbNodeId_t>();
-        std::size_t sizeAddress = response.getResponseValueAtOffset(offset + 4, 4).to<std::size_t>();
-        std::string address = response.getResponseValueAtOffset(offset + 8, sizeAddress).toString();
+        memdbNodeId_t nodeId = response.getResponseValueAtOffset(offset, sizeof(memdbNodeId_t)).to<memdbNodeId_t>();
+        uint32_t sizeAddress = response.getResponseValueAtOffset(offset + sizeof(memdbNodeId_t), 4).to<uint32_t>();
+        std::string address = response.getResponseValueAtOffset(offset + sizeof(memdbNodeId_t) + 4, sizeAddress).toString();
 
         nodes.push_back(std::make_shared<Node>(
                 nodeId, address, this->configuration->get<uint64_t>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS)
         ));
 
-        offset += 8 + sizeAddress;
+        offset += sizeof(nodeId) + 4 + sizeAddress;
     }
 
 

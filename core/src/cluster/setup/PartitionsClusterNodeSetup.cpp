@@ -9,7 +9,7 @@ void PartitionsClusterNodeSetup::setClusterConfig(GetClusterConfigResponse clust
     cluster->memDbStores = this->memDbStores;
     cluster->clusterNodes->setNumberPartitions(clusterConfig.nodesPerPartition);
 
-    this->partitionNeighborsNodesGroupSetter.addAllNeighborsInPartitions();
+    this->partitionNeighborsNodesGroupSetter.addAllNeighborsInPartitions(clusterConfig);
 }
 
 std::vector<RingEntry> PartitionsClusterNodeSetup::getRingEntriesFromClusterConfig(const GetClusterConfigResponse& clusterConfig) {

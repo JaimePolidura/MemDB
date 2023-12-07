@@ -17,12 +17,12 @@ public:
 
     void updateNeighborsWithDeletedNode(node_t deletedNode);
 
-    void addAllNeighborsInPartitions();
+    void addAllNeighborsInPartitions(const GetClusterConfigResponse& response);
 
 private:
     std::vector<RingEntry> getRingEntriesPartitionExceptSelf(RingEntry actualEntry);
 
-    std::vector<node_t> toNodesFromRingEntries(const std::vector<RingEntry>& ringEntries);
+    std::vector<node_t> toNodesFromRingEntries(const std::vector<RingEntry>& ringEntries, const std::vector<node_t>& nodes);
 
     bool containsNodeId(const std::vector<RingEntry>& entries, memdbNodeId_t nodeId);
 

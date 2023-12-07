@@ -2,7 +2,7 @@
 
 Response GetClusterConfigOperator::operate(const OperationBody& operation, const OperationOptions operationOptions, OperatorDependencies& dependencies) {
     bool usingPartitions = dependencies.configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS);
-    int nNodesCluster = dependencies.cluster->clusterNodes->getSize() + 1; //Plus self
+    int nNodesCluster = dependencies.cluster->clusterNodes->getSize();
 
     dependencies.logger->info("Received GET_CLUSTER_CONFIG from node {0}", operation.nodeId);
 
@@ -11,9 +11,9 @@ Response GetClusterConfigOperator::operate(const OperationBody& operation, const
         ->values({
             SimpleString<memDbDataLength_t>::fromNumber(dependencies.cluster->getNodesPerPartition()),
             SimpleString<memDbDataLength_t>::fromNumber(dependencies.cluster->getMaxPartitionSize()),
-            SimpleString<memDbDataLength_t>::fromNumber(nNodesCluster),
+            SimpleString<memDbDataLength_t>::fromNumber(nNodesCluster + 1), //clusterNodes->getSize() doest include our self
             SimpleString<memDbDataLength_t>::fromSimpleStrings(
-                nodesToSimpleStrings(dependencies.cluster->clusterNodes->getAllNodes())
+                nodesToSimpleStrings(dependencies, dependencies.cluster->clusterNodes->getAllNodes())
             ),
             SimpleString<memDbDataLength_t>::fromSimpleStrings(
                 ringEntriesToSimpleStrings(usingPartitions, dependencies.cluster->partitions->getAll())
@@ -39,16 +39,22 @@ std::vector<SimpleString<memDbDataLength_t>> GetClusterConfigOperator::ringEntri
     return nodesToReturn;
 }
 
-std::vector<SimpleString<memDbDataLength_t>> GetClusterConfigOperator::nodesToSimpleStrings(const std::vector<node_t>& nodes) {
+std::vector<SimpleString<memDbDataLength_t>> GetClusterConfigOperator::nodesToSimpleStrings(OperatorDependencies& dependencies, const std::vector<node_t>& nodes) {
     std::vector<SimpleString<memDbDataLength_t>> nodesToReturn{};
 
     std::for_each(nodes.begin(), nodes.end(), [&nodesToReturn](const node_t& node){
         nodesToReturn.push_back(SimpleString<memDbDataLength_t>::fromSimpleStrings({
             SimpleString<memDbDataLength_t>::fromNumber(node->nodeId),
-            SimpleString<memDbDataLength_t>::fromNumber(node->address.size()),
+            SimpleString<memDbDataLength_t>::fromNumber(static_cast<uint32_t>(node->address.size())),
             SimpleString<memDbDataLength_t>::fromString(node->address),
         }));
     });
+
+    //We include our self
+    std::string selfAddress = dependencies.configuration->get(ConfigurationKeys::ADDRESS);
+    nodesToReturn.push_back(SimpleString<memDbDataLength_t>::fromNumber(dependencies.cluster->getNodeId()));
+    nodesToReturn.push_back(SimpleString<memDbDataLength_t>::fromNumber(static_cast<uint32_t>(selfAddress.size())));
+    nodesToReturn.push_back(SimpleString<memDbDataLength_t>::fromString(selfAddress));
 
     return nodesToReturn;
 }

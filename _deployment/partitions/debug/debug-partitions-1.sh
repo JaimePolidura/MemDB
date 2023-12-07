@@ -1,7 +1,5 @@
 cd ../../..
 
-sleep 5s
-
 # nodesPerPartition "2"
 # ringSize "64"
 

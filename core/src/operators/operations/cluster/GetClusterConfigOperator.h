@@ -17,5 +17,5 @@ public:
 private:
     std::vector<SimpleString<memDbDataLength_t>> ringEntriesToSimpleStrings(bool usingPartition, const std::vector<RingEntry>& ringEntries);
 
-    std::vector<SimpleString<memDbDataLength_t>> nodesToSimpleStrings(const std::vector<node_t>& nodes);
+    std::vector<SimpleString<memDbDataLength_t>> nodesToSimpleStrings(OperatorDependencies& dependencies, const std::vector<node_t>& nodes);
 };

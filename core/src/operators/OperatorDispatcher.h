@@ -46,6 +46,7 @@ private:
 
     OperatorDependencies dependencies;
 
+    friend class NewNodePartitionChangeHandler;
     friend class MemDbCreator;
 
     Response dispatch_no_applyDelayedOperationsBuffer(const Request& request);

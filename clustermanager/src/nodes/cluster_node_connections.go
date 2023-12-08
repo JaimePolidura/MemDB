@@ -2,8 +2,7 @@ package nodes
 
 import (
 	configuration "clustermanager/src/config"
-	"clustermanager/src/nodes/messages/request"
-	"clustermanager/src/nodes/messages/response"
+	"clustermanager/src/nodes/messages"
 	"encoding/binary"
 	"errors"
 	"strconv"
@@ -38,8 +37,8 @@ func (this *ClusterNodeConnections) GetNode(nodeId NodeId_t) (*Node, error) {
 		return node.(*Node), nil
 	}
 
-	authKey := this.configuration.Get(configuration.MEMDB_CLUSTERMANAGER_AUTH_USER_KEY)
-	res, err := this.SendRequestToAnySeeder(request.BuildGetNodeDataRequest(authKey, nodeId))
+	authKey := this.configuration.Get(configuration.AUTH_API_KEY)
+	res, err := this.SendRequestToAnySeeder(messages.BuildGetNodeDataRequest(authKey, string(nodeId)))
 	if err != nil || !res.Success {
 		return nil, err
 	}
@@ -52,17 +51,17 @@ func (this *ClusterNodeConnections) GetNode(nodeId NodeId_t) (*Node, error) {
 	return node, nil
 }
 
-func (this *ClusterNodeConnections) SendRequestToAnySeeder(request request.Request) (response.Response, error) {
+func (this *ClusterNodeConnections) SendRequestToAnySeeder(request messages.Request) (messages.Response, error) {
 	for _, node := range this.seedNodes {
 		if res, err := node.Send(request); err == nil {
 			return res, nil
 		}
 	}
 
-	return response.Response{}, errors.New("No seed node found")
+	return messages.Response{}, errors.New("No seed node found")
 }
 
-func getNodeDataResFromStirng(res response.Response) NodeData {
+func getNodeDataResFromStirng(res messages.Response) NodeData {
 	bytes := []byte(res.ResponseBody)
 	nodeId := NodeId_t(strconv.Itoa(int(binary.BigEndian.Uint32(bytes[:4]))))
 	addressSize := binary.BigEndian.Uint32(bytes[4:8])

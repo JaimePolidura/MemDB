@@ -3,8 +3,7 @@ package endpoints
 import (
 	configuration "clustermanager/src/config"
 	v2 "clustermanager/src/nodes"
-	"clustermanager/src/nodes/messages/request"
-	"clustermanager/src/nodes/messages/response"
+	"clustermanager/src/nodes/messages"
 	"encoding/binary"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -24,8 +23,8 @@ func CreateGetClusterConfigController(configuration *configuration.Configuartion
 }
 
 func (this *GetClusterConfigController) GetClusterConfig(context echo.Context) error {
-	userAuthKey := this.Configuration.Get(configuration.MEMDB_CLUSTERMANAGER_AUTH_USER_KEY)
-	getConfigRequest := request.BuildGetClusterConfigRequest(userAuthKey)
+	userAuthKey := this.Configuration.Get(configuration.AUTH_API_KEY)
+	getConfigRequest := messages.BuildGetClusterConfigRequest(userAuthKey)
 
 	if res, err := this.NodeConnections.SendRequestToAnySeeder(getConfigRequest); err == nil {
 		return context.JSON(http.StatusOK, this.clusterConfigResponseToJSON(res))
@@ -34,7 +33,7 @@ func (this *GetClusterConfigController) GetClusterConfig(context echo.Context) e
 	}
 }
 
-func (this *GetClusterConfigController) clusterConfigResponseToJSON(response response.Response) GetClusterConfigResponse {
+func (this *GetClusterConfigController) clusterConfigResponseToJSON(response messages.Response) GetClusterConfigResponse {
 	bytes := []byte(response.ResponseBody)
 
 	nodesPerPartition := binary.BigEndian.Uint32(bytes[:4])
@@ -47,8 +46,8 @@ func (this *GetClusterConfigController) clusterConfigResponseToJSON(response res
 	addressByNodeId := make(map[v2.NodeId_t]string)
 
 	for i := 0; i < int(nNodesInCluster); i++ {
-		nodeId := v2.NodeId_t(strconv.Itoa(int(binary.BigEndian.Uint32(bytes[offset : offset+4]))))
-		offset += 4
+		nodeId := v2.NodeId_t(strconv.Itoa(int(binary.BigEndian.Uint16(bytes[offset : offset+2]))))
+		offset += 2
 
 		addressSize := binary.BigEndian.Uint32(bytes[offset : offset+4])
 		offset += 4
@@ -59,8 +58,8 @@ func (this *GetClusterConfigController) clusterConfigResponseToJSON(response res
 		addressByNodeId[nodeId] = address
 	}
 	for i := 0; i < int(nNodesInCluster); i++ {
-		nodeId := v2.NodeId_t(strconv.Itoa(int(binary.BigEndian.Uint32(bytes[offset : offset+4]))))
-		offset += 4
+		nodeId := v2.NodeId_t(strconv.Itoa(int(binary.BigEndian.Uint16(bytes[offset : offset+2]))))
+		offset += 2
 
 		ringPosition := binary.BigEndian.Uint32(bytes[offset : offset+4])
 		offset += 4
@@ -68,7 +67,7 @@ func (this *GetClusterConfigController) clusterConfigResponseToJSON(response res
 		ringPositionsByNodeId[nodeId] = ringPosition
 	}
 
-	nodes := make([]NodeResponse, nNodesInCluster)
+	nodes := make([]NodeResponse, 0)
 	for nodeId, address := range addressByNodeId {
 		ringPosition := uint32(0)
 		if usingPartitions {

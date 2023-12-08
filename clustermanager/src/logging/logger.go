@@ -11,13 +11,13 @@ type Logger struct {
 }
 
 func (client *Logger) Info(text string) {
-	if client.Configuration.GetBoolean(config.MEMDB_CLUSTERMANAGER_DO_LOGGING) {
+	if client.Configuration.GetBoolean(config.USE_LOGGING) {
 		client.NativeLogger.Println(text)
 	}
 }
 
 func (client *Logger) Error(text string) {
-	if client.Configuration.GetBoolean(config.MEMDB_CLUSTERMANAGER_DO_LOGGING) {
+	if client.Configuration.GetBoolean(config.USE_LOGGING) {
 		client.NativeLogger.Fatal(text)
 	}
 }

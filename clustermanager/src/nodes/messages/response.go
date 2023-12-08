@@ -1,4 +1,4 @@
-package response
+package messages
 
 type Response struct {
 	ErrorCode    uint8

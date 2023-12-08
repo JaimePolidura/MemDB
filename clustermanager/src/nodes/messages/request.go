@@ -1,6 +1,4 @@
-package request
-
-import "clustermanager/src/nodes"
+package messages
 
 type Request struct {
 	AuthKey        string
@@ -22,19 +20,19 @@ func BuildGetClusterConfigRequest(authKey string) Request {
 	}
 }
 
-func BuildDoLeaveNodeClusterRequest(authKey string, nodeId nodes.NodeId_t) Request {
+func BuildDoLeaveNodeClusterRequest(authKey string, nodeId string) Request {
 	return Request{
 		AuthKey:        authKey,
 		OperatorNumber: 0x15,
-		Args:           []string{string(nodeId)},
+		Args:           []string{nodeId},
 	}
 }
 
-func BuildGetNodeDataRequest(authKey string, nodeId nodes.NodeId_t) Request {
+func BuildGetNodeDataRequest(authKey string, nodeId string) Request {
 	return Request{
 		AuthKey:        authKey,
 		OperatorNumber: 0x16,
-		Args:           []string{string(nodeId)},
+		Args:           []string{nodeId},
 	}
 }
 

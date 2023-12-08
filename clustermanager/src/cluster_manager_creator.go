@@ -38,7 +38,7 @@ func configureHttpApi(configuration *config.Configuartion,
 
 	apiGroup := echoApi.Group("/api")
 	apiGroup.Use(echojwt.WithConfig(echojwt.Config{
-		SigningKey: []byte(configuration.Get(config.MEMDB_CLUSTERMANAGER_API_JWT_SECRET_KEY)),
+		SigningKey: []byte(configuration.Get(config.API_JWT_SECRET_KEY)),
 	}))
 
 	getClusterConfigController := endpoints.CreateGetClusterConfigController(configuration, connections)

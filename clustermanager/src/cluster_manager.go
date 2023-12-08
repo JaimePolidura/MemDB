@@ -14,7 +14,7 @@ type ClusterManager struct {
 }
 
 func (clusterManager *ClusterManager) start() {
-	clusterManager.api.Logger.Fatal(clusterManager.api.Start(":" + clusterManager.configuration.Get(config.MEMDB_CLUSTERMANAGER_API_PORT)))
+	clusterManager.api.Logger.Fatal(clusterManager.api.Start(":" + clusterManager.configuration.Get(config.API_PORT)))
 	var input string //Block program
 	fmt.Scanln(&input)
 }

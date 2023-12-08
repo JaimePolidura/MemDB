@@ -3,7 +3,7 @@ package endpoints
 import (
 	configuration "clustermanager/src/config"
 	"clustermanager/src/nodes"
-	"clustermanager/src/nodes/messages/request"
+	"clustermanager/src/nodes/messages"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
@@ -21,7 +21,7 @@ func CreateRemoveNodeClusterController(configuartion *configuration.Configuartio
 }
 
 func (this *RemoveNodeClusterController) Remove(ctx echo.Context) error {
-	authKey := this.Configuartion.Get(configuration.MEMDB_CLUSTERMANAGER_AUTH_USER_KEY)
+	authKey := this.Configuartion.Get(configuration.AUTH_API_KEY)
 	nodeId := nodes.NodeId_t(ctx.Param("nodeId"))
 
 	node, err := this.ClusterNodeConnections.GetNode(nodeId)
@@ -29,7 +29,7 @@ func (this *RemoveNodeClusterController) Remove(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, "Node not found / Impossible to contact with seeder node")
 	}
 
-	if res, err := node.Send(request.BuildDoLeaveNodeClusterRequest(authKey, node.NodeId)); err != nil || !res.Success {
+	if res, err := node.Send(messages.BuildDoLeaveNodeClusterRequest(authKey, string(node.NodeId))); err != nil || !res.Success {
 		return ctx.JSON(http.StatusBadRequest, "Error while sending DO_LEAVE_CLUSTER")
 	} else {
 		return ctx.JSON(http.StatusOK, "Sended DO_LEAVE_CLUSTER")

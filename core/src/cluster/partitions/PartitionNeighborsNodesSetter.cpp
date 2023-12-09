@@ -19,7 +19,7 @@ void PartitionNeighborsNodesSetter::updateNeighborsWithNewNode(node_t newNode) {
         std::vector<RingEntry> neighborsActualPartition = cluster->partitions->getNeighborsClockwiseByNodeId(actualHeadPartition.nodeId);
 
         if(this->containsNodeId(neighborsActualPartition, newNode->nodeId)){
-            cluster->clusterNodes->addNode(newNode, actualPartitionId);
+            cluster->clusterNodes->addNodeInPartition(newNode, actualPartitionId);
 
             memdbNodeId_t oldMemberPartitionNodeId = this->getOldNodeIdPartitionMember(neighborsActualPartition);
             cluster->clusterNodes->removeNodeFromPartition(oldMemberPartitionNodeId, actualPartitionId);
@@ -35,7 +35,7 @@ void PartitionNeighborsNodesSetter::updateNeighborsWithNewNode(node_t newNode) {
     }
 }
 
-void PartitionNeighborsNodesSetter::addAllNeighborsInPartitions(const GetClusterConfigResponse& response) {
+void PartitionNeighborsNodesSetter::updateNeighborsWithNodes(const GetClusterConfigResponse& response) {
     uint32_t nodesPerPartition = cluster->partitions->getNodesPerPartition();
     RingEntry actualEntry = cluster->partitions->getSelfEntry();
 
@@ -43,7 +43,7 @@ void PartitionNeighborsNodesSetter::addAllNeighborsInPartitions(const GetCluster
         std::vector<RingEntry> ringEntriesActualPartition = this->getRingEntriesPartitionExceptSelf(actualEntry);
         std::vector<node_t> nodesActualPartition = this->toNodesFromRingEntries(ringEntriesActualPartition, response.nodes);
 
-        cluster->clusterNodes->setOtherNodes(nodesActualPartition, i);
+        cluster->clusterNodes->addNodesInPartition(nodesActualPartition, i);
 
         std::optional<RingEntry> actualEntryOptional = cluster->partitions->getNeighborCounterClockwiseByNodeId(actualEntry.nodeId);
 

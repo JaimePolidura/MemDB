@@ -17,7 +17,7 @@ public:
 
     void updateNeighborsWithDeletedNode(node_t deletedNode);
 
-    void addAllNeighborsInPartitions(const GetClusterConfigResponse& response);
+    void updateNeighborsWithNodes(const GetClusterConfigResponse& response);
 
 private:
     std::vector<RingEntry> getRingEntriesPartitionExceptSelf(RingEntry actualEntry);

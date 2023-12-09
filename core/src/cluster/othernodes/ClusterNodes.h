@@ -21,7 +21,6 @@ class ClusterNodes {
 public:
     ClusterNodes(configuration_t configuration, logger_t logger):
         logger(logger),
-        nodesById(std::map<memdbNodeId_t, node_t>{}),
         configuration(configuration),
         hintsService(std::make_shared<HintsService>(configuration)),
         requestPool(configuration->get<int>(ConfigurationKeys::SERVER_THREADS)) {}
@@ -46,7 +45,7 @@ public:
 
     int getSize();
 
-    void setOtherNodes(const std::vector<node_t>& otherNodesToSet, memdbPartitionId_t partitionId);
+    void addNodesInPartition(const std::vector<node_t>& otherNodesToSet, memdbPartitionId_t partitionId);
 
     std::vector<node_t> getAllNodes();
 
@@ -54,7 +53,11 @@ public:
 
     bool isEmtpy(memdbPartitionId_t partitionId);
 
-    void addNode(node_t node, memdbPartitionId_t partitionId);
+    void addNode(node_t node);
+
+    void addNodes(const std::vector<node_t>& nodes);
+
+    void addNodeInPartition(node_t node, memdbPartitionId_t partitionId);
 
     bool existsByNodeId(memdbNodeId_t nodeId);
 
@@ -69,7 +72,8 @@ public:
     void sendHintedHandoff(memdbNodeId_t nodeId);
 
 private:
-    std::map<memdbNodeId_t, node_t> nodesById{};
+    std::map<memdbNodeId_t, node_t> allNodesById{}; //Includes all nodes even if the actual node doesnt share any partition
+
     std::vector<NodesInPartition> nodesInPartitions{};
 
     configuration_t configuration;

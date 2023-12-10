@@ -1,7 +1,7 @@
 #include "config/keys/ConfigurationKeys.h"
 
 const std::string ConfigurationKeys::AUTH_NODE_KEY = "AUTH_NODE_KEY";
-const std::string ConfigurationKeys::AUTH_USER_KEY = "AUTH_USER_KEY";
+const std::string ConfigurationKeys::AUTH_API_USER_KEY = "AUTH_API_USER_KEY";
 const std::string ConfigurationKeys::DATA_PATH = "DATA_PATH";
 
 const std::string ConfigurationKeys::SERVER_PORT = "SERVER_PORT";

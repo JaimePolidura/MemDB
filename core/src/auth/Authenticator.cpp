@@ -1,7 +1,7 @@
 #include "auth/Authenticator.h"
 
 bool Authenticator::authenticate(const std::string& authKey) {
-    return this->configuration->get(ConfigurationKeys::AUTH_USER_KEY) == authKey ||
+    return this->configuration->get(ConfigurationKeys::AUTH_API_USER_KEY) == authKey ||
            this->configuration->get(ConfigurationKeys::AUTH_NODE_KEY) == authKey;
 }
 
@@ -20,7 +20,7 @@ bool Authenticator::isKeyUser(const std::string& authKey) {
 }
 
 std::result<AuthenticationType> Authenticator::getAuthenticationTypeFromConfiguration(const std::string& authKey) {
-    if(this->configuration->get(ConfigurationKeys::AUTH_USER_KEY) == authKey) {
+    if(this->configuration->get(ConfigurationKeys::AUTH_API_USER_KEY) == authKey) {
         return std::ok(AuthenticationType::USER);
     }else if (this->configuration->get(ConfigurationKeys::AUTH_NODE_KEY) == authKey) {
         return std::ok(AuthenticationType::NODE);

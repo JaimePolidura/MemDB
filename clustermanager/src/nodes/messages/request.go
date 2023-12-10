@@ -34,7 +34,7 @@ func BuildDoLeaveNodeClusterRequest(authKey string, nodeId string) Request {
 
 	return Request{
 		authKey:        authKey,
-		operatorNumber: 0x15,
+		operatorNumber: 15,
 		args:           args,
 	}
 }
@@ -48,7 +48,7 @@ func BuildGetNodeDataRequest(authKey string, nodeId string) Request {
 
 	return Request{
 		authKey:        authKey,
-		operatorNumber: 0x16,
+		operatorNumber: 16,
 		args:           args,
 	}
 }

@@ -22,14 +22,14 @@ func CreateRemoveNodeClusterController(configuartion *configuration.Configuartio
 }
 
 func (this *RemoveNodeClusterController) Remove(ctx echo.Context) error {
-	authKey := this.Configuartion.Get(configuration.AUTH_API_KEY)
+	authKey := this.Configuartion.Get(configuration.AUTH_API_USER_KEY)
 	nodeId := nodes.NodeId_t(ctx.Param("nodeId"))
 
 	node, err := this.ClusterNodeConnections.GetNode(nodeId)
 	if err != nil {
 		return ctx.JSON(http.StatusBadRequest, "Node not found / Impossible to contact with seeder node")
 	}
-
+	
 	if res, err := node.Send(messages.BuildDoLeaveNodeClusterRequest(authKey, string(node.NodeId))); err != nil {
 		return ctx.JSON(http.StatusBadRequest, "Error while sending DO_LEAVE_CLUSTER: "+err.Error())
 	} else if !res.Success {

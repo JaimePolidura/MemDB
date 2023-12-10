@@ -23,7 +23,7 @@ func CreateGetClusterConfigController(configuration *configuration.Configuartion
 }
 
 func (this *GetClusterConfigController) GetClusterConfig(context echo.Context) error {
-	userAuthKey := this.Configuration.Get(configuration.AUTH_API_KEY)
+	userAuthKey := this.Configuration.Get(configuration.AUTH_API_USER_KEY)
 	getConfigRequest := messages.BuildGetClusterConfigRequest(userAuthKey)
 
 	if res, err := this.NodeConnections.SendRequestToAnySeeder(getConfigRequest); err == nil {

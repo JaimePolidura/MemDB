@@ -14,8 +14,8 @@ class DefaultConfig {
 public:
     static std::map<std::string, std::string> get() {
         return {
-                {ConfigurationKeys::AUTH_NODE_KEY,                      "123",},
-                {ConfigurationKeys::AUTH_USER_KEY,                      "789",},
+                {ConfigurationKeys::AUTH_API_USER_KEY,                  "123"},
+                {ConfigurationKeys::AUTH_NODE_KEY,                      "456"},
                 {ConfigurationKeys::SERVER_THREADS,                     "63"},
                 {ConfigurationKeys::SERVER_PORT,                        "10000"},
                 {ConfigurationKeys::NUMBER_BUCKETS,                     "64"},

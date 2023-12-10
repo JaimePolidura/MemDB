@@ -31,7 +31,7 @@ func (controller *LoginController) Login(c echo.Context) error {
 		return err
 	}
 
-	if loginRequest.AuthKey != controller.Configuration.Get(config.AUTH_API_KEY) {
+	if loginRequest.AuthKey != controller.Configuration.Get(config.AUTH_API_USER_KEY) {
 		return c.JSON(http.StatusForbidden, "Invalid auth key")
 	}
 

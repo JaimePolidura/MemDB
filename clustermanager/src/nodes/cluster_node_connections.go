@@ -37,7 +37,7 @@ func (this *ClusterNodeConnections) GetNode(nodeId NodeId_t) (*Node, error) {
 		return node.(*Node), nil
 	}
 
-	authKey := this.configuration.Get(configuration.AUTH_API_KEY)
+	authKey := this.configuration.Get(configuration.AUTH_API_USER_KEY)
 	res, err := this.SendRequestToAnySeeder(messages.BuildGetNodeDataRequest(authKey, string(nodeId)))
 	if err != nil {
 		return nil, err

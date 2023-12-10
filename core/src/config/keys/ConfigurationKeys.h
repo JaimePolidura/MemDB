@@ -5,7 +5,7 @@
 class ConfigurationKeys {
 public:
     static const std::string AUTH_NODE_KEY;
-    static const std::string AUTH_USER_KEY;
+    static const std::string AUTH_API_USER_KEY;
 
     static const std::string DATA_PATH;
     static const std::string SERVER_PORT;

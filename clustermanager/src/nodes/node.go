@@ -4,7 +4,6 @@ import (
 	"clustermanager/src/nodes/messages"
 	"encoding/binary"
 	"errors"
-	"fmt"
 	"net"
 )
 
@@ -25,8 +24,6 @@ func (node *Node) Send(requestToSend messages.Request) (messages.Response, error
 	}
 
 	if bytes, err := node.readResponseBytes(); err == nil {
-		fmt.Println(bytes)
-
 		return messages.Desrialize(bytes), nil
 	} else {
 		return messages.Response{}, err

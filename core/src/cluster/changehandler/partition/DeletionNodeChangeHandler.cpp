@@ -12,6 +12,7 @@ void DeletionNodeChangeHandler::handle(node_t deletedNode) {
     if(this->cluster->clusterNodes->existsByNodeId(deletedNode->nodeId)) {
         this->logger->debugInfo("Detected deletion of node {0}", deletedNode->nodeId);
 
+        this->cluster->clusterNodes->deleteNodeById(deletedNode->nodeId);
         this->partitionNeighborsNodesGroupSetter.updateNeighborsWithDeletedNode(deletedNode);
     }
 

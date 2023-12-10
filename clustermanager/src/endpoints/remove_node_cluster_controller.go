@@ -6,6 +6,7 @@ import (
 	"clustermanager/src/nodes/messages"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"strconv"
 )
 
 type RemoveNodeClusterController struct {
@@ -29,9 +30,13 @@ func (this *RemoveNodeClusterController) Remove(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, "Node not found / Impossible to contact with seeder node")
 	}
 
-	if res, err := node.Send(messages.BuildDoLeaveNodeClusterRequest(authKey, string(node.NodeId))); err != nil || !res.Success {
-		return ctx.JSON(http.StatusBadRequest, "Error while sending DO_LEAVE_CLUSTER")
-	} else {
+	if res, err := node.Send(messages.BuildDoLeaveNodeClusterRequest(authKey, string(node.NodeId))); err != nil {
+		return ctx.JSON(http.StatusBadRequest, "Error while sending DO_LEAVE_CLUSTER: "+err.Error())
+	} else if !res.Success {
+		return ctx.JSON(http.StatusOK, "Error while sending DO_LEAVE_CLUSTER: "+strconv.Itoa(int(res.ErrorCode)))
+	} else if res.Success {
 		return ctx.JSON(http.StatusOK, "Sended DO_LEAVE_CLUSTER")
 	}
+
+	return nil
 }

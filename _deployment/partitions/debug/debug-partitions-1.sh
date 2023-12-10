@@ -19,11 +19,11 @@ sudo ./linux-build.sh
 
 sudo gdb --args ./src/build/src/memdb_run USE_REPLICATION=true \
         SHOW_DEBUG_LOG=true \
+        ADDRESS=192.168.1.159 \
         SERVER_PORT=10000 \
-		SEED_NODES=localhost:10000 \
+        SEED_NODES=192.168.1.159:10000 \
         DATA_PATH=/etc/memdb1 \
         NODE_ID=1 \
-		SEED_NODES=localhost:10000 \
-		NODES_PER_PARTITION=2 \
-		MAX_PARTITION_SIZE=64 \
-		USE_PARTITIONS=true
+        NODES_PER_PARTITION=2 \
+        MAX_PARTITION_SIZE=64 \
+        USE_PARTITIONS=true

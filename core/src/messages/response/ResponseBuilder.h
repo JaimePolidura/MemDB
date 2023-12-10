@@ -21,6 +21,7 @@ public:
     ResponseBuilder * success();
     ResponseBuilder * requestNumber(memdbRequestNumber_t requestNumber);
     ResponseBuilder * value(const SimpleString<memDbDataLength_t>& value);
+    ResponseBuilder * valueIfSuccessful(bool isSuccess, const SimpleString<memDbDataLength_t>& value);
     ResponseBuilder * values(const std::vector<SimpleString<memDbDataLength_t>>& values);
     ResponseBuilder * isSuccessful(bool isSuccessful, uint8_t errorCodeIfUnsuccessful);
 

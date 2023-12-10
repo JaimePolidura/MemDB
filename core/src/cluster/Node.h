@@ -38,7 +38,7 @@ struct Node {
     void setLogger(logger_t logger);
 
 private:
-    void openConnectionIfClosedOrThrow();
+    std::result<bool> openConnectionIfClosedOrThrow();
 
     bool connectToSocket(std::string& ip, const std::string& port, ip::tcp::socket& socket);
 

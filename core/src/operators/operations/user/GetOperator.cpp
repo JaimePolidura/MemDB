@@ -7,7 +7,7 @@ Response GetOperator::operate(const OperationBody& operation, const OperationOpt
     return ResponseBuilder::builder()
         .isSuccessful(result.has_value(), ErrorCode::UNKNOWN_KEY)
         ->timestamp(result->timestamp)
-        ->value(result->value)
+        ->value(result->hasValue() ? result->value : SimpleString<memDbDataLength_t>::fromString(""))
         ->build();
 }
 

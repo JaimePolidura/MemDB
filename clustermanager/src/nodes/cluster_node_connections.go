@@ -39,8 +39,12 @@ func (this *ClusterNodeConnections) GetNode(nodeId NodeId_t) (*Node, error) {
 
 	authKey := this.configuration.Get(configuration.AUTH_API_KEY)
 	res, err := this.SendRequestToAnySeeder(messages.BuildGetNodeDataRequest(authKey, string(nodeId)))
-	if err != nil || !res.Success {
+	if err != nil {
 		return nil, err
+	}
+	if !res.Success {
+		return nil, errors.New("Cannot get data from node " + string(nodeId) + ". Got Error code code: " +
+			strconv.Itoa(int(res.ErrorCode)) + " from seed node")
 	}
 
 	nodeDataResponse := getNodeDataResFromStirng(res)
@@ -63,9 +67,9 @@ func (this *ClusterNodeConnections) SendRequestToAnySeeder(request messages.Requ
 
 func getNodeDataResFromStirng(res messages.Response) NodeData {
 	bytes := []byte(res.ResponseBody)
-	nodeId := NodeId_t(strconv.Itoa(int(binary.BigEndian.Uint32(bytes[:4]))))
-	addressSize := binary.BigEndian.Uint32(bytes[4:8])
-	address := string(bytes[8:addressSize])
+	nodeId := NodeId_t(strconv.Itoa(int(binary.BigEndian.Uint16(bytes[:2]))))
+	addressSize := binary.BigEndian.Uint32(bytes[2:6])
+	address := string(bytes[6 : 6+addressSize])
 
 	return NodeData{
 		nodeId:  nodeId,

@@ -3,19 +3,18 @@
 Response GetNodeDataOperator::operate(const OperationBody&operation, const OperationOptions operationOptions, OperatorDependencies&dependencies) {
     memdbNodeId_t nodeId = operation.getArg(0).to<memdbNodeId_t>();
     std::optional<node_t> nodeOptional = dependencies.cluster->clusterNodes->getByNodeId(nodeId);
+    bool isSuccessful = nodeOptional.has_value();
 
-    return nodeOptional.has_value() ?
-        ResponseBuilder::builder()
-            .value(this->nodeToSimpleString(nodeOptional.value()))
-            ->success()
-            ->build() :
-        Response::error(ErrorCode::NODE_NOT_FOUND);
+    return ResponseBuilder::builder()
+        .valueIfSuccessful(isSuccessful, this->nodeToSimpleString(nodeOptional.value()))
+        ->isSuccessful(isSuccessful, ErrorCode::NODE_NOT_FOUND)
+        ->build();
 }
 
 SimpleString<memDbDataLength_t> GetNodeDataOperator::nodeToSimpleString(node_t node) {
     return SimpleString<memDbDataLength_t>::fromSimpleStrings({
         SimpleString<memDbDataLength_t>::fromNumber(node->nodeId),
-        SimpleString<memDbDataLength_t>::fromNumber(node->address.size()),
+        SimpleString<memDbDataLength_t>::fromNumber(static_cast<uint32_t>(node->address.size())),
         SimpleString<memDbDataLength_t>::fromString(node->address),
     });
 }

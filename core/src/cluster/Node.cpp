@@ -16,7 +16,9 @@ Node::Node(const Node& other) {
 }
 
 auto Node::sendRequest(const Request &request) -> std::result<Response> {
-    this->openConnectionIfClosedOrThrow();
+    if(this->openConnectionIfClosedOrThrow().has_error()) {
+        return std::error<Response>();
+    }
 
     std::vector<uint8_t> serializedRequest = this->requestSerializer.serialize(request);
     std::size_t bytesWritten = this->writeSyncToConnection(serializedRequest);
@@ -68,14 +70,16 @@ bool Node::openConnection() {
     return true;
 }
 
-void Node::openConnectionIfClosedOrThrow() {
+std::result<bool> Node::openConnectionIfClosedOrThrow() {
     if(!this->isConnectionOpened()){
         bool success = this->openConnection();
 
         if(!success){
-            throw std::runtime_error("Cannot open connection");
+            return std::error(false);
         }
     }
+
+    return std::ok<bool>(true);
 }
 
 void Node::setLogger(logger_t loggerP) {

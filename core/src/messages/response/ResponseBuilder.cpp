@@ -46,6 +46,14 @@ ResponseBuilder * ResponseBuilder::value(const SimpleString<memDbDataLength_t>& 
     return this;
 }
 
+ResponseBuilder * ResponseBuilder::valueIfSuccessful(bool isSuccess, const SimpleString<memDbDataLength_t>& value) {
+    if(isSuccess) {
+        this->_responseValue.push_back(value);
+    }
+
+    return this;
+}
+
 ResponseBuilder * ResponseBuilder::values(const std::vector<SimpleString<memDbDataLength_t>>& values) {
     this->_responseValue = values;
     return this;

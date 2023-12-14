@@ -36,7 +36,7 @@ func (controller *LoginController) Login(c echo.Context) error {
 	}
 
 	unsingedToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 5)),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 50)),
 	})
 
 	signedToken, err := unsingedToken.SignedString(

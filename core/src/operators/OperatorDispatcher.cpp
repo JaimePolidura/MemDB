@@ -128,6 +128,8 @@ inline int OperatorDispatcher::getPartitionIdByKey(const SimpleString<memDbDataL
 }
 
 bool OperatorDispatcher::isAuthorizedToExecute(std::shared_ptr<Operator> operatorToExecute, AuthenticationType authenticationOfUser) {
+    std::cout << operatorToExecute->desc().name << std::endl;
+
     for(AuthenticationType authenticationTypeRequiredForOperator : operatorToExecute->desc().authorizedToExecute) {
         if(authenticationTypeRequiredForOperator == authenticationOfUser){
             return true;

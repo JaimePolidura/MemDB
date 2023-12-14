@@ -21,7 +21,7 @@ func BuildHealthCheckRequest(authKey string) Request {
 func BuildGetClusterConfigRequest(authKey string) Request {
 	return Request{
 		authKey:        authKey,
-		operatorNumber: 0x12,
+		operatorNumber: 12,
 	}
 }
 

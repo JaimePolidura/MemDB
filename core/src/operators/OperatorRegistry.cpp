@@ -19,7 +19,7 @@ OperatorRegistry::OperatorRegistry() {
     this->operators[OperatorNumbers::GET_CLUSTER_CONFIG] = std::make_shared<GetClusterConfigOperator>();
     this->operators[OperatorNumbers::JOIN_CLUSTER_ANNOUNCE] = std::make_shared<JoinClusterAnnounceOperator>();
     this->operators[OperatorNumbers::LEAVE_CLUSTER_ANNOUNCE] = std::make_shared<LeaveClusterAnnounceOperator>();
-    this->operators[OperatorNumbers::DO_LEAVE_CLUSTER] = std::make_shared<JoinClusterAnnounceOperator>();
+    this->operators[OperatorNumbers::DO_LEAVE_CLUSTER] = std::make_shared<DoLeaveClusterOperator>();
     this->operators[OperatorNumbers::GET_NODE_DATA] = std::make_shared<GetNodeDataOperator>();
 }
 

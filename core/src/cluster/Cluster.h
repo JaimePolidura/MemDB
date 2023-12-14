@@ -57,6 +57,8 @@ public:
     auto getNodeId() -> memdbNodeId_t;
 
 private:
+    static constexpr std::string CLUSTER_CONFIG_FIEL_NAME = "cluster-config";
+
     onGoingSyncOplogs_t onGoingMultipleResponsesStore;
     configuration_t configuration;
     clusterNodes_t clusterNodes;
@@ -84,8 +86,9 @@ private:
     friend class ClusterNodeSetup;
     friend class ClusterTest;
 
-    std::vector<RingEntry> getRingEntriesFromGetClusterConfig(uint32_t nNodesInCluster, int& offset, Response response);
-    std::vector<node_t> getNodesFromGetClusterConfig(int nNodesInCluster, int& offset, Response response);
+    std::vector<node_t> getCandidatesToSendGetClusterConfig();
+    std::vector<node_t> getSeedNodes();
+    void persistClusterConfig(const GetClusterConfigResponse& response);
 };
 
 using cluster_t = std::shared_ptr<Cluster>;

@@ -137,27 +137,15 @@ auto Cluster::getClusterConfig() -> std::result<GetClusterConfigResponse> {
                 ->selfNode(this->getNodeId())
                 ->build());
 
+            seedNode.closeConnection();
+
             if(responseResult.is_success() && responseResult->isSuccessful){
                 this->logger->info("Received GET_CLUSTER_CONFIG from seed node {0}", seedNode.nodeId);
 
-                uint32_t nodesPerPartition = responseResult->getResponseValueAtOffset(0, 4).to<uint32_t>();
-                uint32_t maxPartitionSize = responseResult->getResponseValueAtOffset(4, 4).to<uint32_t>();
-                int nNodesInCluster = responseResult->getResponseValueAtOffset(8, 4).to<int>();
+                GetClusterConfigResponse response = GetClusterConfigResponse::deserialize(responseResult.get(), configuration);
+                this->persistClusterConfig(response);
 
-                int offset = 12;
-                std::vector<node_t> nodes = getNodesFromGetClusterConfig(nNodesInCluster, offset, responseResult.get());
-                std::vector<RingEntry> ringEntries = usingPartitions ? //Using partitions
-                    getRingEntriesFromGetClusterConfig(nNodesInCluster, offset, responseResult.get()) :
-                    std::vector<RingEntry>{};
-
-                seedNode.closeConnection();
-
-                return std::ok(GetClusterConfigResponse{
-                    .nodesPerPartition = nodesPerPartition,
-                    .maxPartitionSize = maxPartitionSize,
-                    .nodes = nodes,
-                    .ringEntries = ringEntries
-                });
+                return std::ok(response);
             }
 
             std::this_thread::sleep_for(std::chrono::milliseconds(timeoutMs));
@@ -167,35 +155,43 @@ auto Cluster::getClusterConfig() -> std::result<GetClusterConfigResponse> {
     return std::error<GetClusterConfigResponse>();
 }
 
-std::vector<RingEntry> Cluster::getRingEntriesFromGetClusterConfig(uint32_t nNodesInCluster, int& offset, Response response) {
-    std::vector<RingEntry> ringEntries{nNodesInCluster};
-    for(int i = 0; i < nNodesInCluster; i++) {
-        memdbNodeId_t nodeId = response.getResponseValueAtOffset(offset, sizeof(memdbNodeId_t)).to<memdbNodeId_t>();
-        uint32_t ringPosition = response.getResponseValueAtOffset(offset + sizeof(memdbNodeId_t), 4).to<uint32_t>();
-
-        ringEntries[i] = RingEntry{.nodeId = nodeId, .ringPosition = ringPosition};
-
-        offset += sizeof(memdbNodeId_t) + 4;
+std::vector<node_t> Cluster::getCandidatesToSendGetClusterConfig() {
+    ResponseDeserializer responseDeserializer{};
+    std::string clusterConfigPath = configuration->get(ConfigurationKeys::DATA_PATH)
+        + "/" + CLUSTER_CONFIG_FIEL_NAME;
+    if(!FileUtils::exists(clusterConfigPath)) {
+        return getSeedNodes();
     }
 
-    return ringEntries;
+    std::vector<uint8_t> bytesClusterConfigRespnose = FileUtils::readBytes(clusterConfigPath);
+    std::result<Response> clusterConfigDeserialized = responseDeserializer.deserialize(bytesClusterConfigRespnose);
+
+    if(clusterConfigDeserialized.is_success()) {
+        return GetClusterConfigResponse::deserialize(clusterConfigDeserialized.get(), configuration)
+            .nodes;
+    } else {
+        this->logger->error("Error while reading cluster config file {0} it might be corrupted", clusterConfigPath);
+        return getSeedNodes();
+    }
 }
 
-std::vector<node_t> Cluster::getNodesFromGetClusterConfig(int nNodesInCluster, int& offset, Response response) {
-    std::vector<node_t> nodes{};
+void Cluster::persistClusterConfig(const GetClusterConfigResponse& response) {
+    std::vector<uint8_t> serialized = response.serialize();
+    std::string clusterConfigPath = configuration->get(ConfigurationKeys::DATA_PATH)
+        + "/" + CLUSTER_CONFIG_FIEL_NAME;
 
-    for(int i = 0; i < nNodesInCluster; i++) {
-        memdbNodeId_t nodeId = response.getResponseValueAtOffset(offset, sizeof(memdbNodeId_t)).to<memdbNodeId_t>();
-        uint32_t sizeAddress = response.getResponseValueAtOffset(offset + sizeof(memdbNodeId_t), 4).to<uint32_t>();
-        std::string address = response.getResponseValueAtOffset(offset + sizeof(memdbNodeId_t) + 4, sizeAddress).toString();
+    FileUtils::clear(clusterConfigPath);
+    FileUtils::writeBytes(clusterConfigPath, serialized);
+}
 
-        nodes.push_back(std::make_shared<Node>(
-                nodeId, address, this->configuration->get<uint64_t>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS)
-        ));
+std::vector<node_t> Cluster::getSeedNodes() {
+    std::vector<std::string> seedNodesAddress = this->configuration->getVector(ConfigurationKeys::SEED_NODES);
+    std::vector<node_t> nodes{seedNodesAddress.size()};
+    uint64_t timeout = configuration->get<uint64_t>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS);
 
-        offset += sizeof(nodeId) + 4 + sizeAddress;
+    for(int i = 0; i < nodes.size(); i++) {
+        nodes[i] = std::make_shared<Node>(0, seedNodesAddress[i], timeout);
     }
-
 
     return nodes;
 }

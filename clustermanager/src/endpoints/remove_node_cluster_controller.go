@@ -27,9 +27,9 @@ func (this *RemoveNodeClusterController) Remove(ctx echo.Context) error {
 
 	node, err := this.ClusterNodeConnections.GetNode(nodeId)
 	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, "Node not found / Impossible to contact with seeder node")
+		return ctx.JSON(http.StatusBadRequest, "Node not found / Impossible to contact with seeder node: "+err.Error())
 	}
-	
+
 	if res, err := node.Send(messages.BuildDoLeaveNodeClusterRequest(authKey, string(node.NodeId))); err != nil {
 		return ctx.JSON(http.StatusBadRequest, "Error while sending DO_LEAVE_CLUSTER: "+err.Error())
 	} else if !res.Success {

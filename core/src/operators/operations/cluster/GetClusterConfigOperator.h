@@ -15,7 +15,5 @@ public:
     OperatorDescriptor desc() override;
 
 private:
-    std::vector<SimpleString<memDbDataLength_t>> ringEntriesToSimpleStrings(bool usingPartition, const std::vector<RingEntry>& ringEntries);
-
-    std::vector<SimpleString<memDbDataLength_t>> nodesToSimpleStrings(OperatorDependencies& dependencies, const std::vector<node_t>& nodes);
+    std::vector<node_t> getNodesToSendInResponse(OperatorDependencies& dependencies);
 };

@@ -196,7 +196,7 @@ void ClusterNodes::broadcastAll(const OperationBody& operation, SendRequestOptio
     }
 }
 
-std::optional<node_t> ClusterNodes::getRandomNode(memdbPartitionId_t partitionId, std::set<memdbNodeId_t> alreadyCheckedNodesId) {
+std::optional<node_t> ClusterNodes::getRandomNode(memdbPartitionId_t partitionId, std::set<memdbNodeId_t>& alreadyCheckedNodesId) {
     std::srand(std::time(nullptr));
     NodesInPartition nodesInPartition = this->nodesInPartitions[partitionId];
     std::set<memdbNodeId_t> nodesIdInPartition = nodesInPartition.getAll();
@@ -212,6 +212,8 @@ std::optional<node_t> ClusterNodes::getRandomNode(memdbPartitionId_t partitionId
         node_t randomNode = this->allNodesById.at(* ptr);
 
         alreadyCheckedNodesId.insert(randomNode->nodeId);
+
+        return randomNode;
     }
 
     return std::nullopt;

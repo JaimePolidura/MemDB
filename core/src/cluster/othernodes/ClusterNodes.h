@@ -66,8 +66,8 @@ public:
     void deleteNodeById(const memdbNodeId_t nodeId);
 
     void removeNodeFromPartition(memdbNodeId_t nodeId, memdbPartitionId_t partitionId);
-    
-    std::optional<node_t> getRandomNode(memdbPartitionId_t partitionId, std::set<memdbNodeId_t> alreadyCheckedNodesId = {});
+
+    std::optional<node_t> getRandomNode(memdbPartitionId_t partitionId, std::set<memdbNodeId_t>& alreadyCheckedNodesId);
 
     void sendHintedHandoff(memdbNodeId_t nodeId);
 

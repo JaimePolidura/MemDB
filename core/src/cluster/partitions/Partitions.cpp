@@ -16,11 +16,21 @@ std::vector<RingEntry> Partitions::getAll() {
 }
 
 uint32_t Partitions::getOplogIdOfOtherNodeBySelfOplogId(memdbNodeId_t otherNodeId, uint32_t selfOplogId) {
-    return this->configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS) ?
-           (this->isClockwiseNeighbor(otherNodeId) ?
-            selfOplogId + this->getDistanceClockwise(otherNodeId) :
-            selfOplogId - this->getDistanceCounterClockwise(otherNodeId))
-        : 0;
+    if(!this->configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS)) {
+        return 0;
+    }
+    if(this->isClockwiseNeighbor(otherNodeId)) {
+        uint32_t oplogId = selfOplogId + this->getDistanceClockwise(otherNodeId);
+        return oplogId >= nodesPerPartition ?
+                0 :
+                oplogId;
+    } else {
+        int otherOplogId = static_cast<int>(selfOplogId) - static_cast<int>(this->getDistanceCounterClockwise(otherNodeId));
+
+        return otherOplogId <= 0 ?
+            nodesPerPartition - 1 :
+            otherOplogId;
+    }
 }
 
 uint32_t Partitions::getRingPositionByKey(SimpleString<memDbDataLength_t> key) {

@@ -40,7 +40,7 @@ void ClusterNodeSetup::setConfigurationProvidedClusterConfig() {
     memdbNodeId_t selfNodeId = configuration->get<memdbNodeId_t>(ConfigurationKeys::NODE_ID);
     uint32_t maxPartitionSize = configuration->get<uint32_t>(ConfigurationKeys::MAX_PARTITION_SIZE);
     uint32_t ringPosition = static_cast<uint32_t>(HashCalculator::calculateMD5(std::to_string(selfNodeId)) % maxPartitionSize);
-    
+
     auto clusterConfig = GetClusterConfigResponse{
         .nodesPerPartition = nodesPerPartition,
         .maxPartitionSize = maxPartitionSize,

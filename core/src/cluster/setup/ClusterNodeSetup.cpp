@@ -40,8 +40,8 @@ void ClusterNodeSetup::setConfigurationProvidedClusterConfig() {
     memdbNodeId_t selfNodeId = configuration->get<memdbNodeId_t>(ConfigurationKeys::NODE_ID);
     uint32_t maxPartitionSize = configuration->get<uint32_t>(ConfigurationKeys::MAX_PARTITION_SIZE);
     uint32_t ringPosition = static_cast<uint32_t>(HashCalculator::calculateMD5(std::to_string(selfNodeId)) % maxPartitionSize);
-
-    this->setClusterConfig(GetClusterConfigResponse{
+    
+    auto clusterConfig = GetClusterConfigResponse{
         .nodesPerPartition = nodesPerPartition,
         .maxPartitionSize = maxPartitionSize,
         .nodes = {},
@@ -49,7 +49,10 @@ void ClusterNodeSetup::setConfigurationProvidedClusterConfig() {
             .nodeId = selfNodeId,
             .ringPosition =  ringPosition
         }}
-    });
+    };
+
+    this->setClusterConfig(clusterConfig);
+    this->cluster->persistClusterConfig(clusterConfig);
 }
 
 bool ClusterNodeSetup::isSelfTheOnlySeedNode() {

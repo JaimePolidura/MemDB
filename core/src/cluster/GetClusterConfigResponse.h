@@ -13,11 +13,11 @@ public:
 
     std::vector<uint8_t> serialize() const;
 
-    static GetClusterConfigResponse deserialize(const Response& bytes, configuration_t configuration);
+    static GetClusterConfigResponse deserialize(const std::vector<uint8_t>& bytes, configuration_t configuration);
 
 private:
     std::size_t getSerializedBytesSize() const;
 
-    static std::vector<RingEntry> getRingEntriesFromGetClusterConfig(uint32_t nNodesInCluster, int& offset, Response response);
-    static std::vector<node_t> getNodesFromGetClusterConfig(int nNodesInCluster, int& offset, Response response, configuration_t configuration);
+    static std::vector<RingEntry> getRingEntriesFromGetClusterConfig(uint32_t nNodesInCluster, int& offset, const std::vector<uint8_t>& bytes);
+    static std::vector<node_t> getNodesFromGetClusterConfig(int nNodesInCluster, int& offset, const std::vector<uint8_t>& bytes, configuration_t configuration);
 };

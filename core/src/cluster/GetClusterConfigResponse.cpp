@@ -11,7 +11,6 @@ std::vector<uint8_t> GetClusterConfigResponse::serialize() const {
     for (node_t node : nodes) {
         Utils::appendToBuffer(node->nodeId, serialized);
         Utils::appendToBuffer(static_cast<uint32_t>(node->address.size()), serialized);
-        Utils::appendToBuffer(node->address, serialized);
         Utils::appendToBuffer(reinterpret_cast<uint8_t *>(node->address.data()), node->address.size(), serialized);
     }
     for (RingEntry ringEntry : ringEntries) {
@@ -36,16 +35,16 @@ std::size_t GetClusterConfigResponse::getSerializedBytesSize() const {
     return size;
 }
 
-GetClusterConfigResponse GetClusterConfigResponse::deserialize(const Response& response, configuration_t configuration) {
-    uint32_t nodesPerPartition = response.getResponseValueAtOffset(0, 4).to<uint32_t>();
-    uint32_t maxPartitionSize = response.getResponseValueAtOffset(4, 4).to<uint32_t>();
-    int nNodesInCluster = response.getResponseValueAtOffset(8, 4).to<int>();
+GetClusterConfigResponse GetClusterConfigResponse::deserialize(const std::vector<uint8_t>& bytes, configuration_t configuration) {
+    uint32_t nodesPerPartition = Utils::parseFromBuffer<uint32_t>(bytes, 0);
+    uint32_t maxPartitionSize = Utils::parseFromBuffer<uint32_t>(bytes, 4);
+    int nNodesInCluster = Utils::parseFromBuffer<uint32_t>(bytes, 8);
     bool usingPartitions = configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS);
 
     int offset = 12;
-    std::vector<node_t> nodes = getNodesFromGetClusterConfig(nNodesInCluster, offset, response, configuration);
+    std::vector<node_t> nodes = getNodesFromGetClusterConfig(nNodesInCluster, offset, bytes, configuration);
     std::vector<RingEntry> ringEntries = usingPartitions ? //Using partitions
-        getRingEntriesFromGetClusterConfig(nNodesInCluster, offset, response) :
+        getRingEntriesFromGetClusterConfig(nNodesInCluster, offset, bytes) :
         std::vector<RingEntry>{};
 
     return GetClusterConfigResponse{
@@ -56,11 +55,11 @@ GetClusterConfigResponse GetClusterConfigResponse::deserialize(const Response& r
     };
 }
 
-std::vector<RingEntry> GetClusterConfigResponse::getRingEntriesFromGetClusterConfig(uint32_t nNodesInCluster, int& offset, Response response) {
+std::vector<RingEntry> GetClusterConfigResponse::getRingEntriesFromGetClusterConfig(uint32_t nNodesInCluster, int& offset, const std::vector<uint8_t>& bytes) {
     std::vector<RingEntry> ringEntries{nNodesInCluster};
     for(int i = 0; i < nNodesInCluster; i++) {
-        memdbNodeId_t nodeId = response.getResponseValueAtOffset(offset, sizeof(memdbNodeId_t)).to<memdbNodeId_t>();
-        uint32_t ringPosition = response.getResponseValueAtOffset(offset + sizeof(memdbNodeId_t), 4).to<uint32_t>();
+        memdbNodeId_t nodeId = Utils::parseFromBuffer<memdbNodeId_t>(bytes, offset);
+        uint32_t ringPosition = Utils::parseFromBuffer<uint32_t>(bytes, offset + sizeof(memdbNodeId_t));
 
         ringEntries[i] = RingEntry{.nodeId = nodeId, .ringPosition = ringPosition};
 
@@ -70,14 +69,14 @@ std::vector<RingEntry> GetClusterConfigResponse::getRingEntriesFromGetClusterCon
     return ringEntries;
 }
 
-std::vector<node_t> GetClusterConfigResponse::getNodesFromGetClusterConfig(int nNodesInCluster, int& offset, Response response, configuration_t configuration) {
+std::vector<node_t> GetClusterConfigResponse::getNodesFromGetClusterConfig(int nNodesInCluster, int& offset, const std::vector<uint8_t>& bytes, configuration_t configuration) {
     uint64_t timeout = configuration->get<uint64_t>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS);
     std::vector<node_t> nodes{};
 
     for(int i = 0; i < nNodesInCluster; i++) {
-        memdbNodeId_t nodeId = response.getResponseValueAtOffset(offset, sizeof(memdbNodeId_t)).to<memdbNodeId_t>();
-        uint32_t sizeAddress = response.getResponseValueAtOffset(offset + sizeof(memdbNodeId_t), 4).to<uint32_t>();
-        std::string address = response.getResponseValueAtOffset(offset + sizeof(memdbNodeId_t) + 4, sizeAddress).toString();
+        memdbNodeId_t nodeId = Utils::parseFromBuffer<memdbNodeId_t>(bytes, offset);
+        uint32_t sizeAddress = Utils::parseFromBuffer<uint32_t>(bytes, offset + sizeof(memdbNodeId_t));
+        std::string address = std::string((char *)(bytes.data() + offset + sizeof(memdbNodeId_t) + 4), sizeAddress);
 
         nodes.push_back(std::make_shared<Node>(
                 nodeId, address, timeout

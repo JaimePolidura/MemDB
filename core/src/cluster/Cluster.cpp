@@ -111,38 +111,35 @@ auto Cluster::getPartitionIdByKey(SimpleString<memDbDataLength_t> key) -> uint32
 }
 
 auto Cluster::getClusterConfig() -> std::result<GetClusterConfigResponse> {
-    std::vector<std::string> addressSeedNodes = this->configuration->getVector(ConfigurationKeys::SEED_NODES);
+    std::vector<node_t> candidatesNodes = this->getCandidatesToSendGetClusterConfig();
     uint64_t timeoutMs = this->configuration->get<uint64_t>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS);
     uint32_t nRetries = this->configuration->get<uint32_t>(ConfigurationKeys::NODE_REQUEST_N_RETRIES);
-    bool usingPartitions = this->configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS);
 
-    if(addressSeedNodes.empty()) {
+    if(candidatesNodes.empty()) {
         return std::error<GetClusterConfigResponse>();
     }
 
     this->logger->info("Sending GET_CLUSTER_CONFIG to any seed node");
 
-    for(const std::string& seedNodeAddress : addressSeedNodes) {
-        if(seedNodeAddress == this->configuration->get(ConfigurationKeys::ADDRESS) + ":" +
+    for(const node_t candidateNode : candidatesNodes) {
+        if(candidateNode->address == this->configuration->get(ConfigurationKeys::ADDRESS) + ":" +
             this->configuration->get(ConfigurationKeys::SERVER_PORT))  {
             continue;
         }
 
-        Node seedNode = Node{0, seedNodeAddress, timeoutMs};
-
         for(int i = 0; i < nRetries; i++) {
-            std::result<Response> responseResult = seedNode.sendRequest(RequestBuilder::builder()
+            std::result<Response> responseResult = candidateNode->sendRequest(RequestBuilder::builder()
                 .authKey(this->configuration->get(ConfigurationKeys::AUTH_NODE_KEY))
                 ->operatorNumber(OperatorNumbers::GET_CLUSTER_CONFIG)
                 ->selfNode(this->getNodeId())
                 ->build());
 
-            seedNode.closeConnection();
+            candidateNode->closeConnection();
 
             if(responseResult.is_success() && responseResult->isSuccessful){
-                this->logger->info("Received GET_CLUSTER_CONFIG from seed node {0}", seedNode.nodeId);
+                this->logger->info("Received GET_CLUSTER_CONFIG from seed node {0}", candidateNode->nodeId);
 
-                GetClusterConfigResponse response = GetClusterConfigResponse::deserialize(responseResult.get(), configuration);
+                GetClusterConfigResponse response = GetClusterConfigResponse::deserialize(responseResult.get().responseValue.toVector(), configuration);
                 this->persistClusterConfig(response);
 
                 return std::ok(response);
@@ -156,20 +153,18 @@ auto Cluster::getClusterConfig() -> std::result<GetClusterConfigResponse> {
 }
 
 std::vector<node_t> Cluster::getCandidatesToSendGetClusterConfig() {
-    ResponseDeserializer responseDeserializer{};
     std::string clusterConfigPath = configuration->get(ConfigurationKeys::DATA_PATH)
-        + "/" + CLUSTER_CONFIG_FIEL_NAME;
+        + "/cluster-config";
     if(!FileUtils::exists(clusterConfigPath)) {
+        FileUtils::createFile(configuration->get(ConfigurationKeys::DATA_PATH), "cluster-config");
         return getSeedNodes();
     }
 
     std::vector<uint8_t> bytesClusterConfigRespnose = FileUtils::readBytes(clusterConfigPath);
-    std::result<Response> clusterConfigDeserialized = responseDeserializer.deserialize(bytesClusterConfigRespnose);
 
-    if(clusterConfigDeserialized.is_success()) {
-        return GetClusterConfigResponse::deserialize(clusterConfigDeserialized.get(), configuration)
-            .nodes;
-    } else {
+    try {
+        return GetClusterConfigResponse::deserialize(bytesClusterConfigRespnose, configuration).nodes;
+    }catch (const std::exception& e) {
         this->logger->error("Error while reading cluster config file {0} it might be corrupted", clusterConfigPath);
         return getSeedNodes();
     }
@@ -178,7 +173,7 @@ std::vector<node_t> Cluster::getCandidatesToSendGetClusterConfig() {
 void Cluster::persistClusterConfig(const GetClusterConfigResponse& response) {
     std::vector<uint8_t> serialized = response.serialize();
     std::string clusterConfigPath = configuration->get(ConfigurationKeys::DATA_PATH)
-        + "/" + CLUSTER_CONFIG_FIEL_NAME;
+        + "/cluster-config";
 
     FileUtils::clear(clusterConfigPath);
     FileUtils::writeBytes(clusterConfigPath, serialized);

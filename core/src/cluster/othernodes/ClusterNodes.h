@@ -72,6 +72,8 @@ public:
     void sendHintedHandoff(memdbNodeId_t nodeId);
 
 private:
+    friend class DoLeaveClusterOperator;
+
     std::map<memdbNodeId_t, node_t> allNodesById{}; //Includes all nodes even if the actual node doesnt share any partition
 
     std::vector<NodesInPartition> nodesInPartitions{};

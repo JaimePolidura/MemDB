@@ -12,7 +12,6 @@
 
 template<typename SizeValue>
 class Map {
-private:
     std::atomic_uint32_t size;
     std::vector<AVLTree<SizeValue>> buckets;
     std::vector<SharedLock *> locks;
@@ -32,6 +31,10 @@ public:
               lamportClock_t lamportClock,
               bool requestFromNode);
 
+    void incrementCounter(const SimpleString<SizeValue>& key,
+        uint32_t nNodes,
+        memdbNodeId_t selfNodeId);
+
     /**
      * Returns true if operation was successful
      */
@@ -45,8 +48,6 @@ public:
 
     void clear();
     bool contains(const SimpleString<SizeValue>& key) const;
-
-    std::vector<MapEntry<SizeValue>> all();
 
     int getSize() const;
 
@@ -62,7 +63,6 @@ public:
     }
 
 private:
-
     AVLNode<SizeValue> * getNodeByKeyHash(uint32_t keyHash) const {
         AVLTree<SizeValue> * actualMapNode = this->getBucket(keyHash);
 
@@ -91,7 +91,6 @@ private:
 
 public:
     class BucketMapHashOrderedIterator : public Iterator<std::vector<MapEntry<memDbDataLength_t>>> {
-    private:
         Map<SizeValue> * map;
         uint32_t actualBucket;
 
@@ -99,7 +98,7 @@ public:
         BucketMapHashOrderedIterator(Map * map): map(map), actualBucket(0) {}
 
         std::vector<MapEntry<memDbDataLength_t>> next() override {
-            return this->map->buckets.at(this->actualBucket++).getOrderedByHash();;
+            return this->map->buckets.at(this->actualBucket++).getOrderedByHash();
         }
 
         bool hasNext() override {
@@ -142,24 +141,11 @@ std::result<DbEditResult> Map<SizeValue>::put(const SimpleString<SizeValue> &key
 
     AVLTree<SizeValue> * bucket = this->getBucket(keyHash);
 
-    std::result<DbEditResult> addResult = bucket->add(key, keyHash, value, timestamp, updateClockStrategy, lamportClock, requestFromNode);
+    std::result<DbEditResult> addResult = bucket->addData(key, keyHash, value, timestamp, updateClockStrategy, lamportClock, requestFromNode);
 
     unlockWrite(keyHash);
 
     return addResult;
-}
-
-template<typename SizeValue>
-std::vector<MapEntry<SizeValue>> Map<SizeValue>::all() {
-    std::vector<MapEntry<SizeValue>> all{};
-
-    for (const AVLTree bucket: this->buckets){
-        for (const auto node : bucket.all()){
-            all.push_back(MapEntry{.key = node->key, .value = node->_value, .keyHash = node->keyHash, .timestamp = node->timestamp});
-        }
-    }
-
-    return all;
 }
 
 template<typename SizeValue>
@@ -171,7 +157,7 @@ std::optional<MapEntry<SizeValue>> Map<SizeValue>::get(const SimpleString<SizeVa
     AVLNode<SizeValue> * node = this->getNodeByKeyHash(hash);
 
     const std::optional<MapEntry<SizeValue>> response = (node != nullptr ?
-            std::optional<MapEntry<SizeValue>>{MapEntry{node->key, node->value, node->keyHash, node->timestamp}} :
+            std::optional<MapEntry<SizeValue>>{MapEntry{node->key, node->keyHash, node->nodeType, node->data}} :
             std::nullopt);
 
     unlockRead(hash);

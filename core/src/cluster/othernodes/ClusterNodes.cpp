@@ -75,6 +75,13 @@ bool ClusterNodes::existsByNodeId(memdbNodeId_t nodeId) {
 }
 
 std::optional<node_t> ClusterNodes::getByNodeId(memdbNodeId_t nodeId) {
+    memdbNodeId_t selfNodeId = this->configuration->get<memdbNodeId_t>(ConfigurationKeys::NODE_ID);
+
+    if(nodeId == selfNodeId) {
+        return std::make_shared<Node>(selfNodeId, this->configuration->get(ConfigurationKeys::ADDRESS) + ":"
+            + this->configuration->get(ConfigurationKeys::SERVER_PORT), 0);
+    }
+
     if(this->allNodesById.contains(nodeId)) {
         return this->allNodesById[nodeId];
     } else {

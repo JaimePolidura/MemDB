@@ -7,6 +7,7 @@ public:
     static const constexpr uint8_t SET = 1; //4
     static const constexpr uint8_t GET = 2; //8
     static const constexpr uint8_t DEL = 3; //12
+    static const constexpr uint8_t INC = 18;
     static const constexpr uint8_t CONTAINS = 17;
 
     static const constexpr uint8_t HEALTH_CHECK = 4; //16

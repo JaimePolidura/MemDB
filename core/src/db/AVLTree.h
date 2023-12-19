@@ -7,6 +7,9 @@
 #include "MapEntry.h"
 #include "db/DbEditResult.h"
 #include "utils/std/Result.h"
+#include "db/counters/UpdateCounterType.h"
+#include "counters/Counter.h"
+#include "db/NodeType.h"
 
 #define IGNORE_TIMESTAMP true
 #define NOT_IGNORE_TIMESTAMP false
@@ -15,19 +18,19 @@ template<typename SizeValue>
 class AVLNode {
 public:
     SimpleString<SizeValue> key;
-    SimpleString<SizeValue> value;
     AVLNode<SizeValue> * left;
-    LamportClock timestamp;
     AVLNode<SizeValue> * right;
+    std::shared_ptr<void> data;
     uint32_t keyHash;
     int16_t height;
+    NodeType nodeType;
 
     bool hasNoChild() {
         return this->left == nullptr && this->right == nullptr;
     }
 
-    AVLNode(SimpleString<SizeValue> key, uint32_t keyHash, SimpleString<SizeValue> value, int16_t height, uint16_t nodeId, uint64_t timestamp):
-            left(nullptr), right(nullptr), value(value), keyHash(keyHash), height(height), key(key), timestamp(nodeId, timestamp) {
+    AVLNode(SimpleString<SizeValue> key, uint32_t keyHash, int16_t height, NodeType nodeType, std::shared_ptr<void> data) :
+            left(nullptr), right(nullptr), keyHash(keyHash), height(height), key(key), nodeType(nodeType), data(data) {
     }
 };
 
@@ -36,58 +39,35 @@ class AVLTree {
 public:
     AVLNode<SizeValue> * root;
 
-public:
-    std::result<DbEditResult> add(const SimpleString<SizeValue> &key,
+    std::result<DbEditResult> addData(const SimpleString<SizeValue> &key,
               uint32_t keyHash,
               const SimpleString<SizeValue> &value,
               LamportClock timestampFromNode,
               LamportClock::UpdateClockStrategy updateClockStrategy,
               lamportClock_t lamportClock,
               bool requestFromNode) {
-        AVLNode<SizeValue> * newNode = new AVLNode(key, keyHash, value, -1, 0, 0);
+        AVLNode<SizeValue> * newDataNode = new AVLNode(key, keyHash, -1, NodeType::DATA, std::make_shared<DataAVLNode<SizeValue>>(value, LamportClock{0, 0}));
 
         DbEditResult result{.timestampOfOperation = 0};
-        AVLNode<SizeValue> * insertedNode = this->insertRecursive(newNode, result, this->root, timestampFromNode, updateClockStrategy, lamportClock, requestFromNode);
+        AVLNode<SizeValue> * insertedNode = this->insertRecursiveData(newDataNode, result, this->root, timestampFromNode, updateClockStrategy, lamportClock, requestFromNode);
 
         return insertedNode != nullptr ?
             std::ok(result) :
             std::error<DbEditResult>();
     }
 
-    std::result<DbEditResult> remove(uint32_t keyHash,
+    std::result<DbEditResult> removeData(uint32_t keyHash,
                  LamportClock timestamp,
                  LamportClock::UpdateClockStrategy updateClockStrategy,
                  lamportClock_t lamportClock,
                  bool checkTimestamps) {
         bool removed = false;
         DbEditResult result{};
-        this->removeRecursive(this->root, result, keyHash, timestamp, updateClockStrategy, lamportClock, removed, checkTimestamps);
+        this->removeRecursiveData(this->root, result, keyHash, timestamp, updateClockStrategy, lamportClock, removed, checkTimestamps);
 
         return removed ?
             std::ok(result) :
             std::error<DbEditResult>();
-    }
-
-    std::vector<AVLNode<SizeValue> *> all() const {
-        std::vector<AVLNode<SizeValue> *> toReturn{};
-        if(this->root == nullptr) return toReturn;
-
-        std::queue<AVLNode<SizeValue> *> pending{};
-        pending.push(this->root);
-
-        while(!pending.empty()) {
-            AVLNode<SizeValue> * node = pending.front();
-            pending.pop();
-
-            if(node->left != nullptr)
-                pending.push(node->left);
-            if(node->right != nullptr)
-                pending.push(node->right);
-
-            toReturn.push_back(node);
-        }
-
-        return toReturn;
     }
 
     bool contains(uint32_t keyHashToSearch) const {
@@ -124,7 +104,7 @@ private:
         if(node->left != nullptr){
             this->getOrderedByHashRecursive(node->left, toReturn);
         }
-        toReturn.push_back(MapEntry<SizeValue>{node->key, node->value, node->keyHash, node->timestamp});
+        toReturn.push_back(MapEntry<SizeValue>{node->key, node->keyHash, node->nodeType, node->data});
         if(node->right != nullptr){
             this->getOrderedByHashRecursive(node->right, toReturn);
         }
@@ -143,7 +123,7 @@ private:
         delete node;
     }
 
-    AVLNode<SizeValue> * removeRecursive(AVLNode<SizeValue> * last,
+    AVLNode<SizeValue> * removeRecursiveData(AVLNode<SizeValue> * last,
                                          DbEditResult& result,
                                          uint32_t keyHashToRemove,
                                          LamportClock timestamp,
@@ -157,11 +137,19 @@ private:
         if(last == nullptr){
             return last;
         }else if(last->keyHash > keyHashToRemove) {
-            last->left = this->removeRecursive(last->left, result, keyHashToRemove, timestamp, updateClockStrategy, lamportClock, removed, checkTimestamps);
+            last->left = this->removeRecursiveData(last->left, result, keyHashToRemove, timestamp, updateClockStrategy, lamportClock, removed, checkTimestamps);
         }else if (last->keyHash < keyHashToRemove) {
-            last->right = this->removeRecursive(last->left, result, keyHashToRemove, timestamp, updateClockStrategy, lamportClock, removed, checkTimestamps);
+            last->right = this->removeRecursiveData(last->left, result, keyHashToRemove, timestamp, updateClockStrategy, lamportClock, removed, checkTimestamps);
         }else {
-            if(!ignoreTimeStamps && last->timestamp > timestamp) {
+            if(last->nodeType != NodeType::DATA) {
+                result.timestampOfOperation = 0;
+                removed = false;
+                return last;
+            }
+
+            DataAVLNode<SizeValue> * dataNodeLast = std::dynamic_pointer_cast<DataAVLNode<SizeValue>>(last->data).get();
+
+            if(!ignoreTimeStamps && dataNodeLast->timestamp > timestamp) {
                 result.timestampOfOperation = 0;
                 removed = false;
                 return last;
@@ -174,13 +162,15 @@ private:
             if(last->left && last->right) {
                 AVLNode<SizeValue> * temp = this->mostLeftChild(last->right);
 
+                //TODO Review
                 last->keyHash = temp->keyHash;
-                last->value = temp->value;
+                last->data = temp->data;
+                last->nodeType = temp->data;
 
                 if(rootRemoved) this->root = last;
 
                 bool ignore = false;
-                last->right = removeRecursive(last->right, result, last->keyHash, last->timestamp, LamportClock::UpdateClockStrategy::NONE, lamportClock, ignore, ignoreTimeStamps);
+                last->right = removeRecursive(last->right, result, last->keyHash, dataNodeLast->timestamp, LamportClock::UpdateClockStrategy::NONE, lamportClock, ignore, ignoreTimeStamps);
             }else{
                 AVLNode<SizeValue> * temp = last;
                 if(last->left == nullptr)
@@ -192,12 +182,12 @@ private:
 
                 delete temp;
             }
-
-            if(last != nullptr)
-                last = this->rebalance(last);
-
-            return last;
         }
+
+        if(last != nullptr)
+            last = this->rebalance(last);
+
+        return last;
     }
 
     AVLNode<SizeValue> * mostLeftChild(AVLNode<SizeValue> * node) const {
@@ -207,7 +197,7 @@ private:
         return node;
     }
 
-    AVLNode<SizeValue> * insertRecursive(
+    AVLNode<SizeValue> * insertRecursiveData(
             AVLNode<SizeValue> * toInsert,
             DbEditResult& result,
             AVLNode<SizeValue> * last,
@@ -219,15 +209,17 @@ private:
         bool ignoreTimestamps = updateClockStrategy == LamportClock::UpdateClockStrategy::NONE || !requestFromNode;
 
         if(last == nullptr) {
-            uint64_t newTimestampCounter = clock->update(updateClockStrategy, timestamp.getCounterValue());
+            uint64_t newTimestampCounter = this->updateClock(clock, updateClockStrategy, timestamp.getCounterValue());
+
+            DataAVLNode<SizeValue> * dataNodeToInsert = std::static_pointer_cast<DataAVLNode<SizeValue>>(toInsert->data).get();
 
             if(requestFromNode){
                 result.timestampOfOperation = timestamp.counter;
-                toInsert->timestamp = timestamp;
+                dataNodeToInsert->timestamp = timestamp;
             } else {
                 result.timestampOfOperation = newTimestampCounter;
-                toInsert->timestamp.counter = newTimestampCounter;
-                toInsert->timestamp.nodeId = timestamp.nodeId;
+                dataNodeToInsert->timestamp.counter = newTimestampCounter;
+                dataNodeToInsert->timestamp.nodeId = timestamp.nodeId;
             }
 
             if(this->root == nullptr){
@@ -238,27 +230,34 @@ private:
         }
 
         if(last->keyHash > toInsert->keyHash) {
-            AVLNode<SizeValue> * inserted = insertRecursive(toInsert, result, last->left, timestamp, updateClockStrategy, clock, requestFromNode);
+            AVLNode<SizeValue> * inserted = insertRecursiveData(toInsert, result, last->left, timestamp, updateClockStrategy, clock, requestFromNode);
             if(inserted != nullptr) last->left = inserted;
 
         }else if(last->keyHash < toInsert->keyHash) {
-            AVLNode<SizeValue> * inserted = insertRecursive(toInsert, result, last->right, timestamp, updateClockStrategy, clock, requestFromNode);
+            AVLNode<SizeValue> * inserted = insertRecursiveData(toInsert, result, last->right, timestamp, updateClockStrategy, clock, requestFromNode);
             if(inserted != nullptr) last->right = inserted;
 
         }else{
-            if(!ignoreTimestamps && last->timestamp > timestamp) //Reject. Node has been updated by more updated node
+            if(last->nodeType != NodeType::DATA) {
+                return nullptr; //Error
+            }
+
+            DataAVLNode<SizeValue> * dataNodeToInsert = std::static_pointer_cast<DataAVLNode<SizeValue>>(toInsert->data).get();
+            DataAVLNode<SizeValue> * dataLastNode = std::static_pointer_cast<DataAVLNode<SizeValue>>(last->data).get();
+
+            if(!ignoreTimestamps && dataLastNode->timestamp > timestamp) //Reject. Node has been updated by more updated node
                 return nullptr;
 
-            last->value = toInsert->value;
+            dataLastNode->value = dataNodeToInsert->value;
 
             uint64_t newTimestampCounter = clock->update(updateClockStrategy, timestamp.getCounterValue());
             if(requestFromNode) {
                 result.timestampOfOperation = timestamp.counter;
-                last->timestamp = timestamp;
+                dataLastNode->timestamp = timestamp;
             } else {
                 result.timestampOfOperation = newTimestampCounter;
-                last->timestamp.counter = newTimestampCounter;
-                last->timestamp.nodeId = timestamp.nodeId;
+                dataLastNode->timestamp.counter = newTimestampCounter;
+                dataLastNode->timestamp.nodeId = timestamp.nodeId;
             }
         }
 
@@ -334,5 +333,13 @@ private:
 
     int16_t getHeight(AVLNode<SizeValue> * node) const {
         return node == nullptr ? -1 : node->height;
+    }
+
+    uint64_t updateClock(lamportClock_t lamportClock, LamportClock::UpdateClockStrategy updateType, uint64_t othersValue) {
+        if(lamportClock != nullptr) {
+            return lamportClock->update(updateType, othersValue);
+        } else {
+            return 0;
+        }
     }
 };

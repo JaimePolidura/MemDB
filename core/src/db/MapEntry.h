@@ -2,23 +2,26 @@
 
 #include "utils/strings/SimpleString.h"
 #include "utils/clock/LamportClock.h"
+#include "db/NodeType.h"
 
 template<typename SizeValue>
 struct MapEntry {
     SimpleString<SizeValue> key;
-    SimpleString<SizeValue> value;
     uint32_t keyHash{};
-    LamportClock timestamp;
+    std::shared_ptr<void> data;
+    NodeType type;
 
     MapEntry() = default;
 
-    MapEntry(SimpleString<SizeValue> key, SimpleString<SizeValue> value, uint32_t keyHash, LamportClock timestamp):
-        key(key), value(value), keyHash(keyHash), timestamp(timestamp) {}
+    MapEntry(SimpleString<SizeValue> key, uint32_t keyHash, NodeType type, std::shared_ptr<void> data):
+        key(key), keyHash(keyHash), data(data), type(type) {}
 
-    MapEntry(const MapEntry& other): key(other.key), value(other.value), keyHash(other.keyHash), timestamp(other.timestamp) {}
+    std::shared_ptr<CounterAVLNode> toCounter() const {
+        return std::dynamic_pointer_cast<CounterAVLNode>(this->data);
+    }
 
-    bool hasValue() {
-        return this->value.data() != nullptr;
+    std::shared_ptr<DataAVLNode<SizeValue>> toData() const {
+        return std::dynamic_pointer_cast<DataAVLNode<SizeValue>>(this->data);
     }
 };
 

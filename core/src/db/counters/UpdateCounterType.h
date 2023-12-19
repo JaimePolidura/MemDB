@@ -1,0 +1,8 @@
+#pragma once
+
+enum UpdateCounterType {
+    USER_INCREMENT,
+    USER_DECREMENT,
+    REPLICATION_INCREMENT,
+    REPLICATION_DECREMENT
+};

@@ -14,13 +14,15 @@ struct CreateMoveOplogReqParams {
 };
 
 class MoveOpLogRequestCreator {
+public:
+    MoveOpLogRequestCreator(const std::string& nodeAuthKey, memdbNodeId_t selfNodeId);
+
+    Request create(CreateMoveOplogReqParams params);
+
 private:
     OperationLogSerializer operationLogSerializer{};
     memdbNodeId_t selfNodeId;
     std::string nodeAuthKey;
 
-public:
-    MoveOpLogRequestCreator(const std::string& nodeAuthKey, memdbNodeId_t selfNodeId);
-
-    Request create(CreateMoveOplogReqParams params);
+    OperationBody convertMapEntryIntoOperation(const MapEntry<memDbDataLength_t>& entry);
 };

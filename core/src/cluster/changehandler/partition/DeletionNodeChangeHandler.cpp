@@ -43,7 +43,7 @@ void DeletionNodeChangeHandler::sendRestOplogsToNextNodes(const std::vector<Ring
         auto bucketIterator = this->cluster->memDbStores->getByPartitionId(actualOplogId)->bucketIterator();
 
         while(bucketIterator.hasNext()){
-            auto actualOplog = bucketIterator.next();
+            std::vector<MapEntry<memDbDataLength_t>> actualOplog = bucketIterator.next();
             if(actualOplog.empty()){
                 continue;
             }

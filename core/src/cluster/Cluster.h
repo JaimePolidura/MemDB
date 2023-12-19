@@ -57,8 +57,6 @@ public:
     auto getNodeId() -> memdbNodeId_t;
 
 private:
-    static constexpr std::string CLUSTER_CONFIG_FIEL_NAME = "cluster-config";
-
     onGoingSyncOplogs_t onGoingMultipleResponsesStore;
     configuration_t configuration;
     clusterNodes_t clusterNodes;

@@ -11,7 +11,7 @@ public:
 
     void decrement();
 
-    uint64_t get();
+    uint64_t count() const;
 
 private:
     uint64_t * nIncrements; //Index -> nodeId

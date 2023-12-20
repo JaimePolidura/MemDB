@@ -9,9 +9,9 @@ Response CasOperator::operate(const OperationBody& operation, const OperationOpt
 
     dependencies.logger->debugInfo("Received CAS(key = {0}, expectedValue = {1}, newValue = {2})", key.toString(), expectedValue.toString(), newValue.toString());
 
-    std::result<std::tuple<LamportClock, LamportClock>> resultPrepare = sendRetriesPrepares(dependencies, proposerPaxosRound, options.partitionId, key, expectedValue);
+    auto resultPrepare = sendRetriesPrepares(dependencies, proposerPaxosRound, options.partitionId, key, expectedValue);
     if(resultPrepare.has_error()){
-        return Response::error(ErrorCode::CAS_FAILED);
+        return Response::error(resultPrepare.get_error());
     }
     auto [prevTimestamp, nextTimestamp] = resultPrepare.get();
 
@@ -47,7 +47,7 @@ Response CasOperator::operate(const OperationBody& operation, const OperationOpt
     }
 }
 
-std::result<std::tuple<LamportClock, LamportClock>> CasOperator::sendRetriesPrepares(OperatorDependencies& dependencies,
+std::result<std::tuple<LamportClock, LamportClock>, uint8_t> CasOperator::sendRetriesPrepares(OperatorDependencies& dependencies,
                                                                                      proposerPaxosRound_t proposerPaxosRound,
                                                                         int partitionId,
                                                                         SimpleString<memDbDataLength_t> key,
@@ -59,13 +59,16 @@ std::result<std::tuple<LamportClock, LamportClock>> CasOperator::sendRetriesPrep
 
     while(true){
         std::optional<MapEntry<memDbDataLength_t>> storedInDb = memDbStore->get(key);
-        if(!storedInDb.has_value() || (storedInDb->value != expectedValue)) {
+        if(storedInDb.has_value() && storedInDb->type != NodeType::DATA) {
+            return std::error<std::tuple<LamportClock, LamportClock>>(ErrorCode::INVALID_TYPE);
+        }
+        if(!storedInDb.has_value() || (storedInDb->toData()->value != expectedValue)) {
             proposerPaxosRound->state = ProposerPaxosState::FAILED;
             dependencies.logger->debugInfo("Expected value doest match with actual value stored in local db at key {0}", key.toString());
-            return std::error<std::tuple<LamportClock, LamportClock>>();
+            return std::error<std::tuple<LamportClock, LamportClock>>(ErrorCode::CAS_FAILED);
         }
 
-        prevTimestamp = storedInDb->timestamp;
+        prevTimestamp = storedInDb->toData()->timestamp;
         nextTimestamp.counter++;
 
         dependencies.logger->debugInfo("Sending PREPARE(prev = {0}, next = {1}, key = {2}) to nodes in partition {3}",
@@ -84,7 +87,7 @@ std::result<std::tuple<LamportClock, LamportClock>> CasOperator::sendRetriesPrep
 
     proposerPaxosRound->retryPrepareTimer.reset();
 
-    return std::ok<std::tuple<LamportClock, LamportClock>>({prevTimestamp, nextTimestamp});
+    return std::ok<std::tuple<LamportClock, LamportClock>, uint8_t>({prevTimestamp, nextTimestamp});
 }
 
 bool CasOperator::checkIfQuorumAndAllResponsesSuccess(multipleResponses_t multiResponses, proposerPaxosRound_t proposerPaxosRound, OperatorDependencies& dependencies) {

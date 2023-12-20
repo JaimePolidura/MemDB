@@ -147,7 +147,7 @@ private:
                 return last;
             }
 
-            DataAVLNode<SizeValue> * dataNodeLast = std::dynamic_pointer_cast<DataAVLNode<SizeValue>>(last->data).get();
+            DataAVLNode<SizeValue> * dataNodeLast = std::static_pointer_cast<DataAVLNode<SizeValue>>(last->data).get();
 
             if(!ignoreTimeStamps && dataNodeLast->timestamp > timestamp) {
                 result.timestampOfOperation = 0;
@@ -165,12 +165,12 @@ private:
                 //TODO Review
                 last->keyHash = temp->keyHash;
                 last->data = temp->data;
-                last->nodeType = temp->data;
+                last->nodeType = temp->nodeType;
 
                 if(rootRemoved) this->root = last;
 
                 bool ignore = false;
-                last->right = removeRecursive(last->right, result, last->keyHash, dataNodeLast->timestamp, LamportClock::UpdateClockStrategy::NONE, lamportClock, ignore, ignoreTimeStamps);
+                last->right = removeRecursiveData(last->right, result, last->keyHash, dataNodeLast->timestamp, LamportClock::UpdateClockStrategy::NONE, lamportClock, ignore, ignoreTimeStamps);
             }else{
                 AVLNode<SizeValue> * temp = last;
                 if(last->left == nullptr)

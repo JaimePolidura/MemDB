@@ -176,7 +176,7 @@ std::result<DbEditResult> Map<SizeValue>::remove(const SimpleString<SizeValue>& 
     lockWrite(hash);
 
     AVLTree<SizeValue> * bucket = this->getBucket(hash);
-    std::result<DbEditResult> removeResult = bucket->remove(hash, timestamp, updateClockStrategy, lamportClock, checkTimestamps);
+    std::result<DbEditResult> removeResult = bucket->removeData(hash, timestamp, updateClockStrategy, lamportClock, checkTimestamps);
 
     unlockWrite(hash);
 

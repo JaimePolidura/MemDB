@@ -22,7 +22,7 @@ private:
             SimpleString<memDbDataLength_t>,
             SimpleString<memDbDataLength_t>> getArgs(const OperationBody& operation);
 
-    std::result<std::tuple<LamportClock, LamportClock>> sendRetriesPrepares(OperatorDependencies& dependencies,
+    std::result<std::tuple<LamportClock, LamportClock>, uint8_t> sendRetriesPrepares(OperatorDependencies& dependencies,
                                                                             proposerPaxosRound_t proposerPaxosRound,
                                                                             int partitionId,
                                                                             SimpleString<memDbDataLength_t> key,

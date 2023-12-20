@@ -10,7 +10,7 @@ void Counter::decrement() {
     this->nIncrements[this->selfNodeId]--;
 }
 
-uint64_t Counter::get() {
+uint64_t Counter::count() const {
     uint64_t actualValue = 0;
 
     for(int i = 0; i < this->nNodes; i++) {

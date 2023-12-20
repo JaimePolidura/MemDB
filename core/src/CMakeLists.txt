@@ -15,24 +15,16 @@ add_library(${BINARY}_lib STATIC ${SOURCES} MemDb.cpp MemDbCreator.cpp utils/Uti
 # He cambiado el nombre de la carpeta de boost a xd. Con eso el programa no se bloquea
 include_directories(${CMAKE_PREFIX_PATH}/include)
 
-find_package(nlohmann_json CONFIG REQUIRED)
-target_link_libraries(${BINARY}_lib PRIVATE nlohmann_json::nlohmann_json)
-
 # No funciona en windows y no se por que
 if(UNIX)
     find_package(spdlog CONFIG REQUIRED)
     target_link_libraries(${BINARY}_lib PRIVATE spdlog::spdlog spdlog::spdlog_header_only)
-
-    find_package(etcd-cpp-api CONFIG)
-    target_link_libraries(${BINARY}_lib PRIVATE etcd-cpp-api)
 endif()
 
 if(UNIX)
     target_include_directories(${BINARY}_lib PRIVATE /usr/local/include)
-    target_link_libraries(${BINARY}_lib PRIVATE cpprest etcd-cpp-api)
     target_link_directories(${BINARY}_lib PRIVATE /usr/local/lib)
-    target_compile_options(${BINARY}_lib PRIVATE -I/usr/local/include/etcd)
-    target_link_libraries(${BINARY}_lib PRIVATE -letcd-cpp-api -lcpprest -lcrypto -lcpprest -lz)
+    target_link_libraries(${BINARY}_lib PRIVATE -lcpprest -lcrypto -lz)
     target_link_libraries(${BINARY}_run PRIVATE ${BINARY}_lib)
 endif()
 

@@ -7,11 +7,14 @@ Response PrepareCasOperator::operate(const OperationBody& operation, const Opera
 
     std::optional<MapEntry<memDbDataLength_t>> keyInDb = memDbStore->get(key);
     std::optional<AcceptatorPaxosRound> paxosRound = dependencies.onGoingPaxosRounds->getAcceptatorByKeyHash(keyHash);
-    bool moreUpToDateValueIsStored = keyInDb.has_value() && keyInDb->timestamp > prevTimestamp;
+    if(keyInDb->type != NodeType::DATA) {
+        return Response::error(ErrorCode::INVALID_TYPE);
+    }
+    bool moreUpToDateValueIsStored = keyInDb.has_value() && keyInDb->toData()->timestamp > prevTimestamp;
     bool promisedHigherTimestamp = paxosRound.has_value() && paxosRound->promisedNextTimestamp > nextTimestamp;
 
     dependencies.logger->debugInfo("Received PREPARE(prev = {0}, next = {1}, key = {2}) from node {3}. More up to date value stored {4}? {5} Promised higher next timestamp {6}? {7}",
-                                   prevTimestamp.toString(), nextTimestamp.toString(), key.toString(), std::to_string(operation.nodeId), keyInDb->timestamp.toString(),
+                                   prevTimestamp.toString(), nextTimestamp.toString(), key.toString(), std::to_string(operation.nodeId), keyInDb->toData()->timestamp.toString(),
                                    moreUpToDateValueIsStored, paxosRound->promisedNextTimestamp.toString(), promisedHigherTimestamp);
     
     if(moreUpToDateValueIsStored || promisedHigherTimestamp) {

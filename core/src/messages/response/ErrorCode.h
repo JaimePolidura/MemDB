@@ -16,4 +16,5 @@ public:
     static const constexpr uint8_t UNFIXABLE_CORRUPTED_OPLOG_SEGMENT = 9;
     static const constexpr uint8_t CAS_FAILED = 10;
     static const constexpr uint8_t NODE_NOT_FOUND = 11;
+    static const constexpr uint8_t INVALID_TYPE = 12;
 };

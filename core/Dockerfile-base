@@ -26,7 +26,6 @@ RUN git clone https://github.com/Microsoft/vcpkg.git \
     && cd /vcpkg \
     && ./bootstrap-vcpkg.sh
 
-RUN ./vcpkg/vcpkg install nlohmann-json:x64-linux
 RUN ./vcpkg/vcpkg install boost:x64-linux
 RUN ./vcpkg/vcpkg install spdlog:x64-linux
 
@@ -39,19 +38,6 @@ RUN tar xvfz cmake-3.26.0.tar.gz
 RUN cd cmake-3.26.0 && ./bootstrap
 RUN cd cmake-3.26.0 && make && make install
 RUN cd /usr/bin && ln -s cmake-3.26.0/bin/cmake cmake && ln -s vcpkg/vcpkg vcpkg
-
-# Set up etcd-cpp-apiv3
-RUN git clone https://github.com/microsoft/cpprestsdk.git \
-    && cd cpprestsdk \
-    && mkdir build && cd build \
-    && cmake .. -DCPPREST_EXCLUDE_WEBSOCKETS=ON \
-    && make -j$(nproc) && make install
-
-RUN git clone https://github.com/etcd-cpp-apiv3/etcd-cpp-apiv3 \
-    && cd etcd-cpp-apiv3 \
-    && mkdir build && cd build \
-    && cmake .. \
-    && make -j$(nproc) && make install
 
 # Without this boost is included two times, for some reason io_context blocks for ever or crash with segfault
 RUN cd vcpkg/installed/x64-linux/include && mv boost xd

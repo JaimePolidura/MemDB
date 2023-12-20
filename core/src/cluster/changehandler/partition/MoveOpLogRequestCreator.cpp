@@ -36,5 +36,10 @@ OperationBody MoveOpLogRequestCreator::convertMapEntryIntoOperation(const MapEnt
                 ->buildOperationBody();
     } else if (entry.type == NodeType::COUNTER) {
         //TODO may return operator REPLICATE_COUNTER?
+        return RequestBuilder::builder()
+                .operatorNumber(OperatorNumbers::SET)
+                ->buildOperationBody();
     }
+
+    throw std::runtime_error("Invliad avl node type " + entry.type);
 }

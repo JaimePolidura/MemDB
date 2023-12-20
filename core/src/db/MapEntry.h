@@ -17,11 +17,11 @@ struct MapEntry {
         key(key), keyHash(keyHash), data(data), type(type) {}
 
     std::shared_ptr<CounterAVLNode> toCounter() const {
-        return std::dynamic_pointer_cast<CounterAVLNode>(this->data);
+        return std::static_pointer_cast<CounterAVLNode>(this->data);
     }
 
     std::shared_ptr<DataAVLNode<SizeValue>> toData() const {
-        return std::dynamic_pointer_cast<DataAVLNode<SizeValue>>(this->data);
+        return std::static_pointer_cast<DataAVLNode<SizeValue>>(this->data);
     }
 };
 

@@ -34,7 +34,7 @@ SimpleString<memDbDataLength_t> GetOperator::getValue(const std::optional<MapEnt
     }
 
     if(entry->type == NodeType::COUNTER) {
-        return SimpleString<memDbDataLength_t>::fromNumber(entry->toCounter().get());
+        return SimpleString<memDbDataLength_t>::fromNumber(entry->toCounter()->counter.count());
     } else {
         return entry->toData()->value;
     }

@@ -17,7 +17,8 @@ void ClusterNodes::addNodesInPartition(const std::vector<node_t>& otherNodesToSe
 std::vector<node_t> ClusterNodes::getAllNodes() {
     std::vector<node_t> nodes{};
     nodes.reserve(this->allNodesById.size());
-    for (const node_t node: this->allNodesById | std::views::values) {
+
+    for (const auto[nodeId, node] : this->allNodesById) {
         nodes.push_back(node);
     }
 
@@ -189,7 +190,7 @@ void ClusterNodes::broadcastAll(const OperationBody& operation, SendRequestOptio
     int timeout = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS);
     int nRetries = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_N_RETRIES);
 
-    for (node_t node: this->allNodesById | std::views::values) {
+    for (const auto[nodeId, node]: this->allNodesById) {
         this->requestPool.submit([node, operation, timeout, options, nRetries, this]() mutable -> void {
             std::result<Response> result = Utils::retryNTimesAndGet<Response, std::milli>(nRetries, std::chrono::milliseconds(timeout),
                 [this, &node, &operation, options]() -> std::result<Response> {

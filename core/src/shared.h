@@ -42,10 +42,7 @@
 #include <boost/beast.hpp>
 #include <boost/beast/core/tcp_stream.hpp>
 #include <boost/beast/core/flat_buffer.hpp>
-#include <nlohmann/json.hpp>
 #include <boost/asio.hpp>
-#include <etcd/Client.hpp>
-#include <etcd/Watcher.hpp>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <openssl/md5.h>

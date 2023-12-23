@@ -24,7 +24,7 @@ LamportClock GetOperator::getTimestampCounter(const std::optional<MapEntry<memDb
     if(!entry.has_value()) {
         return LamportClock{0, 0};
     } else if (entry->type == NodeType::COUNTER) {
-        return LamportClock{0, entry->toCounter()->counter.count()};
+        return LamportClock{0, static_cast<uint64_t>(entry->toCounter()->counter.count())};
     } else {
         return entry->toData()->timestamp;
     }

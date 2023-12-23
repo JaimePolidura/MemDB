@@ -6,7 +6,7 @@ Response UpdateCounterOperator::operate(const OperationBody& operation, const Op
     SimpleString<memDbDataLength_t> key = operation.args->at(0);
     bool isIncrement = operation.flag1;
 
-    std::result<uint64_t> updateCounterResult = memdDbStore->updateCounter(key, dependencies.cluster->getNodeId(),
+    std::result<int64_t> updateCounterResult = memdDbStore->updateCounter(key, dependencies.cluster->getNodeId(),
         nNodesInCluster, isIncrement);
 
     if(updateCounterResult.has_error()) {
@@ -22,12 +22,12 @@ Response UpdateCounterOperator::operate(const OperationBody& operation, const Op
     return Response::success();
 }
 
-void UpdateCounterOperator::replicate(Counter& counter, uint64_t newUpdatedValue, OperatorDependencies& dependencies, const OperationBody& operation) {
+void UpdateCounterOperator::replicate(Counter& counter, int64_t newUpdatedValue, OperatorDependencies& dependencies, const OperationBody& operation) {
     dependencies.cluster->clusterNodes->requestPool.submit([newUpdatedValue, dependencies, counter, operation, this]() mutable -> void {
         SimpleString<memDbDataLength_t> key = operation.args->at(0);
         uint32_t partitionId = dependencies.cluster->getPartitionIdByKey(key);
 
-        RequestBuilder * replicateCounterRequest = RequestBuilder::builder()
+        RequestBuilder replicateCounterRequest = *RequestBuilder::builder()
             .authKey(dependencies.configuration->get(ConfigurationKeys::AUTH_NODE_KEY))
             ->operatorNumber(OperatorNumbers::REPLICATE_COUNTER)
             ->operatorFlag1(operation.flag1); //Is increment
@@ -42,7 +42,7 @@ void UpdateCounterOperator::replicate(Counter& counter, uint64_t newUpdatedValue
                 nodeId, newUpdatedValue, lastSeenIncrement, lastSeenDecrement);
 
             return replicateCounterRequest
-                ->addArg(key)
+                .addArg(key)
                 ->addDoubleArg(newUpdatedValue)
                 ->addDoubleArg(lastSeenIncrement)
                 ->addDoubleArg(lastSeenDecrement)
@@ -58,9 +58,9 @@ void UpdateCounterOperator::replicate(Counter& counter, uint64_t newUpdatedValue
 void UpdateCounterOperator::onReplicationCounterResponse(const SimpleString<memDbDataLength_t>& key, const Response& response,
     Counter& counter, const OperatorDependencies& dependencies) {
 
-    memdbNodeId_t otherNodeId = response.getResponseValueAtOffset(8, sizeof(memdbNodeId_t)).to<memdbNodeId_t>();
-    uint64_t nIncrementToSync = response.getResponseValueAtOffset(0, 8).to<uint64_t>();
-    uint64_t nDecrementToSync = response.getResponseValueAtOffset(8, 8).to<uint64_t>();
+    int64_t nIncrementToSync = response.getResponseValueAtOffset(0, 8).to<int64_t>();
+    int64_t nDecrementToSync = response.getResponseValueAtOffset(8, 8).to<int64_t>();
+    memdbNodeId_t otherNodeId = response.getResponseValueAtOffset(16, sizeof(memdbNodeId_t)).to<memdbNodeId_t>();
 
     dependencies.logger->debugInfo("Received REPLICATE_COUNTER response from node {0} with incToSync {1}, decToSync: {2}",
         otherNodeId, nIncrementToSync, nDecrementToSync);

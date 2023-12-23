@@ -62,7 +62,7 @@ public final class MultiResponses {
         private final List<Response> responses;
 
         public String anyResponse() {
-            return this.responses.get(0).getResponse();
+            return this.responses.get(0).toString();
         }
 
         public boolean anyResponseHasValue() {
@@ -73,25 +73,21 @@ public final class MultiResponses {
             return responses.stream()
                     .max(Comparator.comparing(Response::getTimestamp))
                     .get()
-                    .getResponse();
+                    .toString();
         }
 
         public int mostUptoDateResponseAsInt() {
-            String response = responses.stream()
+            return responses.stream()
                     .max(Comparator.comparing(Response::getTimestamp))
                     .get()
-                    .getResponse();
-
-            return response != null && !response.isEmpty() ? Integer.parseInt(response) : 0;
+                    .toInt();
         }
 
         public long mostUptoDateResponseAsLong() {
-            String response = responses.stream()
+            return responses.stream()
                     .max(Comparator.comparing(Response::getTimestamp))
                     .get()
-                    .getResponse();
-
-            return response != null && !response.isEmpty() ? Long.parseLong(response) : 0;
+                    .toLong();
         }
 
         public boolean mostUptoDateResponseHasValue() {
@@ -118,7 +114,7 @@ public final class MultiResponses {
         }
 
         public List<String> allValues() {
-            return responses.stream().map(Response::getResponse).toList();
+            return responses.stream().map(Response::toString).toList();
         }
 
         public Stream<Response> stream() {

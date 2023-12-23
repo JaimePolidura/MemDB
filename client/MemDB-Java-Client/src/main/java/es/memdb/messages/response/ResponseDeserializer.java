@@ -21,21 +21,17 @@ public final class ResponseDeserializer {
         int offsetResponseLength = 4 + 8 + 2 + 1;
         int offsetResponseBody = offsetResponseLength + 4;
 
-        String response = raw.length > offsetResponseBody && raw[offsetResponseLength + 3] > 0 ?
-                new String(this.split(raw, offsetResponseBody, raw.length), StandardCharsets.US_ASCII) :
-                "";
+        byte[] response = raw.length > offsetResponseBody && raw[offsetResponseLength + 3] > 0 ?
+                this.split(raw, offsetResponseBody, raw.length) :
+                new byte[]{0, 0, 0, 0};
 
         return Response.builder()
                 .errorCode(errorCode)
                 .requestNumber(requestNumber)
                 .timestamp(timestamp)
                 .isSuccessful(isSuccessFul)
-                .response(formatResponse(response))
+                .response(response)
                 .build();
-    }
-
-    private String formatResponse(String response) {
-        return response.trim();
     }
 
     private byte[] split(byte[] source, int from, int to) {

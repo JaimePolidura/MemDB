@@ -5,7 +5,7 @@
 struct ReplicateCounterRequest {
     memdbNodeId_t otherNodeId;
     bool isIncrement;
-    uint64_t newValue;
-    uint64_t lastSeenSelfIncrement;
-    uint64_t lastSeenSelfDecrement;
+    int64_t newValue;
+    int64_t lastSeenSelfIncrement;
+    int64_t lastSeenSelfDecrement;
 };

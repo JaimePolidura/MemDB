@@ -12,7 +12,7 @@ void BackedDiskRequestBuffer::add(const Request& request) {
     std::unique_lock uniqueLock(this->lock);
 
     std::vector<uint8_t> serialized = this->serializer.serialize(request);
-    Utils::appendToBuffer(static_cast<memDbDataLength_t>(serialized.size()), serialized);
+    Utils::appendBeginningToBuffer(static_cast<memDbDataLength_t>(serialized.size()), serialized);
 
     FileUtils::appendBytes(fullPath, serialized);
 }

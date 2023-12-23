@@ -26,15 +26,15 @@ public final class MemDb {
     public String get(String key) {
         return sendRequest(OperationRequest.builder()
                 .operator(Operator.GET)
-                .args(List.of(key)));
+                .args(List.of(key)))
+                .toString();
     }
 
     public long getCounter(String key) {
-        String result = sendRequest(OperationRequest.builder()
+        return sendRequest(OperationRequest.builder()
                 .operator(Operator.GET)
-                .args(List.of(key)));
-
-        return result != null && !result.isEmpty() ? Long.parseLong(result) : 0;
+                .args(List.of(key)))
+                .toLong();
     }
 
     public MultiResponses getQuorumCounter(String key) {
@@ -112,7 +112,7 @@ public final class MemDb {
         return connectionCluster.sendMultipleRequest(request);
     }
 
-    private String sendRequest(OperationRequest.OperationRequestBuilder operation) {
+    private Response sendRequest(OperationRequest.OperationRequestBuilder operation) {
         Request request = createRequestObject(operation);
         Response response = sendRequestAndReceiveResponse(request);
 
@@ -127,10 +127,10 @@ public final class MemDb {
         return response;
     }
 
-    private String handleResponse(Request request, Response response) {
+    private Response handleResponse(Request request, Response response) {
         return response.isFailed() ?
                 handleException(request, response) :
-                response.getResponse();
+                response;
     }
 
     private Request createRequestObject(OperationRequest.OperationRequestBuilder operation) {
@@ -146,7 +146,7 @@ public final class MemDb {
     }
 
     @SneakyThrows
-    private String handleException(Request request, Response response) {
+    private Response handleException(Request request, Response response) {
         int errorCode = response.getErrorCode();
         Class<? extends MemDbException> exception = memDbExceptionsRegistry.findByCode(errorCode, request);
         boolean exceptionExpected = request.getOperationRequest().getOperator().isExceptionExpected(exception);
@@ -154,6 +154,6 @@ public final class MemDb {
         if(!exceptionExpected)
             throw (MemDbException) exception.getConstructors()[0].newInstance(exception.getName(), request);
         else
-            return null;
+            return response.withResponse(new byte[]{0, 0, 0, 0});
     }
 }

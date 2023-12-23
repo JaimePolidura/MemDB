@@ -36,9 +36,7 @@ public:
     */
     bool putCounter(const SimpleString<SizeValue>& key, memdbNodeId_t selfNodeId, uint32_t nNodes);
 
-    std::result<uint64_t> incrementCounter(const SimpleString<SizeValue>& key, memdbNodeId_t selfNodeId, uint32_t nNodes);
-
-    std::result<uint64_t> updateCounter(const SimpleString<SizeValue>& key, memdbNodeId_t selfNodeId, uint32_t nNodes, bool isIncrement);
+    std::result<int64_t> updateCounter(const SimpleString<SizeValue>& key, memdbNodeId_t selfNodeId, uint32_t nNodes, bool isIncrement);
 
     /**
      * Returns true if operation was successful
@@ -154,7 +152,7 @@ std::result<DbEditResult> Map<SizeValue>::putData(const SimpleString<SizeValue> 
 }
 
 template<typename SizeValue>
-std::result<uint64_t> Map<SizeValue>::updateCounter(const SimpleString<SizeValue>& key, memdbNodeId_t selfNodeId, uint32_t nNodes, bool isIncrement) {
+std::result<int64_t> Map<SizeValue>::updateCounter(const SimpleString<SizeValue>& key, memdbNodeId_t selfNodeId, uint32_t nNodes, bool isIncrement) {
     uint32_t hash = this->calculateHash(key);
 
     lockWrite(hash);
@@ -167,11 +165,11 @@ std::result<uint64_t> Map<SizeValue>::updateCounter(const SimpleString<SizeValue
         bucketNodeWithKey = bucket->get(hash);
     }
     if(bucketNodeWithKey != nullptr && bucketNodeWithKey->nodeType != NodeType::COUNTER) {
-        return std::error<uint64_t>();
+        return std::error<int64_t>();
     }
 
     std::shared_ptr<CounterAVLNode> bucketNodeCounter = std::static_pointer_cast<CounterAVLNode>(bucketNodeWithKey->data);
-    uint64_t newValue = isIncrement ?
+    int64_t newValue = isIncrement ?
         bucketNodeCounter->counter.increment() :
         bucketNodeCounter->counter.decrement();
 
@@ -199,31 +197,6 @@ bool Map<SizeValue>::putCounter(const SimpleString<SizeValue>& key, memdbNodeId_
     unlockWrite(hash);
 
     return added;
-}
-
-template<typename SizeValue>
-std::result<uint64_t> Map<SizeValue>::incrementCounter(const SimpleString<SizeValue>& key, memdbNodeId_t selfNodeId, uint32_t nNodes) {
-    uint32_t hash = this->calculateHash(key);
-
-    lockWrite(hash);
-
-    AVLTree<SizeValue> * bucket = this->getBucket(hash);
-    AVLNode<SizeValue> * bucketNodeWithKey = bucket->get(hash);
-
-    if(bucketNodeWithKey == nullptr) {
-        bucket->addCounter(key, hash, selfNodeId, nNodes);
-        bucketNodeWithKey = bucket->get(hash);
-    }
-    if(bucketNodeWithKey != nullptr && bucketNodeWithKey->nodeType != NodeType::COUNTER) {
-        return std::error<uint64_t>();
-    }
-
-    std::shared_ptr<CounterAVLNode> bucketNodeCounter = std::static_pointer_cast<CounterAVLNode>(bucketNodeWithKey->data);
-    uint64_t newValue = bucketNodeCounter->counter.increment();
-
-    unlockWrite(hash);
-
-    return std::ok(newValue);
 }
 
 template<typename SizeValue>

@@ -5,9 +5,9 @@
 Response ReplicateCounterOperator::operate(const OperationBody&operation, const OperationOptions options, OperatorDependencies&dependencies) {
     memDbDataStoreMap_t memdDbStore = dependencies.memDbStores->getByPartitionId(options.partitionId);
     SimpleString<memDbDataLength_t> key = operation.args->at(0);
-    uint64_t newValue = operation.getDoubleArgU64(1);
-    uint64_t lastSeenIncrement = operation.getDoubleArgU64(3);
-    uint64_t lastSeenDecrement = operation.getDoubleArgU64(4);
+    int64_t newValue = operation.getDoubleArgU64(1);
+    int64_t lastSeenIncrement = operation.getDoubleArgU64(3);
+    int64_t lastSeenDecrement = operation.getDoubleArgU64(4);
     bool isIncrement = operation.flag1;
 
     std::optional<MapEntry<memDbDataLength_t>> result = memdDbStore->get(key);

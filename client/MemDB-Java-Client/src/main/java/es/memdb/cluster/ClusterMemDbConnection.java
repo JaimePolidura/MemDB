@@ -163,7 +163,7 @@ public final class ClusterMemDbConnection implements MemDbConnection {
     }
 
     private ClusterConfig deserializeGetConfigRequest(Response response) {
-        ByteBuffer bytesClusterConfigResponse = ByteBuffer.wrap(response.getResponse().getBytes())
+        ByteBuffer bytesClusterConfigResponse = ByteBuffer.wrap(response.getResponse())
                 .order(ByteOrder.BIG_ENDIAN);
 
         int nodesPerPartition = bytesClusterConfigResponse.getInt(0);

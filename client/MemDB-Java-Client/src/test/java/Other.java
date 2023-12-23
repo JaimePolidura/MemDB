@@ -20,13 +20,15 @@ public final class Other {
 
     private static void counters() throws Exception {
         MemDb memDb = MemDbConnections.sync("192.168.1.159", 10000, "123");
-        memDb.increment("contador");
-        memDb.increment("contador");
-        memDb.increment("contador");
+        
+        System.out.println(memDb.getCounter("contador"));
 
+//        memDb.increment("contador");
+//        memDb.increment("contador");
+//        memDb.increment("contador");
 
-        MemDb memDb2 = MemDbConnections.sync("192.168.1.159", 10001, "123");
-        System.out.println(memDb2.getCounter("contador"));
+//        MemDb memDb2 = MemDbConnections.sync("192.168.1.159", 10001, "123");
+//        System.out.println(memDb2.getCounter("contador"));
     }
 
     @SneakyThrows

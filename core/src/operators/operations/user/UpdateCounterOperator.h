@@ -19,7 +19,7 @@ public:
     OperatorDescriptor desc() override;
 
 private:
-    void replicate(Counter& counter, uint64_t newUpdatedValue, OperatorDependencies& dependencies, const OperationBody& operationBody);
+    void replicate(Counter& counter, int64_t newUpdatedValue, OperatorDependencies& dependencies, const OperationBody& operationBody);
 
     void onReplicationCounterResponse(const SimpleString<memDbDataLength_t>& key, const Response& response, Counter& counter, const OperatorDependencies& dependencies);
 };

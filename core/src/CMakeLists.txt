@@ -9,6 +9,7 @@ add_library(${BINARY}_lib STATIC ${SOURCES} MemDb.cpp MemDbCreator.cpp utils/Uti
         db/MemDbStores.h
         db/MemDbStores.h
         db/AVLTree.h
+        operators/OperatorProperty.h
 )
 
 # VCPKG Libraries

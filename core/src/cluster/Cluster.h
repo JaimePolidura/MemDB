@@ -81,6 +81,7 @@ private:
     friend class DoLeaveClusterOperator;
     friend class SimpleClusterNodeSetup;
     friend class GetNodeDataOperator;
+    friend class UpdateCounterOperator;
     friend class ClusterNodeSetup;
     friend class ClusterTest;
 

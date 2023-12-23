@@ -41,6 +41,8 @@ public:
 
     multipleResponses_t broadcastAndWait(const OperationBody& operation, SendRequestOptions options);
 
+    multipleResponses_t broadcastForEachAndWait(SendRequestOptions options, std::function<OperationBody(memdbNodeId_t)> requestCreator);
+
     void setNumberPartitions(uint32_t numberPartitions);
 
     int getSize();
@@ -72,7 +74,9 @@ public:
     void sendHintedHandoff(memdbNodeId_t nodeId);
 
 private:
+    //TODO Antipattern, expose globa thread pool instead
     friend class DoLeaveClusterOperator;
+    friend class UpdateCounterOperator;
 
     std::map<memdbNodeId_t, node_t> allNodesById{}; //Includes all nodes even if the actual node doesnt share any partition
 

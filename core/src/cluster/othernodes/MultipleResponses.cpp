@@ -17,6 +17,11 @@ bool MultipleResponses::waitForSuccessfulQuorum(uint64_t timeoutMs) {
     return this->successfulResponsesLatch.awaitMinOrEq(minQuorum - 1, timeoutMs); //-1 to include our self
 }
 
+void MultipleResponses::onResponse(std::function<void(const Response&)> onResponse) {
+    std::unique_lock<std::mutex> lock(this->responsesLock);
+    this->onResponsesCallbacks.push_back(onResponse);
+}
+
 bool MultipleResponses::allResponsesSuccessful() {
     for (const auto[nodeId, response] : this->responses) {
         if(!response.isSuccessful){
@@ -35,5 +40,9 @@ void MultipleResponsesNotifier::addResponse(memdbNodeId_t nodeId, const Response
     multipleResponse->responses.insert({nodeId, response});
     if(response.isSuccessful){
         multipleResponse->successfulResponsesLatch.increase();
+    }
+
+    for(const std::function<void(const Response&)>& responseCallback : this->multipleResponse->onResponsesCallbacks) {
+        responseCallback(response);
     }
 }

@@ -56,6 +56,14 @@ public:
             std::error<DbEditResult>();
     }
 
+    std::result<bool> addCounter(const SimpleString<SizeValue>& key, uint32_t keyHash, memdbNodeId_t selfNodeId, uint32_t nNodes) {
+        AVLNode<SizeValue> * newDataNode = new AVLNode(key, keyHash, -1, NodeType::COUNTER, std::make_shared<CounterAVLNode>(Counter{selfNodeId, nNodes}));
+
+        bool inserted = this->insertRecursiveCounter(newDataNode, this->root) != nullptr;
+
+        return inserted ? std::ok(true) : std::error(false);
+    }
+
     std::result<DbEditResult> removeData(uint32_t keyHash,
                  LamportClock timestamp,
                  LamportClock::UpdateClockStrategy updateClockStrategy,
@@ -195,6 +203,29 @@ private:
             node = node->left;
 
         return node;
+    }
+
+    AVLNode<SizeValue> * insertRecursiveCounter(AVLNode<SizeValue> * toInsert, AVLNode<SizeValue> * last){
+        if(last == nullptr) {
+            if(this->root == nullptr) {
+                this->root = toInsert;
+            }
+
+            return toInsert;
+        }
+
+        if(last->keyHash > toInsert->keyHash) {
+            AVLNode<SizeValue> * inserted = insertRecursiveCounter(toInsert, last->left);
+            if(inserted != nullptr) last->left = inserted;
+
+        }else if(last->keyHash < toInsert->keyHash) {
+            AVLNode<SizeValue> * inserted = insertRecursiveCounter(toInsert, last->right);
+            if(inserted != nullptr) last->right = inserted;
+        } else {
+            return nullptr; //This method is used only for insertions, if you want to update the counter use increment/decrement counter functions
+        }
+
+        return this->rebalance(last);
     }
 
     AVLNode<SizeValue> * insertRecursiveData(

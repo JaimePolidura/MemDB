@@ -166,6 +166,34 @@ auto ClusterNodes::broadcast(const OperationBody& operation, SendRequestOptions 
     });
 }
 
+auto ClusterNodes::broadcastForEachAndWait(SendRequestOptions options, std::function<OperationBody(memdbNodeId_t)> requestCreator) -> multipleResponses_t {
+    int nNodesInPartition = this->nodesInPartitions[options.partitionId].size();
+    int timeout = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_TIMEOUT_MS);
+    int nRetries = this->configuration->get<int>(ConfigurationKeys::NODE_REQUEST_N_RETRIES);
+    multipleResponses_t multipleResponses = std::make_shared<MultipleResponses>(nNodesInPartition);
+    MultipleResponsesNotifier multipleResponseNotifier(multipleResponses);
+
+    this->forEachNodeInPartition(options.partitionId, [this, timeout, nRetries, options, requestCreator, multipleResponseNotifier](node_t node) -> void {
+        this->requestPool.submit([node, requestCreator, timeout, nRetries, options, multipleResponseNotifier, this]() mutable -> void {
+            OperationBody request = requestCreator(node->nodeId);
+
+            std::result<Response> result = Utils::retryNTimesAndGet<Response, std::milli>(nRetries, std::chrono::milliseconds(timeout),
+                [this, &node, &request]() -> std::result<Response> {
+                    return node->sendRequest(this->prepareRequest(request));
+            });
+
+            if(result.has_error() && options.canBeStoredInHint) {
+                this->hintsService->add(node->nodeId, this->prepareRequest(request));
+            }
+            if (result->isSuccessful) {
+                multipleResponseNotifier.addResponse(node->nodeId, result.get());
+            }
+        });
+    });
+
+    return multipleResponses;
+}
+
 auto ClusterNodes::broadcastAndWait(const OperationBody& operation, SendRequestOptions options) -> multipleResponses_t {
     int nNodesInPartition = this->nodesInPartitions[options.partitionId].size();
     multipleResponses_t multipleResponses = std::make_shared<MultipleResponses>(nNodesInPartition);

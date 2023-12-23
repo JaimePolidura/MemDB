@@ -77,10 +77,11 @@ Response OperatorDispatcher::executeOperation(std::shared_ptr<Operator> operator
         }
 
         if(isInReplicationMode() && options.fromClient() && !options.dontBroadcastToCluster){
-            this->cluster->broadcast(operation, {
+            multipleResponses_t responses = this->cluster->broadcastAndWait(operation, {
                 .partitionId = this->getPartitionIdByKey(operation.getArg(0)),
                 .canBeStoredInHint =  true
             });
+
             this->logger->debugInfo("Broadcasting request for operator {0} of key {1} with timestamp ({2}, {3})",
                                     operatorToExecute->desc().name, operation.getArg(0).toString(), operation.timestamp, cluster->getNodeId());
         }

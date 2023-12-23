@@ -6,7 +6,7 @@ Response SetOperator::operate(const OperationBody& operation, const OperationOpt
     SimpleString value = operation.args->at(1);
     LamportClock requestTimestamp = this->getTimestamp(operation, options, dependencies);
 
-    std::result<DbEditResult> resultSet = memDbStore->put(key, value, requestTimestamp, options.updateClockStrategy,
+    std::result<DbEditResult> resultSet = memDbStore->putData(key, value, requestTimestamp, options.updateClockStrategy,
                                                           dependencies.clock, options.checkTimestamps);
 
     dependencies.logger->debugInfo("Executed SET({0}, {1}) Success? {2} Req timestamp: {3} New timestamp: {4}",key.toString(), value.toString(),

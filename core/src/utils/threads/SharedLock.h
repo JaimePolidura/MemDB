@@ -4,12 +4,12 @@
 
 class SharedLock {
 private:
-    int64_t lockedSharedCount;
+    int64_t lockedSharedCount{};
     std::mutex sharedCountLock;
 
     std::mutex lock;
 
-    uint64_t lockedExclusiveCount;
+    uint64_t lockedExclusiveCount{};
 
 public:
     void lockShared();

@@ -21,6 +21,8 @@
 #include "OperatorNumbers.h"
 #include "operators/operations/cluster/DoLeaveClusterOperator.h"
 #include "operators/operations/cluster/LeaveClusterAnnounceOperator.h"
+#include "operators/operations/cluster/ReplicateCounterOperator.h"
+#include "operators/operations/user/UpdateCounterOperator.h"
 
 class OperatorRegistry {
     std::map<uint8_t, std::shared_ptr<Operator>> operators{};

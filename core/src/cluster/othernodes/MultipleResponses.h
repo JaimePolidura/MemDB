@@ -7,6 +7,8 @@
 class MultipleResponses {
 private:
     std::map<memdbNodeId_t, Response> responses{};
+    std::vector<std::function<void(const Response&)>> onResponsesCallbacks{};
+
     std::mutex responsesLock{};
     CounterLatch successfulResponsesLatch{};
     int nTotalRequest;
@@ -18,6 +20,8 @@ public:
     bool waitForSuccessfulQuorum(uint64_t timeoutMs);
 
     std::map<memdbNodeId_t, Response> getResponses();
+
+    void onResponse(std::function<void(const Response&)> onResponse);
 
     bool allResponsesSuccessful();
 };

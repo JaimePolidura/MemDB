@@ -6,6 +6,9 @@ OperatorRegistry::OperatorRegistry() {
     this->operators[OperatorNumbers::DEL] = std::make_shared<DeleteOperator>();
     this->operators[OperatorNumbers::CONTAINS] = std::make_shared<ContainsOperator>();
 
+    this->operators[OperatorNumbers::UPDATE_COUNTER] = std::make_shared<UpdateCounterOperator>();
+    this->operators[OperatorNumbers::REPLICATE_COUNTER] = std::make_shared<ReplicateCounterOperator>();
+
     this->operators[OperatorNumbers::HEALTH_CHECK] = std::make_shared<HealthCheckOperator>();
     this->operators[OperatorNumbers::SYNC_OPLOG] = std::make_shared<SyncOplogOperator>();
     this->operators[OperatorNumbers::MOVE_OPLOG] = std::make_shared<MovePartitionOplogOperator>();

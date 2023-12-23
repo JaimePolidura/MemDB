@@ -175,6 +175,26 @@ public:
         return false;
     }
 
+    template<typename Arg, typename... Args>
+    static std::vector<uint8_t> toBuffer(Arg arg, Args ...args) {
+        std::vector<uint8_t> buffer{};
+
+        return toBufferRecursive(buffer, arg, args...);
+    }
+
+private:
+    template<typename Arg, typename... Args>
+    static std::vector<uint8_t> toBufferRecursive(std::vector<uint8_t>& buffer, Arg arg, Args ...args) {
+        Utils::appendToBuffer(arg, buffer);
+
+        if constexpr (sizeof...(args) > 0) {
+            return toBufferRecursive(buffer, args...);
+        } else {
+            return buffer;
+        }
+    }
+public:
+
     template<typename T>
     static T parse(const uint8_t * input) {
         T parsedValue = 0;

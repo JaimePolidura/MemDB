@@ -190,3 +190,20 @@ std::vector<node_t> Cluster::getSeedNodes() {
 
     return nodes;
 }
+
+auto Cluster::getNTotalNodesInPartition() -> int {
+    bool usingPartitions = configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS);
+    bool usingReplication = configuration->getBoolean(ConfigurationKeys::USE_REPLICATION);
+
+    if(!usingReplication) {
+        return 1;
+    }
+    if(!usingPartitions) {
+        return clusterNodes->getSize() + 1; //Plus self
+    }
+    if(usingPartitions) {
+        return getNodesPerPartition();
+    }
+
+    return 1;
+}

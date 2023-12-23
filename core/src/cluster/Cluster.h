@@ -56,6 +56,8 @@ public:
 
     auto getNodeId() -> memdbNodeId_t;
 
+    auto getNTotalNodesInPartition() -> int;
+
 private:
     onGoingSyncOplogs_t onGoingMultipleResponsesStore;
     configuration_t configuration;

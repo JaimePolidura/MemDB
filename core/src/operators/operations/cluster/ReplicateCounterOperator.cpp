@@ -8,22 +8,32 @@ Response ReplicateCounterOperator::operate(const OperationBody&operation, const 
     uint64_t newValue = operation.getDoubleArgU64(1);
     uint64_t lastSeenIncrement = operation.getDoubleArgU64(3);
     uint64_t lastSeenDecrement = operation.getDoubleArgU64(4);
+    bool isIncrement = operation.flag1;
 
     std::optional<MapEntry<memDbDataLength_t>> result = memdDbStore->get(key);
 
     if(result.has_value() && result->type != NodeType::COUNTER) {
         return Response::error(ErrorCode::INVALID_TYPE);
     }
+    if(!result.has_value()) {
+        memdDbStore->putCounter(key, dependencies.cluster->getNodeId(),
+            dependencies.cluster->getNTotalNodesInPartition());//Add new counter
+        result = memdDbStore->get(key);
+    }
 
     std::shared_ptr<CounterAVLNode> counterMapNode = result->toCounter();
 
     ReplicateCounterResponse response = counterMapNode->counter.onReplicationCounter(ReplicateCounterRequest{
         .otherNodeId = operation.nodeId,
-        .isIncrement = operation.flag1,
+        .isIncrement = isIncrement,
         .newValue = newValue,
         .lastSeenSelfIncrement = lastSeenIncrement,
         .lastSeenSelfDecrement = lastSeenDecrement
     });
+
+    dependencies.logger->debugInfo("Recevied REPLICATE_COUNTER from node {0} with new value: {1}, lastSeenInc: {2}, "
+                                   "lastSeenDec: {3}. Returned incToSync: {4}, decToSync: {5}", operation.nodeId, newValue,
+                                   lastSeenIncrement, lastSeenDecrement, response.nIncrementToSync, response.nDecrementToSync);
 
     return ResponseBuilder::builder()
         .success()
@@ -46,4 +56,3 @@ OperatorDescriptor ReplicateCounterOperator::desc() {
         .authorizedToExecute = { AuthenticationType::NODE }
     };
 }
-

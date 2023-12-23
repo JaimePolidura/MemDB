@@ -11,11 +11,7 @@ uint64_t Counter::increment() {
 }
 
 uint64_t Counter::decrement() {
-    if(this->nDecrements[this->getIndexByNode(this->selfNodeId)] > 0) {
-        return --this->nDecrements[this->getIndexByNode(this->selfNodeId)];
-    } else {
-        return 0;
-    }
+    return ++this->nDecrements[this->getIndexByNode(this->selfNodeId)];
 }
 
 void Counter::syncIncrement(uint64_t valueToSync, memdbNodeId_t otherNodeId) {
@@ -38,10 +34,10 @@ uint64_t Counter::count() const {
     uint64_t actualValue = 0;
 
     for(int i = 0; i < this->nNodes; i++) {
-        actualValue += this->nIncrements[this->getIndexByNode(static_cast<memdbNodeId_t>(i))];
+        actualValue += this->nIncrements[i];
     }
     for(int i = 0; i < this->nNodes; i++) {
-        uint64_t actualToDecrement = this->nDecrements[this->getIndexByNode(static_cast<memdbNodeId_t>(i))];
+        uint64_t actualToDecrement = this->nDecrements[i];
         if(actualToDecrement >= actualValue) {
             actualValue = 0;
             break;
@@ -78,7 +74,7 @@ void Counter::maybeResizeCounters(memdbNodeId_t otherNodeId) {
         uint64_t * newPtrIncrements = new uint64_t[otherNodeId + 1];
         memset(newPtrIncrements, 0, sizeof(uint64_t) * (otherNodeId + 1));
         memcpy(newPtrIncrements, this->nIncrements, this->nNodes * sizeof(uint64_t));
-        
+
         uint64_t * newPtrDecrements = new uint64_t[otherNodeId + 1];
         memset(newPtrDecrements, 0, sizeof(uint64_t) * (otherNodeId + 1));
         memcpy(newPtrDecrements, this->nDecrements, this->nNodes * sizeof(uint64_t));

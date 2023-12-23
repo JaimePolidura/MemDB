@@ -29,12 +29,12 @@ public final class MemDb {
                 .args(List.of(key)));
     }
 
-    public int getCounter(String key) {
+    public long getCounter(String key) {
         String result = sendRequest(OperationRequest.builder()
                 .operator(Operator.GET)
                 .args(List.of(key)));
 
-        return result != null && !result.isEmpty() ? Integer.parseInt(result) : 0;
+        return result != null && !result.isEmpty() ? Long.parseLong(result) : 0;
     }
 
     public MultiResponses getQuorumCounter(String key) {

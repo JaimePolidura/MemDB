@@ -24,7 +24,9 @@ public final class Other {
         memDb.increment("contador");
         memDb.increment("contador");
 
-        System.out.println(memDb.getCounter("contador"));
+
+        MemDb memDb2 = MemDbConnections.sync("192.168.1.159", 10001, "123");
+        System.out.println(memDb2.getCounter("contador"));
     }
 
     @SneakyThrows

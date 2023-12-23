@@ -31,6 +31,11 @@ public:
               lamportClock_t lamportClock,
               bool requestFromNode);
 
+    /**
+    * Returns true if the counter was added. I wont be added if it already exists
+    */
+    bool putCounter(const SimpleString<SizeValue>& key, memdbNodeId_t selfNodeId, uint32_t nNodes);
+
     std::result<uint64_t> incrementCounter(const SimpleString<SizeValue>& key, memdbNodeId_t selfNodeId, uint32_t nNodes);
 
     std::result<uint64_t> updateCounter(const SimpleString<SizeValue>& key, memdbNodeId_t selfNodeId, uint32_t nNodes, bool isIncrement);
@@ -173,6 +178,27 @@ std::result<uint64_t> Map<SizeValue>::updateCounter(const SimpleString<SizeValue
     unlockWrite(hash);
 
     return std::ok(newValue);
+}
+
+template<typename SizeValue>
+bool Map<SizeValue>::putCounter(const SimpleString<SizeValue>& key, memdbNodeId_t selfNodeId, uint32_t nNodes) {
+    uint32_t hash = this->calculateHash(key);
+    bool added = false;
+
+    lockWrite(hash);
+
+    AVLTree<SizeValue> * bucket = this->getBucket(hash);
+    AVLNode<SizeValue> * bucketNodeWithKey = bucket->get(hash);
+
+    if(bucketNodeWithKey == nullptr) {
+        bucket->addCounter(key, hash, selfNodeId, nNodes);
+        bucketNodeWithKey = bucket->get(hash);
+        added = true;
+    }
+
+    unlockWrite(hash);
+
+    return added;
 }
 
 template<typename SizeValue>

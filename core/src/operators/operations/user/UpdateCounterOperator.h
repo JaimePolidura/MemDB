@@ -21,7 +21,5 @@ public:
 private:
     void replicate(Counter& counter, uint64_t newUpdatedValue, OperatorDependencies& dependencies, const OperationBody& operationBody);
 
-    void onReplicationCounterResponse(const SimpleString<memDbDataLength_t>& key, const Response& response, Counter& counter);
-
-    uint32_t getNNodesInCluster(OperatorDependencies&dependencies);
+    void onReplicationCounterResponse(const SimpleString<memDbDataLength_t>& key, const Response& response, Counter& counter, const OperatorDependencies& dependencies);
 };

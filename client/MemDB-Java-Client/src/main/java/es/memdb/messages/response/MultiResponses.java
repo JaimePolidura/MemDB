@@ -85,6 +85,15 @@ public final class MultiResponses {
             return response != null && !response.isEmpty() ? Integer.parseInt(response) : 0;
         }
 
+        public long mostUptoDateResponseAsLong() {
+            String response = responses.stream()
+                    .max(Comparator.comparing(Response::getTimestamp))
+                    .get()
+                    .getResponse();
+
+            return response != null && !response.isEmpty() ? Long.parseLong(response) : 0;
+        }
+
         public boolean mostUptoDateResponseHasValue() {
             return responses.stream()
                     .max(Comparator.comparing(Response::getTimestamp))

@@ -2,9 +2,9 @@
 
 Response UpdateCounterOperator::operate(const OperationBody& operation, const OperationOptions options, OperatorDependencies& dependencies) {
     memDbDataStoreMap_t memdDbStore = dependencies.memDbStores->getByPartitionId(options.partitionId);
+    uint32_t nNodesInCluster = dependencies.cluster->getNTotalNodesInPartition();
     SimpleString<memDbDataLength_t> key = operation.args->at(0);
     bool isIncrement = operation.flag1;
-    uint32_t nNodesInCluster = this->getNNodesInCluster(dependencies);
 
     std::result<uint64_t> updateCounterResult = memdDbStore->updateCounter(key, dependencies.cluster->getNodeId(),
         nNodesInCluster, isIncrement);
@@ -15,7 +15,9 @@ Response UpdateCounterOperator::operate(const OperationBody& operation, const Op
 
     std::optional<MapEntry<memDbDataLength_t>> counterMapEntry = memdDbStore->get(key);
 
-    replicate(counterMapEntry->toCounter()->counter, updateCounterResult.get(), dependencies, operation);
+    if(!options.dontBroadcastToCluster) {
+        replicate(counterMapEntry->toCounter()->counter, updateCounterResult.get(), dependencies, operation);
+    }
 
     return Response::success();
 }
@@ -33,8 +35,11 @@ void UpdateCounterOperator::replicate(Counter& counter, uint64_t newUpdatedValue
         multipleResponses_t responses = dependencies.cluster->clusterNodes->broadcastForEachAndWait(SendRequestOptions{
             .partitionId = static_cast<int>(partitionId),
             .canBeStoredInHint = true
-        }, [replicateCounterRequest, counter, key, newUpdatedValue](memdbNodeId_t nodeId) mutable -> OperationBody {
+        }, [replicateCounterRequest, counter, key, dependencies, newUpdatedValue](memdbNodeId_t nodeId) mutable -> OperationBody {
             const auto[lastSeenIncrement, lastSeenDecrement] = counter.getLastSeen(nodeId);
+
+            dependencies.logger->debugInfo("Sending to node {0} REPLICATE_COUNTER(newValue = {1}, lastSeenInc = {2}, lastSeenDec = {3})",
+                nodeId, newUpdatedValue, lastSeenIncrement, lastSeenDecrement);
 
             return replicateCounterRequest
                 ->addArg(key)
@@ -44,16 +49,21 @@ void UpdateCounterOperator::replicate(Counter& counter, uint64_t newUpdatedValue
                 ->buildOperationBody();
         });
 
-        responses->onResponse([key, counter, this](const Response& response) mutable -> void {
-            this->onReplicationCounterResponse(key, response, counter);
+        responses->onResponse([key, counter, dependencies, this](const Response& response) mutable -> void {
+            this->onReplicationCounterResponse(key, response, counter, dependencies);
         });
     });
 }
 
-void UpdateCounterOperator::onReplicationCounterResponse(const SimpleString<memDbDataLength_t>& key, const Response& response, Counter& counter) {
+void UpdateCounterOperator::onReplicationCounterResponse(const SimpleString<memDbDataLength_t>& key, const Response& response,
+    Counter& counter, const OperatorDependencies& dependencies) {
+
     memdbNodeId_t otherNodeId = response.getResponseValueAtOffset(8, sizeof(memdbNodeId_t)).to<memdbNodeId_t>();
     uint64_t nIncrementToSync = response.getResponseValueAtOffset(0, 8).to<uint64_t>();
     uint64_t nDecrementToSync = response.getResponseValueAtOffset(8, 8).to<uint64_t>();
+
+    dependencies.logger->debugInfo("Received REPLICATE_COUNTER response from node {0} with incToSync {1}, decToSync: {2}",
+        otherNodeId, nIncrementToSync, nDecrementToSync);
 
     if(nIncrementToSync > 0) { //Needs to sync
         counter.syncIncrement(nIncrementToSync, otherNodeId);
@@ -61,23 +71,6 @@ void UpdateCounterOperator::onReplicationCounterResponse(const SimpleString<memD
     if(nDecrementToSync > 0) {
         counter.syncDecrement(nDecrementToSync, otherNodeId);
     }
-}
-
-uint32_t UpdateCounterOperator::getNNodesInCluster(OperatorDependencies& dependencies) {
-    bool usingPartitions = dependencies.configuration->getBoolean(ConfigurationKeys::USE_PARTITIONS);
-    bool usingReplication = dependencies.configuration->getBoolean(ConfigurationKeys::USE_REPLICATION);
-
-    if(!usingReplication) {
-        return 1;
-    }
-    if(!usingPartitions) {
-        return dependencies.cluster->clusterNodes->getSize() + 1; //Plus self
-    }
-    if(usingPartitions) {
-        return dependencies.cluster->getNodesPerPartition();
-    }
-
-    return 1;
 }
 
 OperatorDescriptor UpdateCounterOperator::desc() {

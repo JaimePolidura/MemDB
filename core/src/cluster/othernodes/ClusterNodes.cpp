@@ -173,7 +173,7 @@ auto ClusterNodes::broadcastForEachAndWait(SendRequestOptions options, std::func
     multipleResponses_t multipleResponses = std::make_shared<MultipleResponses>(nNodesInPartition);
     MultipleResponsesNotifier multipleResponseNotifier(multipleResponses);
 
-    this->forEachNodeInPartition(options.partitionId, [this, timeout, nRetries, options, requestCreator, multipleResponseNotifier](node_t node) -> void {
+    this->forEachNodeInPartition(options.partitionId, [this, timeout, nRetries, options, requestCreator, multipleResponseNotifier](node_t node) mutable -> void {
         this->requestPool.submit([node, requestCreator, timeout, nRetries, options, multipleResponseNotifier, this]() mutable -> void {
             OperationBody request = requestCreator(node->nodeId);
 

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "share.h"
-
 #include "utils/strings/SimpleString.h"
 #include "utils/clock/LamportClock.h"
 #include "db/counters/Counter.h"

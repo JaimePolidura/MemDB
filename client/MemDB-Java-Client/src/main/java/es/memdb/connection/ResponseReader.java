@@ -3,6 +3,7 @@ package es.memdb.connection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public final class ResponseReader {
     public byte[] read(InputStream input) {
@@ -21,6 +22,8 @@ public final class ResponseReader {
             byte[] bufferWithResponseBody = new byte[responseLength];
 
             input.read(bufferWithResponseBody);
+
+            System.out.println(Arrays.toString(bufferWithResponseBody));
 
             return bufferWithResponseBody;
         }catch (IOException e) {

@@ -29,6 +29,22 @@ public final class MemDb {
                 .args(List.of(key)));
     }
 
+    public int getCounter(String key) {
+        String result = sendRequest(OperationRequest.builder()
+                .operator(Operator.GET)
+                .args(List.of(key)));
+
+        return result != null && !result.isEmpty() ? Integer.parseInt(result) : 0;
+    }
+
+    public MultiResponses getQuorumCounter(String key) {
+        Request request = createRequestObject(OperationRequest.builder()
+                .operator(Operator.GET)
+                .args(List.of(key)));
+
+        return sendMultiRequest(request);
+    }
+
     public boolean contains(String key) {
         return sendRequest(OperationRequest.builder()
                 .operator(Operator.CONTAINS)
@@ -61,6 +77,20 @@ public final class MemDb {
         sendRequest(OperationRequest.builder()
                 .operator(Operator.SET)
                 .args(List.of(key, value)));
+    }
+
+    public void increment(String key) {
+        sendRequest(OperationRequest.builder()
+                .operator(Operator.UPDATE_COUNTER)
+                .flag1(true)
+                .args(List.of(key)));
+    }
+
+    public void decrement(String key) {
+        sendRequest(OperationRequest.builder()
+                .operator(Operator.UPDATE_COUNTER)
+                .flag1(false)
+                .args(List.of(key)));
     }
 
     public boolean cas(String key, String expected, String value) {

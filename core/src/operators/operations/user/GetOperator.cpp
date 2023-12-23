@@ -21,8 +21,10 @@ OperatorDescriptor GetOperator::desc() {
 }
 
 LamportClock GetOperator::getTimestampCounter(const std::optional<MapEntry<memDbDataLength_t>>& entry) {
-    if(!entry.has_value() || entry->type == NodeType::COUNTER) {
+    if(!entry.has_value()) {
         return LamportClock{0, 0};
+    } else if (entry->type == NodeType::COUNTER) {
+        return LamportClock{0, entry->toCounter()->counter.count()};
     } else {
         return entry->toData()->timestamp;
     }

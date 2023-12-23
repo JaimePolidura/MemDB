@@ -21,7 +21,7 @@ Response UpdateCounterOperator::operate(const OperationBody& operation, const Op
 }
 
 void UpdateCounterOperator::replicate(Counter& counter, uint64_t newUpdatedValue, OperatorDependencies& dependencies, const OperationBody& operation) {
-    dependencies.cluster->clusterNodes->requestPool.submit([newUpdatedValue, dependencies, counter, operation, this]() {
+    dependencies.cluster->clusterNodes->requestPool.submit([newUpdatedValue, dependencies, counter, operation, this]() mutable -> void {
         SimpleString<memDbDataLength_t> key = operation.args->at(0);
         uint32_t partitionId = dependencies.cluster->getPartitionIdByKey(key);
 
@@ -33,7 +33,7 @@ void UpdateCounterOperator::replicate(Counter& counter, uint64_t newUpdatedValue
         multipleResponses_t responses = dependencies.cluster->clusterNodes->broadcastForEachAndWait(SendRequestOptions{
             .partitionId = static_cast<int>(partitionId),
             .canBeStoredInHint = true
-        }, [replicateCounterRequest, counter, key, newUpdatedValue](memdbNodeId_t nodeId) -> OperationBody {
+        }, [replicateCounterRequest, counter, key, newUpdatedValue](memdbNodeId_t nodeId) mutable -> OperationBody {
             const auto[lastSeenIncrement, lastSeenDecrement] = counter.getLastSeen(nodeId);
 
             return replicateCounterRequest
@@ -71,7 +71,7 @@ uint32_t UpdateCounterOperator::getNNodesInCluster(OperatorDependencies& depende
         return 1;
     }
     if(!usingPartitions) {
-        return dependencies.cluster->clusterNodes->getSize();
+        return dependencies.cluster->clusterNodes->getSize() + 1; //Plus self
     }
     if(usingPartitions) {
         return dependencies.cluster->getNodesPerPartition();
@@ -82,10 +82,10 @@ uint32_t UpdateCounterOperator::getNNodesInCluster(OperatorDependencies& depende
 
 OperatorDescriptor UpdateCounterOperator::desc() {
     return OperatorDescriptor{
-        .type = OperatorType::DB_STORE_WRITE,
+        .type = OperatorType::NODE_MAINTENANCE,
         .number = OperatorNumbers::UPDATE_COUNTER,
         .name = "UPDATE_COUNTER",
-        .authorizedToExecute = { AuthenticationType::NODE },
+        .authorizedToExecute = { AuthenticationType::USER },
     };
 }
 

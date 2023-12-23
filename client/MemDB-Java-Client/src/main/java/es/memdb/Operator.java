@@ -13,7 +13,8 @@ public enum Operator {
     DELETE(3, List.of(UnknownKey.class)),
     CAS(9, List.of(CasFailed.class)),
     GET_CLUSTER_CONFIG(12, Collections.EMPTY_LIST),
-    CONTAINS(17, List.of(UnknownKey.class));
+    CONTAINS(17, List.of(UnknownKey.class)),
+    UPDATE_COUNTER(18, Collections.EMPTY_LIST);
 
     public final List<Class<? extends MemDbException>> expectedExceptions;
     public final int operatorNumber;

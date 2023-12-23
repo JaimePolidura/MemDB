@@ -2,8 +2,6 @@ import es.memdb.MemDb;
 import es.memdb.connection.MemDbConnections;
 import lombok.SneakyThrows;
 
-import java.util.concurrent.TimeUnit;
-
 public final class Other {
     @SneakyThrows
     public static void main(String[] args) {
@@ -13,9 +11,20 @@ public final class Other {
 //        node1_write();
 //        node3_write();
 //        node5_write();
-        node1_read();
+//        node1_read();
 //        node4_read();
 //        node5_read();
+
+        counters();
+    }
+
+    private static void counters() throws Exception {
+        MemDb memDb = MemDbConnections.sync("192.168.1.159", 10000, "123");
+        memDb.increment("contador");
+        memDb.increment("contador");
+        memDb.increment("contador");
+
+        System.out.println(memDb.getCounter("contador"));
     }
 
     @SneakyThrows

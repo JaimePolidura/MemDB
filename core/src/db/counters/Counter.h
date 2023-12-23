@@ -5,8 +5,8 @@
 #include "utils/threads/SharedLock.h"
 #include "db/counters/ReplicateCounterRequest.h"
 #include "ReplicateCounterResponse.h"
+#include "db/counters/CounterArrayIndexMapper.h"
 
-//TODO Race conditions
 class Counter {
 public:
     Counter(memdbNodeId_t selfNodeId, uint32_t nNodes);
@@ -28,10 +28,16 @@ public:
 private:
     std::shared_ptr<SharedLock> lock;
 
+    std::shared_ptr<CounterArrayIndexMapper> arrayNodeIndexMapper{};
+
     uint64_t * nIncrements; //Index -> nodeId
     uint64_t * nDecrements;
     memdbNodeId_t selfNodeId;
     uint32_t nNodes;
 
+    void maybeResizeCounters(memdbNodeId_t otherNodeId);
+
     void updateCounterFromReplication(ReplicateCounterRequest request);
+
+    int getIndexByNode(memdbNodeId_t nodeId) const;
 };

@@ -17,6 +17,7 @@ OperatorDescriptor JoinClusterAnnounceOperator::desc() {
         .type = OperatorType::NODE_MAINTENANCE,
         .number = OperatorNumbers::JOIN_CLUSTER_ANNOUNCE,
         .name = "JOIN_CLUSTER_ANNOUNCE",
-        .authorizedToExecute = { AuthenticationType::NODE}
+        .authorizedToExecute = { AuthenticationType::NODE},
+        .properties = {}
     };
 }

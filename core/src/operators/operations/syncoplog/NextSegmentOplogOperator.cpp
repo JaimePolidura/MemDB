@@ -30,6 +30,7 @@ OperatorDescriptor NextSegmentOplogOperator::desc() {
         .number = OperatorNumbers::NEXT_SYNC_OPLOG_SEGMENT,
         .name = "NEXT_SYNC_OPLOG_SEGMENT",
         .authorizedToExecute = { AuthenticationType::NODE },
+        .properties = {}
     };
 }
 

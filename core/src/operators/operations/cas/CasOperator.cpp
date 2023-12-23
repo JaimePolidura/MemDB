@@ -152,5 +152,6 @@ OperatorDescriptor CasOperator::desc() {
         .number = OperatorNumbers::CAS,
         .name = "CAS",
         .authorizedToExecute = { AuthenticationType::USER },
+        .properties = {},
     };
 }

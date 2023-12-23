@@ -79,6 +79,7 @@ OperatorDescriptor UpdateCounterOperator::desc() {
         .number = OperatorNumbers::UPDATE_COUNTER,
         .name = "UPDATE_COUNTER",
         .authorizedToExecute = { AuthenticationType::USER },
+        .properties = { OperatorProperty::PERSISTENCE }
     };
 }
 

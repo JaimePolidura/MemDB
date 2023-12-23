@@ -41,6 +41,7 @@ OperatorDescriptor MovePartitionOplogOperator::desc() {
             .number = OperatorNumbers::MOVE_OPLOG,
             .name = "MOVE_PARTITION_OPLOG",
             .authorizedToExecute = { AuthenticationType::NODE },
+            .properties = {}
     };
 }
 

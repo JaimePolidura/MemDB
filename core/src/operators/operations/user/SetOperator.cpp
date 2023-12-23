@@ -24,6 +24,7 @@ OperatorDescriptor SetOperator::desc() {
             .number = OperatorNumbers::SET,
             .name = "SET",
             .authorizedToExecute = { AuthenticationType::USER, AuthenticationType::NODE },
+            .properties = { OperatorProperty::BROADCAST, OperatorProperty::PERSISTENCE }
     };
 }
 

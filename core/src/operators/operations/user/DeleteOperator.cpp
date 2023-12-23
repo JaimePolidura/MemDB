@@ -22,6 +22,7 @@ OperatorDescriptor DeleteOperator::desc() {
         .number = OperatorNumbers::DEL,
         .name = "DELETE",
         .authorizedToExecute = { AuthenticationType::USER, AuthenticationType::NODE },
+        .properties = { OperatorProperty::BROADCAST, OperatorProperty::PERSISTENCE }
     };
 }
 

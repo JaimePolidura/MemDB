@@ -17,6 +17,7 @@ OperatorDescriptor GetOperator::desc() {
             .number = OperatorNumbers::GET,
             .name = "GET",
             .authorizedToExecute = { AuthenticationType::USER },
+            .properties = {}
     };
 }
 

@@ -24,6 +24,7 @@ OperatorDescriptor GetNodeDataOperator::desc() {
         .type = OperatorType::NODE_MAINTENANCE,
         .number =  OperatorNumbers::GET_NODE_DATA,
         .name = "GET_NODE_DATA",
-        .authorizedToExecute = { AuthenticationType::NODE, AuthenticationType::USER }
+        .authorizedToExecute = { AuthenticationType::NODE, AuthenticationType::USER },
+        .properties = {}
     };
 }

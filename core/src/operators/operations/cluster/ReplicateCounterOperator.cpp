@@ -53,6 +53,7 @@ OperatorDescriptor ReplicateCounterOperator::desc() {
         .type = OperatorType::DB_STORE_WRITE,
         .number = OperatorNumbers::REPLICATE_COUNTER,
         .name = "REPLICATE_COUNTER",
-        .authorizedToExecute = { AuthenticationType::NODE }
+        .authorizedToExecute = { AuthenticationType::NODE },
+        .properties = {}
     };
 }

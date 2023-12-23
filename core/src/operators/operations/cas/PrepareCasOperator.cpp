@@ -44,5 +44,6 @@ OperatorDescriptor PrepareCasOperator::desc() {
             .number = OperatorNumbers::CAS_PREPARE,
             .name = "CAS_PREPARE",
             .authorizedToExecute = { AuthenticationType::NODE },
+            .properties =  {}
     };
 }

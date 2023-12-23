@@ -18,5 +18,6 @@ OperatorDescriptor ContainsOperator::desc() {
         .number = OperatorNumbers::CONTAINS,
         .name = "CONTAINS",
         .authorizedToExecute = { AuthenticationType::USER },
+        .properties = {}
     };
 }

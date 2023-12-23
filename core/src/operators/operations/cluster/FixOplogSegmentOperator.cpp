@@ -29,7 +29,8 @@ OperatorDescriptor FixOplogSegmentOperator::desc() {
             .type = OperatorType::NODE_MAINTENANCE,
             .number = OperatorNumbers::FIX_OPLOG_SEGMENT,
             .name = "FIX_OPLOG_SEGMENT",
-            .authorizedToExecute = { AuthenticationType::NODE }
+            .authorizedToExecute = { AuthenticationType::NODE },
+            .properties = {}
     };
 }
 

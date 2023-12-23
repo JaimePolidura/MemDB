@@ -16,6 +16,7 @@ OperatorDescriptor LeaveClusterAnnounceOperator::desc() {
         .type = OperatorType::NODE_MAINTENANCE,
         .number = OperatorNumbers::LEAVE_CLUSTER_ANNOUNCE,
         .name = "LEAVE_CLUSTER_ANNOUNCE",
-        .authorizedToExecute = { AuthenticationType::NODE }
+        .authorizedToExecute = { AuthenticationType::NODE },
+        .properties = {}
     };
 }

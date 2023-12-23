@@ -59,5 +59,6 @@ OperatorDescriptor AcceptCasOperator::desc() {
             .number = OperatorNumbers::CAS_ACCEPT,
             .name = "CAS_ACCEPT",
             .authorizedToExecute = { AuthenticationType::NODE },
+            .properties =  {}
     };
 }

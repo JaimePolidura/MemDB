@@ -30,5 +30,6 @@ OperatorDescriptor SyncOplogOperator::desc() {
             .number = OperatorNumbers::SYNC_OPLOG,
             .name = "SYNC_OPLOG",
             .authorizedToExecute = { AuthenticationType::NODE },
+            .properties = {}
     };
 }

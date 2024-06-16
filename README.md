@@ -21,7 +21,7 @@ In memory, distributed leaderless key-value store in C++ with partitions, persis
 
 ## Java client
 ```java
-//Seed nodes are used a first contact nodes. Once the client or a node contacts any of this seed nodes,
+//Seed nodes are used as a first-contact nodes. Once the client/node contacts any of this seed nodes,
 //it will recieve all the other nodes in the cluster.
 List<String> seedNodeAddresses = List.of("192.168.1.2:10000", "192.168.1.3:10000", "192.168.1.4:10000");
 MemDb memDb = MemDbConnections.cluster("123", seedNodeAddresses);

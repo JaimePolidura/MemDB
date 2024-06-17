@@ -5,7 +5,7 @@ In memory, distributed leaderless key-value store in C++ with partitions, persis
 - Basic key-value CRUD operations: get, set, delete & contains.
 - Data can be persisted using a log of operations, which is replied when the server boots. This log can be compacted (removing duplicates) and compressed. Every log entry contains the key, value, operation type and a lamport timestamp.
 - Data can be distributed over multiple nodes in a leaderless approach. Concurrent writes are detected using lamport clocks since every message in the cluster is timestamped. When a node joins the cluster or reboots, it will receive only the writes that it missed while it was down from any other alive node's log.
-- Data can be partitioned over the cluster using consistent hashing approach (similar to DynamoDB). Nodes can dynamically join and leave the cluster.
+- Data can be partitioned over the cluster using consistent hashing approach (similar to DynamoDB or Cassandra). Nodes can dynamically join and leave the cluster.
 - Distributed counters.
 - Atomic CAS operations over a partition using Paxos algorithm.
 - Uses custom binary protocol over TCP.
